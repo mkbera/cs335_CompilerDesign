@@ -1,61 +1,17 @@
-\documentclass[landscape]{article}
-
-\usepackage{assign}
-
-\setcoursetitle{CS335: Compiler Design}
-\setauthname{Prann Bansal, Manish Kumar Bera, Gurpreet Singh}
-\setauthroll{150259}
-\setheaddate{21 January, 2018}
-\setassigncode{0}
-
-\begin{document}
-\makeheader
-
-\begin{qsection}{Team Members} \vspace{5mm}
-
-	\begin{center}
-		\begin{tabular}[h!]{lC{3.5cm}l}
-			\hline
-			\bt{Names}			&	\bt{Roll Numbers}	&	\bt{Email} 			\\
-			\hline
-			Manish Kumar Bera	&	150381				&	mkbera@iitk.ac.in	\\
-			Prann Bansal		&	150510				&	prann@iitk.ac.in	\\
-			Gurpreet Singh		&	150259				&	guggu@iitk.ac.in	\\
-			\hline
-		\end{tabular}
-	\end{center}
-
-\end{qsection}
-
-\begin{qsection}{T-Diagram}
-
-	\begin{figure}[h!]
-		\centering
-		\includegraphics[height=60px]{includes/t-diagram.pdf}
-		\caption{T-Diagram for the proposed compiler}
-		\label{fig:t-diagram}
-	\end{figure}
-
-	The T-Diagram for the proposed compiler is given in Figure \ref{fig:t-diagram}. We aim to build a compiler for a subset of the Java programming language, compiled to the assembly language MIPS, on a Node.js platform.
-
-\end{qsection}
-
-\begin{qsection}{BNF}
-
-	Below, we provide the subset of the Java BNF obtained from --- \tt{\href{https://users-cs.au.dk/amoeller/dRegAut/JavaBNF.html}{https://users-cs.au.dk/amoeller/dRegAut/JavaBNF.html}} \br
-
-	\begin{enumerate}[label=\bt{\theenumi.}]
-		\ditem[Programs.]
-
-			\begin{longtable}{R{7cm} c L{15cm}}
-				\bt{LHS}									&					&	\bt{RHS} \\
+				\\
+				########################## JAVA SYNTAX SPECIFICATION ###########################
+				\\
+				\\
+				----------------------------------- PROGRAMS -----------------------------------
+				\\
 				<compilation unit>							&	$\colon\colon=$	&	<import declarations>? <type declarations>?
-			\end{longtable}
-
-		\ditem[Declarations.]
-
-			\begin{longtable}{R{7cm} c L{15cm}}
-				\bt{LHS}									&					&	\bt{RHS} \\
+				\\
+				--------------------------------------------------------------------------------
+				\\
+				\\
+				\\
+				--------------------------------- DECLARATIONS ---------------------------------
+				\\
 				<import declarations>						&	$\colon\colon=$	&	<import declaration> | <import declarations> <import declaration>
 				\\
 				<import declaration>						&	$\colon\colon=$	&	<single type import declaration> | <type import on demand declaration>
@@ -137,12 +93,39 @@
 				<variable initializers>						&	$\colon\colon=$	&	<variable initializer> | <variable initializers> , <variable initializer>
 				\\
 				<variable initializer>						&	$\colon\colon=$	&	<expression> | <array initializer>
-			\end{longtable}
-
-		\ditem[Types.]
-
-			\begin{longtable}{R{7cm} c L{15cm}}
-				\bt{LHS}									&					&	\bt{RHS} \\
+				\\
+				--------------------------------------------------------------------------------
+				\\
+				\\
+				\\
+				------------------------------------ TYPES -------------------------------------
+				\\
+				<type>										&	$\colon\colon=$	&	<primitive type> | <reference type>
+				\\
+				<primitive type>							&	$\colon\colon=$	&	<numeric type> | boolean
+				\\
+				<numeric type>								&	$\colon\colon=$	&	<integral type> | <floating-point type>
+				\\
+				<integral type>								&	$\colon\colon=$	&	byte | short | int | long | char
+				\\
+				<floating-point type>						&	$\colon\colon=$	&	float | double
+				\\
+				<reference type>							&	$\colon\colon=$	&	<class or interface type> | <array type>
+				\\
+				<class or interface type>					&	$\colon\colon=$	&	<class type> | <interface type>
+				\\
+				<class type>								&	$\colon\colon=$	&	<type name>
+				\\
+				<interface type>							&	$\colon\colon=$	&	<type name>
+				\\
+				<array type>								&	$\colon\colon=$	&	<type> [ ]
+				\\
+				--------------------------------------------------------------------------------
+				\\
+				\\
+				\\
+				----------------------------- BLOCKS AND COMMANDS ------------------------------
+				\\
 				<block>										&	$\colon\colon=$	&	{ <block statements>? }
 				\\
 				<block statements>							&	$\colon\colon=$	&	<block statement> | <block statements> <block statement>
@@ -204,12 +187,13 @@
 				<continue statement>						&	$\colon\colon=$	&	continue ;
 				\\
 				<return statement>							&	$\colon\colon=$	&	return <expression>? ;
-			\end{longtable}
-
-		\ditem[Blocks and Commands.]
-
-			\begin{longtable}{R{7cm} c L{15cm}}
-				\bt{LHS}									&					&	\bt{RHS} \\
+				\\
+				--------------------------------------------------------------------------------
+				\\
+				\\
+				\\
+				--------------------------------- EXPRESSIONS ----------------------------------
+				\\
 				<constant expression>						&	$\colon\colon=$	&	<expression>
 				\\
 				<expression>								&	$\colon\colon=$	&	<assignment expression>
@@ -220,15 +204,15 @@
 				\\
 				<left hand side>							&	$\colon\colon=$	&	<expression name> | <field access> | <array access>
 				\\
-				<assignment operator>						&	$\colon\colon=$	&	= | *= | /= | \%= | += | -= | <<= | >>= | &= | ^= | |=
+				<assignment operator>						&	$\colon\colon=$	&	= | *= | /= | %= | += | -= | <<= | >>= | &= | ^= | |=
 				\\
 				<conditional expression>					&	$\colon\colon=$	&	<conditional or expression> | <conditional or expression> ? <expression> : <conditional expression>
 				\\
 				<conditional or expression>					&	$\colon\colon=$	&	<conditional and expression> | <conditional or expression> || <conditional and expression>
 				\\
-				<conditional and expression>				&	$\colon\colon=$	&	<inclusive or expression> | <conditional and expression> \&\& <inclusive or expression>
+				<conditional and expression>				&	$\colon\colon=$	&	<inclusive or expression> | <conditional and expression> && <inclusive or expression>
 				\\
-				<inclusive or expression>					&	$\colon\colon=$	&	<exclusive or expression> | <inclusive or expression> \#| <exclusive or expression>
+				<inclusive or expression>					&	$\colon\colon=$	&	<exclusive or expression> | <inclusive or expression> #| <exclusive or expression>
 				\\
 				<exclusive or expression>					&	$\colon\colon=$	&	<and expression> | <exclusive or expression> ^ <and expression>
 				\\
@@ -281,89 +265,14 @@
 				<dims>										&	$\colon\colon=$	&	[ ] | <dims> [ ]
 				\\
 				<array access>								&	$\colon\colon=$	&	<expression name> [ <expression> ] | <primary no new array> [ <expression>]
-			\end{longtable}
-
-		\ditem[Expressions.]
-
-			\begin{longtable}{R{7cm} c L{15cm}}
-				\bt{LHS}									&					&	\bt{RHS} \\
-				<constant expression>						&	$\colon\colon=$	&	<expression>
 				\\
-				<expression>								&	$\colon\colon=$	&	<assignment expression>
+				--------------------------------------------------------------------------------
 				\\
-				<assignment expression>						&	$\colon\colon=$	&	<conditional expression> | <assignment>
 				\\
-				<assignment>								&	$\colon\colon=$	&	<left hand side> <assignment operator> <assignment expression>
 				\\
-				<left hand side>							&	$\colon\colon=$	&	<expression name> | <field access> | <array access>
+				------------------------------------ TOKENS ------------------------------------
 				\\
-				<assignment operator>						&	$\colon\colon=$ &	= | *= | /= | \%= | += | -= | <<= | >>= | \&= | \verb!^!= | |=
 				\\
-				<conditional expression>					&	$\colon\colon=$	&	<conditional or expression> | <conditional or expression> ? <expression> : <conditional expression>
-				\\
-				<conditional or expression>					&	$\colon\colon=$	&	<conditional and expression> | <conditional or expression> || <conditional and expression>
-				\\
-				<conditional and expression>				&	$\colon\colon=$ &	<inclusive or expression> | <conditional and expression> \&\& <inclusive or expression>
-				\\
-				<inclusive or expression>					&	$\colon\colon=$	&	<exclusive or expression> | <inclusive or expression> \ut{|} <exclusive or expression>
-				\\
-				<exclusive or expression>					&	$\colon\colon=$ &	<and expression> | <exclusive or expression> \verb!^! <and expression>
-				\\
-				<and expression>							&	$\colon\colon=$	&	<equality expression> | <and expression> \& <equality expression>
-				\\
-				<equality expression>						&	$\colon\colon=$	&	<relational expression> | <equality expression> == <relational expression> | <equality expression> != <relational expression>
-				\\
-				<relational expression>						&	$\colon\colon=$	&	<shift expression> | <relational expression> < <shift expression> | <relational expression> > <shift expression> | <relational expression> <= <shift expression> | <relational expression> >= <shift expression> | <relational expression> instanceof <reference type>
-				\\
-				<shift expression>							&	$\colon\colon=$	&	<additive expression> | <shift expression> << <additive expression> | <shift expression> >> <additive expression>
-				\\
-				<additive expression>						&	$\colon\colon=$	&	<multiplicative expression> | <additive expression> + <multiplicative expression> | <additive expression> - <multiplicative expression>
-				\\
-				<multiplicative expression>					&	$\colon\colon=$	&	<unary expression> | <multiplicative expression> * <unary expression> | <multiplicative expression> / <unary expression> | <multiplicative expression> \% <unary expression>
-				\\
-				<cast expression>							&	$\colon\colon=$	&	( <primitive type> ) <unary expression> | ( <reference type> ) <unary expression not plus minus>
-				\\
-				<unary expression>							&	$\colon\colon=$	&	<preincrement expression> | <predecrement expression> | + <unary expression> | - <unary expression> | <unary expression not plus minus>
-				\\
-				<predecrement expression>					&	$\colon\colon=$	&	-- <unary expression>
-				\\
-				<preincrement expression>					&	$\colon\colon=$	&	++ <unary expression>
-				\\
-				<unary expression not plus minus>			&	$\colon\colon=$	&	<postfix expression> | ~ <unary expression> | ! <unary expression> | <cast expression>
-				\\
-				<postdecrement expression>					&	$\colon\colon=$	&	<postfix expression> --
-				\\
-				<postincrement expression>					&	$\colon\colon=$	&	<postfix expression> ++
-				\\
-				<postfix expression>						&	$\colon\colon=$	&	<primary> | <expression name> | <postincrement expression> | <postdecrement expression>
-				\\
-				<method invocation>							&	$\colon\colon=$	&	<method name> ( <argument list>? ) | <primary> . <identifier> ( <argument list>? ) | super . <identifier> ( <argument list>? )
-				\\
-				<field access>								&	$\colon\colon=$	&	<primary> . <identifier> | super . <identifier>
-				\\
-				<primary>									&	$\colon\colon=$	&	<primary no new array> | <array creation expression>
-				\\
-				<primary no new array>						&	$\colon\colon=$	&	<literal> | this | ( <expression> ) | <class instance creation expression> | <field access> | <method invocation> | <array access>
-				\\
-				<class instance creation expression>		&	$\colon\colon=$	&	new <class type> ( <argument list>? )
-				\\
-				<argument list>								&	$\colon\colon=$	&	<expression> | <argument list> , <expression>
-				\\
-				<array creation expression>					&	$\colon\colon=$	&	new <primitive type> <dim exprs> <dims>? | new <class or interface type> <dim exprs> <dims>?
-				\\
-				<dim exprs>									&	$\colon\colon=$	&	<dim expr> | <dim exprs> <dim expr>
-				\\
-				<dim expr>									&	$\colon\colon=$	&	[ <expression> ]
-				\\
-				<dims>										&	$\colon\colon=$	&	[ ] | <dims> [ ]
-				\\
-				<array access>								&	$\colon\colon=$	&	<expression name> [ <expression> ] | <primary no new array> [ <expression>]
-			\end{longtable}
-
-		\ditem[Tokens.]
-
-			\begin{longtable}{R{7cm} c L{15cm}}
-				\bt{LHS}									&					&	\bt{RHS} \\
 				<type name>									&	$\colon\colon=$	&	<identifier>
 				\\
 				<expression name>							&	$\colon\colon=$	&	<identifier> | <ambiguous name> . <identifier>
@@ -390,49 +299,18 @@
 				\\
 				<boolean literal>							&	$\colon\colon=$	&	true | false
 				\\
-				<character literal>							&	$\colon\colon=$	&	\textquotesingle\ <single character> \textquotesingle\ | \textquotesingle\ <escape sequence> \textquotesingle
+				<character literal>							&	$\colon\colon=$	&	' <single character> ' | ' <escape sequence> '
 				\\
-				<single character>							&	$\colon\colon=$	&	<input character> except \textquotesingle\ and \textbackslash
+				<single character>							&	$\colon\colon=$	&	<input character> except ' and \
 				\\
 				<string literal>							&	$\colon\colon=$	&	" <string characters>? "
 				\\
 				<string characters>							&	$\colon\colon=$	&	<string character> | <string characters> <string character>
 				\\
-				<string character>							&	$\colon\colon=$	&	<input character> except " and \textbackslash\ | <escape character>
+				<string character>							&	$\colon\colon=$	&	<input character> except " and \ | <escape character>
 				\\
 				<null literal>								&	$\colon\colon=$	&	null
 				\\
 				<keyword>									&	$\colon\colon=$	&	boolean | break | byte | case | char | class | const | continue | default | do | double | else | extends | float | for | if | import | instanceof | int | long | new | return | short | static | super | switch | this | void | while
-			\end{longtable}
-
-	\end{enumerate}
-
-\end{qsection}
-
-\begin{qsection}{Deleted Constructs}
-
-	
-
-\end{qsection}
-
-\begin{qsection}{Required Tools}
-
-	\begin{enumerate}
-		\ditem[Lexer Generators.]
-			\begin{enumerate}
-				\item jison-lex	---	\href{https://www.npmjs.com/package/jison}{https://www.npmjs.com/package/jison}
-				\item jacob		---	\href{https://www.npmjs.com/package/jacob}{https://www.npmjs.com/package/jacob}
-				\item lexer		---	\href{https://www.npmjs.com/package/lexer}{https://www.npmjs.com/package/lexer}
-			\end{enumerate}
-
-		\ditem[Parser Generators.]
-			\begin{enumerate}
-				\item jison	---	\href{https://www.npmjs.com/package/jison}{https://www.npmjs.com/package/jison}
-				\item jacob	---	\href{https://www.npmjs.com/package/jacob}{https://www.npmjs.com/package/jacob}
-				\item pegjs	---	\href{https://www.npmjs.com/package/pegjs}{https://www.npmjs.com/package/pegjs}
-			\end{enumerate}
-	\end{enumerate}<++>
-
-\end{qsection}<++>
-
-\end{document}
+				\\
+				--------------------------------------------------------------------------------
