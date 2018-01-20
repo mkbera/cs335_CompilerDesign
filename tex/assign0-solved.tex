@@ -1,4 +1,4 @@
-\documentclass[landscape]{article}
+\documentclass[landscape, 11pt]{article}
 
 \usepackage{assign}
 
@@ -42,9 +42,11 @@
 
 \begin{qsection}{BNF}
 
-	Below, we provide the subset of the Java BNF obtained from --- \tt{\href{https://users-cs.au.dk/amoeller/dRegAut/JavaBNF.html}{https://users-cs.au.dk/amoeller/dRegAut/JavaBNF.html}} \br
+	Below, we provide the subset of the Java BNF obtained from ---
+	\ct{\href{https://users-cs.au.dk/amoeller/dRegAut/JavaBNF.html}{https://users-cs.au.dk/amoeller/dRegAut/JavaBNF.html}} \br
 
 	\begin{enumerate}[label=\bt{\theenumi.}]
+		\tt
 		\ditem[Programs.]
 
 			\begin{longtable}{R{7cm} c L{15cm}}
@@ -220,7 +222,7 @@
 				\\
 				<left hand side>							&	$\colon\colon=$	&	<expression name> | <field access> | <array access>
 				\\
-				<assignment operator>						&	$\colon\colon=$	&	= | *= | /= | \%= | += | -= | <<= | >>= | &= | ^= | |=
+				<assignment operator>						&	$\colon\colon=$	&	= | *= | /= | \%= | += | -= | <<= | >>= | \&= | $\wedge$= | |=
 				\\
 				<conditional expression>					&	$\colon\colon=$	&	<conditional or expression> | <conditional or expression> ? <expression> : <conditional expression>
 				\\
@@ -230,9 +232,9 @@
 				\\
 				<inclusive or expression>					&	$\colon\colon=$	&	<exclusive or expression> | <inclusive or expression> \#| <exclusive or expression>
 				\\
-				<exclusive or expression>					&	$\colon\colon=$	&	<and expression> | <exclusive or expression> ^ <and expression>
+				<exclusive or expression>					&	$\colon\colon=$	&	<and expression> | <exclusive or expression> $\wedge$ <and expression>
 				\\
-				<and expression>							&	$\colon\colon=$	&	<equality expression> | <and expression> & <equality expression>
+				<and expression>							&	$\colon\colon=$	&	<equality expression> | <and expression> \& <equality expression>
 				\\
 				<equality expression>						&	$\colon\colon=$	&	<relational expression> | <equality expression> == <relational expression> | <equality expression> != <relational expression>
 				\\
@@ -242,7 +244,7 @@
 				\\
 				<additive expression>						&	$\colon\colon=$	&	<multiplicative expression> | <additive expression> + <multiplicative expression> | <additive expression> - <multiplicative expression>
 				\\
-				<multiplicative expression>					&	$\colon\colon=$	&	<unary expression> | <multiplicative expression> * <unary expression> | <multiplicative expression> / <unary expression> | <multiplicative expression> % <unary expression>
+				<multiplicative expression>					&	$\colon\colon=$	&	<unary expression> | <multiplicative expression> * <unary expression> | <multiplicative expression> / <unary expression> | <multiplicative expression> \% <unary expression>
 				\\
 				<cast expression>							&	$\colon\colon=$	&	( <primitive type> ) <unary expression> | ( <reference type> ) <unary expression not plus minus>
 				\\
@@ -297,7 +299,7 @@
 				\\
 				<left hand side>							&	$\colon\colon=$	&	<expression name> | <field access> | <array access>
 				\\
-				<assignment operator>						&	$\colon\colon=$ &	= | *= | /= | \%= | += | -= | <<= | >>= | \&= | \verb!^!= | |=
+				<assignment operator>						&	$\colon\colon=$ &	= | *= | /= | \%= | += | -= | <<= | >>= | \&= | $\wedge$= | |=
 				\\
 				<conditional expression>					&	$\colon\colon=$	&	<conditional or expression> | <conditional or expression> ? <expression> : <conditional expression>
 				\\
@@ -307,7 +309,7 @@
 				\\
 				<inclusive or expression>					&	$\colon\colon=$	&	<exclusive or expression> | <inclusive or expression> \ut{|} <exclusive or expression>
 				\\
-				<exclusive or expression>					&	$\colon\colon=$ &	<and expression> | <exclusive or expression> \verb!^! <and expression>
+				<exclusive or expression>					&	$\colon\colon=$ &	<and expression> | <exclusive or expression> $\wedge$ <and expression>
 				\\
 				<and expression>							&	$\colon\colon=$	&	<equality expression> | <and expression> \& <equality expression>
 				\\
@@ -404,35 +406,156 @@
 				\\
 				<keyword>									&	$\colon\colon=$	&	boolean | break | byte | case | char | class | const | continue | default | do | double | else | extends | float | for | if | import | instanceof | int | long | new | return | short | static | super | switch | this | void | while
 			\end{longtable}
-
 	\end{enumerate}
 
 \end{qsection}
 
+\def\arraystretch{1}
+
 \begin{qsection}{Deleted Constructs}
 
-	
+	\begin{enumerate}[label=\bt{\theenumi.}]
+		\tt
+		\ditem[Programs.]
+
+			\begin{longtable}{R{7cm} c L{15cm}}
+				<compilation unit>							&	$\colon\colon-$	&	<package declaration>? <import declarations>? <type declarations>? \\
+															&	$\colon\colon+$	&	<import declarations>? <type declarations>? \\\\
+			\end{longtable}
+		\ditem[Declarations.]
+
+			\begin{longtable}{R{7cm} c L{15cm}}
+				<package declaration>						&	$\colon\colon-$	&	package <package name> ; \\\\
+				<type import on demand declaration>			&	$\colon\colon-$	&	import <package name> . * ; \\\\
+				<type declaration>							&	$\colon\colon-$	&	<class declaration> | <interface declaration> | ; \\
+															&	$\colon\colon+$	&	<class declaration> | ; \\\\
+				<class declaration>							&	$\colon\colon-$	&	<class modifiers>? class <identifier> <super>? <interfaces>? <class body> \\
+															&	$\colon\colon+$	&	<class modifiers>? class <identifier> <super>? <class body> \\\\
+				<class modifier>							&	$\colon\colon-$	&	public | abstract | final \\
+															&	$\colon\colon+$	&	public \\\\
+				<interfaces>								&	$\colon\colon-$	&	implements <interface type list> \\\\
+				<interface type list>						&	$\colon\colon-$	&	<interface type> | <interface type list> , <interface type> \\\\
+				<constructor declaration>					&	$\colon\colon-$	&	<constructor modifiers>? <constructor declarator> <throws>? <constructor body> \\
+															&	$\colon\colon+$	&	<constructor modifiers>? <constructor declarator> <constructor body> \\\\
+				<constructor modifier>						&	$\colon\colon-$	&	public | protected | private \\
+															&	$\colon\colon+$	&	public \\\\
+				<constructor declarator>					&	$\colon\colon-$	&	<simple type name> ( <formal parameter list>? ) \\
+															&	$\colon\colon+$	&	<type name> ( <formal parameter list>? ) \\\\
+				<throws>									&	$\colon\colon-$	&	throws <class type list> \\\\
+				<class type list>							&	$\colon\colon-$	&	<class type> | <class type list> , <class type> \\\\
+				<explicit constructor invocation>			&	$\colon\colon-$	&	this ( <argument list>? ) | super ( <argument list>? ) \\
+															&	$\colon\colon+$	&	this ( <argument list>? ) | super ( <argument list>? ) \\\\
+				<field modifier>							&	$\colon\colon-$	&	public | protected | private | static | final | transient | volatile \\
+															&	$\colon\colon+$	&	public | static \\\\
+				<method header>								&	$\colon\colon-$	&	<method modifiers>? <result type> <method declarator> <throws>? \\
+															&	$\colon\colon+$	&	<method modifiers>? <result type> <method declarator> \\\\
+				<method modifier>							&	$\colon\colon-$	&	public | protected | private | static | abstract | final | synchronized | native \\
+															&	$\colon\colon+$	&	public | static \\\\
+				<interface declaration>						&	$\colon\colon-$	&	<interface modifiers>? interface <identifier> <extends interfaces>? <interface body> \\\\
+				<interface modifiers>						&	$\colon\colon-$	&	<interface modifier> | <interface modifiers> <interface modifier> \\\\
+				<interface modifier>						&	$\colon\colon-$	&	public | abstract \\\\
+				<extends interfaces>						&	$\colon\colon-$	&	extends <interface type> | <extends interfaces> , <interface type> \\\\
+				<interface body>							&	$\colon\colon-$	&	\{ <interface member declarations>? \} \\\\
+				<interface member declarations>				&	$\colon\colon-$	&	<interface member declaration> | <interface member declarations> <interface member declaration> \\\\
+				<interface member declaration>				&	$\colon\colon-$	&	<constant declaration> | <abstract method declaration> \\\\
+				<constant modifiers>						&	$\colon\colon-$	&	public | static | final \\
+															&	$\colon\colon+$	&	public | static \\\\
+				<abstract method declaration>				&	$\colon\colon-$	&	<abstract method modifiers>? <result type> <method declarator> <throws>? ; \\\\
+				<abstract method modifiers>					&	$\colon\colon-$	&	<abstract method modifier> | <abstract method modifiers> <abstract method modifier> \\\\
+				<abstract method modifier>					&	$\colon\colon-$	&	public | abstract \\\\
+			\end{longtable}
+
+		\ditem[Blocks and Commands.]
+
+			\begin{longtable}{R{7cm} c L{15cm}}
+				<statement>									&	$\colon\colon-$	&	<statement without trailing substatement> | <labeled statement> | <if then statement> | <if then else statement> | <while statement> | <for statement> \\
+															&	$\colon\colon+$	&	<statement without trailing substatement> | <if then statement> | <if then else statement> | <while statement> | <for statement> \\\\
+				<statement no short if>						&	$\colon\colon-$	&	<statement without trailing substatement> | <labeled statement no short if> | <if then else statement no short if> | <while statement no short if> | <for statement no short if> \\
+															&	$\colon\colon+$	&	<statement without trailing substatement> | <if then else statement no short if> | <while statement no short if> | <for statement no short if> \\\\
+				<statement without trailing substatement>	&	$\colon\colon-$	&	<block> | <empty statement> | <expression statement> | <switch statement> | <do statement> | <break statement> | <continue statement> | <return statement> | <synchronized statement> | <throws statements> | <try statement> \\
+															&	$\colon\colon+$	&	<block> | <empty statement> | <expression statement> | <switch statement> | <do statement> | <break statement> | <continue statement> | <return statement> \\\\
+				<labeled statement>							&	$\colon\colon-$	&	<identifier> : <statement> \\\\
+				<labeled statement no short if>				&	$\colon\colon-$	&	<identifier> : <statement no short if> \\\\
+				<break statement>							&	$\colon\colon-$	&	break <identifier>? ; \\
+															&	$\colon\colon+$	&	break ; \\\\
+				<continue statement>						&	$\colon\colon-$	&	continue <identifier>? ; \\
+															&	$\colon\colon+$	&	continue ; \\\\
+				<throws statement>							&	$\colon\colon-$	&	throw <expression> ; \\\\
+				<synchronized statement>					&	$\colon\colon-$	&	synchronized ( <expression> ) <block> \\\\
+				<try statement>								&	$\colon\colon-$	&	try <block> <catches> | try <block> <catches>? <finally> \\\\
+				<catches>									&	$\colon\colon-$	&	<catch clause> | <catches> <catch clause> \\\\
+				<catch clause>								&	$\colon\colon-$	&	catch ( <formal parameter> ) <block> \\\\
+				<finally >									&	$\colon\colon-$	&	finally <block> \\\\
+			\end{longtable}
+
+		\ditem[Expressions.]
+			\begin{longtable}{R{7cm} c L{15cm}}
+				<assignment operator>						&	$\colon\colon-$	&	= | *= | /= | \%= | += | -= | <<= | >>= | >>>= | \&= | \wedge= | |= \\
+															&	$\colon\colon+$	&	= | *= | /= | \%= | += | -= | <<= | >>= | \&= | \wedge= | |= \\\\
+				<inclusive or expression>					&	$\colon\colon-$	&	<exclusive or expression> | <inclusive or expression> | <exclusive or expression> \\
+															&	$\colon\colon+$	&	<exclusive or expression> | <inclusive or expression> #| <exclusive or expression> \\\\
+				<shift expression>							&	$\colon\colon-$	&	<additive expression> | <shift expression> << <additive expression> | <shift expression> >> <additive expression> | <shift expression> >>> <additive expression> \\
+															&	$\colon\colon+$	&	<additive expression> | <shift expression> << <additive expression> | <shift expression> >> <additive expression> \\\\
+			\end{longtable}
+
+		\ditem[Tokens.]
+			\begin{longtable}{R{7cm} c L{15cm}}
+				<package name>								&	$\colon\colon-$	&	<identifier> | <package name> . <identifier> \\\\
+				<type name>									&	$\colon\colon-$	&	<identifier> | <package name> . <identifier> \\
+															&	$\colon\colon+$	&	<identifier> \\\\
+				<simple type name>							&	$\colon\colon-$	&	<identifier> \\\\
+				<ambiguous name>							&	$\colon\colon-$	&	<identifier> | <ambiguous name>. <identifier> \\
+															&	$\colon\colon+$	&	<identifier> | <ambiguous name>. <identifier> \\\\
+				<integer literal>							&	$\colon\colon-$	&	<decimal integer literal> | <hex integer literal> | <octal integer literal> \\
+															&	$\colon\colon+$	&	0 | <non zero digit> <digits>? \\\\
+				<decimal integer literal>					&	$\colon\colon-$	&	<decimal numeral> <integer type suffix>? \\\\
+				<hex integer literal>						&	$\colon\colon-$	&	<hex numeral> <integer type suffix>? \\\\
+				<octal integer literal>						&	$\colon\colon-$	&	<octal numeral> <integer type suffix>? \\\\
+				<integer type suffix>						&	$\colon\colon-$	&	l | L \\\\
+				<decimal numeral>							&	$\colon\colon-$	&	0 | <non zero digit> <digits>? \\\\
+				<hex numeral>								&	$\colon\colon-$	&	0 x <hex digit> | 0 X <hex digit> | <hex numeral> <hex digit> \\\\
+				<hex digit>									&	$\colon\colon-$	&	0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | a | b | c | d | e | f | A | B | C | D | E | F \\\\
+				<octal numeral>								&	$\colon\colon-$	&	0 <octal digit> | <octal numeral> <octal digit> \\\\
+				<octal digit>								&	$\colon\colon-$	&	0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 \\\\
+				<floating-point literal>					&	$\colon\colon-$	&	<digits> . <digits>? <exponent part>? <float type suffix>? | <digits> <exponent part>? <float type suffix>? \\
+															&	$\colon\colon+$	&	<digits> . <digits>? \\\\
+				<exponent part>								&	$\colon\colon-$	&	<exponent indicator> <signed integer> \\\\
+				<exponent indicator>						&	$\colon\colon-$	&	e | E \\\\
+				<float type suffix>							&	$\colon\colon-$	&	f | F | d | D \\
+				<string literal>							&	$\colon\colon-$	&	" <string characters>?" \\
+															&	$\colon\colon+$	&	" <string characters>? " \\\\
+				<keyword>									&	$\colon\colon-$	&	abstract | boolean | break | byte | case | catch | char | class | const | continue | default | do | double | else | extends | final | finally | float | for | goto | if | implements | import | instanceof | int | interface | long | native | new | package | private | protected | public | return | short | static | super | switch | synchronized | this | throw | throws | transient | try | void | volatile | while \\
+															&	$\colon\colon+$	&	boolean | break | byte | case | char | class | const | continue | default | do | double | else | extends | float | for | if | import | instanceof | int | long | new | return | short | static | super | switch | this | void | while \\\\
+		\end{longtable}
+
+	\end{enumerate}
+
+	\end{enumerate}
+
+	\end{enumerate}
 
 \end{qsection}
 
 \begin{qsection}{Required Tools}
 
 	\begin{enumerate}
-		\ditem[Lexer Generators.]
-			\begin{enumerate}
+		\ditem[Lexer Generators.] \br
+
+			\begin{enumerate}[label=\alph*.]
 				\item jison-lex	---	\href{https://www.npmjs.com/package/jison}{https://www.npmjs.com/package/jison}
 				\item jacob		---	\href{https://www.npmjs.com/package/jacob}{https://www.npmjs.com/package/jacob}
 				\item lexer		---	\href{https://www.npmjs.com/package/lexer}{https://www.npmjs.com/package/lexer}
-			\end{enumerate}
+			\end{enumerate} \br
 
-		\ditem[Parser Generators.]
-			\begin{enumerate}
+		\ditem[Parser Generators.] \br
+
+			\begin{enumerate}[label=\alph*.]
 				\item jison	---	\href{https://www.npmjs.com/package/jison}{https://www.npmjs.com/package/jison}
 				\item jacob	---	\href{https://www.npmjs.com/package/jacob}{https://www.npmjs.com/package/jacob}
 				\item pegjs	---	\href{https://www.npmjs.com/package/pegjs}{https://www.npmjs.com/package/pegjs}
 			\end{enumerate}
-	\end{enumerate}<++>
+	\end{enumerate}
 
-\end{qsection}<++>
+\end{qsection}
 
 \end{document}
