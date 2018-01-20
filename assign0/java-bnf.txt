@@ -1,315 +1,295 @@
-########################## JAVA SYNTAX SPECIFICATION ###########################
+Java Syntax Specification
 
+Programs
 
------------------------------------ PROGRAMS -----------------------------------
+<compilation unit> ::= <import declarations>? <type declarations>?
+Declarations
 
-<compilation unit>                          ::=    <import declarations>? <type declarations>?
+<import declarations> ::= <import declaration> | <import declarations> <import declaration>
 
---------------------------------------------------------------------------------
+<import declaration> ::= <single type import declaration> | <type import on demand declaration>
 
+<single type import declaration> ::= import <type name> ;
 
+<type declarations> ::= <type declaration> | <type declarations> <type declaration>
 
---------------------------------- DECLARATIONS ---------------------------------
+<type declaration> ::= <class declaration> | ;
 
-<import declarations>                       ::=    <import declaration> | <import declarations> <import declaration>
+<class declaration> ::= <class modifiers>? class <identifier> <super>? <class body>
 
-<import declaration>                        ::=    <single type import declaration> | <type import on demand declaration>
+<class modifiers> ::= <class modifier> | <class modifiers> <class modifier>
 
-<single type import declaration>            ::=    import <type name> ;
+<class modifier> ::= public
 
-<type declarations>                         ::=    <type declaration> | <type declarations> <type declaration>
+<super> ::= extends <class type>
 
-<type declaration>                          ::=    <class declaration> | ;
+<class body> ::= { <class body declarations>? }
 
-<class declaration>                         ::=    <class modifiers>? class <identifier> <super>? <class body>
+<class body declarations> ::= <class body declaration> | <class body declarations> <class body declaration>
 
-<class modifiers>                           ::=    <class modifier> | <class modifiers> <class modifier>
+<class body declaration> ::= <class member declaration> | <static initializer> | <constructor declaration>
 
-<class modifier>                            ::=    public
+<class member declaration> ::= <field declaration> | <method declaration>
 
-<super>                                     ::=    extends <class type>
+<static initializer> ::= static <block>
 
-<class body>                                ::=    { <class body declarations>? }
+<constructor declaration> ::= <constructor modifiers>? <constructor declarator> <constructor body>
 
-<class body declarations>                   ::=    <class body declaration> | <class body declarations> <class body declaration>
+<constructor modifiers> ::= <constructor modifier> | <constructor modifiers> <constructor modifier>
 
-<class body declaration>                    ::=    <class member declaration> | <static initializer> | <constructor declaration>
+<constructor modifier> ::= public
 
-<class member declaration>                  ::=    <field declaration> | <method declaration>
+<constructor declarator> ::= <type name> ( <formal parameter list>? )
 
-<static initializer>                        ::=    static <block>
+<formal parameter list> ::= <formal parameter> | <formal parameter list> , <formal parameter>
 
-<constructor declaration>                   ::=    <constructor modifiers>? <constructor declarator> <constructor body>
+<formal parameter> ::= <type> <variable declarator id>
 
-<constructor modifiers>                     ::=    <constructor modifier> | <constructor modifiers> <constructor modifier>
+<constructor body> ::= { <explicit constructor invocation>? <block statements>? }
 
-<constructor modifier>                      ::=    public
+<explicit constructor invocation> ::= this ( <argument list>? ) | super ( <argument list>? )
 
-<constructor declarator>                    ::=    <type name> ( <formal parameter list>? )
+<field declaration> ::= <field modifiers>? <type> <variable declarators> ;
 
-<formal parameter list>                     ::=    <formal parameter> | <formal parameter list> , <formal parameter>
+<field modifiers> ::= <field modifier> | <field modifiers> <field modifier>
 
-<formal parameter>                          ::=    <type> <variable declarator id>
+<field modifier> ::= public | static
 
-<constructor body>                          ::=    { <explicit constructor invocation>? <block statements>? }
+<variable declarators> ::= <variable declarator> | <variable declarators> , <variable declarator>
 
-<explicit constructor invocation>           ::=    this ( <argument list>? ) | super ( <argument list>? )
+<variable declarator> ::= <variable declarator id> | <variable declarator id> = <variable initializer>
 
-<field declaration>                         ::=    <field modifiers>? <type> <variable declarators> ;
+<variable declarator id> ::= <identifier> | <variable declarator id> [ ]
 
-<field modifiers>                           ::=    <field modifier> | <field modifiers> <field modifier>
+<variable initializer> ::= <expression> | <array initializer>
 
-<field modifier>                            ::=    public | static
+<method declaration> ::= <method header> <method body>
 
-<variable declarators>                      ::=    <variable declarator> | <variable declarators> , <variable declarator>
+<method header> ::= <method modifiers>? <result type> <method declarator>
 
-<variable declarator>                       ::=    <variable declarator id> | <variable declarator id> = <variable initializer>
+<result type> ::= <type> | void
 
-<variable declarator id>                    ::=    <identifier> | <variable declarator id> [ ]
+<method modifiers> ::= <method modifier> | <method modifiers> <method modifier>
 
-<variable initializer>                      ::=    <expression> | <array initializer>
+<method modifier> ::= public | static
 
-<method declaration>                        ::=    <method header> <method body>
+<method declarator> ::= <identifier> ( <formal parameter list>? )
 
-<method header>                             ::=    <method modifiers>? <result type> <method declarator>
+<method body> ::= <block> | ;
 
-<result type>                               ::=    <type> | void
+<constant declaration> ::= <constant modifiers> <type> <variable declarator>
 
-<method modifiers>                          ::=    <method modifier> | <method modifiers> <method modifier>
+<constant modifiers> ::= public | static
 
-<method modifier>                           ::=    public | static
+<array initializer> ::= { <variable initializers>? , ? }
 
-<method declarator>                         ::=    <identifier> ( <formal parameter list>? )
+<variable initializers> ::= <variable initializer> | <variable initializers> , <variable initializer>
 
-<method body>                               ::=    <block> | ;
+<variable initializer> ::= <expression> | <array initializer>
 
-<constant declaration>                      ::=    <constant modifiers> <type> <variable declarator>
+Types
 
-<constant modifiers>                        ::=    public | static
+<type> ::= <primitive type> | <reference type>
 
-<array initializer>                         ::=    { <variable initializers>? , ? }
+<primitive type> ::= <numeric type> | boolean
 
-<variable initializers>                     ::=    <variable initializer> | <variable initializers> , <variable initializer>
+<numeric type> ::= <integral type> | <floating-point type>
 
-<variable initializer>                      ::=    <expression> | <array initializer>
+<integral type> ::= byte | short | int | long | char
 
---------------------------------------------------------------------------------
+<floating-point type> ::= float | double
 
+<reference type> ::= <class or interface type> | <array type>
 
+<class or interface type> ::= <class type> | <interface type>
 
------------------------------------- TYPES -------------------------------------
+<class type> ::= <type name>
 
-<type>                                      ::=    <primitive type> | <reference type>
+<interface type> ::= <type name>
 
-<primitive type>                            ::=    <numeric type> | boolean
+<array type> ::= <type> [ ]
 
-<numeric type>                              ::=    <integral type> | <floating-point type>
+Blocks and Commands
 
-<integral type>                             ::=    byte | short | int | long | char
+<block> ::= { <block statements>? }
+<block statements> ::= <block statement> | <block statements> <block statement>
 
-<floating-point type>                       ::=    float | double
+<block statement> ::= <local variable declaration statement> | <statement>
 
-<reference type>                            ::=    <class or interface type> | <array type>
+<local variable declaration statement> ::= <local variable declaration> ;
 
-<class or interface type>                   ::=    <class type> | <interface type>
+<local variable declaration> ::= <type> <variable declarators>
 
-<class type>                                ::=    <type name>
+<statement> ::= <statement without trailing substatement> | <if then statement> | <if then else statement> | <while statement> | <for statement>
 
-<interface type>                            ::=    <type name>
+<statement no short if> ::= <statement without trailing substatement> | <if then else statement no short if> | <while statement no short if> | <for statement no short if>
 
-<array type>                                ::=    <type> [ ]
+<statement without trailing substatement> ::= <block> | <empty statement> | <expression statement> | <switch statement> | <do statement> | <break statement> | <continue statement> | <return statement>
 
---------------------------------------------------------------------------------
+<empty statement> ::= ;
 
+<expression statement> ::= <statement expression> ;
 
+<statement expression> ::= <assignment> | <preincrement expression> | <postincrement expression> | <predecrement expression> | <postdecrement expression> | <method invocation> | <class instance creation expression>
 
------------------------------ BLOCKS AND COMMANDS ------------------------------
+<if then statement> ::= if ( <expression> ) <statement>
 
-<block>                                     ::=    { <block statements>? }
+<if then else statement> ::= if ( <expression> ) <statement no short if> else <statement>
 
-<block statements>                          ::=    <block statement> | <block statements> <block statement>
+<if then else statement no short if> ::= if ( <expression> ) <statement no short if> else <statement no short if>
 
-<block statement>                           ::=    <local variable declaration statement> | <statement>
+<switch statement> ::= switch ( <expression> ) <switch block>
 
-<local variable declaration statement>      ::=    <local variable declaration> ;
+<switch block> ::= { <switch block statement groups>? <switch labels>? }
 
-<local variable declaration>                ::=    <type> <variable declarators>
+<switch block statement groups> ::= <switch block statement group> | <switch block statement groups> <switch block statement group>
 
-<statement>                                 ::=    <statement without trailing substatement> | <if then statement> | <if then else statement> | <while statement> | <for statement>
+<switch block statement group> ::= <switch labels> <block statements>
 
-<statement no short if>                     ::=    <statement without trailing substatement> | <if then else statement no short if> | <while statement no short if> | <for statement no short if>
+<switch labels> ::= <switch label> | <switch labels> <switch label>
 
-<statement without trailing substatement>   ::=    <block> | <empty statement> | <expression statement> | <switch statement> | <do statement> | <break statement> | <continue statement> | <return statement>
+<switch label> ::= case <constant expression> : | default :
 
-<empty statement>                           ::=    ;
+<while statement> ::= while ( <expression> ) <statement>
 
-<expression statement>                      ::=    <statement expression> ;
+<while statement no short if> ::= while ( <expression> ) <statement no short if>
 
-<statement expression>                      ::=    <assignment> | <preincrement expression> | <postincrement expression> | <predecrement expression> | <postdecrement expression> | <method invocation> | <class instance creation expression>
+<do statement> ::= do <statement> while ( <expression> ) ;
 
-<if then statement>                         ::=    if ( <expression> ) <statement>
+<for statement> ::= for ( <for init>? ; <expression>? ; <for update>? ) <statement>
 
-<if then else statement>                    ::=    if ( <expression> ) <statement no short if> else <statement>
+<for statement no short if> ::= for ( <for init>? ; <expression>? ; <for update>? ) <statement no short if>
 
-<if then else statement no short if>        ::=    if ( <expression> ) <statement no short if> else <statement no short if>
+<for init> ::= <statement expression list> | <local variable declaration>
 
-<switch statement>                          ::=    switch ( <expression> ) <switch block>
+<for update> ::= <statement expression list>
 
-<switch block>                              ::=    { <switch block statement groups>? <switch labels>? }
+<statement expression list> ::= <statement expression> | <statement expression list> , <statement expression>
 
-<switch block statement groups>             ::=    <switch block statement group> | <switch block statement groups> <switch block statement group>
+<break statement> ::= break ;
 
-<switch block statement group>              ::=    <switch labels> <block statements>
+<continue statement> ::= continue ;
 
-<switch labels>                             ::=    <switch label> | <switch labels> <switch label>
+<return statement> ::= return <expression>? ;
 
-<switch label>                              ::=    case <constant expression> : | default :
+Expressions
 
-<while statement>                           ::=    while ( <expression> ) <statement>
+<constant expression> ::= <expression>
 
-<while statement no short if>               ::=    while ( <expression> ) <statement no short if>
+<expression> ::= <assignment expression>
 
-<do statement>                              ::=    do <statement> while ( <expression> ) ;
+<assignment expression> ::= <conditional expression> | <assignment>
 
-<for statement>                             ::=    for ( <for init>? ; <expression>? ; <for update>? ) <statement>
+<assignment> ::= <left hand side> <assignment operator> <assignment expression>
 
-<for statement no short if>                 ::=    for ( <for init>? ; <expression>? ; <for update>? ) <statement no short if>
+<left hand side> ::= <expression name> | <field access> | <array access>
 
-<for init>                                  ::=    <statement expression list> | <local variable declaration>
+<assignment operator> ::= = | *= | /= | %= | += | -= | <<= | >>= | &= | ^= | |=
 
-<for update>                                ::=    <statement expression list>
+<conditional expression> ::= <conditional or expression> | <conditional or expression> ? <expression> : <conditional expression>
 
-<statement expression list>                 ::=    <statement expression> | <statement expression list> , <statement expression>
+<conditional or expression> ::= <conditional and expression> | <conditional or expression> || <conditional and expression>
 
-<break statement>                           ::=    break ;
+<conditional and expression> ::= <inclusive or expression> | <conditional and expression> && <inclusive or expression>
 
-<continue statement>                        ::=    continue ;
+<inclusive or expression> ::= <exclusive or expression> | <inclusive or expression> #| <exclusive or expression>
 
-<return statement>                          ::=    return <expression>? ;
+<exclusive or expression> ::= <and expression> | <exclusive or expression> ^ <and expression>
 
---------------------------------------------------------------------------------
+<and expression> ::= <equality expression> | <and expression> & <equality expression>
 
+<equality expression> ::= <relational expression> | <equality expression> == <relational expression> | <equality expression> != <relational expression>
 
+<relational expression> ::= <shift expression> | <relational expression> < <shift expression> | <relational expression> > <shift expression> | <relational expression> <= <shift expression> | <relational expression> >= <shift expression> | <relational expression> instanceof <reference type>
 
---------------------------------- EXPRESSIONS ----------------------------------
+<shift expression> ::= <additive expression> | <shift expression> << <additive expression> | <shift expression> >> <additive expression>
 
-<constant expression>                       ::=    <expression>
+<additive expression> ::= <multiplicative expression> | <additive expression> + <multiplicative expression> | <additive expression> - <multiplicative expression>
 
-<expression>                                ::=    <assignment expression>
+<multiplicative expression> ::= <unary expression> | <multiplicative expression> * <unary expression> | <multiplicative expression> / <unary expression> | <multiplicative expression> % <unary expression>
 
-<assignment expression>                     ::=    <conditional expression> | <assignment>
+<cast expression> ::= ( <primitive type> ) <unary expression> | ( <reference type> ) <unary expression not plus minus>
 
-<assignment>                                ::=    <left hand side> <assignment operator> <assignment expression>
+<unary expression> ::= <preincrement expression> | <predecrement expression> | + <unary expression> | - <unary expression> | <unary expression not plus minus>
 
-<left hand side>                            ::=    <expression name> | <field access> | <array access>
+<predecrement expression> ::= -- <unary expression>
 
-<assignment operator>                       ::=    = | *= | /= | %= | += | -= | <<= | >>= | &= | ^= | |=
+<preincrement expression> ::= ++ <unary expression>
 
-<conditional expression>                    ::=    <conditional or expression> | <conditional or expression> ? <expression> : <conditional expression>
+<unary expression not plus minus> ::= <postfix expression> | ~ <unary expression> | ! <unary expression> | <cast expression>
 
-<conditional or expression>                 ::=    <conditional and expression> | <conditional or expression> || <conditional and expression>
+<postdecrement expression> ::= <postfix expression> --
 
-<conditional and expression>                ::=    <inclusive or expression> | <conditional and expression> && <inclusive or expression>
+<postincrement expression> ::= <postfix expression> ++
 
-<inclusive or expression>                   ::=    <exclusive or expression> | <inclusive or expression> #| <exclusive or expression>
+<postfix expression> ::= <primary> | <expression name> | <postincrement expression> | <postdecrement expression>
 
-<exclusive or expression>                   ::=    <and expression> | <exclusive or expression> ^ <and expression>
+<method invocation> ::= <method name> ( <argument list>? ) | <primary> . <identifier> ( <argument list>? ) | super . <identifier> ( <argument list>? )
 
-<and expression>                            ::=    <equality expression> | <and expression> & <equality expression>
+<field access> ::= <primary> . <identifier> | super . <identifier>
 
-<equality expression>                       ::=    <relational expression> | <equality expression> == <relational expression> | <equality expression> != <relational expression>
+<primary> ::= <primary no new array> | <array creation expression>
 
-<relational expression>                     ::=    <shift expression> | <relational expression> < <shift expression> | <relational expression> > <shift expression> | <relational expression> <= <shift expression> | <relational expression> >= <shift expression> | <relational expression> instanceof <reference type>
+<primary no new array> ::= <literal> | this | ( <expression> ) | <class instance creation expression> | <field access> | <method invocation> | <array access>
 
-<shift expression>                          ::=    <additive expression> | <shift expression> << <additive expression> | <shift expression> >> <additive expression>
+<class instance creation expression> ::= new <class type> ( <argument list>? )
 
-<additive expression>                       ::=    <multiplicative expression> | <additive expression> + <multiplicative expression> | <additive expression> - <multiplicative expression>
+<argument list> ::= <expression> | <argument list> , <expression>
 
-<multiplicative expression>                 ::=    <unary expression> | <multiplicative expression> * <unary expression> | <multiplicative expression> / <unary expression> | <multiplicative expression> % <unary expression>
+<array creation expression> ::= new <primitive type> <dim exprs> <dims>? | new <class or interface type> <dim exprs> <dims>?
 
-<cast expression>                           ::=    ( <primitive type> ) <unary expression> | ( <reference type> ) <unary expression not plus minus>
+<dim exprs> ::= <dim expr> | <dim exprs> <dim expr>
 
-<unary expression>                          ::=    <preincrement expression> | <predecrement expression> | + <unary expression> | - <unary expression> | <unary expression not plus minus>
+<dim expr> ::= [ <expression> ]
 
-<predecrement expression>                   ::=    -- <unary expression>
+<dims> ::= [ ] | <dims> [ ]
 
-<preincrement expression>                   ::=    ++ <unary expression>
+<array access> ::= <expression name> [ <expression> ] | <primary no new array> [ <expression>]
 
-<unary expression not plus minus>           ::=    <postfix expression> | ~ <unary expression> | ! <unary expression> | <cast expression>
+Tokens
 
-<postdecrement expression>                  ::=    <postfix expression> --
+<type name> ::= <identifier>
 
-<postincrement expression>                  ::=    <postfix expression> ++
+<expression name> ::= <identifier> | <ambiguous name> . <identifier>
 
-<postfix expression>                        ::=    <primary> | <expression name> | <postincrement expression> | <postdecrement expression>
+<method name> ::= <identifier> | <ambiguous name>. <identifier>
 
-<method invocation>                         ::=    <method name> ( <argument list>? ) | <primary> . <identifier> ( <argument list>? ) | super . <identifier> ( <argument list>? )
+<ambiguous name> ::= <identifier> | <ambiguous name>. <identifier>
 
-<field access>                              ::=    <primary> . <identifier> | super . <identifier>
+<literal> ::= <integer literal> | <floating-point literal> | <boolean literal> | <character literal> | <string literal> | <null literal>
 
-<primary>                                   ::=    <primary no new array> | <array creation expression>
+<integer literal> ::= 0 | <non zero digit> <digits>?
 
-<primary no new array>                      ::=    <literal> | this | ( <expression> ) | <class instance creation expression> | <field access> | <method invocation> | <array access>
+<digits> ::= <digit> | <digits> <digit>
 
-<class instance creation expression>        ::=    new <class type> ( <argument list>? )
+<digit> ::= 0 | <non zero digit>
 
-<argument list>                             ::=    <expression> | <argument list> , <expression>
+<non zero digit> ::= 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9
 
-<array creation expression>                 ::=    new <primitive type> <dim exprs> <dims>? | new <class or interface type> <dim exprs> <dims>?
+<floating-point literal> ::= <digits> . <digits>?
 
-<dim exprs>                                 ::=    <dim expr> | <dim exprs> <dim expr>
+<signed integer> ::= <sign>? <digits>
 
-<dim expr>                                  ::=    [ <expression> ]
+<sign> ::= + | -
 
-<dims>                                      ::=    [ ] | <dims> [ ]
+<boolean literal> ::= true | false
 
-<array access>                              ::=    <expression name> [ <expression> ] | <primary no new array> [ <expression>]
+<character literal> ::= ' <single character> ' | ' <escape sequence> '
 
---------------------------------------------------------------------------------
+<single character> ::= <input character> except ' and \
 
+<string literal> ::= " <string characters>? "
 
+<string characters> ::= <string character> | <string characters> <string character>
 
------------------------------------- TOKENS ------------------------------------
+<string character> ::= <input character> except " and \ | <escape character>
 
+<null literal> ::= null
 
-<type name>                                 ::=    <identifier>
+<keyword> ::= boolean | break | byte | case | char | class | const | continue | default | do | double | else | extends | float | for | if | import | instanceof | int | long | new | return | short | static | super | switch | this | void | while
 
-<expression name>                           ::=    <identifier> | <ambiguous name> . <identifier>
 
-<method name>                               ::=    <identifier> | <ambiguous name>. <identifier>
+The character set for Java is Unicode, a 16-bit character set. This is the set denoted by <input character>. Unicode effectively contains the familiar 7-bit ASCII characters as a subset, and includes "escape code" designations of the form \udddd (where each d is from <hex digit>). In the extended BNF for Java the optional appearance of X is written X?, and the iterative appearance of X is written {X}.
+The syntax category <identifier> consists of strings that must start with a letter - including underscore (_) and dollar sign ($) - followed by any number of letters and digits. Characters of numerous international languages are recognized as "letters" in Java. A Java letter is a character for which the method Character.isJavaLetter returns true. A Java letter-or-digit is a character for which the method Character.isJaveLetterOrDigit returns true. Also, <identifier> includes none of the keywords given above - these are reserved words in Java.
 
-<ambiguous name>                            ::=    <identifier> | <ambiguous name>. <identifier>
-
-<literal>                                   ::=    <integer literal> | <floating-point literal> | <boolean literal> | <character literal> | <string literal> | <null literal>
-
-<integer literal>                           ::=    0 | <non zero digit> <digits>?
-
-<digits>                                    ::=    <digit> | <digits> <digit>
-
-<digit>                                     ::=    0 | <non zero digit>
-
-<non zero digit>                            ::=    1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9
-
-<floating-point literal>                    ::=    <digits> . <digits>?
-
-<signed integer>                            ::=    <sign>? <digits>
-
-<sign>                                      ::=    + | -
-
-<boolean literal>                           ::=    true | false
-
-<character literal>                         ::=    ' <single character> ' | ' <escape sequence> '
-
-<single character>                          ::=    <input character> except ' and \
-
-<string literal>                            ::=    " <string characters>? "
-
-<string characters>                         ::=    <string character> | <string characters> <string character>
-
-<string character>                          ::=    <input character> except " and \ | <escape character>
-
-<null literal>                              ::=    null
-
-<keyword>                                   ::=    boolean | break | byte | case | char | class | const | continue | default | do | double | else | extends | float | for | if | import | instanceof | int | long | new | return | short | static | super | switch | this | void | while
-
---------------------------------------------------------------------------------
+The only BNF extention used here is the optional construct which is written with '?' added as a suffix to a terminal or non-terminal. Note that '*', '{', and '}' are all terminal symbols. This BNF definition does not address such pragmatic issues as comment conventions and the use of "white space" to delimit tokens. This BNF also does not express numerous "context-sensitive" restrictions on syntax. For instance, type use of identifiers must be consistent with the required declarations, there are size limitations on numerical literals, etc.
