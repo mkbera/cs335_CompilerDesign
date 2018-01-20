@@ -443,8 +443,6 @@
 															&	$\colon\colon+$	&	<type name> ( <formal parameter list>? ) \\\\
 				<throws>									&	$\colon\colon-$	&	throws <class type list> \\\\
 				<class type list>							&	$\colon\colon-$	&	<class type> | <class type list> , <class type> \\\\
-				<explicit constructor invocation>			&	$\colon\colon-$	&	this ( <argument list>? ) | super ( <argument list>? ) \\
-															&	$\colon\colon+$	&	this ( <argument list>? ) | super ( <argument list>? ) \\\\
 				<field modifier>							&	$\colon\colon-$	&	public | protected | private | static | final | transient | volatile \\
 															&	$\colon\colon+$	&	public | static \\\\
 				<method header>								&	$\colon\colon-$	&	<method modifiers>? <result type> <method declarator> <throws>? \\
@@ -492,8 +490,6 @@
 			\begin{longtable}{R{7cm} c L{15cm}}
 				<assignment operator>						&	$\colon\colon-$	&	= | *= | /= | \%= | += | -= | <<= | >>= | >>>= | \&= | \wedge= | |= \\
 															&	$\colon\colon+$	&	= | *= | /= | \%= | += | -= | <<= | >>= | \&= | \wedge= | |= \\\\
-				<inclusive or expression>					&	$\colon\colon-$	&	<exclusive or expression> | <inclusive or expression> | <exclusive or expression> \\
-															&	$\colon\colon+$	&	<exclusive or expression> | <inclusive or expression> #| <exclusive or expression> \\\\
 				<shift expression>							&	$\colon\colon-$	&	<additive expression> | <shift expression> << <additive expression> | <shift expression> >> <additive expression> | <shift expression> >>> <additive expression> \\
 															&	$\colon\colon+$	&	<additive expression> | <shift expression> << <additive expression> | <shift expression> >> <additive expression> \\\\
 			\end{longtable}
@@ -504,8 +500,6 @@
 				<type name>									&	$\colon\colon-$	&	<identifier> | <package name> . <identifier> \\
 															&	$\colon\colon+$	&	<identifier> \\\\
 				<simple type name>							&	$\colon\colon-$	&	<identifier> \\\\
-				<ambiguous name>							&	$\colon\colon-$	&	<identifier> | <ambiguous name>. <identifier> \\
-															&	$\colon\colon+$	&	<identifier> | <ambiguous name>. <identifier> \\\\
 				<integer literal>							&	$\colon\colon-$	&	<decimal integer literal> | <hex integer literal> | <octal integer literal> \\
 															&	$\colon\colon+$	&	0 | <non zero digit> <digits>? \\\\
 				<decimal integer literal>					&	$\colon\colon-$	&	<decimal numeral> <integer type suffix>? \\\\
@@ -530,9 +524,6 @@
 
 	\end{enumerate}
 
-	\end{enumerate}
-
-	\end{enumerate}
 
 \end{qsection}
 
