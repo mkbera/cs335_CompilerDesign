@@ -4,7 +4,7 @@
 
 \setcoursetitle{CS335: Compiler Design}
 \setauthname{Prann Bansal, Manish Kumar Bera, Gurpreet Singh}
-\setauthroll{150259}
+\setauthroll{150381, 150510, 150259}
 \setheaddate{21 January, 2018}
 \setassigncode{0}
 
@@ -36,9 +36,11 @@
 		\label{fig:t-diagram}
 	\end{figure}
 
-	The T-Diagram for the proposed compiler is given in Figure \ref{fig:t-diagram}. We aim to build a compiler for a subset of the Java programming language, compiled to the assembly language MIPS, on a Node.js platform.
+	The T-Diagram for the proposed compiler is given in Figure \ref{fig:t-diagram}. We aim to build a compiler for a subset of the Java programming language, compiled to the assembly language x86, on a Node.js platform.
 
 \end{qsection}
+
+\clearpage
 
 \begin{qsection}{BNF}
 
@@ -50,14 +52,14 @@
 		\ditem[Programs.]
 
 			\begin{longtable}{R{7cm} c L{15cm}}
-				\bt{LHS}									&					&	\bt{RHS} \\
+				\bt{CONSTRUCT}									&					&	\bt{RULES} \\
 				<compilation unit>							&	$\colon\colon=$	&	<import declarations>? <type declarations>?
 			\end{longtable}
 
 		\ditem[Declarations.]
 
 			\begin{longtable}{R{7cm} c L{15cm}}
-				\bt{LHS}									&					&	\bt{RHS} \\
+				\bt{CONSTRUCT}									&					&	\bt{RULES} \\
 				<import declarations>						&	$\colon\colon=$	&	<import declaration> | <import declarations> <import declaration>
 				\\
 				<import declaration>						&	$\colon\colon=$	&	<single type import declaration> | <type import on demand declaration>
@@ -144,7 +146,7 @@
 		\ditem[Types.]
 
 			\begin{longtable}{R{7cm} c L{15cm}}
-				\bt{LHS}									&					&	\bt{RHS} \\
+				\bt{CONSTRUCT}									&					&	\bt{RULES} \\
 				<block>										&	$\colon\colon=$	&	{ <block statements>? }
 				\\
 				<block statements>							&	$\colon\colon=$	&	<block statement> | <block statements> <block statement>
@@ -211,7 +213,7 @@
 		\ditem[Blocks and Commands.]
 
 			\begin{longtable}{R{7cm} c L{15cm}}
-				\bt{LHS}									&					&	\bt{RHS} \\
+				\bt{CONSTRUCT}									&					&	\bt{RULES} \\
 				<constant expression>						&	$\colon\colon=$	&	<expression>
 				\\
 				<expression>								&	$\colon\colon=$	&	<assignment expression>
@@ -288,7 +290,7 @@
 		\ditem[Expressions.]
 
 			\begin{longtable}{R{7cm} c L{15cm}}
-				\bt{LHS}									&					&	\bt{RHS} \\
+				\bt{CONSTRUCT}									&					&	\bt{RULES} \\
 				<constant expression>						&	$\colon\colon=$	&	<expression>
 				\\
 				<expression>								&	$\colon\colon=$	&	<assignment expression>
@@ -365,7 +367,7 @@
 		\ditem[Tokens.]
 
 			\begin{longtable}{R{7cm} c L{15cm}}
-				\bt{LHS}									&					&	\bt{RHS} \\
+				\bt{CONSTRUCT}									&					&	\bt{RULES} \\
 				<type name>									&	$\colon\colon=$	&	<identifier>
 				\\
 				<expression name>							&	$\colon\colon=$	&	<identifier> | <ambiguous name> . <identifier>
@@ -419,12 +421,14 @@
 		\ditem[Programs.]
 
 			\begin{longtable}{R{7cm} c L{15cm}}
+				\bt{CONSTRUCT}									&					&	\bt{RULES} \\
 				<compilation unit>							&	$\colon\colon-$	&	<package declaration>? <import declarations>? <type declarations>? \\
 															&	$\colon\colon+$	&	<import declarations>? <type declarations>? \\\\
 			\end{longtable}
 		\ditem[Declarations.]
 
 			\begin{longtable}{R{7cm} c L{15cm}}
+				\bt{CONSTRUCT}									&					&	\bt{RULES} \\
 				<package declaration>						&	$\colon\colon-$	&	package <package name> ; \\\\
 				<type import on demand declaration>			&	$\colon\colon-$	&	import <package name> . * ; \\\\
 				<type declaration>							&	$\colon\colon-$	&	<class declaration> | <interface declaration> | ; \\
@@ -466,6 +470,7 @@
 		\ditem[Blocks and Commands.]
 
 			\begin{longtable}{R{7cm} c L{15cm}}
+				\bt{CONSTRUCT}									&					&	\bt{RULES} \\
 				<statement>									&	$\colon\colon-$	&	<statement without trailing substatement> | <labeled statement> | <if then statement> | <if then else statement> | <while statement> | <for statement> \\
 															&	$\colon\colon+$	&	<statement without trailing substatement> | <if then statement> | <if then else statement> | <while statement> | <for statement> \\\\
 				<statement no short if>						&	$\colon\colon-$	&	<statement without trailing substatement> | <labeled statement no short if> | <if then else statement no short if> | <while statement no short if> | <for statement no short if> \\
@@ -487,15 +492,19 @@
 			\end{longtable}
 
 		\ditem[Expressions.]
+
 			\begin{longtable}{R{7cm} c L{15cm}}
-				<assignment operator>						&	$\colon\colon-$	&	= | *= | /= | \%= | += | -= | <<= | >>= | >>>= | \&= | \wedge= | |= \\
-															&	$\colon\colon+$	&	= | *= | /= | \%= | += | -= | <<= | >>= | \&= | \wedge= | |= \\\\
+				\bt{CONSTRUCT}									&					&	\bt{RULES} \\
+				<assignment operator>						&	$\colon\colon-$	&	= | *= | /= | \%= | += | -= | <<= | >>= | >>>= | \&= | $\wedge$= | |= \\
+															&	$\colon\colon+$	&	= | *= | /= | \%= | += | -= | <<= | >>= | \&= | $\wedge$= | |= \\\\
 				<shift expression>							&	$\colon\colon-$	&	<additive expression> | <shift expression> << <additive expression> | <shift expression> >> <additive expression> | <shift expression> >>> <additive expression> \\
 															&	$\colon\colon+$	&	<additive expression> | <shift expression> << <additive expression> | <shift expression> >> <additive expression> \\\\
 			\end{longtable}
 
 		\ditem[Tokens.]
+
 			\begin{longtable}{R{7cm} c L{15cm}}
+				\bt{CONSTRUCT}									&					&	\bt{RULES} \\
 				<package name>								&	$\colon\colon-$	&	<identifier> | <package name> . <identifier> \\\\
 				<type name>									&	$\colon\colon-$	&	<identifier> | <package name> . <identifier> \\
 															&	$\colon\colon+$	&	<identifier> \\\\
