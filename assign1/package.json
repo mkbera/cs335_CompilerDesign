@@ -1,0 +1,24 @@
+{
+  "name": "lexer",
+  "version": "1.0.0",
+  "description": "A lexer for a subset of the Java Programming Language",
+  "main": "main.js",
+  "dependencies": {
+    "eslint": "^4.16.0",
+    "jacob": "^1.0.5"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "nodejs index.js in"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mkbera/cs335_CompilerDesign.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/mkbera/cs335_CompilerDesign/issues"
+  },
+  "homepage": "https://github.com/mkbera/cs335_CompilerDesign#readme"
+}
