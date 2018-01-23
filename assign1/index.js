@@ -41,11 +41,12 @@ function runLexer(lexer) {
     var firstToken = lexer.nextToken();
 
     while (!lexer.isEOF(firstToken)) {
-        if (!(firstToken.name in dict)) {
-            console.log("\t>> ERROR:\t" + firstToken.value + " is not a valid syntax");
-            return;
-        }
+        //if (!(firstToken.name in dict)) {
+            //console.log("\t>> ERROR:\t" + firstToken.value + " is not a valid syntax");
+            //return;
+        //}
         console.log(firstToken);
+		console.log("");
         firstToken = lexer.nextToken();
     }
 
