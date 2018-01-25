@@ -54,123 +54,123 @@ import			=	import
 
 <>{boolean}
 {
-	return 'boolean';
+	return "boolean";
 }
 
 <>{break}
 {
-	return 'break';
+	return "break";
 }
 
 <>{byte}
 {
-	return 'byte';
+	return "byte";
 }
 
 <>{case}
 {
-	return 'case';
+	return "case";
 }
 <>{char}
 {
-	return 'char';
+	return "char";
 }
 
 <>{class}
 {
-	return 'class';
+	return "class";
 }
 <>{const}
 {
-	return 'const';
+	return "const";
 }
 <>{continue}
 {
-	return 'continue';
+	return "continue";
 }
 <>{default}
 {
-	return 'default';
+	return "default";
 }
 <>{do}
 {
-	return 'do';
+	return "do";
 }
 <>{double}
 {
-	return 'double';
+	return "double";
 }
 <>{else}
 {
-	return 'else';
+	return "else";
 }
 <>{extends}
 {
-	return 'extends';
+	return "extends";
 }
 <>{float}
 {
-	return 'float';
+	return "float";
 }
 <>{for}
 {
-	return 'for';
+	return "for";
 }
 <>{if}
 {
-	return 'if';
+	return "if";
 }
 <>{import}
 {
-	return 'import';
+	return "import";
 }
 <>{instanceof}
 {
-	return 'instanceof';
+	return "instanceof";
 }
 <>{int}
 {
-	return 'int';
+	return "int";
 }
 <>{long}
 {
-	return 'long';
+	return "long";
 }
 <>{new}
 {
-	return 'new';
+	return "new";
 }
 <>{return}
 {
-	return 'return';
+	return "return";
 }
 <>{short}
 {
-	return 'short';
+	return "short";
 }
 <>{static}
 {
-	return 'static';
+	return "static";
 }
 <>{super}
 {
-	return 'super';
+	return "super";
 }
 <>{switch}
 {
-	return 'switch';
+	return "switch";
 }
 <>{this}
 {
-	return 'this';
+	return "this";
 }
 <>{void}
 {
-	return 'void';
+	return "void";
 }
 <>{while}
 {
-	return 'while';
+	return "while";
 }
 
 
@@ -181,27 +181,25 @@ import			=	import
 <>{digit}*\.{digit}+
 {
 	this.jjval = parseFloat(this.jjtext);
-	return 'float';
+	return "float";
 }
 
 <>{digit}+
 {
 	this.jjval = parseInt(this.jjtext);
-	return 'integer';
+	return "integer";
 }
 
 <>{letter}\w*
 {
-	return 'identifier';
+	return "identifier";
 }
-
-
 
 
 // ------------------------------------ OTHERS ------------------------------------
 
 <>\s* { }
 
-<>[^\s]+ { return 'invalid'; }
+<>[^\s]+ { return "invalid"; }
 
-<>$   { console.log('EOF'); return 'EOF'; }
+<>$   { console.log("EOF"); return "EOF"; }
