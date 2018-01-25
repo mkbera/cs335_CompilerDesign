@@ -10,167 +10,167 @@ ucase_letter			=	[A-Z]
 
 underscore				=	_
 
-keyword_const			=	const
-keyword_static			=	static
+const			=	const
+static			=	static
 
-keyword_int				=	int
-keyword_long			=	long
-keyword_char			=	char
-keyword_void			=	void
-keyword_byte			=	byte
-keyword_short			=	short
-keyword_float			=	float
-keyword_double			=	double
-keyword_boolean			=	boolean
+int				=	int
+long			=	long
+char			=	char
+void			=	void
+byte			=	byte
+short			=	short
+float			=	float
+double			=	double
+boolean			=	boolean
 
-keyword_break			=	break
-keyword_continue		=	continue
+break			=	break
+continue		=	continue
 
-keyword_case			=	case
-keyword_switch			=	switch
-keyword_default			=	default
+case			=	case
+switch			=	switch
+default			=	default
 
-keyword_new				=	new
-keyword_this			=	this
-keyword_class			=	class
-keyword_super			=	super
-keyword_extends			=	extends
-keyword_instanceof		=	instanceof
+new				=	new
+this			=	this
+class			=	class
+super			=	super
+extends			=	extends
+instanceof		=	instanceof
 
-keyword_for				=	for
-keyword_do				=	do
-keyword_while			=	while
+for				=	for
+do				=	do
+while			=	while
 
-keyword_return			=	return
+return			=	return
 
-keyword_if				=	if
-keyword_else			=	else
+if				=	if
+else			=	else
 
-keyword_import			=	import
+import			=	import
 
 %%
 
 // ----------------------------------- KEYWORDS -----------------------------------
 
-<>{keyword_boolean}
+<>{boolean}
 {
-	return 'keyword_boolean';
+	return 'boolean';
 }
 
-<>{keyword_break}
+<>{break}
 {
-	return 'keyword_break';
+	return 'break';
 }
 
-<>{keyword_byte}
+<>{byte}
 {
-	return 'keyword_byte';
+	return 'byte';
 }
 
-<>{keyword_case}
+<>{case}
 {
-	return 'keyword_case';
+	return 'case';
 }
-<>{keyword_char}
+<>{char}
 {
-	return 'keyword_char';
+	return 'char';
 }
 
-<>{keyword_class}
+<>{class}
 {
-	return 'keyword_class';
+	return 'class';
 }
-<>{keyword_const}
+<>{const}
 {
-	return 'keyword_const';
+	return 'const';
 }
-<>{keyword_continue}
+<>{continue}
 {
-	return 'keyword_continue';
+	return 'continue';
 }
-<>{keyword_default}
+<>{default}
 {
-	return 'keyword_default';
+	return 'default';
 }
-<>{keyword_do}
+<>{do}
 {
-	return 'keyword_do';
+	return 'do';
 }
-<>{keyword_double}
+<>{double}
 {
-	return 'keyword_double';
+	return 'double';
 }
-<>{keyword_else}
+<>{else}
 {
-	return 'keyword_else';
+	return 'else';
 }
-<>{keyword_extends}
+<>{extends}
 {
-	return 'keyword_extends';
+	return 'extends';
 }
-<>{keyword_float}
+<>{float}
 {
-	return 'keyword_float';
+	return 'float';
 }
-<>{keyword_for}
+<>{for}
 {
-	return 'keyword_for';
+	return 'for';
 }
-<>{keyword_if}
+<>{if}
 {
-	return 'keyword_if';
+	return 'if';
 }
-<>{keyword_import}
+<>{import}
 {
-	return 'keyword_import';
+	return 'import';
 }
-<>{keyword_instanceof}
+<>{instanceof}
 {
-	return 'keyword_instanceof';
+	return 'instanceof';
 }
-<>{keyword_int}
+<>{int}
 {
-	return 'keyword_int';
+	return 'int';
 }
-<>{keyword_long}
+<>{long}
 {
-	return 'keyword_long';
+	return 'long';
 }
-<>{keyword_new}
+<>{new}
 {
-	return 'keyword_new';
+	return 'new';
 }
-<>{keyword_return}
+<>{return}
 {
-	return 'keyword_return';
+	return 'return';
 }
-<>{keyword_short}
+<>{short}
 {
-	return 'keyword_short';
+	return 'short';
 }
-<>{keyword_static}
+<>{static}
 {
-	return 'keyword_static';
+	return 'static';
 }
-<>{keyword_super}
+<>{super}
 {
-	return 'keyword_super';
+	return 'super';
 }
-<>{keyword_switch}
+<>{switch}
 {
-	return 'keyword_switch';
+	return 'switch';
 }
-<>{keyword_this}
+<>{this}
 {
-	return 'keyword_this';
+	return 'this';
 }
-<>{keyword_void}
+<>{void}
 {
-	return 'keyword_void';
+	return 'void';
 }
-<>{keyword_while}
+<>{while}
 {
-	return 'keyword_while';
+	return 'while';
 }
 
 
