@@ -2,13 +2,13 @@
 
 %%
 
-digit					=	[0-9]
+digit			=	[0-9]
 
-letter					=	[a-zA-Z]
-lcase_letter			=	[a-z]
-ucase_letter			=	[A-Z]
+letter			=	[a-zA-Z]
+lcase_letter	=	[a-z]
+ucase_letter	=	[A-Z]
 
-underscore				=	_
+underscore		=	_
 
 const			=	const
 static			=	static
@@ -190,7 +190,7 @@ import			=	import
 	return 'integer';
 }
 
-<>{letter}+({underscore}*{letter}*{digit}*)*
+<>{letter}\w*
 {
 	return 'identifier';
 }
