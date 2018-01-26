@@ -41,6 +41,8 @@ function main(lexer) {
     fs.readFile(filename, 'utf8', function (err, data) {
         if (err) throw err;
 
+        data = data.replace(/;/g, " ; ")
+
         lexer.setInput(data);
         runLexer(lexer);
     });

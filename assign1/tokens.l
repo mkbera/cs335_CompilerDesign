@@ -190,16 +190,92 @@ import			=	import
 	return "integer";
 }
 
+<>true|false
+{
+	this.jjval = (this.jjtext == "true");
+	return "boolean";
+}
+
 <>{letter}\w*
 {
 	return "identifier";
 }
 
+<>\"(\\.|[^\\\"])*\"
+{
+	return "string";
+}
+
+<>;
+{
+	return "terminator";
+}
+
+<>\.
+{
+	return "field-invoker";
+}
+
+<>,
+{
+	return "separator";
+}
+
+// Bracket Enclosers
+
+<>\(
+{
+	return "paranthesis-start";
+}
+
+<>\)
+{
+	return "paranthesis-end";
+}
+
+<>\[
+{
+	return "brackets-start";
+}
+
+<>\]
+{
+	return "brackets-end";
+}
+
+<>{
+{
+	return "set-start";
+}
+
+<>}
+{
+	return "set-end";
+}
+
+// Comments
+
+<>\/\/.*
+{
+	return "comment";
+}
+
+<>\/\*    
+{
+	this.pushState('BLOCKCOMMENT');
+	return "blockcomment-start";
+}
+
+<BLOCKCOMMENT>\*\/    
+{
+	this.popState();
+	return "blockcomment-end";
+}
+
+<BLOCKCOMMENT>(\n|\r|.) {}
 
 // ------------------------------------ OTHERS ------------------------------------
 
 <>\s* { }
-
-<>[^\s]+ { return "invalid"; }
 
 <>$   { console.log("EOF"); return "EOF"; }
