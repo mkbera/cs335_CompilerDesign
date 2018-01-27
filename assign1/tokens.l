@@ -10,43 +10,70 @@ ucase_letter	=	[A-Z]
 
 underscore		=	_
 
-const			=	const
-static			=	static
+Const			=	const
+Static			=	static
 
-int				=	int
-long			=	long
-char			=	char
-void			=	void
-byte			=	byte
-short			=	short
-float			=	float
-double			=	double
-boolean			=	boolean
+Int				=	int
+Long			=	long
+Char			=	char
+Void			=	void
+Byte			=	byte
+Short			=	short
+Float			=	float
+Double			=	double
+Boolean			=	boolean
 
-break			=	break
-continue		=	continue
+Break			=	break
+Continue		=	continue
 
-case			=	case
-switch			=	switch
-default			=	default
+Case			=	case
+Switch			=	switch
+Default			=	default
 
-new				=	new
-this			=	this
-class			=	class
-super			=	super
-extends			=	extends
-instanceof		=	instanceof
+New				=	new
+This			=	this
+Class			=	class
+Super			=	super
+Extends			=	extends
+Instanceof		=	instanceof
 
-for				=	for
-do				=	do
-while			=	while
+For				=	for
+Do				=	do
+While			=	while
 
-return			=	return
+Return			=	return
 
-if				=	if
-else			=	else
+If				=	if
+Else			=	else
 
-import			=	import
+Import			=	import
+
+op_add					=	[+]
+op_sub					=	[-]
+op_mul					=	[*]
+op_div					=	[/]
+op_mod					=	[%]
+op_addAssign			=	[+][=]
+op_subAssign			=	[-][=]
+op_mulAssign			=	[*][=]
+op_divAssign			=	[/][=]
+op_modAssign			=	[%][=]
+op_equalCompare			=	[=][=]
+op_LshiftEqual			=	[<][<][=]
+op_RshiftEqual			=	[>][>][=]
+op_greaterEqual			=	[>][=]
+op_lessEqual			=	[<][=]
+op_Lshift				=	[<][<]
+op_Rshift				=	[>][>]
+op_greater				=	[>]
+op_less					=	[<]
+op_assign				=	[=]
+op_andand				=	[&][&]
+op_oror					=	[|][|]
+op_and					=	[&]
+op_or					=	[|]
+op_not					=	[!]
+op_xor					=	[\^]
 
 %%
 
@@ -188,6 +215,136 @@ import			=	import
 {
 	this.jjval = parseInt(this.jjtext);
 	return "integer";
+}
+
+<>{op_add}
+{
+	return 'op_add';
+}
+
+<>{op_sub}
+{
+	return 'op_sub';
+}
+
+<>{op_mul}
+{
+	return 'op_mul';
+}
+
+<>{op_div}
+{
+	return 'op_div';
+}
+
+<>{op_mod}
+{
+	return 'op_mod';
+}
+
+<>{op_addAssign}
+{
+	return 'op_addAssign';
+}
+
+<>{op_subAssign}
+{
+	return 'op_subAssign';
+}
+
+<>{op_mulAssign}
+{
+	return 'op_mulAssign';
+}
+
+<>{op_divAssign}
+{
+	return 'op_divAssign';
+}
+
+<>{op_modAssign}
+{
+	return 'op_modAssign';
+}
+
+<>{op_equalCompare}
+{
+	return 'op_equalCompare';
+}
+
+<>{op_LshiftEqual}
+{
+	return 'op_LshiftEqual';
+}
+
+<>{op_RshiftEqual}
+{
+	return 'op_RshiftEqual';
+}
+
+<>{op_greaterEqual}
+{
+	return 'op_greaterEqual';
+}
+
+<>{op_lessEqual}
+{
+	return 'op_lessEqual';
+}
+
+<>{op_Lshift}
+{
+	return 'op_Lshift';
+}
+
+<>{op_Rshift}
+{
+	return 'op_Rshift';
+}
+
+<>{op_greater}
+{
+	return 'op_greater';
+}
+
+<>{op_less}
+{
+	return 'op_less';
+}
+
+<>{op_assign}
+{
+	return 'op_assign';
+}
+
+<>{op_andand}
+{
+	return 'op_andand';
+}
+
+<>{op_oror}
+{
+	return 'op_oror';
+}
+
+<>{op_and}
+{
+	return 'op_and';
+}
+
+<>{op_or}
+{
+	return 'op_or';
+}
+
+<>{op_not}
+{
+	return 'op_not';
+}
+
+<>{op_xor}
+{
+	return 'op_xor';
 }
 
 <>true|false
