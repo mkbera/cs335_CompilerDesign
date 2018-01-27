@@ -10,44 +10,46 @@ ucase_letter	=	[A-Z]
 
 underscore		=	_
 
-Const			=	const
-Static			=	static
+CONST			=	const
+STATIC			=	static
 
-Int				=	int
-Long			=	long
-Char			=	char
-Void			=	void
-Byte			=	byte
-Short			=	short
-Float			=	float
-Double			=	double
-Boolean			=	boolean
+INT				=	int
+LONG			=	long
+CHAR			=	char
+VOID			=	void
+BYTE			=	byte
+SHORT			=	short
+FLOAT			=	float
+DOUBLE			=	double
+BOOLEAN			=	boolean
 
-Break			=	break
-Continue		=	continue
+BREAK			=	break
+CONTINUE		=	continue
 
-Case			=	case
-Switch			=	switch
-Default			=	default
+CASE			=	case
+SWITCH			=	switch
+DEFAULT			=	default
 
-New				=	new
-This			=	this
-Class			=	class
-Super			=	super
-Extends			=	extends
-Instanceof		=	instanceof
+NEW				=	new
+THIS			=	this
+CLASS			=	class
+SUPER			=	super
+EXTENDS			=	extends
+INSTANCEOF		=	instanceof
 
-For				=	for
-Do				=	do
-While			=	while
+FOR				=	for
+DO				=	do
+WHILE			=	while
 
-Return			=	return
+RETURN			=	return
 
-If				=	if
-Else			=	else
+IF				=	if
+ELSE			=	else
 
-Import			=	import
+IMPORT			=	import
 
+op_increment			=	[+][+]
+op_decrement			=	[-][-]
 op_add					=	[+]
 op_sub					=	[-]
 op_mul					=	[*]
@@ -58,6 +60,10 @@ op_subAssign			=	[-][=]
 op_mulAssign			=	[*][=]
 op_divAssign			=	[/][=]
 op_modAssign			=	[%][=]
+op_andAssign			=	[&][=]
+op_orAssign				=	[|][=]
+op_xorAssign			=	[\^][=]
+op_notequalCompare		=	[!][=]
 op_equalCompare			=	[=][=]
 op_LshiftEqual			=	[<][<][=]
 op_RshiftEqual			=	[>][>][=]
@@ -79,125 +85,125 @@ op_xor					=	[\^]
 
 // ----------------------------------- KEYWORDS -----------------------------------
 
-<>{boolean}
+<>{BOOLEAN}
 {
-	return "boolean";
+	return "keyword";
 }
 
-<>{break}
+<>{BREAK}
 {
-	return "break";
+	return "keyword";
 }
 
-<>{byte}
+<>{BYTE}
 {
-	return "byte";
+	return "keyword";
 }
 
-<>{case}
+<>{CASE}
 {
-	return "case";
+	return "keyword";
 }
-<>{char}
+<>{CHAR}
 {
-	return "char";
+	return "keyword";
 }
 
-<>{class}
+<>{CLASS}
 {
-	return "class";
+	return "keyword";
 }
-<>{const}
+<>{CONST}
 {
-	return "const";
+	return "keyword";
 }
-<>{continue}
+<>{CONTINUE}
 {
-	return "continue";
+	return "keyword";
 }
-<>{default}
+<>{DEFAULT}
 {
-	return "default";
+	return "keyword";
 }
-<>{do}
+<>{DO}
 {
-	return "do";
+	return "keyword";
 }
-<>{double}
+<>{DOUBLE}
 {
-	return "double";
+	return "keyword";
 }
-<>{else}
+<>{ELSE}
 {
-	return "else";
+	return "keyword";
 }
-<>{extends}
+<>{EXTENDS}
 {
-	return "extends";
+	return "keyword";
 }
-<>{float}
+<>{FLOAT}
 {
-	return "float";
+	return "keyword";
 }
-<>{for}
+<>{FOR}
 {
-	return "for";
+	return "keyword";
 }
-<>{if}
+<>{IF}
 {
-	return "if";
+	return "keyword";
 }
-<>{import}
+<>{IMPORT}
 {
-	return "import";
+	return "keyword";
 }
-<>{instanceof}
+<>{INSTANCEOF}
 {
-	return "instanceof";
+	return "keyword";
 }
-<>{int}
+<>{INT}
 {
-	return "int";
+	return "keyword";
 }
-<>{long}
+<>{LONG}
 {
-	return "long";
+	return "keyword";
 }
-<>{new}
+<>{NEW}
 {
-	return "new";
+	return "keyword";
 }
-<>{return}
+<>{RETURN}
 {
-	return "return";
+	return "keyword";
 }
-<>{short}
+<>{SHORT}
 {
-	return "short";
+	return "keyword";
 }
-<>{static}
+<>{STATIC}
 {
-	return "static";
+	return "keyword";
 }
-<>{super}
+<>{SUPER}
 {
-	return "super";
+	return "keyword";
 }
-<>{switch}
+<>{SWITCH}
 {
-	return "switch";
+	return "keyword";
 }
-<>{this}
+<>{THIS}
 {
-	return "this";
+	return "keyword";
 }
-<>{void}
+<>{VOID}
 {
-	return "void";
+	return "keyword";
 }
-<>{while}
+<>{WHILE}
 {
-	return "while";
+	return "keyword";
 }
 
 
@@ -215,6 +221,16 @@ op_xor					=	[\^]
 {
 	this.jjval = parseInt(this.jjtext);
 	return "integer";
+}
+
+<>{op_increment}
+{
+	return 'op_increment';
+}
+
+<>{op_decrement}
+{
+	return 'op_decrement';
 }
 
 <>{op_add}
@@ -265,6 +281,26 @@ op_xor					=	[\^]
 <>{op_modAssign}
 {
 	return 'op_modAssign';
+}
+
+<>{op_andAssign}
+{
+	return 'op_andAssign';
+}
+
+<>{op_orAssign}
+{
+	return 'op_orAssign';
+}
+
+<>{op_xorAssign}
+{
+	return 'op_xorAssign';
+}
+
+<>{op_notequalCompare}
+{
+	return 'op_notequalCompare';
 }
 
 <>{op_equalCompare}
