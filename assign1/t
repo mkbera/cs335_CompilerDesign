@@ -1,0 +1,9 @@
+["blockcomment_end",  "blockcomment_start",  "boolean_literal",  "brackets_end",   "brackets_start",
+"character_literal",   "comment",	 "EOF",    "field_invoker",    "float_literal",    "identifier",
+"integer_literal",	"keyword",	"op_add",  "op_addAssign",	"op_and",  "op_andand",  "op_andAssign",
+"op_assign",   "op_decrement",	 "op_div",	  "op_divAssign",	 "op_equalCompare",    "op_greater",
+"op_greaterEqual",	"op_increment",  "op_less",   "op_lessEqual",	"op_Lshift",   "op_LshiftEqual",
+"op_mod",  "op_modAssign",	"op_mul",  "op_mulAssign",	"op_not",	"op_notequalCompare",	"op_or",
+"op_orAssign",	"op_oror",	"op_Rshift",  "op_RshiftEqual",  "op_sub",	 "op_subAssign",   "op_xor",
+"op_xorAssign",  "paranthesis_end",  "paranthesis_start",	"separator",   "set_end",	"set_start",
+"string_literal", "terminator"]
