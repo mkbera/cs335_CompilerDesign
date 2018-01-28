@@ -1,2 +1,2 @@
 #!/bin/sh
-node bin/index.js $1
+node src/index.js $1
