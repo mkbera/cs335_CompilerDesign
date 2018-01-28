@@ -14,3 +14,8 @@ As mentioned above, we can use the generated lexer module through another js fil
 node index.js filename
 
 One can also just call 'bin/lexer filename' to run the index.js file.
+
+**NOTE:** If there is an error stating node not found (on linux) try linking
+(symlink) nodejs to node
+
+	sudo ln -s /usr/bin/nodejs /usr/bin/node
