@@ -12,7 +12,6 @@ underscore				=	_
 
 CONST					=	const
 STATIC					=	static
-PUBLIC					=	public
 
 INT						=	int
 LONG					=	long
@@ -23,6 +22,7 @@ SHORT					=	short
 FLOAT					=	float
 DOUBLE					=	double
 BOOLEAN					=	boolean
+PUBLIC					=	public
 
 BREAK					=	break
 CONTINUE				=	continue
@@ -176,7 +176,7 @@ op_xor					=	[\^]
 }
 <>{PUBLIC}
 {
-	return "public";
+	return "keyword";
 }
 <>{RETURN}
 {
