@@ -71,7 +71,7 @@ function printTokens() {
                 width: 20,
             },
             2: {
-                width: 30,
+                width: 50,
                 wrapWord: true
             }
         }

@@ -9,6 +9,7 @@ lcase_letter			=	[a-z]
 ucase_letter			=	[A-Z]
 
 underscore				=	_
+dollar					=	\$
 
 CONST					=	const
 STATIC					=	static
@@ -406,12 +407,12 @@ op_xor					=	[\^]
 	return "string_literal";
 }
 
-<>\'(\\.|[^\\\'])*\'
+<>\'(\\.|[^\\\'])\'
 {
 	return "character_literal";
 }
 
-<>{letter}\w*
+<>({letter}|{dollar}|{underscore})({letter}|{dollar}|{underscore}|{digit})*
 {
 	return "identifier";
 }
