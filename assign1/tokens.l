@@ -12,6 +12,7 @@ underscore				=	_
 
 CONST					=	const
 STATIC					=	static
+PUBLIC					=	public
 
 INT						=	int
 LONG					=	long
@@ -172,6 +173,10 @@ op_xor					=	[\^]
 <>{NEW}
 {
 	return "keyword";
+}
+<>{PUBLIC}
+{
+	return "public";
 }
 <>{RETURN}
 {
