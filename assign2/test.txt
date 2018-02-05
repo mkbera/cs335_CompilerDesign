@@ -1,0 +1,14 @@
+=	a	2
+=	b	7
++	a	a	b
+if	leq	a	50	label_7
+=	b	5
+jmp	label_9
+block	label_7
+=	b	6
+block	label_9
+call		foo
+return
+function	foo
+print	a
+return
