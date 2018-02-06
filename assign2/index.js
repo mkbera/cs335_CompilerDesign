@@ -11,18 +11,28 @@ class SymbolTable {
 class Registers {
     constructor() {
         this.register_descriptor = {
-            
+            "eax": null,
+            "ebx": null,
+            "ecx": null,
+            "edx": null
         };
         this.address_descriptor = {
 
         };
     }
+    //Method
+    getReg(variable, inst) {
+        
+    }
 }
+
 
 var identifier_to_class = {}
 
 variable_ops = ["+", "-", "/", "*", "=", "%", "^", "|"]
 function_ops = ["function"]
+reg_list = ["eax", "ebx", "ecx", "edx"]
+keywords_3AC = ["if", "return", "function", "call", "block", "jmp", "leq", "geq", "lt", "gt", "eq", "neq", "print"]
 
 function main() {
     if (process.argv.length < 3) {
