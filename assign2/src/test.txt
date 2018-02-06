@@ -3,7 +3,7 @@
 +	a	a	b
 if	leq	a	50	label_7
 =	b	5
-jmp	label_9
+jump	label_9
 block	label_7
 =	b	6
 block	label_9

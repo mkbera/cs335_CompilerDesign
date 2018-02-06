@@ -1,39 +1,58 @@
-class SymbolTable {
-    constructor(identifier, type = "int", return_type = null) {
-        this.parameters = {
-            "type": type,
-            "return_type": return_type
-        };
-        this.identifier = identifier;
+var reg = require('./registers');
+var smt = require('./symbol-table');
+
+var Registers = reg.Registers;
+var SymbolTable = smt.SymbolTable;
+
+var tac;
+
+// -------------------------------------------------- ARRAY PROTOTYPE FUNCTIONS ----------------------------------------------------------------------
+Array.prototype.contains = function (v) {
+    for (var i = 0; i < this.length; i++) {
+        if (this[i] === v) return true;
     }
+    return false;
+};
+
+Array.prototype.unique = function () {
+    var arr = [];
+    for (var i = 0; i < this.length; i++) {
+        if (!arr.includes(this[i])) {
+            arr.push(this[i]);
+        }
+    }
+    return arr;
 }
 
-class Registers {
-    constructor() {
-        this.register_descriptor = {
-            "eax": null,
-            "ebx": null,
-            "ecx": null,
-            "edx": null
-        };
-        this.address_descriptor = {
 
-        };
-    }
-    //Method
-    getReg(variable, inst) {
-        
-    }
+// -------------------------------------------------- EXTRACTING IDENTIFIERS FROM TAC ----------------------------------------------------------------
+function get_labels() {
+    var labels = [];
+
+    tac.forEach(function (instr) {
+        if (instr[0] == "block" || instr[0] == "function") {
+            labels.push(instr[1]);
+        }
+    });
+
+    return labels.unique();
 }
 
 
-var identifier_to_class = {}
+function get_variables() {
+    var variables = [];
 
-variable_ops = ["+", "-", "/", "*", "=", "%", "^", "|"]
-function_ops = ["function"]
-reg_list = ["eax", "ebx", "ecx", "edx"]
-keywords_3AC = ["if", "return", "function", "call", "block", "jmp", "leq", "geq", "lt", "gt", "eq", "neq", "print"]
+    tac.forEach(function (instr) {
+        if (smt.keywords.indexOf(instr[0]) == -1) {
+            variables.push(instr[1]);
+        }
+    });
 
+    return variables.unique();
+}
+
+
+// -------------------------------------------------- MAIN ENTRY CODE --------------------------------------------------------------------------------
 function main() {
     if (process.argv.length < 3) {
         console.log("Filename not specified. Terminating lexer");
@@ -43,27 +62,28 @@ function main() {
     var fs = require("fs");
 
     filename = process.argv[2];
-
     console.log("Reading from file:  " + filename + "\n");
 
-    fs.readFile(filename, "utf8", function (err, data) {
-        if (err) throw err;
-        // console.log(data[1]);
-        var inst = data.split("\n");
-        var num_inst = inst.length;
-
-        for (i=0; i<num_inst; i++){
-            var fields = inst[i].split("\t");
-            if(variable_ops.indexOf(fields[0]) > -1){
-                identifier_to_class[fields[1]] = new SymbolTable(fields[1], "int", null);
-            }
-            else if(function_ops.indexOf(fields[0]) > -1){
-                identifier_to_class[fields[1]] = new SymbolTable(fields[1], "function", "int");
-            }
-        }
-        
-        console.log(identifier_to_class);
+    tac = fs.readFileSync(filename, "utf8").split("\n");
+    tac.forEach(function (line, index) {
+        tac[index] = line.split("\t");
     });
+
+    var labels = get_labels();
+    var variables = get_variables();
+
+    // var inst = data.split("\n");
+    // var num_inst = inst.length;
+
+    // for (i = 0; i < num_inst; i++) {
+    //     var fields = inst[i].split("\t");
+    //     if (variable_ops.indexOf(fields[0]) > -1) {
+    //         identifier_to_class[fields[1]] = new SymbolTable(fields[1], "int", null);
+    //     }
+    //     else if (function_ops.indexOf(fields[0]) > -1) {
+    //         identifier_to_class[fields[1]] = new SymbolTable(fields[1], "function", "int");
+    //     }
+    // }
 }
 
 main();

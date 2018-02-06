@@ -5,3 +5,4 @@
 *.tar*
 *.swp
 *.vscode*
+*csharp-compiler*
