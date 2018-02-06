@@ -1,14 +1,13 @@
-=	a	2
-=	b	7
-+	a	a	b
-if	leq	a	50	label_7
-=	b	5
-jump	label_9
-block	label_7
-=	b	6
-block	label_9
-call		foo
-return
-function	foo
-print	a
-return
+1	=	a	2
+2	=	b	7
+3	+	a	a	b
+4	if	leq	a	50	7
+5	=	b	5
+6	jump	8
+7	=	b	6
+8	call	foo
+9	=	c	10
+10	return
+11	function	foo
+12	print	a
+13	return

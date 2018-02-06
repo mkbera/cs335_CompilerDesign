@@ -8,14 +8,7 @@ class SymbolTable {
 	}
 }
 
-variable_ops = ["+", "-", "/", "*", "=", "%", "^", "|"]
-function_ops = ["function"]
-keywords = ["if", "return", "function", "call", "block", "jump", "leq", "geq", "lt", "gt", "eq", "neq", "print"]
-
 
 module.exports = {
-	SymbolTable: SymbolTable,
-	variable_ops: variable_ops,
-	function_ops: function_ops,
-	keywords: keywords
+	SymbolTable: SymbolTable
 };
