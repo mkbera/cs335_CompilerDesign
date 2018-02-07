@@ -7,12 +7,12 @@ class Registers {
 			"edx": null
 		};
 		this.address_descriptor = {
-
+				// value is a hashmap of two elements: name(iden) and type("mem"/"reg")
 		};
 	}
 	//Method
-	getReg(variable, inst) {
-
+	getReg(inst, next_use_table, assembly) {
+		
 	}
 }
 

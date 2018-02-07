@@ -1,13 +1,7 @@
 1	=	a	2
-2	=	b	7
-3	+	a	a	b
-4	if	leq	a	50	7
-5	=	b	5
-6	jump	8
-7	=	b	6
-8	call	foo
-9	=	c	10
-10	return
-11	function	foo
-12	print	a
-13	return
+2	=	b	a
+3   =   b   3
+4   =   a   b
+5   =   b   a
+6   =   a   3
+7   =   b   3\
