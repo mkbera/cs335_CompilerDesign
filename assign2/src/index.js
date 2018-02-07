@@ -87,28 +87,49 @@ function get_next_use_table(basic_blocks, variables) {
                 var s1 = instr[3];
                 var s2 = instr[4];
 
-                variable_status[dt] = ["dead", null]
+                variable_status[dt] = ["dead", null];
 
-                variable_status[s1] = ["live", parseInt(instr[0])]
+                variable_status[s1] = ["live", parseInt(instr[0])];
                 if (variables.indexOf(s2) > -1) {
-                    variable_status[s2] = ["live", parseInt(instr[0])]
+                    variable_status[s2] = ["live", parseInt(instr[0])];
                 }
             }
             switch (instr[1]) {
                 case "if": {
+                    var c1 = instr[3];
+                    var c2 = instr[4];
 
+                    variable_status[c1] = ["live", parseInt(instr[0])];
+
+                    if (variables.indexOf(c2) > -1) {
+                        variable_status[c2] = ["live", parseInt(instr[0])];
+                    }
+                    break;
                 }
                 case "print": {
+                    var v1 = instr[2];
 
+                    if (variables.indexOf(v1) > -1) {
+                        variable_status[v1] = ["live", parseInt(instr[0])];
+                    }
+                    break;
                 }
                 case "=": {
+                    var v1 = instr[2];
+                    var v2 = instr[3];
 
+                    variable_status[v1] = ["dead", null];
+
+                    if (variables.indexOf(v2) > -1) {
+                        variable_status[v2] = ["live", parseInt(instr[0])];
+                    }
+                    break;
                 }
             }
         }
     });
 
-    console.log(next_use_table);
+    return next_use_table;
 }
 
 
