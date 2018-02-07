@@ -1,8 +1,12 @@
 require("./prototype");
-require("./variables");
+require("./descriptor");
 
 var Registers = require("./registers").Registers;
-var symbol_table = require("./symbol-table").symbol_table;
+
+var Variable = require("./components").Variable;
+var Function = require("./components").Function;
+
+var SymbolTable = require("./symbol-table").SymbolTable;
 
 
 var tac;
@@ -65,29 +69,40 @@ function get_basic_blocks() {
 function get_next_use_table(basic_blocks, variables) {
     var next_use_table = new Array(tac.length).fill(null);;
 
-    var symbol_table = {};
-    variables.forEach(function (variable) { symbol_table[variable] = ["live", null]; });
+    var variable_status = {};
+    variables.forEach(function (variable) { variable_status[variable] = ["dead", null]; });
 
     basic_blocks.forEach(function (block) {
         console.log(block);
         for (var i = block.length - 1; i >= 0; i--) {
-            var curr_symbol_table = {};
-            variables.forEach(function (variable) { curr_symbol_table[variable] = symbol_table[variable]; });
+            var curr_variable_status = {};
+            variables.forEach(function (variable) { curr_variable_status[variable] = variable_status[variable]; });
 
             var instr = block[i];
 
-            next_use_table[parseInt(instr[0]) - 1] = curr_symbol_table;
+            next_use_table[parseInt(instr[0]) - 1] = curr_variable_status;
 
             if (math_ops.indexOf(instr[1]) > -1) {
                 var dt = instr[2];
                 var s1 = instr[3];
                 var s2 = instr[4];
 
-                symbol_table[dt] = ["dead", null]
+                variable_status[dt] = ["dead", null]
 
-                symbol_table[s1] = ["live", parseInt(instr[0])]
+                variable_status[s1] = ["live", parseInt(instr[0])]
                 if (variables.indexOf(s2) > -1) {
-                    symbol_table[s2] = ["live", parseInt(instr[0])]
+                    variable_status[s2] = ["live", parseInt(instr[0])]
+                }
+            }
+            switch (instr[1]) {
+                case "if": {
+
+                }
+                case "print": {
+
+                }
+                case "=": {
+
                 }
             }
         }
