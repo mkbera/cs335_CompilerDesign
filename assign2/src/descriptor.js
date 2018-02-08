@@ -4,13 +4,13 @@ math_ops_1 = ["+", "-", "^", "|", "&"]
 keywords = ["if", "return", "function", "call", "block", "jump", "leq", "geq", "lt", "gt", "eq", "neq", "print"]
 
 map_op = {
-	"+" : "add",
-	"-" : "sub",
-	"/" : "idiv",
-	"*" : "mul",
-	"&" : "and",
-	"|" : "or",
-	"^" : "xor"
+	"+": "add",
+	"-": "sub",
+	"/": "idiv",
+	"*": "mul",
+	"&": "and",
+	"|": "or",
+	"^": "xor"
 }
 
 module.exports = {

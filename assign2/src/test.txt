@@ -1,12 +1,5 @@
 1	=	a	2
-2	=	b	a
-3	=	c	b
-4	=	a	b	
-5	=	e	d
-6	=	f	e
-7	=	g	f
-8	=	h	g
-9	=	i	h
-10	=	j	i
-11	=	k	i
-12	+	a	b	8
+2	+	a	a	2
+3	=	b	a
+4	=	c	a
+5	-	d	b	c

@@ -1,19 +1,30 @@
 require("./prototype");
 require("./descriptor");
 
-var Registers = require("./registers").Registers;
-var registers_list = require("./registers").registers_list;
+global.Registers = require("./registers").Registers;
+global.registers_list = require("./registers").registers_list;
+global.getReg = require("./registers").getReg;
+global.getRegEmpty = require("./registers").getRegEmpty;
+global.farthest_nextuse = require("./registers").farthest_nextuse;
+global.unloadRegisters = require("./registers").unloadRegisters;
 
-var Variable = require("./components").Variable;
-var Function = require("./components").Function;
+global.Variable = require("./components").Variable;
+global.Function = require("./components").Function;
 
-var SymbolTable = require("./symbol-table").SymbolTable;
+global.SymbolTable = require("./symbol-table").SymbolTable;
 
-var registers = new Registers();
+global.Assembly = require("./assembly").Assembly;
 
-var tac;
+global.codeGen = require("./translate").codeGen;
 
-var assembly = "";
+global.registers = new Registers();
+
+global.tac;
+global.variables;
+global.next_use_table;
+global.basic_blocks;
+
+global.assembly = new Assembly();
 
 // -------------------------------------------------- EASY PRINTING ----------------------------------------------------------------------------------
 function print(p) {
@@ -26,7 +37,7 @@ function getVariables() {
     var variables = [];
 
     tac.forEach(function (instr) {			//what about instructions like addition
-        if (instr[1] == "=" && keywords.indexOf(instr[2]) == -1) {
+        if (math_ops.indexOf(instr[1]) > -1 && keywords.indexOf(instr[2]) == -1) {
             variables.push(instr[2]);
         }
     });
@@ -139,212 +150,6 @@ function getNextUseTable(basic_blocks, variables) {
     return next_use_table;
 }
 
-//------------------------------------------------- REGISTER ALLOCATION ------------------------------------------------------------------------------
-function getRegEmpty (variable, inst_num, next_use_table) {	//returns a register only if empty
-	var flag = 0;
-	var rep_var;
-    registers_list.some(function (reg) {
-        //--------There is an empty register----------
-        if (registers.register_descriptor[reg] == null) {
-            registers.register_descriptor[reg] = variable;
-            registers.address_descriptor[variable] = { "type": "reg", "name": reg };
-            flag = 1;
-            rep_reg = reg;
-            return true;
-		}
-		rep_var = registers.register_descriptor[reg];
-		if (next_use_table[inst_num][rep_var][1] == Infinity) {	//no next use empty it
-			assembly = assembly + "mov [" + rep_var + "], " + reg + "\n";
-			registers.address_descriptor[rep_var] = {"type" : "mem", "name" : rep_var};
-			registers.address_descriptor[variable] = {"type" : "reg", "name" : reg};
-			registers.register_descriptor[reg] = variable;
-			flag = 1;
-			rep_reg = reg;
-			return true;
-		}
-    })
-    if (flag == 1) {
-        return rep_reg;
-    }else{
-		return null;
-	}
-}
-
-function getReg(variable, inst_num, next_use_table) {
-    var rep_reg;
-    var rep_var;
-    var rep_use;
-	var flag = 0;
-	rep_reg = getRegEmpty(variable, inst_num, next_use_table);
-	if (rep_reg != null){
-		return rep_reg;
-	}
-    // registers_list.some(function (reg) {
-    //     //--------There is an empty register----------
-    //     if (registers.register_descriptor[reg] == null) {
-    //         registers.register_descriptor[reg] = variable;
-    //         registers.address_descriptor[variable] = { "type": "reg", "name": reg };
-    //         flag = 1;
-    //         rep_reg = reg;
-    //         return true;
-    //     } else {
-    //         rep_reg = reg;    //rep is var to be replaced
-    //         rep_var = registers.register_descriptor[reg];
-    //         rep_use = next_use_table[inst_num][rep_var][1];
-    //     }
-    // })
-    // if (flag == 1) {
-    //     return rep_reg;
-    // }
-    registers_list.forEach(function (reg) {
-        //---------Replace with farthest next use-------
-        var curr_var = registers.register_descriptor[reg];
-        if (next_use_table[inst_num][curr_var][1] > rep_use) {
-            rep_reg = reg;
-            rep_var = curr_var;
-            rep_use = next_use_table[inst_num][curr_var][1];
-        }
-    })
-    registers.register_descriptor[rep_reg] = variable;
-    registers.address_descriptor[variable] = { "type": "reg", "name": rep_reg };
-
-    assembly = assembly + "mov [" + rep_var + "], " + rep_reg + "\n";
-    registers.address_descriptor[rep_var] = { "type": "mem", "name": rep_var };
-    assembly = assembly + "mov " + rep_reg + ", [" + variable + "]\n";
-    return rep_reg;
-}
-
-function farthest_nextuse (variable, inst_num, next_use_table) {
-	var flag = 1
-	variables.some(function (new_var) {
-		if (next_use_table[inst_num][variable][2] < next_use_table[inst_num][new_var][2]) {
-			flag = 0;
-			return true;
-		}
-	})
-	if (flag == 1){
-		return true;
-	}else {
-		return false;
-	}
-}
-
-function codeGen(inst, next_use_table, inst_num) {
-    if (math_ops.indexOf(inst[1]) != -1) {
-        var x = inst[2];
-        var y = inst[3];
-        var des_x = registers.address_descriptor[x]["name"];
-        var des_y = undefined;
-        if (registers.address_descriptor[y] != undefined) {
-            des_y = registers.address_descriptor[y]["name"];
-        }
-        if (inst[1] == "=") {
-            if (registers.address_descriptor[x]["type"] == "reg") {    //x is in reg   
-                if (des_y == null) {
-                    throw Error("Assigning uninitialised value");
-                }
-                if (des_y == undefined) {
-                    des_y = y;
-                } else if (registers.address_descriptor[y]["type"] == "mem") {  //the operand y is in memory
-                    des_y = "[" + des_y + "]";
-                }
-                assembly = assembly + "mov " + des_x + ", " + des_y + "\n";
-            }
-            else {                               //x is in memory
-                if (des_y == undefined) {         // y is constant
-                    des_y = y;
-                    registers.address_descriptor[x] = { "type": "mem", "name": x };
-                    assembly = assembly + "mov [" + des_x + "], " + des_y + "\n";
-                } else if (registers.address_descriptor[y]["type"] == "reg") {  //the operand y is in register
-                    registers.address_descriptor[x] = { "type": "mem", "name": x };
-                    assembly = assembly + "mov [" + des_x + "], " + des_y + "\n";
-                } else {
-                    if (next_use_table[inst_num][inst[2]][1] > next_use_table[inst_num][inst[3]][1]) {    //y next use earlier than x
-                        registers.address_descriptor[x] = { "type": "mem", "name": x };
-                        des_y = getReg(y, inst_num, next_use_table);
-                        assembly = assembly + "mov [" + des_x + "], " + des_y + "\n";
-                    } else {
-                        registers.address_descriptor[y] = { "type": "mem", "name": y };
-                        des_x = getReg(x, inst_num, next_use_table);
-                        assembly = assembly + "mov " + des_x + ", [" + des_y + "]\n";
-                    }
-                }
-            }
-        } else if (math_ops_1.indexOf(inst[1]) > -1) {
-			var op = inst[1];
-			var z = inst[4];
-			var des_z;
-			if(variables.indexOf(z) == -1) {		//z is constant
-				des_z = z;
-				if(registers.address_descriptor[y]["type"] == "reg"){		//y is in register
-					if (registers.address_descriptor[x]["type"] == "reg"){	//x is in register
-						assembly = assembly + "mov " + des_x + ", " + des_y + "\n";
-						assembly = assembly + map_op[op] + " " + des_x + ", " + des_z + "\n";
-					}
-					else if (next_use_table[inst_num][y][1] == Infinity) {	//No next use of y
-						assembly = assembly + "mov [" + y + "], " + des_y + "\n";
-						assembly = assembly + map_op[op] + " " + des_y + ", " + des_z + "\n";
-						registers.address_descriptor[y] = {"type" : "mem", "name" : y};
-						registers.address_descriptor[x] = {"type" : "reg", "name" : des_y};
-						registers.register_descriptor[des_y] = x;
-					}
-					else if ((reg = getRegEmpty(variable, inst_num, next_use_table)) != null) {	//got empty reg for x
-						assembly = assembly + "mov " + reg + ", " + des_y + "\n";
-						assembly = assembly + map_op[op] + " " + reg + ", " + des_z + "\n";
-					}
-					else if (farthest_nextuse(x, inst_num, next_use_table)){	//x has no or farthest next use
-						assembly = assembly + "mov [" + x + "] " + des_y + "\n";
-						assembly = assembly + map_op + " [" + x + "], " + des_z + "\n";
-					}
-					else if (farthest_nextuse(y, inst_num, next_use_table)) {	//y has farthest next use
-						assembly = assembly + "mov [" + y + "], " + des_y + "\n";
-						assembly = assembly + map_op[op] + " " + des_y + ", " + des_z + "\n";
-						registers.address_descriptor[y] = {"type" : "mem", "name" : y};
-						registers.address_descriptor[x] = {"type" : "reg", "name" : des_y};
-						registers.register_descriptor[des_y] = x;
-					}
-					else {	//some other reg has farthest next use
-						var reg = getReg(x, inst_num, next_use_table);
-						assembly = assembly + "mov " + reg + ", " + des_y + "\n";
-						assembly = assembly + map_op[op] + " " + reg + ", " + des_z + "\n";
-					}
-				}
-				else {	//y not in reg
-					if (registers.address_descriptor[x]["type"] == "reg") {	// x in register
-						assembly = assembly + "mov " + des_x + ", [" + y + "]\n";
-						assembly = assembly + map_op[op] + " " + des_x + ", " + des_z + "\n";
-					}
-					else {
-						if (next_use_table[inst_num][inst[2]][1] > next_use_table[inst_num][inst[3]][1]) {    //y next use earlier than x
-							registers.address_descriptor[x] = { "type": "mem", "name": x };
-							des_y = getReg(y, inst_num, next_use_table);
-							if ((reg = getRegEmpty(variable, inst_num, next_use_table)) != null) {	//got empty reg for x
-								assembly = assembly + "mov " + reg + ", " + des_y + "\n";
-								assembly = assembly + map_op[op] + " " + reg + ", " + des_z + "\n";
-							}
-							else if (farthest_nextuse(x, inst_num, next_use_table)){	//x has no or farthest next use
-								assembly = assembly + "mov [" + x + "] " + des_y + "\n";
-								assembly = assembly + map_op + " [" + x + "], " + des_z + "\n";
-							}
-							else {	//some other reg has farthest next use
-								var reg = getReg(x, inst_num, next_use_table);
-								assembly = assembly + "mov " + reg + ", " + des_y + "\n";
-								assembly = assembly + map_op[op] + " " + reg + ", " + des_z + "\n";
-							}
-						}
-						else {
-							registers.address_descriptor[y] = { "type": "mem", "name": y };
-							des_x = getReg(x, inst_num, next_use_table);
-							assembly = assembly + "mov " + des_x + ", [" + y + "]\n";
-							assembly = assembly + map_op[op] + " " + des_x + ", " + des_z + "\n";
-						}
-					}
-				}
-			}
-        }
-    }
-}
-
 
 // -------------------------------------------------- MAIN ENTRY CODE --------------------------------------------------------------------------------
 function main() {
@@ -356,38 +161,43 @@ function main() {
     var fs = require("fs");
 
     filename = process.argv[2];
-    print("Reading from file:  " + filename + "\n");
+    // print("Reading from file:  " + filename);
 
     tac = fs.readFileSync(filename, "utf8").split("\n");
     tac.forEach(function (line, index) {
         tac[index] = line.trim().split("\t");
     });
 
-    global.variables = getVariables();
-    var basic_blocks = getBasicBlocks();
+    variables = getVariables();
+    basic_blocks = getBasicBlocks();
 
-    var next_use_table = getNextUseTable(basic_blocks, variables);
+    next_use_table = getNextUseTable(basic_blocks, variables);
 
-    assembly = assembly + "global _start\nsection .data\n";
+    assembly.add("global main");
+    assembly.add("section .data");
 
-    variables.forEach(function (sym) {
-        assembly = assembly + sym + "\tDD\t?\n"
-        registers.address_descriptor[sym] = { "type": null, "name": sym };
+    variables.forEach(function (variable) {
+        assembly.add("\t" + variable + "\tDD\t0");
+        registers.address_descriptor[variable] = { "type": null, "name": null };
     });
 
-    assembly = assembly + "section .text\n_start:\n"
+    assembly.add("section .text")
+    assembly.add("main:");
 
     var inst_num = 0;
     basic_blocks.forEach(function (block) {
-        for (var i = 0; i < block.length; i++) {
-            codeGen(block[i], next_use_table, inst_num);
+        block.forEach(function (line) {
+            codeGen(line, next_use_table, inst_num);
             inst_num++;
-        }
+        });
+        unloadRegisters();
     });
 
-    print(registers.address_descriptor);
-    print(registers.register_descriptor);
-    print(assembly);
+    assembly.add("\t");
+    assembly.add("\tmov eax, 1");
+    assembly.add("\tint 0x80");
+
+    assembly.print();
 }
 
 main();
