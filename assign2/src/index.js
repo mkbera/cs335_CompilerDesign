@@ -15,6 +15,11 @@ var tac;
 
 var assembly = "";
 
+//------------------------------ EASY PRINTING----------------
+function print(p){
+    console.log(p);
+}
+
 //------------------------------------------------- stripper -------------------------
 function stripper(){
     var i = 0;
@@ -23,7 +28,6 @@ function stripper(){
         
         i++;
     })
-    console.log(tac);
 }
 
 
@@ -88,7 +92,6 @@ function get_next_use_table(basic_blocks, variables) {
     variables.forEach(function (variable) { variable_status[variable] = ["dead", Infinity]; });
 
     basic_blocks.forEach(function (block) {
-        // console.log(block);
         for (var i = block.length - 1; i >= 0; i--) {
             var curr_variable_status = {};
             variables.forEach(function (variable) { curr_variable_status[variable] = variable_status[variable]; });
@@ -153,15 +156,14 @@ function getReg(variable, inst_num, next_use_table){
     var rep_var;
     var rep_use;
     var flag = 0;
-    registers_list.every(function (reg){
+    registers_list.some(function (reg){
         //--------There is an empty register----------
         if (registers.register_descriptor[reg] == null){
-            console.log("9999999999999999");
             registers.register_descriptor[reg] = variable;
             registers.address_descriptor[variable] = {"type" : "reg", "name" : reg};
             flag = 1;
             rep_reg = reg;
-            return false;
+            return true;
         }else{
             rep_reg = reg;    //rep is var to be replaced
             rep_var = registers.register_descriptor[reg];
@@ -185,34 +187,25 @@ function getReg(variable, inst_num, next_use_table){
     registers.register_descriptor[rep_reg] = variable;
     registers.address_descriptor[variable] = {"type" : "reg", "name" : rep_reg};
     
-    assembly = assembly + "mov [" + rep_var + "]," + rep_reg + "\n";
+    assembly = assembly + "mov [" + rep_var + "], " + rep_reg + "\n";
     registers.address_descriptor[rep_var] = {"type" : "mem", "name" : rep_var};
     assembly = assembly + "mov " + rep_reg + ", [" + variable + "]\n";
     return rep_reg;
 }
 
 function codeGen(inst, next_use_table, inst_num){
-	if (math_ops.indexOf(inst[1]) != -1){
+    if (math_ops.indexOf(inst[1]) != -1){
         var x = inst[2];
         var y = inst[3];
-        
-        // var des_x;
-        // var des_y;
-        
         var des_x = registers.address_descriptor[x]["name"];
         var des_y = undefined;
         if(registers.address_descriptor[y] != undefined){
             des_y = registers.address_descriptor[y]["name"];
         }
-        // des_y = registers.address_descriptor[inst[3]];
-        // var ind_x = variables.indexOf(inst[2]);
-        // var ind_y = variables.indexOf(inst[3]);
-        
-		if (inst[1] == "="){
-            if (registers_list.indexOf(des_x) > -1){    //x is in reg                
-				if (des_y == null){
+        if (inst[1] == "="){
+            if (registers.address_descriptor[x]["type"] == "reg"){    //x is in reg   
+                if (des_y == null){
                     throw Error("Assigning uninitialised value");
-                    // exit;
                 }
                 if(des_y == undefined){
                     des_y = y;
@@ -222,22 +215,22 @@ function codeGen(inst, next_use_table, inst_num){
                 assembly = assembly + "mov " + des_x + ", " + des_y + "\n";
 
             }
-            else{  //x is in memory
+            else{                               //x is in memory
                 if(des_y == undefined){         // y is constant
                     des_y = y;
+                    registers.address_descriptor[x] = {"type" : "mem", "name" : x};
                     assembly = assembly + "mov [" + des_x + "], " + des_y + "\n";
                 }else if(registers.address_descriptor[y]["type"] == "reg"){  //the operand y is in register
+                    registers.address_descriptor[x] = {"type" : "mem", "name" : x};
                     assembly = assembly + "mov [" + des_x + "], " + des_y + "\n";
                 }else{
                     if(next_use_table[inst_num][inst[2]][1] > next_use_table[inst_num][inst[3]][1]){    //y next use earlier than x
+                        registers.address_descriptor[x] = {"type" : "mem", "name" : x};
                         des_y = getReg(y, inst_num, next_use_table);
-                        console.log("****************");
                         assembly = assembly + "mov [" + des_x + "], " + des_y + "\n";
                     }else{
-                        console.log("---------------------");
-                        console.log(des_x);
+                        registers.address_descriptor[y] = {"type" : "mem", "name" : y};
                         des_x = getReg(x, inst_num, next_use_table);
-                        console.log(des_x);                        
                         assembly = assembly + "mov " + des_x + ", [" + des_y + "]\n";
                     }
                 }
@@ -252,14 +245,14 @@ function codeGen(inst, next_use_table, inst_num){
 // -------------------------------------------------- MAIN ENTRY CODE --------------------------------------------------------------------------------
 function main() {
     if (process.argv.length < 3) {
-        console.log("Filename not specified. Terminating lexer");
+        print("Filename not specified. Terminating lexer");
         return;
     }
 
     var fs = require("fs");
 
     filename = process.argv[2];
-    console.log("Reading from file:  " + filename + "\n");
+    print("Reading from file:  " + filename + "\n");
 
     tac = fs.readFileSync(filename, "utf8").split("\n");
     tac.forEach(function (line, index) {
@@ -267,7 +260,6 @@ function main() {
     });
 
     stripper();
-    // return;
 
     global.variables = get_variables();
     var basic_blocks = get_basic_blocks();
@@ -275,28 +267,21 @@ function main() {
     var next_use_table = get_next_use_table(basic_blocks, variables);
     var inst_num = 0;
     assembly = assembly + "global _start\n.DATA\n"
-    // console.log("prann");
-    // console.log(registers.register_descriptor);
 	variables.forEach(function (sym){
 		assembly = assembly + sym + "   DD	?\n"
         registers.address_descriptor[sym] = {"type":null, "name":sym};
 	})
 
 	assembly = assembly + ".TEXT\n_start:\n"
-	// console.log(assembly);
-    // console.log(tac);
 	basic_blocks.forEach(function (block){
         for (var i = 0; i < block.length; i++){
-            console.log("*************")
             codeGen(block[i], next_use_table, inst_num);
-            // console.log("**********\n"+assembly+"\n**************\n");
-            // throw '';
             inst_num++;
 		}
     })
-    console.log(assembly);
-    console.log(registers.address_descriptor);
-    console.log(registers.register_descriptor);
+    print(assembly);
+    print(registers.address_descriptor);
+    print(registers.register_descriptor);
 }
 
 main();
