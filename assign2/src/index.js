@@ -42,8 +42,6 @@ function getLabels() {
     labels = labels.unique();
     labels.sort(function (a, b) { return a - b });
 
-    console.log(labels);
-
     return labels;
 }
 
@@ -104,9 +102,10 @@ function getNextUseTable(basic_blocks, variables) {
     var next_use_table = new Array(tac.length).fill(null);;
 
     var variable_status = {};
-    variables.forEach(function (variable) { variable_status[variable] = ["dead", Infinity]; });
+    // variables.forEach(function (variable) { variable_status[variable] = ["dead", Infinity]; });
 
     basic_blocks.forEach(function (block) {
+        variables.forEach(function (variable) { variable_status[variable] = ["dead", Infinity]; });
         for (var i = block.length - 1; i >= 0; i--) {
             var curr_variable_status = {};
             variables.forEach(function (variable) { curr_variable_status[variable] = variable_status[variable]; });
@@ -169,6 +168,7 @@ function getNextUseTable(basic_blocks, variables) {
             }
         }
     });
+
     return next_use_table;
 }
 

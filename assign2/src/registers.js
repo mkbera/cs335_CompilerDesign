@@ -99,19 +99,15 @@ class Registers {
 
 
 	checkFarthestNextUse(variable, line_nr, next_use_table) {
-		var flag = 1
-		variables.some(function (new_var) {
-			if (next_use_table[line_nr][variable][2] < next_use_table[line_nr][new_var][2]) {
-				flag = 0;
+		var flag = true
+		variables.some(function (check_var) {
+			if (next_use_table[line_nr][variable][2] < next_use_table[line_nr][check_var][2]) {
+				flag = false;
 				return true;
 			}
 		})
-		if (flag == 1) {
-			return true;
-		}
-		else {
-			return false;
-		}
+
+		return flag;
 	}
 
 

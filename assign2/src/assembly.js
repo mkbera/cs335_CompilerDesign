@@ -33,6 +33,7 @@ class Assembly {
 	addModules() {
 		// PRINT INT
 		assembly.shiftLeft();
+		assembly.add("");
 		assembly.add("syscall_print_int:");
 		assembly.shiftRight();
 
@@ -49,6 +50,7 @@ class Assembly {
 
 
 	print(file = "") {
+		this.assembly = this.assembly.replace(/\:\s*\n\s*\n/g, ":\n");
 		console.log(this.assembly);
 		if (file != "") {
 			var fs = require("fs");
