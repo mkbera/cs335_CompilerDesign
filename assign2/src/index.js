@@ -42,6 +42,8 @@ function getLabels() {
     labels = labels.unique();
     labels.sort(function (a, b) { return a - b });
 
+    console.log(labels);
+
     return labels;
 }
 
@@ -188,9 +190,14 @@ function main() {
     assembly.setLabels(getLabels());
 
     assembly.add("global main");
+    assembly.add("");
+    assembly.add("extern printf");
+    assembly.add("");
     assembly.add("section .data");
 
     assembly.shiftRight();
+    assembly.add("_int db \"%i\", 0x0a, 0x00");
+
     variables.forEach(function (variable) {
         assembly.add(variable + "\tDD\t0");
         registers.address_descriptor[variable] = { "type": null, "name": null };
@@ -207,9 +214,9 @@ function main() {
             codeGen(line, next_use_table, inst_num);
             inst_num++;
         });
-        assembly.add("");
-        registers.unloadRegisters();
-        assembly.add("");
+        // assembly.add("");
+        // registers.unloadRegisters();
+        // assembly.add("");
     });
 
     assembly.addModules();

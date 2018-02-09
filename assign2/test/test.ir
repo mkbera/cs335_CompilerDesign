@@ -1,0 +1,17 @@
+1	=	a	2
+2	+	a	a	2
+3	=	b	a
+4	=	c	a
+5	-	d	b	c
+6	if	eq	a	4	10
+7	print	a
+8	=	a	4
+9	jump	12
+10	=	a	5
+11	print	a
+12	if	le	a	b	16
+13	+	b	b	1
+14	print	b
+15	jump	17
+16	print	b
+17	exit

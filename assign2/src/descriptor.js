@@ -8,7 +8,7 @@ global.map_op = {
 	"+": "add",
 	"-": "sub",
 	"/": "idiv",
-	"*": "mul",
+	"*": "imul",
 	"&": "and",
 	"|": "or",
 	"^": "xor",

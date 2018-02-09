@@ -49,7 +49,7 @@ class Assembly {
 
 
 	print(file = "") {
-		console.log(this.assembly);
+		// console.log(this.assembly);
 		if (file != "") {
 			var fs = require("fs");
 			fs.writeFile(file, assembly.assembly, (err) => {
