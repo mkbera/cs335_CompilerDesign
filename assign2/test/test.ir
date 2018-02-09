@@ -12,6 +12,7 @@
 12	if	le	a	b	16
 13	+	b	b	1
 14	print	b
-15	jump	17
-16	print	b
-17	exit
+15	jump	18
+16	not	b
+17	print	b
+18	exit

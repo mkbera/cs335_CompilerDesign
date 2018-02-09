@@ -115,7 +115,7 @@ function getNextUseTable(basic_blocks, variables) {
 
             next_use_table[parseInt(instr[0]) - 1] = curr_variable_status;
 
-            if (math_ops.indexOf(instr[1]) > -1) {
+            if (math_ops_binary.indexOf(instr[1]) > -1 || math_ops_involved.indexOf(instr[1]) > -1) {
                 var dt = instr[2];
                 var s1 = instr[3];
                 var s2 = instr[4];
@@ -126,6 +126,14 @@ function getNextUseTable(basic_blocks, variables) {
                 if (variables.indexOf(s2) > -1) {
                     variable_status[s2] = ["live", parseInt(instr[0])];
                 }
+            }
+            else if (math_ops_unary.indexOf(instr[1]) > -1) {
+                var v1 = instr[2];
+
+                if (variables.indexOf(v1) > -1) {
+                    variable_status[v1] = ["live", parseInt(instr[0])];
+                }
+                break;
             }
             switch (instr[1]) {
                 case "if": {
