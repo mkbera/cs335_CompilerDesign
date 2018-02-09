@@ -2,11 +2,6 @@ require("./prototype");
 require("./descriptor");
 
 global.Registers = require("./registers").Registers;
-global.registers_list = require("./registers").registers_list;
-global.getReg = require("./registers").getReg;
-global.getRegEmpty = require("./registers").getRegEmpty;
-global.farthest_nextuse = require("./registers").farthest_nextuse;
-global.unloadRegisters = require("./registers").unloadRegisters;
 
 global.Variable = require("./components").Variable;
 global.Function = require("./components").Function;
@@ -20,9 +15,11 @@ global.codeGen = require("./translate").codeGen;
 global.registers = new Registers();
 
 global.tac;
+
 global.variables;
-global.next_use_table;
 global.basic_blocks;
+
+global.next_use_table;
 
 global.assembly = new Assembly();
 
@@ -33,6 +30,21 @@ function print(p) {
 
 
 // -------------------------------------------------- GENERATING INFO FROM TAC -----------------------------------------------------------------------
+function getLabels() {
+    var labels = [];
+
+    tac.forEach(function (instr) {
+        if (instr[1] == "if" || instr[1] == "jump") {
+            labels.push(parseInt(instr[instr.length - 1]));
+        }
+    });
+
+    labels = labels.unique();
+    labels.sort(function (a, b) { return a - b });
+
+    return labels;
+}
+
 function getVariables() {
     var variables = [];
 
@@ -161,7 +173,7 @@ function main() {
     var fs = require("fs");
 
     filename = process.argv[2];
-    // print("Reading from file:  " + filename);
+    print("Reading from file:  " + filename);
 
     tac = fs.readFileSync(filename, "utf8").split("\n");
     tac.forEach(function (line, index) {
@@ -173,16 +185,21 @@ function main() {
 
     next_use_table = getNextUseTable(basic_blocks, variables);
 
+    assembly.setLabels(getLabels());
+
     assembly.add("global main");
     assembly.add("section .data");
 
+    assembly.shiftRight();
     variables.forEach(function (variable) {
-        assembly.add("\t" + variable + "\tDD\t0");
+        assembly.add(variable + "\tDD\t0");
         registers.address_descriptor[variable] = { "type": null, "name": null };
     });
 
+    assembly.shiftLeft();
     assembly.add("section .text")
     assembly.add("main:");
+    assembly.shiftRight();
 
     var inst_num = 0;
     basic_blocks.forEach(function (block) {
@@ -190,14 +207,19 @@ function main() {
             codeGen(line, next_use_table, inst_num);
             inst_num++;
         });
-        unloadRegisters();
+        assembly.add("");
+        registers.unloadRegisters();
+        assembly.add("");
     });
 
-    assembly.add("\t");
-    assembly.add("\tmov eax, 1");
-    assembly.add("\tint 0x80");
+    assembly.addModules();
 
-    assembly.print();
+    if (process.argv.length == 4) {
+        assembly.print(process.argv[3]);
+    }
+    else {
+        assembly.print();
+    }
 }
 
 main();

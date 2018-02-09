@@ -1,94 +1,4 @@
-var registers_list = ["eax", "ebx", "ecx", "edx", "esi", "edi"]
-
-
-function getRegEmpty(variable, inst_num, next_use_table, safe = []) {	//returns a register only if empty
-	var flag = false;
-	var rep_var;
-	registers_list.some(function (reg) {
-		//--------There is an empty register----------
-		if (registers.register_descriptor[reg] == null) {
-			registers.register_descriptor[reg] = variable;
-			registers.address_descriptor[variable] = { "type": "reg", "name": reg };
-			flag = true;
-			rep_reg = reg;
-			return true;
-		}
-	});
-	if (!flag) {
-		registers_list.some(function (reg) {
-			rep_var = registers.register_descriptor[reg];
-			if (safe.indexOf(rep_var) == -1 && next_use_table[inst_num][rep_var][1] == Infinity) {	//no next use empty it
-				assembly.add("\tmov dword [" + rep_var + "], " + reg);
-				registers.address_descriptor[rep_var] = { "type": "mem", "name": rep_var };
-				registers.address_descriptor[variable] = { "type": "reg", "name": reg };
-				registers.register_descriptor[reg] = variable;
-				flag = true;
-				rep_reg = reg;
-				return true;
-			}
-		});
-	}
-	if (flag) {
-		return rep_reg;
-	} else {
-		return null;
-	}
-}
-
-
-function getReg(variable, inst_num, next_use_table, safe = []) {
-	var rep_reg;
-	var rep_var;
-	var rep_use;
-	var flag = 0;
-	rep_reg = getRegEmpty(variable, inst_num, next_use_table, safe);
-	if (rep_reg != null) {
-		return rep_reg;
-	}
-	registers_list.forEach(function (reg) {
-		//---------Replace with farthest next use-------
-		var curr_var = registers.register_descriptor[reg];
-		if (safe.indexOf(curr_var) == -1 && next_use_table[inst_num][curr_var][1] > rep_use) {
-			rep_reg = reg;
-			rep_var = curr_var;
-			rep_use = next_use_table[inst_num][curr_var][1];
-		}
-	})
-	registers.register_descriptor[rep_reg] = variable;
-	registers.address_descriptor[variable] = { "type": "reg", "name": rep_reg };
-
-	assembly.add("\tmov dword [" + rep_var + "], " + rep_reg);
-	registers.address_descriptor[rep_var] = { "type": "mem", "name": rep_var };
-	return rep_reg;
-}
-
-
-function farthest_nextuse(variable, inst_num, next_use_table) {
-	var flag = 1
-	variables.some(function (new_var) {
-		if (next_use_table[inst_num][variable][2] < next_use_table[inst_num][new_var][2]) {
-			flag = 0;
-			return true;
-		}
-	})
-	if (flag == 1) {
-		return true;
-	} else {
-		return false;
-	}
-}
-
-
-function unloadRegisters() {
-	registers_list.forEach(function (register) {
-		var variable = registers.register_descriptor[register];
-		if (variable != null) {
-			assembly.add("\tmov dword [" + variable + "], " + register);
-			registers.register_descriptor[register] = null;
-			registers.address_descriptor[variable] = { "type": "mem", "name": variable };
-		}
-	});
-}
+global.registers_list = ["eax", "ebx", "ecx", "edx", "esi", "edi"];
 
 
 class Registers {
@@ -102,18 +12,157 @@ class Registers {
 			// value is a hashmap of two elements: name(iden) and type("mem"/"reg")
 		};
 	}
-	//Method
-	getReg(inst, next_use_table, assembly) {
 
+
+	getEmptyReg(variable, line_nr, next_use_table, safe = []) {
+		var self = this;
+
+		var flag = false;
+		var rep_var;
+		var rep_reg;
+
+		registers_list.some(function (register) {
+			if (self.register_descriptor[register] == null) {
+				self.register_descriptor[register] = variable;
+				self.address_descriptor[variable] = { "type": "reg", "name": register };
+				flag = true;
+				rep_reg = register;
+				return true;
+			}
+		});
+
+		return (flag) ? rep_reg : null;
+	}
+
+
+	getNoUseReg(variable, line_nr, next_use_table, safe = []) {
+		var self = this;
+
+		var flag = false;
+		var rep_var;
+		var rep_reg;
+
+		registers_list.some(function (reg) {
+			rep_var = self.register_descriptor[reg];
+			if (safe.indexOf(rep_var) == -1 && next_use_table[line_nr][rep_var][1] == Infinity) {	//no next use empty it
+				assembly.add("mov dword [" + rep_var + "], " + reg);
+				self.address_descriptor[rep_var] = { "type": "mem", "name": rep_var };
+				self.address_descriptor[variable] = { "type": "reg", "name": reg };
+				self.register_descriptor[reg] = variable;
+				flag = true;
+				rep_reg = reg;
+				return true;
+			}
+		});
+
+		return (flag) ? rep_reg : null;
+	}
+
+
+	getReg(variable, line_nr, next_use_table, safe = []) {
+		var self = this;
+
+		var rep_reg;
+		var rep_var;
+		var rep_use;
+
+		var flag = false;
+
+		rep_reg = self.getEmptyReg(variable, line_nr, next_use_table, safe);
+		if (rep_reg != null) {
+			return rep_reg;
+		}
+		rep_reg = self.getNoUseReg(variable, line_nr, next_use_table, safe);
+		if (rep_reg != null) {
+			return rep_reg;
+		}
+
+		registers_list.forEach(function (reg) {
+			var curr_var = self.register_descriptor[reg];
+			if (safe.indexOf(curr_var) == -1 && next_use_table[line_nr][curr_var][1] > rep_use) {
+				rep_reg = reg;
+				rep_var = curr_var;
+				rep_use = next_use_table[line_nr][curr_var][1];
+			}
+		})
+		self.register_descriptor[rep_reg] = variable;
+		self.address_descriptor[variable] = { "type": "reg", "name": rep_reg };
+
+		assembly.add("mov dword [" + rep_var + "], " + rep_reg);
+		self.address_descriptor[rep_var] = { "type": "mem", "name": rep_var };
+		return rep_reg;
+	}
+
+
+	checkFarthestNextUse(variable, line_nr, next_use_table) {
+		var flag = 1
+		variables.some(function (new_var) {
+			if (next_use_table[line_nr][variable][2] < next_use_table[line_nr][new_var][2]) {
+				flag = 0;
+				return true;
+			}
+		})
+		if (flag == 1) {
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
+
+
+	unloadRegisters() {
+		var self = this;
+		registers_list.forEach(function (register) {
+			var variable = self.register_descriptor[register];
+			if (variable != null) {
+				assembly.add("mov dword [" + variable + "], " + register);
+				self.register_descriptor[register] = null;
+				self.address_descriptor[variable] = { "type": "mem", "name": variable };
+			}
+		});
+	}
+
+	loadVariable(variable, line_nr, next_use_table, safe = []) {
+		var self = this;
+
+		var des_variable = self.address_descriptor[variable]["name"];
+		if (des_variable == null) {
+			self.address_descriptor[variable] = { "type": "mem", "name": variable };
+			des_variable = variable;
+		}
+
+		if (self.address_descriptor[variable]["type"] == "reg") {
+			return des_variable;
+		}
+
+		if (next_use_table[line_nr][variable][1] == Infinity) {											// variable has no next use
+			des_variable = "[" + des_variable + "]";
+		}
+		else if (checkFarthestNextUse(variable, line_nr, next_use_table)) {								// variable has farthest use
+			if ((reg = getEmptyReg(variable, line_nr, next_use_table, safe)) != null) {						// there is an empy register
+				des_variable = reg;
+				assembly.add("mov dword " + des_variable + ", [" + variable + "]");
+			}
+			else if ((reg = getNoUseReg(variable, line_nr, next_use_table, safe)) != null) {				// there is a no use register
+				des_variable = reg;
+				assembly.add("mov dword " + des_variable + ", [" + variable + "]");
+			}
+			else {
+				des_variable = "[" + des_variable + "]";
+			}
+		}
+		else {																						// variable has some use
+			des_variable = self.getReg(variable, line_nr, next_use_table, safe);
+			assembly.add("mov dword " + des_variable + ", [" + variable + "]");
+		}
+
+		return des_variable;
 	}
 }
 
 
 module.exports = {
 	Registers: Registers,
-	registers_list: registers_list,
-	getReg: getReg,
-	getRegEmpty: getRegEmpty,
-	farthest_nextuse: farthest_nextuse,
-	unloadRegisters: unloadRegisters
+	registers_list: registers_list
 };
