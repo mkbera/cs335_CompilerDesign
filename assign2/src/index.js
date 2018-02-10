@@ -41,6 +41,7 @@ function main() {
         tac[index] = line.trim().split("\t");
     });
 
+
     variables = TAC.getVariables();
     basic_blocks = TAC.getBasicBlocks();
 
@@ -64,8 +65,8 @@ function main() {
         registers.address_descriptor[variable] = { "type": null, "name": null };
     });
 
-    Object.keys(arrays).forEach(function (array) {
-        assembly.add(array + "\tTIMES\t" + arrays[array] + "\tDD\t0")
+    Object.keys(arrays).forEach(function (identifier) {
+        assembly.add(identifier + "\tTIMES\t" + arrays[identifier] + "\tDD\t0")
     })
 
     assembly.shiftLeft();

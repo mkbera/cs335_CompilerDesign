@@ -83,19 +83,16 @@ function getBasicBlocks() {
 
 
 function getNextUseTable(basic_blocks, variables) {
-	var next_use_table = new Array(tac.length).fill(null);;
+	var next_use_table = new Array(tac.length).fill({});;
 
 	var variable_status = {};
 
 	basic_blocks.forEach(function (block) {
 		variables.forEach(function (variable) { variable_status[variable] = ["dead", Infinity]; });
 		for (var i = block.length - 1; i >= 0; i--) {
-			var curr_variable_status = {};
-			variables.forEach(function (variable) { curr_variable_status[variable] = variable_status[variable]; });
-
 			var instr = block[i];
 
-			next_use_table[parseInt(instr[0]) - 1] = curr_variable_status;
+			variables.forEach(function (variable) { next_use_table[parseInt(instr[0]) - 1][variable] = variable_status[variable]; });
 
 			if (math_ops_binary.indexOf(instr[1]) > -1 || math_ops_involved.indexOf(instr[1]) > -1) {
 				var dt = instr[2];

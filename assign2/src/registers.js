@@ -94,6 +94,7 @@ class Registers {
 		self.address_descriptor[variable] = { "type": "reg", "name": rep_reg };
 
 		assembly.add("mov dword [" + rep_var + "], " + rep_reg);
+
 		self.address_descriptor[rep_var] = { "type": "mem", "name": rep_var };
 		return rep_reg;
 	}

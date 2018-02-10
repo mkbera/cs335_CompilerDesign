@@ -10,8 +10,8 @@
 10	-	v	i	j
 11	arr=	a	index	v
 12	print	v
-13	inc	j
+13	+	j	j	1
 14	jump	7
-15	inc	i
+15	+	i	i	1
 16	jump	5
 17	exit
