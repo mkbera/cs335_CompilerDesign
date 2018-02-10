@@ -128,7 +128,6 @@ function getNextUseTable(basic_blocks, variables) {
     var next_use_table = new Array(tac.length).fill(null);;
 
     var variable_status = {};
-    // variables.forEach(function (variable) { variable_status[variable] = ["dead", Infinity]; });
 
     basic_blocks.forEach(function (block) {
         variables.forEach(function (variable) { variable_status[variable] = ["dead", Infinity]; });
