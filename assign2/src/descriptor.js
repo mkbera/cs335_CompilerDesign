@@ -1,4 +1,4 @@
-global.math_ops = ["+", "-", "^", "|", "&", "*", "/", "%", "=", "not", "inc", "dec", "=arr"]
+global.math_ops = ["+", "-", "^", "|", "&", "*", "/", "%", "=", "=arr"]
 global.math_ops_binary = ["+", "-", "^", "|", "&"]
 global.math_ops_unary = ["not", "inc", "dec"]
 global.math_ops_involved = ["*", "/", "%"]

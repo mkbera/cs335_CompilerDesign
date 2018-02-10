@@ -507,6 +507,8 @@ function codeGen(instr, next_use_table, line_nr) {
 		assembly.add("call syscall_print_int");
 	}
 	else if (op == "exit") {
+		registers.unloadRegisters();
+
 		assembly.add("");
 		assembly.add("mov eax, 1");
 		assembly.add("int 0x80");
@@ -518,10 +520,11 @@ function codeGen(instr, next_use_table, line_nr) {
 		var y = instr[4];
 		var des_z = "";
 		var des_y = "";
-		// assembly.add(registers.address_descriptor[z]);
+
 		if (registers.address_descriptor[z]["type"] == null) {
 			registers.address_descriptor[z] = { "type": "mem", "name": "z" };
 		}
+
 		if (registers.address_descriptor[z]["type"] == "mem") {
 			des_z = registers.getReg(z, line_nr, next_use_table, safe = [y], safe_regs = [], print = true);
 			assembly.add("mov dword " + des_z + ", [" + z + "]");

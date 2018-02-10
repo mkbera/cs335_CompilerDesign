@@ -16,7 +16,7 @@ class Registers {
 
 	getEmptyReg(variable, line_nr, next_use_table, safe = [], safe_regs = []) {
 		var self = this;
-		
+
 		var flag = false;
 		var rep_var;
 		var rep_reg;
@@ -90,8 +90,6 @@ class Registers {
 			}
 		});
 
-		console.log("pppppppppppppppppppppppppp");
-		// If()
 		self.register_descriptor[rep_reg] = variable;
 		self.address_descriptor[variable] = { "type": "reg", "name": rep_reg };
 

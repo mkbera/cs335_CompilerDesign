@@ -55,7 +55,7 @@ class Assembly {
 
 	print(file = "") {
 		this.assembly = this.assembly.replace(/\:\s*\n\s*\n/g, ":\n");
-		console.log(this.assembly);
+		// console.log(this.assembly);
 		if (file != "") {
 			var fs = require("fs");
 			fs.writeFile(file, assembly.assembly, (err) => {
