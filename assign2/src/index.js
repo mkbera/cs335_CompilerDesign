@@ -219,8 +219,12 @@ function main() {
     var inst_num = 0;
     basic_blocks.forEach(function (block) {
         block.forEach(function (line) {
-            codeGen(line, next_use_table, inst_num);
-            inst_num++;
+			codeGen(line, next_use_table, inst_num);
+			if (inst_num == 19) {
+				print(registers.address_descriptor);
+				print(next_use_table[24])
+			}
+				inst_num++;
         });
         // assembly.add("");
         // registers.unloadRegisters();
@@ -233,7 +237,10 @@ function main() {
         assembly.print(process.argv[3]);
     }
     else {
-        assembly.print();
+		assembly.print();
+		// console.log(registers.address_descriptor);
+		// console.log(next_use_table);
+		// if
     }
 }
 

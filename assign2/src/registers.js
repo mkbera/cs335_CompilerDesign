@@ -16,7 +16,7 @@ class Registers {
 
 	getEmptyReg(variable, line_nr, next_use_table, safe = [], safe_regs = []) {
 		var self = this;
-
+		
 		var flag = false;
 		var rep_var;
 		var rep_reg;
@@ -63,10 +63,10 @@ class Registers {
 
 	getReg(variable, line_nr, next_use_table, safe = [], safe_regs = []) {
 		var self = this;
-
+		//TODO : imul x y z, y not in reg, y 2nd last next use after x.
 		var rep_reg;
 		var rep_var;
-		var rep_use;
+		var rep_use = 0;
 
 		var flag = false;
 
@@ -89,6 +89,9 @@ class Registers {
 				}
 			}
 		});
+
+		console.log("pppppppppppppppppppppppppp");
+		// If()
 		self.register_descriptor[rep_reg] = variable;
 		self.address_descriptor[variable] = { "type": "reg", "name": rep_reg };
 
@@ -98,10 +101,10 @@ class Registers {
 	}
 
 
-	checkFarthestNextUse(variable, line_nr, next_use_table) {
+	checkFarthestNextUse(variable, line_nr, next_use_table, safe = []) {
 		var flag = true
 		variables.some(function (check_var) {
-			if (next_use_table[line_nr][variable][2] < next_use_table[line_nr][check_var][2]) {
+			if (safe.indexOf(check_var) == -1 && next_use_table[line_nr][variable][2] < next_use_table[line_nr][check_var][2]) {
 				flag = false;
 				return true;
 			}

@@ -37,6 +37,8 @@ class Assembly {
 		assembly.add("syscall_print_int:");
 		assembly.shiftRight();
 
+		assembly.add("push ecx")
+		assembly.add("push edx")
 		assembly.add("push ebp");
 		assembly.add("mov ebp, esp");
 		assembly.add("push eax");
@@ -45,6 +47,8 @@ class Assembly {
 		assembly.add("mov eax, 0");
 		assembly.add("mov esp, ebp");
 		assembly.add("pop ebp");
+		assembly.add("pop ecx")
+		assembly.add("pop ecx")
 		assembly.add("ret");
 	}
 
