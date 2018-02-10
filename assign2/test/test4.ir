@@ -4,19 +4,19 @@
 4	=	a	b
 5	=	e	a
 6	=	f	c
-7	*	a	b	e
-8	*	c	f	b
+7	%	a	b	e
+8	%	e	f	b
 9	=	d	c
 10	=	g	9
 11	=	h	a
 12	=	i	20
-13	*	g	d	c
-14	*	a	a	9
-15	*	g	a	1000
-16	*	a	b	8
+13	%	g	d	1
+14	%	a	a	9
+15	%	g	a	1000
+16	%	a	b	8
 17	=	j	0
 18	-	j	c	d
-19	*	g	j	i
+19	%	g	j	i
 20	=	a	1
 21	print	a
 22	print	b

@@ -18,6 +18,8 @@ global.tac;
 
 global.variables;
 global.basic_blocks;
+global.arrays;
+global.array_list;
 
 global.next_use_table;
 
@@ -55,6 +57,30 @@ function getVariables() {
     });
 
     return variables.unique();
+}
+
+function getArrayList() {
+	var array_list = [];
+
+	tac.forEach(function (instr) {
+        if (instr[1] == "array") {
+            array_list.push(instr[2]);
+        }
+	});
+
+	return array_list;
+}
+
+function getArrays() {
+	var arrays = {};
+
+	tac.forEach(function (instr) {
+        if (instr[1] == "array") {
+            arrays[instr[2]] = instr[3];
+        }
+	});
+	
+	return arrays;
 }
 
 
@@ -192,6 +218,8 @@ function main() {
 
     variables = getVariables();
     basic_blocks = getBasicBlocks();
+	arrays = getArrays();
+	array_list = getArrayList();
 
     next_use_table = getNextUseTable(basic_blocks, variables);
 
@@ -209,20 +237,25 @@ function main() {
     variables.forEach(function (variable) {
         assembly.add(variable + "\tDD\t0");
         registers.address_descriptor[variable] = { "type": null, "name": null };
-    });
+	});
+	
+	array_list.forEach(function (array) {
+		assembly.add(array + "\tTIMES\t" + arrays[array] + "\tDD\t0")
+	})
 
     assembly.shiftLeft();
     assembly.add("section .text")
     assembly.add("main:");
     assembly.shiftRight();
-
+	print(variables + "ppppppppppppp");
     var inst_num = 0;
     basic_blocks.forEach(function (block) {
         block.forEach(function (line) {
 			codeGen(line, next_use_table, inst_num);
-			if (inst_num == 19) {
+			if (inst_num == 5) {
 				print(registers.address_descriptor);
-				print(next_use_table[24])
+				print(next_use_table[6]);
+				print(registers.register_descriptor);
 			}
 				inst_num++;
         });

@@ -1,4 +1,4 @@
-global.registers_list = ["eax", "ebx", "ecx", "edx", "esi", "edi"];
+global.registers_list = ["eax", "ebx", "edx", "ecx"];
 
 
 class Registers {
@@ -143,11 +143,11 @@ class Registers {
 		}
 
 		var reg;
-		if (next_use_table[line_nr][variable][1] == Infinity) {											// variable has no next use
+		if (next_use_table[line_nr][variable][1] == Infinity) {			// variable has no next use
 			des_variable = "[" + des_variable + "]";
 		}
-		else if (self.checkFarthestNextUse(variable, line_nr, next_use_table)) {								// variable has farthest use
-			if ((reg = self.getEmptyReg(variable, line_nr, next_use_table, safe, safe_regs)) != null) {						// there is an empy register
+		else if (self.checkFarthestNextUse(variable, line_nr, next_use_table)) {	// variable has farthest use
+			if ((reg = self.getEmptyReg(variable, line_nr, next_use_table, safe, safe_regs)) != null) {	// there is an empy register
 				des_variable = reg;
 				if (print) assembly.add("mov dword " + des_variable + ", [" + variable + "]");
 			}

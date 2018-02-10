@@ -18,6 +18,10 @@ class Function {
 	}
 }
 
+class Array {
+	
+}
+
 
 module.exports = {
 	Variable: Variable,

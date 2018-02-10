@@ -1,0 +1,10 @@
+1	array	a	2
+2	arr=	a	0	69
+3	=	b	20
+4	=arr	b	a	0
+5	arr=	a	1	b
+6	=arr	c	a	0
+7	=arr	d	a	1
+8	print	b
+9	print	c
+10	print	d

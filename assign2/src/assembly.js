@@ -47,7 +47,7 @@ class Assembly {
 		assembly.add("mov eax, 0");
 		assembly.add("mov esp, ebp");
 		assembly.add("pop ebp");
-		assembly.add("pop ecx")
+		assembly.add("pop edx")
 		assembly.add("pop ecx")
 		assembly.add("ret");
 	}

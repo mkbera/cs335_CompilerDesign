@@ -17,9 +17,9 @@
 17	=	j	0
 18	+	j	c	d
 19	-	g	j	i
-20	+	g	f	h
+20	*	g	f	h
 21	if	lt	a	g	24
-22	+	a	a	1
+22	/	a	a	1
 23	jmp	25
 24	-	a	a	1
 25	=	a	10000
