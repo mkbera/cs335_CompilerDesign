@@ -14,50 +14,73 @@ class Registers {
 	}
 
 
+	spillVariable(variable, line_nr, print = true) {
+		var self = this;
+
+		if (variables.indexOf(variable) > -1 && self.address_descriptor[variable] != null && self.address_descriptor[variable]["type"] == "reg") {
+			var reg = self.address_descriptor[variable]["name"];
+
+			if (print) {
+				print = false;
+
+				var block = basic_blocks[line_block_mapping[line_nr]];
+				block.some(function (instr) {
+					if (instr[2] == variable) {
+						print = true;
+						return true;
+					}
+				});
+
+				if (print) assembly.add("mov dword [" + variable + "], " + reg);
+			}
+			registers.address_descriptor[variable] = { "type": "mem", "name": variable };
+
+			self.register_descriptor[reg] = null;
+		}
+	}
+
+
 	getEmptyReg(variable, line_nr, next_use_table, safe = [], safe_regs = []) {
 		var self = this;
 
-		var flag = false;
-		var rep_var;
-		var rep_reg;
+		var rep_reg = null;
 
 		registers_list.some(function (register) {
 			if (safe_regs.indexOf(register) == -1 && self.register_descriptor[register] == null) {
 				self.register_descriptor[register] = variable;
 				self.address_descriptor[variable] = { "type": "reg", "name": register };
-				flag = true;
+
 				rep_reg = register;
 				return true;
 			}
 		});
 
-		return (flag) ? rep_reg : null;
+		return rep_reg;
 	}
 
 
 	getNoUseReg(variable, line_nr, next_use_table, safe = [], safe_regs = []) {
 		var self = this;
 
-		var flag = false;
 		var rep_var;
-		var rep_reg;
+		var rep_reg = null;
 
 		registers_list.some(function (register) {
 			if (safe_regs.indexOf(register) == -1) {
 				rep_var = self.register_descriptor[register];
 				if (safe.indexOf(rep_var) == -1 && next_use_table[line_nr][rep_var][1] == Infinity) {	//no next use empty it
-					assembly.add("mov dword [" + rep_var + "], " + register);
-					self.address_descriptor[rep_var] = { "type": "mem", "name": rep_var };
+					self.spillVariable(rep_var, line_nr, print = true);
+
 					self.address_descriptor[variable] = { "type": "reg", "name": register };
 					self.register_descriptor[register] = variable;
-					flag = true;
+
 					rep_reg = register;
 					return true;
 				}
 			}
 		});
 
-		return (flag) ? rep_reg : null;
+		return rep_reg;
 	}
 
 
@@ -67,8 +90,6 @@ class Registers {
 		var rep_reg;
 		var rep_var;
 		var rep_use = 0;
-
-		var flag = false;
 
 		rep_reg = self.getEmptyReg(variable, line_nr, next_use_table, safe);
 		if (rep_reg != null) {
@@ -90,12 +111,11 @@ class Registers {
 			}
 		});
 
+		self.spillVariable(rep_var, line_nr, print = true);
+
 		self.register_descriptor[rep_reg] = variable;
 		self.address_descriptor[variable] = { "type": "reg", "name": rep_reg };
 
-		assembly.add("mov dword [" + rep_var + "], " + rep_reg);
-
-		self.address_descriptor[rep_var] = { "type": "mem", "name": rep_var };
 		return rep_reg;
 	}
 
@@ -113,17 +133,14 @@ class Registers {
 	}
 
 
-	unloadRegisters() {
+	unloadRegisters(line_nr) {
 		var self = this;
-		registers_list.forEach(function (register) {
-			var variable = self.register_descriptor[register];
-			if (variable != null) {
-				assembly.add("mov dword [" + variable + "], " + register);
-				self.register_descriptor[register] = null;
-				self.address_descriptor[variable] = { "type": "mem", "name": variable };
-			}
+
+		variables.forEach(function (variable) {
+			self.spillVariable(variable, line_nr, print = true);
 		});
 	}
+
 
 	loadVariable(variable, line_nr, next_use_table, safe = [], safe_regs = [], print = true) {
 		var self = this;
