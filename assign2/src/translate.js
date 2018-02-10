@@ -223,31 +223,21 @@ function codeGen(instr, next_use_table, line_nr) {
 				registers.address_descriptor[y] = { "type": "mem", "name": y };
 				registers.register_descriptor[des_y] = x;
 			}
-			else if ((reg = registers.getEmptyReg(x, line_nr, next_use_table, safe = [y], safe_regs = [], print = true)) != null) {		//empty for x
+			else if ((reg = registers.getEmptyReg(x, line_nr, next_use_table, safe = [y, z], safe_regs = [], print = true)) != null) {		//empty for x
 				assembly.add("imul dword " + reg + ", " + des_y + ", " + des_z);
 			}
-			else if ((reg = registers.getNoUseReg(x, line_nr, next_use_table, safe = [y], safe_regs = [], print = true)) != null) {
+			else if ((reg = registers.getNoUseReg(x, line_nr, next_use_table, safe = [y, z], safe_regs = [], print = true)) != null) {
 				assembly.add("imul dword " + reg + ", " + des_y + ", " + des_z);
 			}
 			else {	// get reg for spilling
-				reg = registers.getReg(x, line_nr, next_use_table, safe = [y], safe_regs = [], print = true);
+				reg = registers.getReg(x, line_nr, next_use_table, safe = [y, z], safe_regs = [], print = true);
 				assembly.add("imul dword " + reg + ", " + des_y + ", " + des_z);
 			}
 		}
 		else {	// z in reg or mem
-			if (registers.address_descriptor[z]["type"] == "mem") {	// z in mem
-				if (next_use_table[line_nr][z][1] != Infinity && !registers.checkFarthestNextUse(z, line_nr, next_use_table, safe = [x, y])) {	// z has next use and it is not farthest
-					des_z = registers.getReg(z, line_nr, next_use_table, safe = [x, y], safe_regs = [], print = true);
-					assembly.add("mov dword " + des_z + ", [" + z + "]")
-				}
-				else {
-					des_z = registers.address_descriptor[z]["name"];
-					des_z = "[" + des_z + "]";
-				}
-			}
-			else {		// z in reg
-				des_z = registers.address_descriptor[z]["name"];
-			}
+			des_z = registers.loadVariable(z, line_nr, next_use_table, safe = [x, y], safe_regs = [], print = true);
+
+			assembly.add("TEST");
 			if (registers.address_descriptor[x]["type"] == "reg") {	// x in reg
 				assembly.add("mov dword " + des_x + ", " + des_y);
 				assembly.add("imul dword " + des_x + ", " + des_z);

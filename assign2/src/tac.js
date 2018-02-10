@@ -83,7 +83,7 @@ function getBasicBlocks() {
 
 
 function getNextUseTable(basic_blocks, variables) {
-	var next_use_table = new Array(tac.length).fill({});;
+	var next_use_table = new Array(tac.length).fill({});
 
 	var variable_status = {};
 
@@ -169,8 +169,6 @@ function getNextUseTable(basic_blocks, variables) {
 			}
 		}
 	});
-
-	console.log(next_use_table);
 
 	return next_use_table;
 }
