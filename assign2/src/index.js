@@ -19,6 +19,7 @@ global.registers = new Registers();
 global.arrays;
 global.variables;
 global.basic_blocks;
+global.line_block_mapping;
 
 global.next_use_table;
 
@@ -44,6 +45,15 @@ function main() {
 
     variables = TAC.getVariables();
     basic_blocks = TAC.getBasicBlocks();
+
+    line_block_mapping = {};
+    var block_nr = 0;
+    basic_blocks.forEach(function (block) {
+        block.forEach(function (line) {
+            line_block_mapping[parseInt(line[0]) - 1] = block_nr;
+        });
+        block_nr += 1;
+    });
 
     arrays = TAC.getArrays();
 
