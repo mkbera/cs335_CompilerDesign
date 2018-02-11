@@ -26,7 +26,7 @@
 26	print	j
 27	-	j	c	d
 28	print	j
-29	%	g	j	i
+29	/	g	j	i
 30	print	g
 31	/	a	a	1
 32	print	a

@@ -415,7 +415,7 @@ function codeGen(instr, next_use_table, line_nr) {
 		else if (registers.address_descriptor[z]["type"] == "mem") {	// z in mem
 			des_z = registers.loadVariable(z, line_nr, next_use_table, safe = [], safe_regs = ["eax", "edx"], print = true);
 		}
-		
+		assembly.add("cdq");
 		assembly.add("idiv dword " + des_z);
 		if(x == z && registers.address_descriptor[z]["type"] == "reg" && registers.address_descriptor[z]["name"] != "eax"){
 			reg = registers.address_descriptor[z]["name"];
@@ -492,6 +492,7 @@ function codeGen(instr, next_use_table, line_nr) {
 		assembly.shiftRight();
 	}
 	else if (op == "call") {
+		registers.unloadRegisters(line_nr);
 		assembly.add("call func_" + instr[2]);
 	}
 	else if (op == "return") {
@@ -510,7 +511,7 @@ function codeGen(instr, next_use_table, line_nr) {
 				des_variable = registers.loadVariable(variable, line_nr, next_use_table, safe = [], safe_regs = ["eax"], print = false);
 			}
 
-			assembly.add("mov dword " + des_variable + ", eax");
+			assembly.add("mov dword " + des_variable + ", eax; comment");
 			registers.register_descriptor["eax"] = null;
 		}
 		else {
@@ -620,7 +621,7 @@ function codeGen(instr, next_use_table, line_nr) {
 		assembly.add("pop edx");
 		assembly.add("pop ecx");
 		assembly.add("pop ebx");
-		assembly.add("push eax");
+		assembly.add("pop eax");
 		if (registers.address_descriptor[x]["type"] == "reg"){
 			des_x = registers.address_descriptor[x]["name"];
 			assembly.add("mov dword " + des_x + ", [" + x + "]");

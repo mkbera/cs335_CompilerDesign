@@ -77,6 +77,10 @@ function getBasicBlocks() {
 				splits.push(index);
 				break;
 			}
+			case "call": {
+				splits.push(index);
+				break;
+			}
 		}
 	});
 

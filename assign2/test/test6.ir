@@ -20,17 +20,18 @@
 20	*	g	f	h
 21	if	lt	a	g	24
 22	/	a	a	1
-23	jmp	25
+23	jump	25
 24	-	a	a	1
 25	=	a	10000
 26	if	gt	a	b	28
 27	+	g	i	7
 28	+	b	b	1
 29	if	ge	b	10	31
-30	jmp	28
+30	jump	28
 31	=	c	5
 32	if	eq	c	10	36
 33	+	c	c	1
-34	-	b	a	c
-35	jmp	32
-36	=	a	1
+34	print	c
+35	jump	32
+36	print	c
+37	exit
