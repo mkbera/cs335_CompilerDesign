@@ -134,7 +134,6 @@ class Registers {
 
 	unloadRegisters(line_nr) {
 		var self = this;
-		console.log(functions);
 		variables.forEach(function (variable) {
 			self.spillVariable(variable, line_nr, true);
 		});

@@ -54,14 +54,14 @@ class Assembly {
 		assembly.add("pop esi")
 		assembly.add("pop edx");
 		assembly.add("pop ecx");
-		assembly.add("pop ebx")		
+		assembly.add("pop ebx")
 		assembly.add("ret");
 	}
 
 
 	print(file = "") {
 		this.assembly = this.assembly.replace(/\:\s*\n\s*\n/g, ":\n");
-		// console.log(this.assembly);
+		console.log(this.assembly);
 		if (file != "") {
 			var fs = require("fs");
 			fs.writeFile(file, assembly.assembly, (err) => {

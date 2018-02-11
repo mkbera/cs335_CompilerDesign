@@ -207,11 +207,31 @@ function getNextUseTable(basic_blocks, variables) {
 }
 
 
+function getSymbolTable() {
+	var symbol_table = new SymbolTable();
+
+	variables.forEach(function (variable) {
+		symbol_table.insert_variable(variable, "int", "global");
+	});
+
+	functions.forEach(function (func) {
+		symbol_table.insert_function(func, "int", "global", null);
+	});
+
+	for (array in arrays) {
+		symbol_table.insert_array(array, "int", "global", arrays[array]);
+	}
+
+	return symbol_table;
+}
+
+
 module.exports = {
 	getArrays: getArrays,
 	getVariables: getVariables,
 	getLabels: getLabels,
 	getBasicBlocks: getBasicBlocks,
 	getNextUseTable: getNextUseTable,
-	getFunctions: getFunctions
+	getFunctions: getFunctions,
+	getSymbolTable: getSymbolTable
 }

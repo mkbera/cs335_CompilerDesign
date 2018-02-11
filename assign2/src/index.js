@@ -21,6 +21,7 @@ global.variables;
 global.functions;
 global.basic_blocks;
 global.line_block_mapping;
+global.symbol_table;
 
 global.next_use_table;
 
@@ -45,8 +46,8 @@ function main() {
 
 
     variables = TAC.getVariables();
-	basic_blocks = TAC.getBasicBlocks();
-	functions = TAC.getFunctions();
+    basic_blocks = TAC.getBasicBlocks();
+    functions = TAC.getFunctions();
 
     line_block_mapping = {};
     var block_nr = 0;
@@ -59,21 +60,8 @@ function main() {
 
     arrays = TAC.getArrays();
 
-//------------------------------------------- CREATING SYMBOL TABLE ---------------------------------------------------------
-	SymbolTable = new SymbolTable();
-	variables.forEach(function (variable){
-		SymbolTable.insert_variable(variable, "int", "global");
-	});
-	functions.forEach(function (func){
-		SymbolTable.insert_function(func, "int", "global", null);
-	});
-	for (array in arrays) {
-		SymbolTable.insert_array(array, "int", "global", arrays[array]);		
-	}
-
-//-------------------------------------------		DONE			---------------------------------------------------------
-
     next_use_table = TAC.getNextUseTable(basic_blocks, variables);
+    symbol_table = TAC.getSymbolTable();
 
     assembly.setLabels(TAC.getLabels());
 
@@ -86,7 +74,7 @@ function main() {
 
     assembly.shiftRight();
     assembly.add("_int db \"%i\", 0x0a, 0x00");
-	assembly.add("_int_scan db \"%d\", 0");
+    assembly.add("_int_scan db \"%d\", 0");
 
     variables.forEach(function (variable) {
         assembly.add(variable + "\tDD\t0");
@@ -115,7 +103,7 @@ function main() {
     }
     else {
         assembly.print();
-	}
+    }
 }
 
 main();
