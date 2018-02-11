@@ -23,9 +23,25 @@ function getVariables() {
 		if (math_ops.indexOf(instr[1]) > -1 && keywords.indexOf(instr[2]) == -1) {
 			variables.push(instr[2]);
 		}
+		if (instr[1] == "scan") {
+			variables.push(instr[2]);
+		}
 	});
 
 	return variables.unique();
+}
+
+
+function getFunctions() {
+	var functions = [];
+
+	tac.forEach(function (instr) {
+		if (instr[1] == "function") {
+			functions.push(inst[2]);
+		}
+	});
+
+	return functions.unique();
 }
 
 
@@ -139,6 +155,14 @@ function getNextUseTable(basic_blocks, variables) {
 					}
 					break;
 				}
+				case "scan": {
+					var v1 = instr[2];
+
+					if (variables.indexOf(v1) > -1) {
+						variable_status[v1] = ["live", parseInt(instr[0])];
+					}
+					break;
+				}
 				case "=": {
 					var v1 = instr[2];
 					var v2 = instr[3];
@@ -184,5 +208,6 @@ module.exports = {
 	getVariables: getVariables,
 	getLabels: getLabels,
 	getBasicBlocks: getBasicBlocks,
-	getNextUseTable: getNextUseTable
+	getNextUseTable: getNextUseTable,
+	getFunctions: getFunctions
 }

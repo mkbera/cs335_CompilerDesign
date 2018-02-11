@@ -19,11 +19,18 @@ class Function {
 }
 
 class Array {
-	
+	constructor(identifier, data_type, env_scope, size) {
+		this.identifier = identifier;
+		this.data_type = data_type;
+		this.env_scope = env_scope;
+		this.size = size;
+		this.category = "array";
+	}
 }
 
 
 module.exports = {
 	Variable: Variable,
-	Function: Function
+	Function: Function,
+	Array:	Array
 };

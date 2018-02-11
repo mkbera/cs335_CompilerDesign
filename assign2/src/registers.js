@@ -44,7 +44,6 @@ class Registers {
 		var self = this;
 
 		var rep_reg = null;
-
 		registers_list.some(function (register) {
 			if (safe_regs.indexOf(register) == -1 && self.register_descriptor[register] == null) {
 				self.register_descriptor[register] = variable;
@@ -135,9 +134,9 @@ class Registers {
 
 	unloadRegisters(line_nr) {
 		var self = this;
-
+		console.log(functions);
 		variables.forEach(function (variable) {
-			self.spillVariable(variable, line_nr, print = true);
+			self.spillVariable(variable, line_nr, true);
 		});
 	}
 
