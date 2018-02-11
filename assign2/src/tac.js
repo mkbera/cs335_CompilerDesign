@@ -37,7 +37,7 @@ function getFunctions() {
 
 	tac.forEach(function (instr) {
 		if (instr[1] == "function") {
-			functions.push(inst[2]);
+			functions.push(instr[2]);
 		}
 	});
 
