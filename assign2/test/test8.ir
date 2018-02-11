@@ -8,3 +8,4 @@
 8	print	b
 9	print	c
 10	print	d
+11	exit
