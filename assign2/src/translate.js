@@ -8,6 +8,10 @@ function codeGen(instr, next_use_table, line_nr) {
 		assembly.shiftRight();
 	}
 
+	console.log(registers.register_descriptor);
+	console.log(line_nr);
+	console.log("")
+
 	var op = instr[1];
 
 	if (op == "=") {
@@ -30,7 +34,7 @@ function codeGen(instr, next_use_table, line_nr) {
 		}
 
 		if (des_y == null) {
-			throw Error("Comparing Uninitialised Values");
+			throw Error("Using Uninitialised Values");
 		}
 
 		if (registers.address_descriptor[x]["type"] == "reg") {    // x is in a register
@@ -130,12 +134,8 @@ function codeGen(instr, next_use_table, line_nr) {
 			des_z = z;
 		}
 		else {
-			if (registers.address_descriptor[z]["type"] == "reg") {
-				des_z = registers.address_descriptor[z]["name"];
-			}
-			else {
-				des_z = "[" + registers.address_descriptor[z]["name"] + "]";
-			}
+			des_z = registers.loadVariable(z, line_nr, next_use_table, safe = [x, y], safe_regs = [], print = true);
+			console.log(next_use_table[line_nr]);
 		}
 
 		des_x = registers.address_descriptor[x]["name"];
@@ -187,7 +187,8 @@ function codeGen(instr, next_use_table, line_nr) {
 		des_x = registers.loadVariable(x, line_nr, next_use_table, safe = [], safe_regs = [], print = true);
 
 		assembly.add(map_op[op] + " dword " + des_x);
-	} else if (op == "*") {
+	}
+	else if (op == "*") {
 		var x = instr[2];
 		var y = instr[3];
 
@@ -312,7 +313,8 @@ function codeGen(instr, next_use_table, line_nr) {
 			registers.register_descriptor["eax"] = x;
 			registers.register_descriptor["edx"] = null;
 			registers.address_descriptor[x] = { "type": "reg", "name": "eax" };
-		} else {	// op is %
+		}
+		else {	// op is %
 			registers.register_descriptor["eax"] = null;
 			registers.register_descriptor["edx"] = x;
 			registers.address_descriptor[x] = { "type": "reg", "name": "edx" };
@@ -344,7 +346,8 @@ function codeGen(instr, next_use_table, line_nr) {
 			if (flag == true) {
 				assembly.add("mov dword " + rep_reg + ", " + z);
 				des_z = rep_reg;
-			} else {
+			}
+			else {
 				registers_list.some(function (register) {
 					if (safe_regs.indexOf(register) == -1) {
 						rep_var = registers.register_descriptor[register];
@@ -361,7 +364,8 @@ function codeGen(instr, next_use_table, line_nr) {
 				if (flag == true) {
 					assembly.add("mov dword " + rep_reg + ", " + z);
 					des_z = rep_reg;
-				} else {
+				}
+				else {
 					registers_list.forEach(function (register) {
 						if (safe_regs.indexOf(register) == -1) {
 							var curr_var = registers.register_descriptor[register];

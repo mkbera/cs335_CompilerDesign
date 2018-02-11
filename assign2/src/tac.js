@@ -92,7 +92,12 @@ function getNextUseTable(basic_blocks, variables) {
 		for (var i = block.length - 1; i >= 0; i--) {
 			var instr = block[i];
 
-			variables.forEach(function (variable) { next_use_table[parseInt(instr[0]) - 1][variable] = variable_status[variable]; });
+			next_use_table[parseInt(instr[0]) - 1] = JSON.parse(JSON.stringify(variable_status));
+			variables.forEach(function (variable) {
+				if (next_use_table[parseInt(instr[0]) - 1][variable][1] == null) {
+					next_use_table[parseInt(instr[0]) - 1][variable][1] = Infinity;
+				}
+			});
 
 			if (math_ops_binary.indexOf(instr[1]) > -1 || math_ops_involved.indexOf(instr[1]) > -1) {
 				var dt = instr[2];

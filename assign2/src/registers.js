@@ -1,4 +1,4 @@
-global.registers_list = ["eax", "ebx", "edx", "ecx"];
+global.registers_list = ["eax", "ebx", "ecx", "edx", "esi", "edi"];
 
 
 class Registers {
