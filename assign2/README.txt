@@ -1,7 +1,7 @@
 GROUP 24:
     -   Manish Kumar Bera
     -   Gurpreet Singh
-    -   Prann Bansal	
+    -   Prann Bansal
 
 In this assignment, we provide the source for the code generation part of the
 compiler, for conversion from the 3AC (IR) to Assembly Code.
@@ -22,14 +22,17 @@ This convention is strict, and any error in following might lead to wrong
 assembly code.
 
 Along with that these are the conventions we made for our 3AC:
--	For X = Y op Z, Y can't take a constant value.
--	array elements can't participate directly in an operation, they will have to
-    be loaded in a temporary variable i.e. either "arr[i] = x" or "x = arr[i]"
+    -	For X = Y op Z, Y can't take a constant value.
+	-	array elements can't participate directly in an operation, they will
+		have to be loaded in a temporary variable i.e. either "arr[i] = x" or "x
+		= arr[i]"
+	-	There will be an exit call at the end of the main block
 
 Library functions provided in our 3AC are:
-"print	a"	:	print an integer value "a"
-"scan	a"	:	scan an integer value into variable "a"
-"exit"		:	denotes end of code and exits from the code
+
+	"print	a"	:	print an integer value "a"
+	"scan	a"	:	scan an integer value into variable "a"
+	"exit"		:	denotes end of code and exits from the code
 
 
 

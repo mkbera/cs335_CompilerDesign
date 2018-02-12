@@ -4,7 +4,10 @@
 4	print	ans
 5	exit
 6	function	factorial
-7	*	ans	ans	n
-8	-	n	n	1
-9	if	ne	n	1	7
-10	return
+7	if	le	n	1	12
+8	*	ans	ans	n
+9	-	n	n	1
+10	if	ne	n	1	8
+11	jump	13
+12	=	ans	1
+13	return

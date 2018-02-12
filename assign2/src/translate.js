@@ -1,6 +1,8 @@
 function codeGen(instr, next_use_table, line_nr) {
 	if (assembly.labels.indexOf(line_nr + 1) > -1) {
-		registers.unloadRegisters(line_nr);
+		if (line_nr > 0) {
+			registers.unloadRegisters(line_nr - 1);
+		}
 
 		assembly.shiftLeft();
 		assembly.add("");
@@ -91,7 +93,7 @@ function codeGen(instr, next_use_table, line_nr) {
 				}
 				else {																						// next use of x is before y
 					des_x = registers.getReg(x, line_nr, next_use_table, safe = [], safe_regs = []);
-					assembly.add("mov dword " + des_x + ", [" + x + "]");
+					// assembly.add("mov dword " + des_x + ", [" + x + "]");
 
 					des_y = registers.loadVariable(y, line_nr, next_use_table, safe = [x], safe_regs = [], print = true);
 				}
@@ -475,11 +477,11 @@ function codeGen(instr, next_use_table, line_nr) {
 		}
 
 		assembly.add("cmp dword " + des_x + ", " + des_y);
-		registers.unloadRegisters(line_nr);
+		registers.unloadRegisters(line_nr - 1);
 		assembly.add(map_op[cond] + " label_" + instr[5]);
 	}
 	else if (op == "jump") {
-		registers.unloadRegisters(line_nr);
+		registers.unloadRegisters(line_nr - 1);
 		assembly.add("jmp label_" + instr[2]);
 	}
 	else if (op == "function") {
@@ -488,7 +490,8 @@ function codeGen(instr, next_use_table, line_nr) {
 		assembly.shiftRight();
 	}
 	else if (op == "call") {
-		registers.unloadRegisters(line_nr);
+		registers.unloadRegisters(line_nr - 1);
+
 		assembly.add("call func_" + instr[2]);
 	}
 	else if (op == "return") {
@@ -628,7 +631,7 @@ function codeGen(instr, next_use_table, line_nr) {
 		assembly.add("");
 	}
 	else if (op == "exit") {
-		registers.unloadRegisters(line_nr);
+		registers.unloadRegisters(line_nr - 1);
 
 		assembly.add("");
 		assembly.add("mov eax, 1");
