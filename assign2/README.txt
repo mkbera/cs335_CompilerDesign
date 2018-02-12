@@ -1,7 +1,7 @@
 GROUP 24:
     -   Manish Kumar Bera
     -   Gurpreet Singh
-    -   Prann Bansal
+    -   Prann Bansal	
 
 In this assignment, we provide the source for the code generation part of the
 compiler, for conversion from the 3AC (IR) to Assembly Code.
@@ -16,7 +16,7 @@ All the operations and keywords allowed in our 3AC are described in
 IR generation will handle the correctness of the 3AC.
 
 Each instruction will start with a line number and will have the elements
-separated by a tab as shown below: "line_num	op  X	Y	Z"
+separated by a tab as shown below: "line_num	op	X	Y	Z"
 
 This convention is strict, and any error in following might lead to wrong
 assembly code.
@@ -25,6 +25,11 @@ Along with that these are the conventions we made for our 3AC:
 -	For X = Y op Z, Y can't take a constant value.
 -	array elements can't participate directly in an operation, they will have to
     be loaded in a temporary variable i.e. either "arr[i] = x" or "x = arr[i]"
+
+Library functions provided in our 3AC are:
+"print	a"	:	print an integer value "a"
+"scan	a"	:	scan an integer value into variable "a"
+"exit"		:	denotes end of code and exits from the code
 
 
 
