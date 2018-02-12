@@ -558,7 +558,7 @@ function codeGen(instr, next_use_table, line_nr) {
 			des_z = registers.address_descriptor[z]["name"];
 		}
 		if (variables.indexOf(y) == -1) {	// y is constant
-			assembly.add("mov dword " + des_z + ", [" + arr + " + " + y + "]");
+			assembly.add("mov dword " + des_z + ", [" + arr + " + 4*" + y + "]");
 		}
 		else {	//	y not constant
 			des_y = registers.address_descriptor[y]["name"];
@@ -566,7 +566,7 @@ function codeGen(instr, next_use_table, line_nr) {
 				des_y = registers.getReg(y, line_nr, next_use_table, safe = [z], safe_regs = [], print = true);
 				assembly.add("mov dword " + des_y + ", [" + y + "]");
 			}
-			assembly.add("mov dword " + des_z + ", [" + arr + " + " + des_y + "]");
+			assembly.add("mov dword " + des_z + ", [" + arr + " + 4*" + des_y + "]");
 		}
 	}
 	else if (op == "arr=") {	// a[10] = z
@@ -596,7 +596,7 @@ function codeGen(instr, next_use_table, line_nr) {
 		else {
 			des_z = registers.address_descriptor[z]["name"];
 		}
-		assembly.add("mov dword [" + arr + " + " + des_y + "], " + des_z);
+		assembly.add("mov dword [" + arr + " + 4*" + des_y + "], " + des_z);
 	}
 	else if (op == "scan") {
 		var x = instr[2];
