@@ -3,7 +3,7 @@
 All the operations and keywords allowed in our 3AC are described in "/src/descriptor.js".
 
 Each instruction will start with a line number and will have the elements separated by a tab as shown below:
-					"line_num	op	X	Y	Z"
+	"line_num	op	X	Y	Z"
 
 Along with that these are the conventions we made for our 3AC:
 -	For X = Y op Z, Y can't take a constant value.
