@@ -43,7 +43,8 @@ Translates the 3AC to assembly code.
 
 ############################	RUNNING THE CODE	######################################
 Call make and execute the following command to run the code:
-	bin/codegen test/test.ir result.asm
+	bin/codegen test/test.ir
+
 Also one can use this command:
 	bin/codegen test/test.ir result.asm
 The resulting assembly code will be written in result.asm
