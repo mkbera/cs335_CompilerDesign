@@ -1,0 +1,15 @@
+1	arr	100
+2	scan	n
+3	=	i	0
+4	=	sum	0	
+5	if	eq	i	n	9
+6	scan	t
+7	arr=	a	i	t
+8	jmp	5
+9	=	i	0
+10	if	eq	i	n	14
+11	=arr	t	arr	i
+12	*	sum	sum	t
+13	jmp	10
+14	print	sum
+15	exit

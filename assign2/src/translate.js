@@ -545,7 +545,7 @@ function codeGen(instr, next_use_table, line_nr) {
 		var des_y = "";
 
 		if (registers.address_descriptor[z]["type"] == null) {	// z = a[10]; z declared for first time
-			registers.address_descriptor[z] = { "type": "mem", "name": "z" };
+			registers.address_descriptor[z] = { "type": "mem", "name": z };
 		}
 
 		if (registers.address_descriptor[z]["type"] == "mem") {	// z in mem
@@ -618,7 +618,10 @@ function codeGen(instr, next_use_table, line_nr) {
 		assembly.add("pop ecx");
 		assembly.add("pop ebx");
 		assembly.add("pop eax");
-		if (registers.address_descriptor[x]["type"] == "reg") {
+		if (registers.address_descriptor[x]["type"] == null){
+			registers.address_descriptor[x] = {"type" : "mem", "name" : x};
+		}
+		else if (registers.address_descriptor[x]["type"] == "reg") {
 			des_x = registers.address_descriptor[x]["name"];
 			assembly.add("mov dword " + des_x + ", [" + x + "]");
 		}
