@@ -16,11 +16,24 @@ function getLabels() {
 }
 
 
-function getVariables() {
+function getArrays() {
+	var arrays = {};
+
+	tac.forEach(function (instr) {
+		if (instr[1] == "array") {
+			arrays[instr[2]] = instr[3];
+		}
+	});
+
+	return arrays;
+}
+
+
+function getVariables(arrays) {
 	var variables = [];
 
 	tac.forEach(function (instr) {
-		if (math_ops.indexOf(instr[1]) > -1 && keywords.indexOf(instr[2]) == -1) {
+		if (math_ops.indexOf(instr[1]) > -1 && keywords.indexOf(instr[2]) == -1 && arrays.indexOf(instr[1]) == -1) {
 			variables.push(instr[2]);
 		}
 		if (instr[1] == "scan") {
@@ -42,19 +55,6 @@ function getFunctions() {
 	});
 
 	return functions.unique();
-}
-
-
-function getArrays() {
-	var arrays = {};
-
-	tac.forEach(function (instr) {
-		if (instr[1] == "array") {
-			arrays[instr[2]] = instr[3];
-		}
-	});
-
-	return arrays;
 }
 
 
@@ -188,16 +188,18 @@ function getNextUseTable(basic_blocks, variables) {
 					if (variables.indexOf(value) > -1) {
 						variable_status[value] = ["live", parseInt(instr[0])];
 					}
+					break;
 				}
 				case "=arr": {
 					var destn = instr[2];
 					var value = instr[4];
 
-					variable_status[destn] = ["live", parseInt(instr[0])];
+					variable_status[destn] = ["dead", Infinity];
 
 					if (variables.indexOf(value) > -1) {
 						variable_status[value] = ["live", parseInt(instr[0])];
 					}
+					break;
 				}
 			}
 		}

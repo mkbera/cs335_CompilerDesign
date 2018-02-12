@@ -44,8 +44,8 @@ function main() {
         tac[index] = line.trim().split("\t");
     });
 
-
-    variables = TAC.getVariables();
+    arrays = TAC.getArrays();
+    variables = TAC.getVariables(Object.keys(arrays));
     basic_blocks = TAC.getBasicBlocks();
     functions = TAC.getFunctions();
 
@@ -57,8 +57,6 @@ function main() {
         });
         block_nr += 1;
     });
-
-    arrays = TAC.getArrays();
 
     next_use_table = TAC.getNextUseTable(basic_blocks, variables);
     symbol_table = TAC.getSymbolTable();

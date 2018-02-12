@@ -618,8 +618,8 @@ function codeGen(instr, next_use_table, line_nr) {
 		assembly.add("pop ecx");
 		assembly.add("pop ebx");
 		assembly.add("pop eax");
-		if (registers.address_descriptor[x]["type"] == null){
-			registers.address_descriptor[x] = {"type" : "mem", "name" : x};
+		if (registers.address_descriptor[x]["type"] == null) {
+			registers.address_descriptor[x] = { "type": "mem", "name": x };
 		}
 		else if (registers.address_descriptor[x]["type"] == "reg") {
 			des_x = registers.address_descriptor[x]["name"];
