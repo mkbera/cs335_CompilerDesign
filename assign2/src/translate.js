@@ -413,7 +413,7 @@ function codeGen(instr, next_use_table, line_nr) {
 		else if (registers.address_descriptor[z]["type"] == "mem") {	// z in mem
 			des_z = registers.loadVariable(z, line_nr, next_use_table, safe = [], safe_regs = ["eax", "edx"], print = true);
 		}
-
+		assembly.add("cdq");
 		assembly.add("idiv dword " + des_z);
 		if (x == z && registers.address_descriptor[z]["type"] == "reg" && registers.address_descriptor[z]["name"] != "eax") {
 			reg = registers.address_descriptor[z]["name"];
@@ -495,6 +495,7 @@ function codeGen(instr, next_use_table, line_nr) {
 		assembly.add("call func_" + instr[2]);
 	}
 	else if (op == "return") {
+		registers.unloadRegisters(line_nr - 1);
 		assembly.add("ret");
 	}
 	else if (op == "print") {

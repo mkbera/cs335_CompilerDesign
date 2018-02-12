@@ -45,14 +45,14 @@
 44	print	h
 45	%	t	h	f
 46	print	t
-47	%	t	h	7
+47	+	t	h	7
 48	print	t
-49	%	t	t	h
+49	+	t	t	h
 50	print	t
-51	%	t	t	3
+51	+	t	t	3
 52	print	t
-53	%	t	e	t
+53	+	t	e	t
 54	print	t
-55	%	t	t	h
+55	+	t	t	h
 56	print	t
 57	exit

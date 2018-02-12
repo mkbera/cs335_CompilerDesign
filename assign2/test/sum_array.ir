@@ -1,15 +1,18 @@
-1	arr	100
+1	array	arr	100
 2	scan	n
 3	=	i	0
-4	=	sum	0	
-5	if	eq	i	n	9
+4	=	sum	1
+5	if	eq	i	n	10
 6	scan	t
-7	arr=	a	i	t
-8	jump	5
-9	=	i	0
-10	if	eq	i	n	14
-11	=arr	t	arr	i
-12	+	sum	sum	t
-13	jump	10
-14	print	sum
-15	exit
+7	arr=	arr	i	t
+8	+	i	i	1
+9	jump	5
+10	=	i	0
+11	if	eq	i	n	17
+12	=arr	t	arr	i
+13	print	t
+14	+	sum	sum	t
+15	+	i	i	1
+16	jump	11
+17	print	sum
+18	exit

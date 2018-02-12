@@ -10,14 +10,14 @@
 10	-	v	i	j
 11	arr=	a	index	v
 12	print	v
-13	call	increment_j
+13	call	inc2
 14	jump	7
-15	call	increment_i
+15	call	inc1
 16	jump	5
 17	exit
-18	function	increment_i
+18	function	inc1
 19	+	i	i	1
 20	return
-21	function	increment_j
+21	function	inc2
 22	+	j	j	1
 23	return
