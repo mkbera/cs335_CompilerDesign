@@ -18,7 +18,6 @@ function getLabels() {
 
 function getArrays() {
 	var arrays = {};
-
 	tac.forEach(function (instr) {
 		if (instr[1] == "array") {
 			arrays[instr[2]] = instr[3];
@@ -162,9 +161,7 @@ function getNextUseTable(basic_blocks, variables) {
 				case "scan": {
 					var v1 = instr[2];
 
-					if (variables.indexOf(v1) > -1) {
-						variable_status[v1] = ["live", parseInt(instr[0])];
-					}
+					variable_status[v1] = ["dead", Infinity];
 					break;
 				}
 				case "=": {

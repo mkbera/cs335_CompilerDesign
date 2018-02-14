@@ -33,8 +33,8 @@ class Registers {
 
 				if (print) assembly.add("mov dword [" + variable + "], " + reg);
 			}
-			self.address_descriptor[variable] = { "type": "mem", "name": variable };
 
+			self.address_descriptor[variable] = { "type": "mem", "name": variable };
 			self.register_descriptor[reg] = null;
 		}
 	}
