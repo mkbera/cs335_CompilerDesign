@@ -499,7 +499,6 @@ function codeGen(instr, next_use_table, line_nr) {
 		assembly.add("ret");
 	}
 	else if (op == "print") {
-		assembly.add("");
 		var rep_variable = registers.register_descriptor["eax"];
 		var variable = instr[2];
 
@@ -528,10 +527,7 @@ function codeGen(instr, next_use_table, line_nr) {
 				des_variable = registers.address_descriptor[variable]["name"];
 			}
 			else {
-				des_variable = registers.loadVariable(variable, line_nr, next_use_table, safe = [], safe_regs = ["eax"]);
-				if (des_variable != "[" + variable + "]") {
-					assembly.add("mov dword " + des_variable + ", [" + variable + "]");
-				}
+				des_variable = registers.loadVariable(variable, line_nr, next_use_table, safe = [], safe_regs = ["eax"], print = true);
 			}
 			assembly.add("mov dword eax, " + des_variable);
 		}

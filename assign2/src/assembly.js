@@ -32,30 +32,29 @@ class Assembly {
 
 	addModules() {
 		// PRINT INT
-		assembly.shiftLeft();
-		assembly.add("");
-		assembly.add("syscall_print_int:");
-		assembly.shiftRight();
-
-		assembly.add("push ebx");
-		assembly.add("push ecx");
-		assembly.add("push edx");
-		assembly.add("push esi")
-		assembly.add("push edi")
-		assembly.add("push ebp");
-		assembly.add("mov ebp, esp");
-		assembly.add("push eax");
-		assembly.add("push _int");
-		assembly.add("call printf");
-		assembly.add("mov eax, 0");
-		assembly.add("mov esp, ebp");
-		assembly.add("pop ebp");
-		assembly.add("pop edi")
-		assembly.add("pop esi")
-		assembly.add("pop edx");
-		assembly.add("pop ecx");
-		assembly.add("pop ebx")
-		assembly.add("ret");
+		this.shiftLeft();
+		this.add("");
+		this.add("syscall_print_int:");
+		this.shiftRight();
+		this.add("push ebx");
+		this.add("push ecx");
+		this.add("push edx");
+		this.add("push esi")
+		this.add("push edi")
+		this.add("push ebp");
+		this.add("mov ebp, esp");
+		this.add("push eax");
+		this.add("push _int");
+		this.add("call printf");
+		this.add("mov eax, 0");
+		this.add("mov esp, ebp");
+		this.add("pop ebp");
+		this.add("pop edi")
+		this.add("pop esi")
+		this.add("pop edx");
+		this.add("pop ecx");
+		this.add("pop ebx")
+		this.add("ret");
 	}
 
 
