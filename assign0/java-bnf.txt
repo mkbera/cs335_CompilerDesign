@@ -310,6 +310,6 @@
 
 <null literal>                              ::=    null
 
-<keyword>                                   ::=    boolean | break | byte | case | char | class | const | continue | default | do | double | else | extends | float | for | if | import | instanceof | int | long | new | return | short | static | super | switch | this | void | while
+<keyword>                                   ::=    boolean | break | byte | case | char | class | const | continue | default | do | double | else | extends | float | for | if | import | instanceof | int | long | new | public | return | short | static | super | switch | this | void | while
 
 --------------------------------------------------------------------------------
