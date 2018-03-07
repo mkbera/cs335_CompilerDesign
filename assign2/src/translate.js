@@ -138,7 +138,20 @@ function codeGen(instr, next_use_table, line_nr) {
 		des_x = registers.address_descriptor[x]["name"];
 
 		if (x == z) {
-			assembly.add(map_op[op] + " dword " + des_x + ", " + des_y);
+			if (op == "-") {
+				if (registers.address_descriptor[x]["type"] == "mem") {
+					des_x = registers.getReg(x, line_nr, next_use_table, safe = [y, z], safe_regs = []);
+				}
+				else {
+					assembly.add("mov dword [" + x + "], " + des_x);
+				}
+
+				assembly.add("mov dword " + des_x + ", " + des_y);
+				assembly.add("sub dword " + des_x + ", [" + x + "]");
+			}
+			else {
+				assembly.add(map_op[op] + " dword " + des_x + ", " + des_y);
+			}
 		}
 		else if (registers.address_descriptor[x]["type"] == "reg") {	//x is in register
 			if (x != y) {
