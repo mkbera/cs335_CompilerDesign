@@ -68,7 +68,9 @@ function print_rules(rules) {
 	}
 }
 
-lexer.setInput("$as+4+a-5");
+input = "$as+4+a-5";
+console.log("Input:\n\t" + input + "\n\n");
+lexer.setInput(input);
 
 var ctx = {
 	rules: [],
