@@ -50,8 +50,6 @@ ELSE					=	else
 
 IMPORT					=	import
 
-colon				=	[:]
-
 op_increment			=	[+][+]
 op_decrement			=	[-][-]
 op_add					=	[+]
@@ -91,127 +89,127 @@ op_xor					=	[\^]
 
 <>{BOOLEAN}
 {
-	return "boolean";
+	return "keyword";
 }
 
 <>{BREAK}
 {
-	return "break";
+	return "keyword";
 }
 
 <>{BYTE}
 {
-	return "byte";
+	return "keyword";
 }
 
 <>{CASE}
 {
-	return "case";
+	return "keyword";
 }
 <>{CHAR}
 {
-	return "char";
+	return "keyword";
 }
 
 <>{CLASS}
 {
-	return "class";
+	return "keyword";
 }
 <>{CONST}
 {
-	return "const";
+	return "keyword";
 }
 <>{CONTINUE}
 {
-	return "continue";
+	return "keyword";
 }
 <>{DEFAULT}
 {
-	return "default";
+	return "keyword";
 }
 <>{DO}
 {
-	return "do";
+	return "keyword";
 }
 <>{DOUBLE}
 {
-	return "double";
+	return "keyword";
 }
 <>{ELSE}
 {
-	return "else";
+	return "keyword";
 }
 <>{EXTENDS}
 {
-	return "extends";
+	return "keyword";
 }
 <>{FLOAT}
 {
-	return "float";
+	return "keyword";
 }
 <>{FOR}
 {
-	return "for";
+	return "keyword";
 }
 <>{IF}
 {
-	return "if";
+	return "keyword";
 }
 <>{IMPORT}
 {
-	return "import";
+	return "keyword";
 }
 <>{INSTANCEOF}
 {
-	return "instanceof";
+	return "keyword";
 }
 <>{INT}
 {
-	return "int";
+	return "keyword";
 }
 <>{LONG}
 {
-	return "long";
+	return "keyword";
 }
 <>{NEW}
 {
-	return "new";
+	return "keyword";
 }
 <>{PUBLIC}
 {
-	return "public";
+	return "keyword";
 }
 <>{RETURN}
 {
-	return "return";
+	return "keyword";
 }
 <>{SHORT}
 {
-	return "short";
+	return "keyword";
 }
 <>{STATIC}
 {
-	return "static";
+	return "keyword";
 }
 <>{SUPER}
 {
-	return "super";
+	return "keyword";
 }
 <>{SWITCH}
 {
-	return "switch";
+	return "keyword";
 }
 <>{THIS}
 {
-	return "this";
+	return "keyword";
 }
 <>{VOID}
 {
-	return "void";
+	return "keyword";
 }
 <>{WHILE}
 {
-	return "while";
+	return "keyword";
 }
 
 
@@ -219,11 +217,6 @@ op_xor					=	[\^]
 
 
 // ------------------------------------ TOKENS ------------------------------------
-
-<>{:}
-{
-	return "colon";
-}
 
 <>{op_increment}
 {
