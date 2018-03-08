@@ -6,3 +6,4 @@
 *.swp
 *.vscode*
 *csharp-compiler*
+*src-local*
