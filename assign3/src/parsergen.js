@@ -36,26 +36,9 @@ class Grammar {
 }
 
 
-rules = {
-	code: [
-		[{ nt: "stmt" }]
-	],
-	stmt: [
-		[{ nt: "id" }, { nt: "op" }, { nt: "stmt" }],
-		[{ nt: "id" }]
-	],
-	id: [
-		["identifier"],
-		["integer_literal"]
-	],
-	op: [
-		["op_add"],
-		["op_sub"]
-	]
-}
-
-
 function main() {
+	var rules = require("./grammar").rules;
+
 	var grammar = new Grammar();
 
 	grammar.add("%moduleName MyParser");
