@@ -14,7 +14,12 @@ class Grammar {
 				s += "'" + token + "' ";
 			}
 			else {
-				s += token.nt + " ";
+				if (token.optional) {
+					s += "[" + token.nt + "] ";
+				}
+				else {
+					s += token.nt + " ";
+				}
 			}
 		});
 		s += "\n\t\tfunction() { this.push( this, \"" + nt + "\", " + JSON.stringify(rule) + " ) }"
@@ -42,7 +47,7 @@ function main() {
 	var grammar = new Grammar();
 
 	grammar.add("%moduleName MyParser");
-	grammar.add("%mode SLR");
+	grammar.add("%mode LR1");
 	grammar.add("\n");
 
 	Object.keys(rules).forEach(function (nt) {

@@ -8,8 +8,6 @@ import_declarations                       =    import_declaration | import_decla
 
 import_declaration                        =    single_type_import_declaration | type_import_on_demand_declaration;
 
-single_type_import_declaration            =    'import' type_name 'terminator';
-
 type_declarations                         =    type_declaration | type_declarations type_declaration;
 
 type_declaration                          =    class_declaration | 'terminator';
@@ -37,8 +35,6 @@ constructor_declaration                   =    {constructor_modifiers} construct
 constructor_modifiers                     =    constructor_modifier | constructor_modifiers constructor_modifier;
 
 constructor_modifier                      =    'public';
-
-constructor_declarator                    =    type_name 'paranthesis_start' {formal_parameter_list} 'paranthesis_end';
 
 formal_parameter_list                     =    formal_parameter | formal_parameter_list 'separator' formal_parameter;
 
@@ -87,6 +83,8 @@ variable_initializers                     =    variable_initializer | variable_i
 variable_initializer                      =    expression | array_initializer;
 
 
+// TYPES
+
 type                                      =    primitive_type | reference_type;
 
 primitive_type                            =    numeric_type | 'boolean';
@@ -100,10 +98,6 @@ floating_point_type                       =    'float' | 'double';
 reference_type                            =    class_or_interface_type | array_type;
 
 class_or_interface_type                   =    class_type | interface_type;
-
-class_type                                =    type_name;
-
-interface_type                            =    type_name;
 
 array_type                                =    type 'brackets_start' 'brackets_end';
 
@@ -169,6 +163,8 @@ continue_statement                        =    'continue' 'terminator';
 
 return_statement                          =    'return' {expression} 'terminator';
 
+
+
 expression                                =    conditional_expression | assignment;
 
 assignment                                =    left_hand_side assignment_operator expression;
@@ -215,7 +211,7 @@ postincrement_expression                  =    postfix_expression 'op_increment'
 
 postfix_expression                        =    primary | expression_name | postincrement_expression | postdecrement_expression;
 
-method_invocation                         =    method_name 'paranthesis_start' {argument_list} 'paranthesis_end' | primary'field_invoker'identifier'paranthesis_start' {argument_list} 'paranthesis_end' | 'super''field_invoker'identifier 'paranthesis_start' {argument_list} 'paranthesis_end';
+method_invocation                         =    expression_name 'paranthesis_start' {argument_list} 'paranthesis_end' | primary'field_invoker'identifier'paranthesis_start' {argument_list} 'paranthesis_end' | 'super''field_invoker'identifier 'paranthesis_start' {argument_list} 'paranthesis_end';
 
 field_access                              =    primary 'field_invoker' identifier | 'super' 'field_invoker' identifier;
 
@@ -237,13 +233,10 @@ dims                                      =    'brackets_start' 'brackets_end' |
 
 array_access                              =    expression_name 'brackets_start' expression 'brackets_end' | primary_no_new_array 'brackets_start' expression'brackets_end';
 
-type_name                                 =    'identifier';
 
-expression_name                           =    'identifier' | ambiguous_name'field_invoker''identifier';
+// TOKENS
 
-method_name                               =    'identifier' | ambiguous_name'field_invoker''identifier';
-
-ambiguous_name                            =    'identifier' | ambiguous_name'field_invoker''identifier';
+expression_name                           =    'identifier' | expression_name 'field_invoker''identifier';
 
 literal                                   =    'integer_literal' | 'float_literal' | 'boolean_literal' | 'character_literal' | 'string_literal' | 'null_literal';
 

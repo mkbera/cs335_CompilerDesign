@@ -89,127 +89,127 @@ op_xor					=	[\^]
 
 <>{BOOLEAN}
 {
-	return "keyword";
+	return "boolean";
 }
 
 <>{BREAK}
 {
-	return "keyword";
+	return "break";
 }
 
 <>{BYTE}
 {
-	return "keyword";
+	return "byte";
 }
 
 <>{CASE}
 {
-	return "keyword";
+	return "case";
 }
 <>{CHAR}
 {
-	return "keyword";
+	return "char";
 }
 
 <>{CLASS}
 {
-	return "keyword";
+	return "class";
 }
 <>{CONST}
 {
-	return "keyword";
+	return "const";
 }
 <>{CONTINUE}
 {
-	return "keyword";
+	return "continue";
 }
 <>{DEFAULT}
 {
-	return "keyword";
+	return "default";
 }
 <>{DO}
 {
-	return "keyword";
+	return "do";
 }
 <>{DOUBLE}
 {
-	return "keyword";
+	return "double";
 }
 <>{ELSE}
 {
-	return "keyword";
+	return "else";
 }
 <>{EXTENDS}
 {
-	return "keyword";
+	return "extends";
 }
 <>{FLOAT}
 {
-	return "keyword";
+	return "float";
 }
 <>{FOR}
 {
-	return "keyword";
+	return "for";
 }
 <>{IF}
 {
-	return "keyword";
+	return "if";
 }
 <>{IMPORT}
 {
-	return "keyword";
+	return "import";
 }
 <>{INSTANCEOF}
 {
-	return "keyword";
+	return "instanceof";
 }
 <>{INT}
 {
-	return "keyword";
+	return "int";
 }
 <>{LONG}
 {
-	return "keyword";
+	return "long";
 }
 <>{NEW}
 {
-	return "keyword";
+	return "new";
 }
 <>{PUBLIC}
 {
-	return "keyword";
+	return "public";
 }
 <>{RETURN}
 {
-	return "keyword";
+	return "return";
 }
 <>{SHORT}
 {
-	return "keyword";
+	return "short";
 }
 <>{STATIC}
 {
-	return "keyword";
+	return "static";
 }
 <>{SUPER}
 {
-	return "keyword";
+	return "super";
 }
 <>{SWITCH}
 {
-	return "keyword";
+	return "switch";
 }
 <>{THIS}
 {
-	return "keyword";
+	return "this";
 }
 <>{VOID}
 {
-	return "keyword";
+	return "void";
 }
 <>{WHILE}
 {
-	return "keyword";
+	return "while";
 }
 
 
@@ -376,6 +376,11 @@ op_xor					=	[\^]
 <>{op_xor}
 {
 	return "op_xor";
+}
+
+<>:
+{
+	return "colon";
 }
 
 

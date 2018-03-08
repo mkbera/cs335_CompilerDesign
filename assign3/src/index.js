@@ -47,6 +47,7 @@ function print_rules(rules) {
 		}
 
 		rule = rules.pop();
+		console.log(rule);
 
 		var ss = [];
 		var flag = true;
@@ -68,7 +69,7 @@ function print_rules(rules) {
 	}
 }
 
-input = "$as+4+a-5";
+input = "import a;";
 console.log("Input:\n\t" + input + "\n\n");
 lexer.setInput(input);
 
