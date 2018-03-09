@@ -14,11 +14,16 @@ class Grammar {
 				s += "'" + token + "' ";
 			}
 			else {
+				var nt = token.nt;
+				if (token.terminal) {
+					nt = "'" + nt + "'";
+				}
+
 				if (token.optional) {
-					s += "[" + token.nt + "] ";
+					s += "[" + nt + "] ";
 				}
 				else {
-					s += token.nt + " ";
+					s += nt + " ";
 				}
 			}
 		});
@@ -51,6 +56,22 @@ function main() {
 	grammar.add("\n");
 
 	Object.keys(rules).forEach(function (nt) {
+		var opt = true;
+		while (opt) {
+			opt = false;
+			for (var i = 0; i < rules[nt].length; i++) {
+				for (var j = 0; j < rules[nt][i].length; j++) {
+					if (typeof rules[nt][i][j] !== "string" && rules[nt][i][j].optional) {
+						opt = true;
+						rules[nt][i][j] = { nt: rules[nt][i][j].nt };
+						rules[nt].push(rules[nt][i].filter(function (el, index) {
+							return index != j;
+						}));
+					}
+				}
+			}
+		}
+
 		grammar.add(nt + "=");
 		for (var i = 0; i < rules[nt].length - 1; i++) {
 			grammar.add("\t\t" + grammar.get_rule_string(nt, rules[nt][i]));
