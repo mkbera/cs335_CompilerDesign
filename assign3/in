@@ -3,7 +3,6 @@ import a; import b;
 class test {
 
 	public func () : int[] {
-		a += b;
-		--a;
+		a = (int) b;
 	}
 }

@@ -182,16 +182,6 @@ rules = {
 		[{ nt: "stmt_expr" }, "terminator"],
 		["terminator"]
 	],
-	stmt_expr: [
-		[{ nt: "assignment" }],
-		[{ nt: "preinc_expr" }],
-		// [{ nt: "postinc_expr" }],
-		[{ nt: "predec_expr" }],
-		// [{ nt: "postdec_expr" }],
-		// [{ nt: "method_invocation" }],
-		// 	[{ nt: "class_instance_creation_expr" }]
-		["identifier"] // CUSTOM
-	],
 
 	// if_then_stmt: [
 	// 	["if", "paranthesis_start", { nt: "expr" }, "paranthesis_end", { nt: "stmt" }]
@@ -265,9 +255,17 @@ rules = {
 
 
 	expr: [
-		["identifier"], // CUSTOM
-		// [{ nt: "cond_expr" }],
+		[{ nt: "cond_expr" }],
 		[{ nt: "assignment" }]
+	],
+	stmt_expr: [
+		[{ nt: "assignment" }],
+		// [{ nt: "preinc_expr" }],
+		// [{ nt: "predec_expr" }],
+		// [{ nt: "postinc_expr" }],
+		// [{ nt: "postdec_expr" }],
+		// [{ nt: "method_invocation" }],
+		// 	[{ nt: "class_instance_creation_expr" }]
 	],
 
 	assignment: [
@@ -292,61 +290,61 @@ rules = {
 		["op_xorAssign"]
 	],
 
-	// cond_expr: [
-	// 	[{ nt: "cond_or_expr" }],
-	// 	[{ nt: "cond_or_expr", optional: true }, { nt: "expr" }, "colon", { nt: "cond_expr" }]
-	// ],
-	// cond_or_expr: [
-	// 	[{ nt: "cond_and_expr" }],
-	// 	[{ nt: "cond_or_expr" }, "op_oror", { nt: "cond_and_expr" }]
-	// ],
-	// cond_and_expr: [
-	// 	[{ nt: "incl_or_expr" }],
-	// 	[{ nt: "cond_and_expr" }, "op_andand", { nt: "incl_or_expr" }]
-	// ],
+	cond_expr: [
+		[{ nt: "cond_or_expr" }],
+		// [{ nt: "cond_or_expr", optional: true }, { nt: "expr" }, "colon", { nt: "cond_expr" }] // TO BE REMOVED
+	],
+	cond_or_expr: [
+		[{ nt: "cond_and_expr" }],
+		[{ nt: "cond_or_expr" }, "op_oror", { nt: "cond_and_expr" }]
+	],
+	cond_and_expr: [
+		[{ nt: "incl_or_expr" }],
+		[{ nt: "cond_and_expr" }, "op_andand", { nt: "incl_or_expr" }]
+	],
 
-	// incl_or_expr: [
-	// 	[{ nt: "excl_or_expr" }],
-	// 	[{ nt: "incl_or_expr" }, "op_or", { nt: "excl_or_expr" }]
-	// ],
-	// excl_or_expr: [
-	// 	[{ nt: "and_expr" }],
-	// 	[{ nt: "excl_or_expr" }, "op_xor", { nt: "and_expr" }]
-	// ],
+	incl_or_expr: [
+		[{ nt: "excl_or_expr" }],
+		[{ nt: "incl_or_expr" }, "op_or", { nt: "excl_or_expr" }]
+	],
+	excl_or_expr: [
+		[{ nt: "and_expr" }],
+		[{ nt: "excl_or_expr" }, "op_xor", { nt: "and_expr" }]
+	],
 
-	// and_expr: [
-	// 	[{ nt: "equality_expr" }],
-	// 	[{ nt: "and_expr" }, "op_and", { nt: "equality_expr" }]
-	// ],
-	// equality_expr: [
-	// 	[{ nt: "relational_expr" }],
-	// 	[{ nt: "equality_expr" }, "op_equalCompare", { nt: "relational_expr" }],
-	// 	[{ nt: "equality_expr" }, "op_notequalCompare", { nt: "relational_expr" }],
-	// ],
-	// relational_expr: [
-	// 	[{ nt: "shit_expr" }],
-	// 	[{ nt: "relational_expr" }, "op_greater", { nt: "shift_expr" }],
-	// 	[{ nt: "relational_expr" }, "op_greaterEqual", { nt: "shift_expr" }],
-	// 	[{ nt: "relational_expr" }, "op_less", { nt: "shift_expr" }],
-	// 	[{ nt: "relational_expr" }, "op_lessEqual", { nt: "shift_expr" }],
-	// 	[{ nt: "relational_expr" }, "instanceof", { nt: "shift_expr" }]
-	// ],
-	// shift_expr: [
-	// 	[{ nt: "additive_expr" }],
-	// 	[{ nt: "shift_expr" }, "op_Lshift", { nt: "additive_expr" }],
-	// 	[{ nt: "shift_expr" }, "op_Rshift", { nt: "additive_expr" }]
-	// ],
-	// additive_expr: [
-	// 	[{ nt: "multiplicative_expr" }],
-	// 	[{ nt: "additive_expr" }, "op_add", { nt: "multiplicative_expr" }],
-	// 	[{ nt: "additive_expr" }, "op_sub", { nt: "multiplicative_expr" }]
-	// ],
-	// multiplicative_expr: [
-	// 	[{ nt: "unary_expr" }],
-	// 	[{ nt: "multiplicative_expr" }, "op_mul", { nt: "unary_expr" }],
-	// 	[{ nt: "multiplicative_expr" }, "op_div", { nt: "unary_expr" }],
-	// 	[{ nt: "multiplicative_expr" }, "op_mod", { nt: "unary_expr" }]
-	// ],
+	and_expr: [
+		[{ nt: "equality_expr" }],
+		[{ nt: "and_expr" }, "op_and", { nt: "equality_expr" }]
+	],
+	equality_expr: [
+		[{ nt: "relational_expr" }],
+		[{ nt: "equality_expr" }, "op_equalCompare", { nt: "relational_expr" }],
+		[{ nt: "equality_expr" }, "op_notequalCompare", { nt: "relational_expr" }],
+	],
+	relational_expr: [
+		[{ nt: "shift_expr" }],
+		[{ nt: "relational_expr" }, "op_greater", { nt: "shift_expr" }],
+		[{ nt: "relational_expr" }, "op_greaterEqual", { nt: "shift_expr" }],
+		[{ nt: "relational_expr" }, "op_less", { nt: "shift_expr" }],
+		[{ nt: "relational_expr" }, "op_lessEqual", { nt: "shift_expr" }],
+		[{ nt: "relational_expr" }, "instanceof", { nt: "shift_expr" }]
+	],
+	shift_expr: [
+		[{ nt: "additive_expr" }],
+		[{ nt: "shift_expr" }, "op_Lshift", { nt: "additive_expr" }],
+		[{ nt: "shift_expr" }, "op_Rshift", { nt: "additive_expr" }]
+	],
+	additive_expr: [
+		[{ nt: "multiplicative_expr" }],
+		[{ nt: "additive_expr" }, "op_add", { nt: "multiplicative_expr" }],
+		[{ nt: "additive_expr" }, "op_sub", { nt: "multiplicative_expr" }]
+	],
+	multiplicative_expr: [
+		[{ nt: "unary_expr" }],
+		[{ nt: "multiplicative_expr" }, "op_mul", { nt: "unary_expr" }],
+		[{ nt: "multiplicative_expr" }, "op_div", { nt: "unary_expr" }],
+		[{ nt: "multiplicative_expr" }, "op_mod", { nt: "unary_expr" }]
+	],
 
 	predec_expr: [
 		["op_decrement", { nt: "unary_expr" }]
@@ -363,16 +361,15 @@ rules = {
 		[{ nt: "unary_expr_npm" }]
 	],
 	unary_expr_npm: [
-		["identifier"] // CUSTOM
-		// 	[{ nt: "postif_expr" }],
-		// 	["op_not", { nt: "unary_expr" }],
-		// 	[{ nt: "cast_expr" }],
+		[{ nt: "postfix_expr" }],
+		["op_not", { nt: "unary_expr" }],
+		[{ nt: "cast_expr" }],
 	],
-	// cast_expr: [
-	// 	["paranthesis_start", { nt: "primitive_type" }, "paranthesis_end", { "nt": "unary_expr" }],
-	// 	["paranthesis_start", { nt: "primitive_type" }, "paranthesis_end", { "nt": "unary_expr_npm" }]
-	// ],
 
+	cast_expr: [
+		["paranthesis_start", { nt: "primitive_type" }, "paranthesis_end", { "nt": "unary_expr" }],
+		// ["paranthesis_start", { nt: "primitive_type" }, "paranthesis_end", { "nt": "unary_expr_npm" }] // TO BE REMOVED
+	],
 
 	// postdec_expr: [
 	// 	[{ nt: "postfix_expr" }, "op_decrement"]
@@ -380,12 +377,14 @@ rules = {
 	// postinc_expr: [
 	// 	[{ nt: "postfix_expr" }, "op_increment"]
 	// ],
-	// postfix_expr: [
-	// 	[{ nt: "primary" }],
-	// 	[{ nt: "expr_name" }],
-	// 	[{ nt: "postinc_expr" }],
-	// 	[{ nt: "postdec_expr" }]
-	// ],
+
+	postfix_expr: [
+		// [{ nt: "primary" }],
+		[{ nt: "expr_name" }],
+		// 	[{ nt: "postinc_expr" }],
+		// 	[{ nt: "postdec_expr" }]
+	],
+
 	// method_invocation: [
 	// 	[{ nt: "expr_name" }, "paranthesis_start", { nt: "argument_list", optional: true }, "paranthesis_end"],
 	// 	[{ nt: "primary" }, "field_invoker", "identifier", "paranthesis_start", { nt: "argument_list", optional: true }, "paranthesis_end"],
