@@ -71,7 +71,7 @@ function print_rules(rules) {
 	}
 }
 
-input = fs.readFileSync("in").toString();
+input = fs.readFileSync("in.java").toString();
 
 console.log("Input:\n\t" + input + "\n\n");
 lexer.setInput(input);

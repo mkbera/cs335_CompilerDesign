@@ -84,8 +84,7 @@ rules = {
 		["identifier"]
 	],
 	var_init: [
-		["identifier"], // CUSTOM
-		// [{ nt: "expr" }],
+		[{ nt: "expr" }],
 		[{ nt: "array_init" }]
 	],
 
@@ -182,16 +181,6 @@ rules = {
 		[{ nt: "stmt_expr" }, "terminator"],
 		["terminator"]
 	],
-	stmt_expr: [
-		[{ nt: "assignment" }],
-		[{ nt: "preinc_expr" }],
-		// [{ nt: "postinc_expr" }],
-		[{ nt: "predec_expr" }],
-		// [{ nt: "postdec_expr" }],
-		// [{ nt: "method_invocation" }],
-		// 	[{ nt: "class_instance_creation_expr" }]
-		["identifier"] // CUSTOM
-	],
 
 	// if_then_stmt: [
 	// 	["if", "paranthesis_start", { nt: "expr" }, "paranthesis_end", { nt: "stmt" }]
@@ -265,88 +254,101 @@ rules = {
 
 
 	expr: [
-		["identifier"], // CUSTOM
-		// [{ nt: "cond_expr" }],
-		[{ nt: "assignment" }]
+		// ["identifier"], // CUSTOM
+		[{ nt: "cond_expr" }],
+		// [{ nt: "assignment" }]
+	],
+	stmt_expr: [
+		// [{ nt: "assignment" }], // TO BE REMOVED
+		// [{ nt: "expr" }], // CUSTOM
+		// [{ nt: "preinc_expr" }],
+		// [{ nt: "postinc_expr" }],
+		// [{ nt: "predec_expr" }],
+		// [{ nt: "postdec_expr" }],
+		// [{ nt: "method_invocation" }],
+		// [{ nt: "class_instance_creation_expr" }]
 	],
 
-	assignment: [
-		[{ nt: "left_hand_side" }, { nt: "assignment_operator" }, { nt: "expr" }]
-	],
-	left_hand_side: [
-		[{ nt: "expr_name" }],
-		// 	[{ nt: "field_access" }],
-		// 	[{ nt: "array_access" }]
-	],
-	assignment_operator: [
-		["op_assign"],
-		["op_mulAssign"],
-		["op_divAssign"],
-		["op_modAssign"],
-		["op_addAssign"],
-		["op_subAssign"],
-		["op_LshiftEqual"],
-		["op_RshiftEqual"],
-		["op_andAssign"],
-		["op_orAssign"],
-		["op_xorAssign"]
+	cast_expr: [
+		["paranthesis_start", { nt: "primitive_type" }, "paranthesis_end", { "nt": "unary_expr" }],
+		["paranthesis_start", { nt: "reference_type" }, "paranthesis_end", { "nt": "unary_expr_npm" }]
 	],
 
-	// cond_expr: [
-	// 	[{ nt: "cond_or_expr" }],
-	// 	[{ nt: "cond_or_expr", optional: true }, { nt: "expr" }, "colon", { nt: "cond_expr" }]
+	// assignment: [
+	// 	[{ nt: "left_hand_side" }, { nt: "assignment_operator" }, { nt: "expr" }]
 	// ],
-	// cond_or_expr: [
-	// 	[{ nt: "cond_and_expr" }],
-	// 	[{ nt: "cond_or_expr" }, "op_oror", { nt: "cond_and_expr" }]
+	// left_hand_side: [
+	// 	[{ nt: "expr_name" }],
+	// 	[{ nt: "field_access" }],
+	// 	[{ nt: "array_access" }]
 	// ],
-	// cond_and_expr: [
-	// 	[{ nt: "incl_or_expr" }],
-	// 	[{ nt: "cond_and_expr" }, "op_andand", { nt: "incl_or_expr" }]
+	// assignment_operator: [
+	// 	["op_assign"],
+	// 	["op_mulAssign"],
+	// 	["op_divAssign"],
+	// 	["op_modAssign"],
+	// 	["op_addAssign"],
+	// 	["op_subAssign"],
+	// 	["op_LshiftEqual"],
+	// 	["op_RshiftEqual"],
+	// 	["op_andAssign"],
+	// 	["op_orAssign"],
+	// 	["op_xorAssign"]
 	// ],
 
-	// incl_or_expr: [
-	// 	[{ nt: "excl_or_expr" }],
-	// 	[{ nt: "incl_or_expr" }, "op_or", { nt: "excl_or_expr" }]
-	// ],
-	// excl_or_expr: [
-	// 	[{ nt: "and_expr" }],
-	// 	[{ nt: "excl_or_expr" }, "op_xor", { nt: "and_expr" }]
-	// ],
-
-	// and_expr: [
-	// 	[{ nt: "equality_expr" }],
-	// 	[{ nt: "and_expr" }, "op_and", { nt: "equality_expr" }]
-	// ],
-	// equality_expr: [
-	// 	[{ nt: "relational_expr" }],
-	// 	[{ nt: "equality_expr" }, "op_equalCompare", { nt: "relational_expr" }],
-	// 	[{ nt: "equality_expr" }, "op_notequalCompare", { nt: "relational_expr" }],
-	// ],
-	// relational_expr: [
-	// 	[{ nt: "shit_expr" }],
-	// 	[{ nt: "relational_expr" }, "op_greater", { nt: "shift_expr" }],
-	// 	[{ nt: "relational_expr" }, "op_greaterEqual", { nt: "shift_expr" }],
-	// 	[{ nt: "relational_expr" }, "op_less", { nt: "shift_expr" }],
-	// 	[{ nt: "relational_expr" }, "op_lessEqual", { nt: "shift_expr" }],
-	// 	[{ nt: "relational_expr" }, "instanceof", { nt: "shift_expr" }]
-	// ],
-	// shift_expr: [
-	// 	[{ nt: "additive_expr" }],
-	// 	[{ nt: "shift_expr" }, "op_Lshift", { nt: "additive_expr" }],
-	// 	[{ nt: "shift_expr" }, "op_Rshift", { nt: "additive_expr" }]
-	// ],
-	// additive_expr: [
-	// 	[{ nt: "multiplicative_expr" }],
-	// 	[{ nt: "additive_expr" }, "op_add", { nt: "multiplicative_expr" }],
-	// 	[{ nt: "additive_expr" }, "op_sub", { nt: "multiplicative_expr" }]
-	// ],
-	// multiplicative_expr: [
-	// 	[{ nt: "unary_expr" }],
-	// 	[{ nt: "multiplicative_expr" }, "op_mul", { nt: "unary_expr" }],
-	// 	[{ nt: "multiplicative_expr" }, "op_div", { nt: "unary_expr" }],
-	// 	[{ nt: "multiplicative_expr" }, "op_mod", { nt: "unary_expr" }]
-	// ],
+	cond_expr: [
+		[{ nt: "cond_or_expr" }]
+		// [{ nt: "cond_or_expr", optional: true }, { nt: "expr" }, "colon", { nt: "cond_expr" }] // TO BE REMOVED
+	],
+	cond_or_expr: [
+		[{ nt: "cond_and_expr" }],
+		[{ nt: "cond_or_expr" }, "op_oror", { nt: "cond_and_expr" }]
+	],
+	cond_and_expr: [
+		[{ nt: "incl_or_expr" }],
+		[{ nt: "cond_and_expr" }, "op_andand", { nt: "incl_or_expr" }]
+	],
+	incl_or_expr: [
+		[{ nt: "excl_or_expr" }],
+		[{ nt: "incl_or_expr" }, "op_or", { nt: "excl_or_expr" }]
+	],
+	excl_or_expr: [
+		[{ nt: "and_expr" }],
+		[{ nt: "excl_or_expr" }, "op_xor", { nt: "and_expr" }]
+	],
+	and_expr: [
+		[{ nt: "equality_expr" }],
+		[{ nt: "and_expr" }, "op_and", { nt: "equality_expr" }]
+	],
+	equality_expr: [
+		[{ nt: "relational_expr" }],
+		[{ nt: "equality_expr" }, "op_equalCompare", { nt: "relational_expr" }],
+		[{ nt: "equality_expr" }, "op_notequalCompare", { nt: "relational_expr" }],
+	],
+	relational_expr: [
+		[{ nt: "shit_expr" }],
+		[{ nt: "relational_expr" }, "op_greater", { nt: "shift_expr" }],
+		[{ nt: "relational_expr" }, "op_greaterEqual", { nt: "shift_expr" }],
+		[{ nt: "relational_expr" }, "op_less", { nt: "shift_expr" }],
+		[{ nt: "relational_expr" }, "op_lessEqual", { nt: "shift_expr" }],
+		[{ nt: "relational_expr" }, "instanceof", { nt: "shift_expr" }]
+	],
+	shift_expr: [
+		[{ nt: "additive_expr" }],
+		[{ nt: "shift_expr" }, "op_Lshift", { nt: "additive_expr" }],
+		[{ nt: "shift_expr" }, "op_Rshift", { nt: "additive_expr" }]
+	],
+	additive_expr: [
+		[{ nt: "multiplicative_expr" }],
+		[{ nt: "additive_expr" }, "op_add", { nt: "multiplicative_expr" }],
+		[{ nt: "additive_expr" }, "op_sub", { nt: "multiplicative_expr" }]
+	],
+	multiplicative_expr: [
+		[{ nt: "unary_expr" }],
+		[{ nt: "multiplicative_expr" }, "op_mul", { nt: "unary_expr" }],
+		[{ nt: "multiplicative_expr" }, "op_div", { nt: "unary_expr" }],
+		[{ nt: "multiplicative_expr" }, "op_mod", { nt: "unary_expr" }]
+	],
 
 	predec_expr: [
 		["op_decrement", { nt: "unary_expr" }]
@@ -363,78 +365,85 @@ rules = {
 		[{ nt: "unary_expr_npm" }]
 	],
 	unary_expr_npm: [
-		["identifier"] // CUSTOM
-		// 	[{ nt: "postif_expr" }],
-		// 	["op_not", { nt: "unary_expr" }],
-		// 	[{ nt: "cast_expr" }],
+		[{ nt: "postfix_expr" }],
+		["op_not", { nt: "unary_expr" }],
+		[{ nt: "cast_expr" }]
 	],
-	// cast_expr: [
-	// 	["paranthesis_start", { nt: "primitive_type" }, "paranthesis_end", { "nt": "unary_expr" }],
-	// 	["paranthesis_start", { nt: "primitive_type" }, "paranthesis_end", { "nt": "unary_expr_npm" }]
-	// ],
 
+	postdec_expr: [
+		[{ nt: "postfix_expr" }, "op_decrement"]
+	],
+	postinc_expr: [
+		[{ nt: "postfix_expr" }, "op_increment"]
+	],
 
-	// postdec_expr: [
-	// 	[{ nt: "postfix_expr" }, "op_decrement"]
-	// ],
-	// postinc_expr: [
-	// 	[{ nt: "postfix_expr" }, "op_increment"]
-	// ],
-	// postfix_expr: [
-	// 	[{ nt: "primary" }],
-	// 	[{ nt: "expr_name" }],
-	// 	[{ nt: "postinc_expr" }],
-	// 	[{ nt: "postdec_expr" }]
-	// ],
-	// method_invocation: [
-	// 	[{ nt: "expr_name" }, "paranthesis_start", { nt: "argument_list", optional: true }, "paranthesis_end"],
-	// 	[{ nt: "primary" }, "field_invoker", "identifier", "paranthesis_start", { nt: "argument_list", optional: true }, "paranthesis_end"],
-	// 	["super", "field_invoker", "identifier", "paranthesis_start", { nt: "argument_list", optional: true }, "paranthesis_end"]
-	// ],
-	// field_access: [
-	// 	[{ nt: "primary" }, "field_invoker", "identifier"],
-	// 	["super", "field_invoker", "identifier"]
-	// ],
-	// primary: [
-	// 	[{ nt: "primary_no_new_array" }],
-	// 	[{ nt: "array_creation_expr" }]
-	// ],
-	// primary_no_new_array: [
-	// 	[{ nt: "literal" }],
-	// 	["this"],
-	// 	["paranthesis_start", { nt: "expr" }, "paranthesis_end"],
-	// 	[{ nt: "class_instance_creation_expr" }],
-	// 	[{ nt: "field_access" }],
-	// 	[{ nt: "array_access" }],
-	// 	[{ nt: "method_invocation" }]
-	// ],
-	// class_instance_creation_expr: [
-	// 	["new", { nt: "class_type" }, "paranthesis_start", { nt: "argument_list", optional: true }, "paranthesis_end"]
-	// ],
-	// argument_list: [
-	// 	[{ nt: "expr" }],
-	// 	[{ nt: "argument_list" }, "separator", { nt: "expr" }]
-	// ],
+	postfix_expr: [
+		[{ nt: "primary" }],
+		[{ nt: "expr_name" }],
+		[{ nt: "postinc_expr" }],
+		[{ nt: "postdec_expr" }]
+	],
+
+	method_invocation: [
+		// [{ nt: "primary" }, "field_invoker", "identifier", "paranthesis_start", { nt: "argument_list", optional: true }, "paranthesis_end"], // TO BE REMOVED
+		// ["super", "field_invoker", "identifier", "paranthesis_start", { nt: "argument_list", optional: true }, "paranthesis_end"] // TO BE REMOVED
+		[{ nt: "expr_name" }, "paranthesis_start", { nt: "argument_list", optional: true }, "paranthesis_end"],
+		[{ nt: "field_access" }, "paranthesis_start", { nt: "argument_list", optional: true }, "paranthesis_end"] // CUSTOM
+	],
+
+	field_access: [
+		[{ nt: "primary" }, "field_invoker", "identifier"],
+		["super", "field_invoker", "identifier"]
+	],
+	array_access: [
+		// NOTE: ARRAY ACCESS arr<...><...>
+		// [{ nt: "expr_name" }, "op_less", "brackets_start", { nt: "expr" }, "brackets_end", "op_greater"], // TO BE REMOVED
+		// [{ nt: "primary_no_new_array" }, "brackets_start", { nt: "expr" }, "brackets_end"] // TO BE REMOVED
+		[{ nt: "expr_name" }, "op_less", { nt: "expr" }, "op_greater"], // CUSTOM
+		[{ nt: "primary_no_new_array" }, "op_less", { nt: "expr" }, "op_greater"] // CUSTOM
+	],
+
+	primary: [
+		[{ nt: "primary_no_new_array" }],
+		// [{ nt: "array_creation_expr" }]
+	],
+	primary_no_new_array: [
+		[{ nt: "literal" }],
+		["this"],
+		// ["paranthesis_start", { nt: "expr" }, "paranthesis_end"], // TO BE REMOVED
+		// NOTE: THE FORMAT FOR EXPRESSION IS ([ ... ])
+		["paranthesis_start", "brackets_start", { nt: "expr" }, "brackets_end", "paranthesis_end"],
+		[{ nt: "class_instance_creation_expr" }],
+		[{ nt: "field_access" }],
+		[{ nt: "array_access" }],
+		[{ nt: "method_invocation" }]
+	],
+
+	class_instance_creation_expr: [
+		["new", "identifier", "paranthesis_start", { nt: "argument_list", optional: true }, "paranthesis_end"]
+	],
+
+	argument_list: [
+		[{ nt: "expr" }],
+		[{ nt: "argument_list" }, "separator", { nt: "expr" }]
+	],
+
 	// array_creation_expr: [
 	// 	[{ nt: "expr" }],
 	// 	["new", { nt: "primitive_type" }, { nt: "dim_exprs" }, { nt: "dims", optional: true }],
-	// 	["new", { nt: "class_type" }, { nt: "dim_exprs" }, { nt: "dims", optional: true }]
+	// 	["new", "identifier", { nt: "dim_exprs" }, { nt: "dims", optional: true }]
 	// ],
-	// dim_exprs: [
-	// 	[{ nt: "dim_exprs" }, { nt: "dim_expr" }],
-	// 	[{ nt: "dim_expr" }]
-	// ],
-	// dim_expr: [
-	// 	["brackets_start", { nt: "expr" }, "brackets_end"]
-	// ],
-	// dims: [
-	// 	["brackets_start", "brackets_end"],
-	// 	[{ nt: "dims" }, "brackets_start", "brackets_end"]
-	// ],
-	// array_access: [
-	// 	[{ nt: "expr_name" }, "brackets_start", { nt: "expr" }, "brackets_end"],
-	// 	[{ nt: "primary_no_new_array" }, "brackets_start", { nt: "expr" }, "brackets_end"],
-	// ],
+	dim_exprs: [
+		[{ nt: "dim_exprs" }, { nt: "dim_expr" }],
+		[{ nt: "dim_expr" }]
+	],
+	dim_expr: [
+		["brackets_start", { nt: "expr" }, "brackets_end"]
+	],
+	dims: [
+		["brackets_start", "brackets_end"],
+		[{ nt: "dims" }, "brackets_start", "brackets_end"]
+	],
 
 
 	// // TOKENS
@@ -444,9 +453,9 @@ rules = {
 	],
 	literal: [
 		["integer_literal"],
-		[{ nt: "signed_integer_literal" }],
+		// [{ nt: "signed_integer_literal" }], // TO BE REMOVED
 		["float_literal"],
-		[{ nt: "signed_float_literal" }],
+		// [{ nt: "signed_float_literal" }], // TO BE REMOVED
 		["boolean_literal"],
 		["character_literal"],
 		["string_literal"],
@@ -456,12 +465,12 @@ rules = {
 		["op_add"],
 		["op_sub"]
 	],
-	signed_integer_literal: [
-		[{ nt: "sign" }, "integer_literal"]
-	],
-	signed_float_literal: [
-		[{ nt: "sign" }, "float_literal"]
-	]
+	// signed_integer_literal: [ // TO BE REMOVED
+	// 	[{ nt: "sign" }, "integer_literal"]
+	// ],
+	// signed_float_literal: [ // TO BE REMOVED
+	// 	[{ nt: "sign" }, "float_literal"]
+	// ]
 }
 
 module.exports = {

@@ -198,8 +198,8 @@ var_declarator_id=
 
 
 var_init=
-		'identifier' 
-		function() { this.push( this, "var_init", ["identifier"] ) }
+		expr 
+		function() { this.push( this, "var_init", [{"nt":"expr"}] ) }
 	|
 		array_init 
 		function() { this.push( this, "var_init", [{"nt":"array_init"}] ) }
@@ -368,72 +368,162 @@ stmt_wots=
 	;
 
 
+expr=
+		cond_expr 
+		function() { this.push( this, "expr", [{"nt":"cond_expr"}] ) }
+	;
+
+
 stmt_expr=
-		assignment 
-		function() { this.push( this, "stmt_expr", [{"nt":"assignment"}] ) }
-	|
 		preinc_expr 
 		function() { this.push( this, "stmt_expr", [{"nt":"preinc_expr"}] ) }
 	|
-		'identifier' 
-		function() { this.push( this, "stmt_expr", ["identifier"] ) }
+		postinc_expr 
+		function() { this.push( this, "stmt_expr", [{"nt":"postinc_expr"}] ) }
+	|
+		predec_expr 
+		function() { this.push( this, "stmt_expr", [{"nt":"predec_expr"}] ) }
+	|
+		postdec_expr 
+		function() { this.push( this, "stmt_expr", [{"nt":"postdec_expr"}] ) }
+	|
+		method_invocation 
+		function() { this.push( this, "stmt_expr", [{"nt":"method_invocation"}] ) }
+	|
+		class_instance_creation_expr 
+		function() { this.push( this, "stmt_expr", [{"nt":"class_instance_creation_expr"}] ) }
 	;
 
 
-expr=
-		'identifier' 
-		function() { this.push( this, "expr", ["identifier"] ) }
+cast_expr=
+		'paranthesis_start' primitive_type 'paranthesis_end' unary_expr 
+		function() { this.push( this, "cast_expr", ["paranthesis_start",{"nt":"primitive_type"},"paranthesis_end",{"nt":"unary_expr"}] ) }
 	|
-		assignment 
-		function() { this.push( this, "expr", [{"nt":"assignment"}] ) }
+		'paranthesis_start' reference_type 'paranthesis_end' unary_expr_npm 
+		function() { this.push( this, "cast_expr", ["paranthesis_start",{"nt":"reference_type"},"paranthesis_end",{"nt":"unary_expr_npm"}] ) }
 	;
 
 
-assignment=
-		left_hand_side assignment_operator expr 
-		function() { this.push( this, "assignment", [{"nt":"left_hand_side"},{"nt":"assignment_operator"},{"nt":"expr"}] ) }
+cond_expr=
+		cond_or_expr 
+		function() { this.push( this, "cond_expr", [{"nt":"cond_or_expr"}] ) }
 	;
 
 
-left_hand_side=
-		expr_name 
-		function() { this.push( this, "left_hand_side", [{"nt":"expr_name"}] ) }
+cond_or_expr=
+		cond_and_expr 
+		function() { this.push( this, "cond_or_expr", [{"nt":"cond_and_expr"}] ) }
+	|
+		cond_or_expr 'op_oror' cond_and_expr 
+		function() { this.push( this, "cond_or_expr", [{"nt":"cond_or_expr"},"op_oror",{"nt":"cond_and_expr"}] ) }
 	;
 
 
-assignment_operator=
-		'op_assign' 
-		function() { this.push( this, "assignment_operator", ["op_assign"] ) }
+cond_and_expr=
+		incl_or_expr 
+		function() { this.push( this, "cond_and_expr", [{"nt":"incl_or_expr"}] ) }
 	|
-		'op_mulAssign' 
-		function() { this.push( this, "assignment_operator", ["op_mulAssign"] ) }
+		cond_and_expr 'op_andand' incl_or_expr 
+		function() { this.push( this, "cond_and_expr", [{"nt":"cond_and_expr"},"op_andand",{"nt":"incl_or_expr"}] ) }
+	;
+
+
+incl_or_expr=
+		excl_or_expr 
+		function() { this.push( this, "incl_or_expr", [{"nt":"excl_or_expr"}] ) }
 	|
-		'op_divAssign' 
-		function() { this.push( this, "assignment_operator", ["op_divAssign"] ) }
+		incl_or_expr 'op_or' excl_or_expr 
+		function() { this.push( this, "incl_or_expr", [{"nt":"incl_or_expr"},"op_or",{"nt":"excl_or_expr"}] ) }
+	;
+
+
+excl_or_expr=
+		and_expr 
+		function() { this.push( this, "excl_or_expr", [{"nt":"and_expr"}] ) }
 	|
-		'op_modAssign' 
-		function() { this.push( this, "assignment_operator", ["op_modAssign"] ) }
+		excl_or_expr 'op_xor' and_expr 
+		function() { this.push( this, "excl_or_expr", [{"nt":"excl_or_expr"},"op_xor",{"nt":"and_expr"}] ) }
+	;
+
+
+and_expr=
+		equality_expr 
+		function() { this.push( this, "and_expr", [{"nt":"equality_expr"}] ) }
 	|
-		'op_addAssign' 
-		function() { this.push( this, "assignment_operator", ["op_addAssign"] ) }
+		and_expr 'op_and' equality_expr 
+		function() { this.push( this, "and_expr", [{"nt":"and_expr"},"op_and",{"nt":"equality_expr"}] ) }
+	;
+
+
+equality_expr=
+		relational_expr 
+		function() { this.push( this, "equality_expr", [{"nt":"relational_expr"}] ) }
 	|
-		'op_subAssign' 
-		function() { this.push( this, "assignment_operator", ["op_subAssign"] ) }
+		equality_expr 'op_equalCompare' relational_expr 
+		function() { this.push( this, "equality_expr", [{"nt":"equality_expr"},"op_equalCompare",{"nt":"relational_expr"}] ) }
 	|
-		'op_LshiftEqual' 
-		function() { this.push( this, "assignment_operator", ["op_LshiftEqual"] ) }
+		equality_expr 'op_notequalCompare' relational_expr 
+		function() { this.push( this, "equality_expr", [{"nt":"equality_expr"},"op_notequalCompare",{"nt":"relational_expr"}] ) }
+	;
+
+
+relational_expr=
+		shit_expr 
+		function() { this.push( this, "relational_expr", [{"nt":"shit_expr"}] ) }
 	|
-		'op_RshiftEqual' 
-		function() { this.push( this, "assignment_operator", ["op_RshiftEqual"] ) }
+		relational_expr 'op_greater' shift_expr 
+		function() { this.push( this, "relational_expr", [{"nt":"relational_expr"},"op_greater",{"nt":"shift_expr"}] ) }
 	|
-		'op_andAssign' 
-		function() { this.push( this, "assignment_operator", ["op_andAssign"] ) }
+		relational_expr 'op_greaterEqual' shift_expr 
+		function() { this.push( this, "relational_expr", [{"nt":"relational_expr"},"op_greaterEqual",{"nt":"shift_expr"}] ) }
 	|
-		'op_orAssign' 
-		function() { this.push( this, "assignment_operator", ["op_orAssign"] ) }
+		relational_expr 'op_less' shift_expr 
+		function() { this.push( this, "relational_expr", [{"nt":"relational_expr"},"op_less",{"nt":"shift_expr"}] ) }
 	|
-		'op_xorAssign' 
-		function() { this.push( this, "assignment_operator", ["op_xorAssign"] ) }
+		relational_expr 'op_lessEqual' shift_expr 
+		function() { this.push( this, "relational_expr", [{"nt":"relational_expr"},"op_lessEqual",{"nt":"shift_expr"}] ) }
+	|
+		relational_expr 'instanceof' shift_expr 
+		function() { this.push( this, "relational_expr", [{"nt":"relational_expr"},"instanceof",{"nt":"shift_expr"}] ) }
+	;
+
+
+shift_expr=
+		additive_expr 
+		function() { this.push( this, "shift_expr", [{"nt":"additive_expr"}] ) }
+	|
+		shift_expr 'op_Lshift' additive_expr 
+		function() { this.push( this, "shift_expr", [{"nt":"shift_expr"},"op_Lshift",{"nt":"additive_expr"}] ) }
+	|
+		shift_expr 'op_Rshift' additive_expr 
+		function() { this.push( this, "shift_expr", [{"nt":"shift_expr"},"op_Rshift",{"nt":"additive_expr"}] ) }
+	;
+
+
+additive_expr=
+		multiplicative_expr 
+		function() { this.push( this, "additive_expr", [{"nt":"multiplicative_expr"}] ) }
+	|
+		additive_expr 'op_add' multiplicative_expr 
+		function() { this.push( this, "additive_expr", [{"nt":"additive_expr"},"op_add",{"nt":"multiplicative_expr"}] ) }
+	|
+		additive_expr 'op_sub' multiplicative_expr 
+		function() { this.push( this, "additive_expr", [{"nt":"additive_expr"},"op_sub",{"nt":"multiplicative_expr"}] ) }
+	;
+
+
+multiplicative_expr=
+		unary_expr 
+		function() { this.push( this, "multiplicative_expr", [{"nt":"unary_expr"}] ) }
+	|
+		multiplicative_expr 'op_mul' unary_expr 
+		function() { this.push( this, "multiplicative_expr", [{"nt":"multiplicative_expr"},"op_mul",{"nt":"unary_expr"}] ) }
+	|
+		multiplicative_expr 'op_div' unary_expr 
+		function() { this.push( this, "multiplicative_expr", [{"nt":"multiplicative_expr"},"op_div",{"nt":"unary_expr"}] ) }
+	|
+		multiplicative_expr 'op_mod' unary_expr 
+		function() { this.push( this, "multiplicative_expr", [{"nt":"multiplicative_expr"},"op_mod",{"nt":"unary_expr"}] ) }
 	;
 
 
@@ -468,8 +558,146 @@ unary_expr=
 
 
 unary_expr_npm=
-		'identifier' 
-		function() { this.push( this, "unary_expr_npm", ["identifier"] ) }
+		postfix_expr 
+		function() { this.push( this, "unary_expr_npm", [{"nt":"postfix_expr"}] ) }
+	|
+		'op_not' unary_expr 
+		function() { this.push( this, "unary_expr_npm", ["op_not",{"nt":"unary_expr"}] ) }
+	|
+		cast_expr 
+		function() { this.push( this, "unary_expr_npm", [{"nt":"cast_expr"}] ) }
+	;
+
+
+postdec_expr=
+		postfix_expr 'op_decrement' 
+		function() { this.push( this, "postdec_expr", [{"nt":"postfix_expr"},"op_decrement"] ) }
+	;
+
+
+postinc_expr=
+		postfix_expr 'op_increment' 
+		function() { this.push( this, "postinc_expr", [{"nt":"postfix_expr"},"op_increment"] ) }
+	;
+
+
+postfix_expr=
+		primary 
+		function() { this.push( this, "postfix_expr", [{"nt":"primary"}] ) }
+	|
+		expr_name 
+		function() { this.push( this, "postfix_expr", [{"nt":"expr_name"}] ) }
+	|
+		postinc_expr 
+		function() { this.push( this, "postfix_expr", [{"nt":"postinc_expr"}] ) }
+	|
+		postdec_expr 
+		function() { this.push( this, "postfix_expr", [{"nt":"postdec_expr"}] ) }
+	;
+
+
+method_invocation=
+		expr_name 'paranthesis_start' argument_list 'paranthesis_end' 
+		function() { this.push( this, "method_invocation", [{"nt":"expr_name"},"paranthesis_start",{"nt":"argument_list"},"paranthesis_end"] ) }
+	|
+		field_access 'paranthesis_start' argument_list 'paranthesis_end' 
+		function() { this.push( this, "method_invocation", [{"nt":"field_access"},"paranthesis_start",{"nt":"argument_list"},"paranthesis_end"] ) }
+	|
+		expr_name 'paranthesis_start' 'paranthesis_end' 
+		function() { this.push( this, "method_invocation", [{"nt":"expr_name"},"paranthesis_start","paranthesis_end"] ) }
+	|
+		field_access 'paranthesis_start' 'paranthesis_end' 
+		function() { this.push( this, "method_invocation", [{"nt":"field_access"},"paranthesis_start","paranthesis_end"] ) }
+	;
+
+
+field_access=
+		primary 'field_invoker' 'identifier' 
+		function() { this.push( this, "field_access", [{"nt":"primary"},"field_invoker","identifier"] ) }
+	|
+		'super' 'field_invoker' 'identifier' 
+		function() { this.push( this, "field_access", ["super","field_invoker","identifier"] ) }
+	;
+
+
+array_access=
+		expr_name 'op_less' expr 'op_greater' 
+		function() { this.push( this, "array_access", [{"nt":"expr_name"},"op_less",{"nt":"expr"},"op_greater"] ) }
+	|
+		primary_no_new_array 'op_less' expr 'op_greater' 
+		function() { this.push( this, "array_access", [{"nt":"primary_no_new_array"},"op_less",{"nt":"expr"},"op_greater"] ) }
+	;
+
+
+primary=
+		primary_no_new_array 
+		function() { this.push( this, "primary", [{"nt":"primary_no_new_array"}] ) }
+	;
+
+
+primary_no_new_array=
+		literal 
+		function() { this.push( this, "primary_no_new_array", [{"nt":"literal"}] ) }
+	|
+		'this' 
+		function() { this.push( this, "primary_no_new_array", ["this"] ) }
+	|
+		'paranthesis_start' 'brackets_start' expr 'brackets_end' 'paranthesis_end' 
+		function() { this.push( this, "primary_no_new_array", ["paranthesis_start","brackets_start",{"nt":"expr"},"brackets_end","paranthesis_end"] ) }
+	|
+		class_instance_creation_expr 
+		function() { this.push( this, "primary_no_new_array", [{"nt":"class_instance_creation_expr"}] ) }
+	|
+		field_access 
+		function() { this.push( this, "primary_no_new_array", [{"nt":"field_access"}] ) }
+	|
+		array_access 
+		function() { this.push( this, "primary_no_new_array", [{"nt":"array_access"}] ) }
+	|
+		method_invocation 
+		function() { this.push( this, "primary_no_new_array", [{"nt":"method_invocation"}] ) }
+	;
+
+
+class_instance_creation_expr=
+		'new' 'identifier' 'paranthesis_start' argument_list 'paranthesis_end' 
+		function() { this.push( this, "class_instance_creation_expr", ["new","identifier","paranthesis_start",{"nt":"argument_list"},"paranthesis_end"] ) }
+	|
+		'new' 'identifier' 'paranthesis_start' 'paranthesis_end' 
+		function() { this.push( this, "class_instance_creation_expr", ["new","identifier","paranthesis_start","paranthesis_end"] ) }
+	;
+
+
+argument_list=
+		expr 
+		function() { this.push( this, "argument_list", [{"nt":"expr"}] ) }
+	|
+		argument_list 'separator' expr 
+		function() { this.push( this, "argument_list", [{"nt":"argument_list"},"separator",{"nt":"expr"}] ) }
+	;
+
+
+dim_exprs=
+		dim_exprs dim_expr 
+		function() { this.push( this, "dim_exprs", [{"nt":"dim_exprs"},{"nt":"dim_expr"}] ) }
+	|
+		dim_expr 
+		function() { this.push( this, "dim_exprs", [{"nt":"dim_expr"}] ) }
+	;
+
+
+dim_expr=
+		'brackets_start' expr 'brackets_end' 
+		function() { this.push( this, "dim_expr", ["brackets_start",{"nt":"expr"},"brackets_end"] ) }
+	;
+
+
+dims=
+		'brackets_start' 'brackets_end' 
+		function() { this.push( this, "dims", ["brackets_start","brackets_end"] ) }
+	|
+		dims 'brackets_start' 'brackets_end' 
+		function() { this.push( this, "dims", [{"nt":"dims"},"brackets_start","brackets_end"] ) }
 	;
 
 
@@ -486,14 +714,8 @@ literal=
 		'integer_literal' 
 		function() { this.push( this, "literal", ["integer_literal"] ) }
 	|
-		signed_integer_literal 
-		function() { this.push( this, "literal", [{"nt":"signed_integer_literal"}] ) }
-	|
 		'float_literal' 
 		function() { this.push( this, "literal", ["float_literal"] ) }
-	|
-		signed_float_literal 
-		function() { this.push( this, "literal", [{"nt":"signed_float_literal"}] ) }
 	|
 		'boolean_literal' 
 		function() { this.push( this, "literal", ["boolean_literal"] ) }
@@ -515,18 +737,6 @@ sign=
 	|
 		'op_sub' 
 		function() { this.push( this, "sign", ["op_sub"] ) }
-	;
-
-
-signed_integer_literal=
-		sign 'integer_literal' 
-		function() { this.push( this, "signed_integer_literal", [{"nt":"sign"},"integer_literal"] ) }
-	;
-
-
-signed_float_literal=
-		sign 'float_literal' 
-		function() { this.push( this, "signed_float_literal", [{"nt":"sign"},"float_literal"] ) }
 	;
 
 
