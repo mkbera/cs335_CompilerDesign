@@ -254,17 +254,18 @@ rules = {
 
 
 	expr: [
-		[{ nt: "cond_expr" }],
+		[{ nt: "cond_expr" }], // TO BE ADDED
+		// [{ nt: "unary_expr" }], // CUSTOM // TO BE REMOVED
 		[{ nt: "assignment" }]
 	],
 	stmt_expr: [
 		[{ nt: "assignment" }],
-		// [{ nt: "preinc_expr" }],
-		// [{ nt: "predec_expr" }],
-		// [{ nt: "postinc_expr" }],
-		// [{ nt: "postdec_expr" }],
-		// [{ nt: "method_invocation" }],
-		// 	[{ nt: "class_instance_creation_expr" }]
+		[{ nt: "preinc_expr" }],
+		[{ nt: "predec_expr" }],
+		[{ nt: "postinc_expr" }],
+		[{ nt: "postdec_expr" }],
+		[{ nt: "method_invocation" }],
+		[{ nt: "class_instance_creation_expr" }]
 	],
 
 	assignment: [
@@ -272,8 +273,8 @@ rules = {
 	],
 	left_hand_side: [
 		[{ nt: "expr_name" }],
-		// 	[{ nt: "field_access" }],
-		// 	[{ nt: "array_access" }]
+		[{ nt: "field_access" }],
+		[{ nt: "array_access" }]
 	],
 	assignment_operator: [
 		["op_assign"],
@@ -370,54 +371,63 @@ rules = {
 		// ["paranthesis_start", { nt: "primitive_type" }, "paranthesis_end", { "nt": "unary_expr_npm" }] // TO BE REMOVED
 	],
 
-	// postdec_expr: [
-	// 	[{ nt: "postfix_expr" }, "op_decrement"]
-	// ],
-	// postinc_expr: [
-	// 	[{ nt: "postfix_expr" }, "op_increment"]
-	// ],
-
-	postfix_expr: [
-		// [{ nt: "primary" }],
-		[{ nt: "expr_name" }],
-		// 	[{ nt: "postinc_expr" }],
-		// 	[{ nt: "postdec_expr" }]
+	postdec_expr: [
+		[{ nt: "postfix_expr" }, "op_decrement"]
+	],
+	postinc_expr: [
+		[{ nt: "postfix_expr" }, "op_increment"]
 	],
 
-	// method_invocation: [
-	// 	[{ nt: "expr_name" }, "paranthesis_start", { nt: "argument_list", optional: true }, "paranthesis_end"],
-	// 	[{ nt: "primary" }, "field_invoker", "identifier", "paranthesis_start", { nt: "argument_list", optional: true }, "paranthesis_end"],
-	// 	["super", "field_invoker", "identifier", "paranthesis_start", { nt: "argument_list", optional: true }, "paranthesis_end"]
-	// ],
-	// field_access: [
-	// 	[{ nt: "primary" }, "field_invoker", "identifier"],
-	// 	["super", "field_invoker", "identifier"]
-	// ],
-	// primary: [
-	// 	[{ nt: "primary_no_new_array" }],
-	// 	[{ nt: "array_creation_expr" }]
-	// ],
-	// primary_no_new_array: [
-	// 	[{ nt: "literal" }],
-	// 	["this"],
-	// 	["paranthesis_start", { nt: "expr" }, "paranthesis_end"],
-	// 	[{ nt: "class_instance_creation_expr" }],
-	// 	[{ nt: "field_access" }],
-	// 	[{ nt: "array_access" }],
-	// 	[{ nt: "method_invocation" }]
-	// ],
-	// class_instance_creation_expr: [
-	// 	["new", { nt: "class_type" }, "paranthesis_start", { nt: "argument_list", optional: true }, "paranthesis_end"]
-	// ],
-	// argument_list: [
-	// 	[{ nt: "expr" }],
-	// 	[{ nt: "argument_list" }, "separator", { nt: "expr" }]
-	// ],
-	// array_creation_expr: [
-	// 	[{ nt: "expr" }],
-	// 	["new", { nt: "primitive_type" }, { nt: "dim_exprs" }, { nt: "dims", optional: true }],
-	// 	["new", "identifier", { nt: "dim_exprs" }, { nt: "dims", optional: true }]
-	// ],
+	postfix_expr: [
+		[{ nt: "primary" }],
+		[{ nt: "expr_name" }],
+		[{ nt: "postinc_expr" }],
+		[{ nt: "postdec_expr" }]
+	],
+
+	method_invocation: [
+		[{ nt: "expr_name" }, "paranthesis_start", { nt: "argument_list", optional: true }, "paranthesis_end"],
+		[{ nt: "primary" }, "field_invoker", "identifier", "paranthesis_start", { nt: "argument_list", optional: true }, "paranthesis_end"],
+		["super", "field_invoker", "identifier", "paranthesis_start", { nt: "argument_list", optional: true }, "paranthesis_end"]
+	],
+	field_access: [
+		[{ nt: "primary" }, "field_invoker", "identifier"],
+		["super", "field_invoker", "identifier"]
+	],
+	array_access: [
+		// NOTE: ARRAY ACCESS arr<...><...>
+		// [{ nt: "expr_name" }, "brackets_start", { nt: "expr" }, "brackets_end"], // TO BE REMOVED
+		// [{ nt: "primary_no_new_array" }, "brackets_start", { nt: "expr" }, "brackets_end"] // TO BE REMOVED
+		// [{ nt: "expr_name" }, "colon", "op_less", { nt: "expr" }, "op_greater"], // CUSTOM
+		// [{ nt: "primary_no_new_array" }, "colon", "op_less", { nt: "expr" }, "op_greater"] // CUSTOM
+		[{ nt: "expr_name" }, "colon", { nt: "dim_exprs" }], // CUSTOM
+		[{ nt: "primary_no_new_array" }, "colon", { nt: "dim_exprs" }] // CUSTOM
+	],
+	primary: [
+		[{ nt: "primary_no_new_array" }],
+		[{ nt: "array_creation_expr" }]
+	],
+	primary_no_new_array: [
+		[{ nt: "literal" }],
+		["this"],
+		["paranthesis_start", { nt: "expr" }, "paranthesis_end"],
+		[{ nt: "class_instance_creation_expr" }],
+		[{ nt: "field_access" }],
+		[{ nt: "array_access" }],
+		[{ nt: "method_invocation" }]
+	],
+	class_instance_creation_expr: [
+		["new", "identifier", "paranthesis_start", { nt: "argument_list", optional: true }, "paranthesis_end"]
+	],
+	argument_list: [
+		[{ nt: "expr" }],
+		[{ nt: "argument_list" }, "separator", { nt: "expr" }]
+	],
+	array_creation_expr: [
+		// [{ nt: "expr" }], // TO BE REMOVED
+		["new", { nt: "primitive_type" }, { nt: "dim_exprs" }, { nt: "dims", optional: true }],
+		["new", "identifier", { nt: "dim_exprs" }, { nt: "dims", optional: true }]
+	],
 	dim_exprs: [
 		[{ nt: "dim_exprs" }, { nt: "dim_expr" }],
 		[{ nt: "dim_expr" }]
