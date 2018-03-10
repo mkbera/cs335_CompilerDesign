@@ -73,7 +73,7 @@ rules = {
 	],
 	var_declarators: [
 		[{ nt: "var_declarators" }, "separator", { nt: "var_declarator" }],
-		[{ nt: "var_declarator" }]
+		[{ nlst: "var_declarator" }]
 	],
 	var_declarator: [
 		[{ nt: "var_declarator_id" }],
@@ -160,102 +160,101 @@ rules = {
 
 	stmt: [
 		[{ nt: "stmt_wots" }],
-		// [{ nt: "if_then_stmt" }],
-		// [{ nt: "if_then_else_stmt" }],
-		// [{ nt: "while_stmt" }],
-		// [{ nt: "for_stmt" }]
+		[{ nt: "if_then_stmt" }],
+		[{ nt: "if_then_else_stmt" }],
+		[{ nt: "while_stmt" }],
+		[{ nt: "for_stmt" }]
 	],
 	stmt_nsi: [
 		[{ nt: "stmt_wots" }],
-		// [{ nt: "if_then_else_stmt_nsi" }],
-		// [{ nt: "while_stmt_nsi" }],
-		// [{ nt: "for_stmt_nsi" }]
+		[{ nt: "if_then_else_stmt_nsi" }],
+		[{ nt: "while_stmt_nsi" }],
+		[{ nt: "for_stmt_nsi" }]
 	],
 	stmt_wots: [
 		[{ nt: "block" }],
-		// [{ nt: "switch_stmt" }],
-		// [{ nt: "do_stmt" }],
-		// [{ nt: "break_stmt" }],
-		// [{ nt: "continue_stmt" }],
-		// [{ nt: "return_stmt" }],
+		[{ nt: "switch_stmt" }],
+		[{ nt: "do_stmt" }],
+		[{ nt: "break_stmt" }],
+		[{ nt: "continue_stmt" }],
+		[{ nt: "return_stmt" }],
 		[{ nt: "stmt_expr" }, "terminator"],
 		["terminator"]
 	],
 
-	// if_then_stmt: [
-	// 	["if", "paranthesis_start", { nt: "expr" }, "paranthesis_end", { nt: "stmt" }]
-	// ],
-	// if_then_else_stmt: [
-	// 	["if", "paranthesis_start", { nt: "expr" }, "paranthesis_end", { nt: "stmt_nsi" }, "else", { nt: "stmt" }]
-	// ],
-	// if_then_else_stmt_nsi: [
-	// 	["if", "paranthesis_start", { nt: "expr" }, "paranthesis_end", { nt: "stmt_nsi" }, "else", { nt: "stmt_nsi" }]
-	// ],
+	if_then_stmt: [
+		["if", "paranthesis_start", { nt: "expr" }, "paranthesis_end", { nt: "stmt" }]
+	],
+	if_then_else_stmt: [
+		["if", "paranthesis_start", { nt: "expr" }, "paranthesis_end", { nt: "stmt_nsi" }, "else", { nt: "stmt" }]
+	],
+	if_then_else_stmt_nsi: [
+		["if", "paranthesis_start", { nt: "expr" }, "paranthesis_end", { nt: "stmt_nsi" }, "else", { nt: "stmt_nsi" }]
+	],
 
-	// switch_stmt: [
-	// 	["switch", "paranthesis_start", { nt: "expr" }, "paranthesis_end", { nt: "switch_block" }]
-	// ],
-	// switch_block: [
-	// 	["set_start", { nt: "switch_block_stmt_groups", optional: true }, { nt: "switch_labels", optional: true }, "set_end"]
-	// ],
-	// switch_block_stmt_groups: [
-	// 	[{ nt: "switch_block_stmt_groups" }, { nt: "switch_block_stmt_group" }],
-	// 	[{ nt: "switch_block_stmt_group" }]
-	// ],
-	// switch_block_stmt_group: [
-	// 	[{ nt: "switch_labels" }, { nt: "block_stmts" }]
-	// ],
-	// switch_labels: [
-	// 	[{ nt: "switch_labels" }, { nt: "switch_label" }],
-	// 	[{ nt: "switch_label" }]
-	// ],
-	// switch_label: [
-	// 	// NOTE: WE ARE NOT EVALUATING CONSTANT EXPRESSION, BUT ONLY LITERALS
-	// 	["case", { nt: "literal" }, "colon"],
-	// 	["case", "paranthesis_start", { nt: "literal" }, "paranthesis_end", "colon"],
-	// 	["default", "colon"]
-	// ],
+	switch_stmt: [
+		["switch", "paranthesis_start", { nt: "expr" }, "paranthesis_end", { nt: "switch_block" }]
+	],
+	switch_block: [
+		["set_start", { nt: "switch_block_stmt_groups", optional: true }, { nt: "switch_labels", optional: true }, "set_end"]
+	],
+	switch_block_stmt_groups: [
+		[{ nt: "switch_block_stmt_groups" }, { nt: "switch_block_stmt_group" }],
+		[{ nt: "switch_block_stmt_group" }]
+	],
+	switch_block_stmt_group: [
+		[{ nt: "switch_labels" }, { nt: "block_stmts" }]
+	],
+	switch_labels: [
+		[{ nt: "switch_labels" }, { nt: "switch_label" }],
+		[{ nt: "switch_label" }]
+	],
+	switch_label: [
+		// NOTE: WE ARE NOT EVALUATING CONSTANT EXPRESSION, BUT ONLY LITERALS
+		["case", { nt: "literal" }, "colon"],
+		["case", "paranthesis_start", { nt: "literal" }, "paranthesis_end", "colon"],
+		["default", "colon"]
+	],
 
-	// while_stmt: [
-	// 	["while", "paranthesis_start", { nt: "expr" }, "paranthesis_end", { nt: "stmt" }]
-	// ],
-	// while_stmt_nsi: [
-	// 	["while", "paranthesis_start", { nt: "expr" }, "paranthesis_end", { nt: "stmt_nsi" }]
-	// ],
+	while_stmt: [
+		["while", "paranthesis_start", { nt: "expr" }, "paranthesis_end", { nt: "stmt" }]
+	],
+	while_stmt_nsi: [
+		["while", "paranthesis_start", { nt: "expr" }, "paranthesis_end", { nt: "stmt_nsi" }]
+	],
 
-	// do_stmt: [
-	// 	["do", { nt: "stmt" }, "while", "paranthesis_start", { nt: "expr" }, "paranthesis_end", "terminator"]
-	// ],
+	do_stmt: [
+		["do", { nt: "stmt" }, "while", "paranthesis_start", { nt: "expr" }, "paranthesis_end", "terminator"]
+	],
 
-	// for_stmt: [
-	// 	["for", "paranthesis_start", { nt: "for_init", optional: true }, "terminator", { nt: "expr", optional: true }, "terminator", { nt: "stmt_expr_list", optional: true }, "paranthesis_end", { nt: "stmt" }]
-	// ],
-	// for_stmt_nsi: [
-	// 	["for", "paranthesis_start", { nt: "for_init", optional: true }, "terminator", { nt: "expr", optional: true }, "terminator", { nt: "stmt_expr_list", optional: true }, "paranthesis_end", { nt: "stmt_nsi" }]
-	// ],
-	// for_init: [
-	// 	[{ nt: "stmt_expr_list" }],
-	// 	[{ nt: "type" }, { nt: "var_declarators" }]
-	// ],
-	// stmt_expr_list: [
-	// 	[{ nt: "stmt_expr_list" }, "separator", { nt: "stmt_expr" }],
-	// 	[{ nt: "stmt_expr" }]
-	// ],
+	for_stmt: [
+		["for", "paranthesis_start", { nt: "for_init", optional: true }, "terminator", { nt: "expr", optional: true }, "terminator", { nt: "stmt_expr_list", optional: true }, "paranthesis_end", { nt: "stmt" }]
+	],
+	for_stmt_nsi: [
+		["for", "paranthesis_start", { nt: "for_init", optional: true }, "terminator", { nt: "expr", optional: true }, "terminator", { nt: "stmt_expr_list", optional: true }, "paranthesis_end", { nt: "stmt_nsi" }]
+	],
+	for_init: [
+		[{ nt: "stmt_expr_list" }],
+		[{ nt: "type" }, { nt: "var_declarators" }]
+	],
+	stmt_expr_list: [
+		[{ nt: "stmt_expr_list" }, "separator", { nt: "stmt_expr" }],
+		[{ nt: "stmt_expr" }]
+	],
 
-	// break_stmt: [
-	// 	["break", "terminator"]
-	// ],
-	// continue_stmt: [
-	// 	["continue", "terminator"]
-	// ],
-	// return_stmt: [
-	// 	["return", { nt: "expr", optional: true }, "terminator"]
-	// ],
+	break_stmt: [
+		["break", "terminator"]
+	],
+	continue_stmt: [
+		["continue", "terminator"]
+	],
+	return_stmt: [
+		["return", { nt: "expr", optional: true }, "terminator"]
+	],
 
 
 	expr: [
-		[{ nt: "cond_expr" }], // TO BE ADDED
-		// [{ nt: "unary_expr" }], // CUSTOM // TO BE REMOVED
+		[{ nt: "cond_expr" }],
 		[{ nt: "assignment" }]
 	],
 	stmt_expr: [
@@ -398,8 +397,6 @@ rules = {
 		// NOTE: ARRAY ACCESS arr<...><...>
 		// [{ nt: "expr_name" }, "brackets_start", { nt: "expr" }, "brackets_end"], // TO BE REMOVED
 		// [{ nt: "primary_no_new_array" }, "brackets_start", { nt: "expr" }, "brackets_end"] // TO BE REMOVED
-		// [{ nt: "expr_name" }, "colon", "op_less", { nt: "expr" }, "op_greater"], // CUSTOM
-		// [{ nt: "primary_no_new_array" }, "colon", "op_less", { nt: "expr" }, "op_greater"] // CUSTOM
 		[{ nt: "expr_name" }, "colon", { nt: "dim_exprs" }], // CUSTOM
 		[{ nt: "primary_no_new_array" }, "colon", { nt: "dim_exprs" }] // CUSTOM
 	],
