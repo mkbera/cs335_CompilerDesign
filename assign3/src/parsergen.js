@@ -7,6 +7,22 @@ class Grammar {
 		this.grammar += s + "\n";
 	}
 
+	stringify(children) {
+		var arr = []
+		var n_child = 1;
+		children.forEach(child => {
+			if (typeof child === "string") {
+				arr.push("'" + child + "'");
+			}
+			else {
+				arr.push("$" + n_child);
+			}
+			n_child++;
+		});
+
+		return arr;
+	}
+
 	get_rule_string(nt, rule) {
 		var s = "";
 		rule.forEach(token => {
@@ -27,7 +43,12 @@ class Grammar {
 				}
 			}
 		});
-		s += "\n\t\tfunction() { this.push( this, \"" + nt + "\", " + JSON.stringify(rule) + " ) }"
+		if (nt == "program") {
+			s += "\n\t\t{ return { parent: '" + nt + "', children: [" + this.stringify(rule) + "] } }"
+		}
+		else {
+			s += "\n\t\t{ $$ = { parent: '" + nt + "', children: [" + this.stringify(rule) + "] } }"
+		}
 
 		return s;
 	}
@@ -35,7 +56,9 @@ class Grammar {
 	print_to_file(file) {
 		var fs = require('fs');
 
-		fs.writeFile(file, this.grammar, function (err) {
+		var lexer = fs.readFileSync("src/includes/tokens.jison").toString();
+
+		fs.writeFile(file, lexer + "\n\n\n" + this.grammar, function (err) {
 			if (err) {
 				return console.log(err);
 			}
@@ -51,8 +74,8 @@ function main() {
 
 	var grammar = new Grammar();
 
-	grammar.add("%moduleName MyParser");
-	grammar.add("%mode LR1");
+	grammar.add("%start program");
+	grammar.add("%% /* language grammar */");
 	grammar.add("\n");
 
 	Object.keys(rules).forEach(function (nt) {
@@ -72,7 +95,7 @@ function main() {
 			}
 		}
 
-		grammar.add(nt + "=");
+		grammar.add(nt + " :");
 		for (var i = 0; i < rules[nt].length - 1; i++) {
 			grammar.add("\t\t" + grammar.get_rule_string(nt, rules[nt][i]));
 			grammar.add("\t|");

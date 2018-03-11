@@ -1,8 +1,0 @@
-mkdir -p src/includes
-mkdir -p src/node_modules/lexer
-mkdir -p src/node_modules/parser
-node src/parsergen.js src/includes/grammar.y
-The grammar was generated and saved to src/includes/grammar.y
-# node src/node_modules/jacob/cmd/cmd.js -t src/includes/tokens.l -l src/node_modules/lexer/index.js
-node src/node_modules/jacob/cmd/cmd.js -g src/includes/grammar.y -p src/node_modules/parser/index.js
-JACOB 1.0.5

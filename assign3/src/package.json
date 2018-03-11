@@ -1,5 +1,5 @@
 {
-  "name": "java-parser",
+  "name": "java-compiler",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -9,6 +9,6 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "jacob": "^1.0.5"
+    "jison": "^0.4.18"
   }
 }

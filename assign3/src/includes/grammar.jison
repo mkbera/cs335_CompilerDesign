@@ -149,7 +149,7 @@
 
 [;]									return 'terminator';
 
-\[.]								return 'field_invoker';
+[.]									return 'field_invoker';
 
 [,]									return 'separator';
 
@@ -232,16 +232,16 @@ type_decr :
 
 class_decr :
 		'public' 'class' 'identifier' extend_decr class_body 
-		{ $$ = { parent: 'class_decr', children: ['public','class','identifier',$1,$2] } }
+		{ $$ = { parent: 'class_decr', children: ['public','class','identifier',$4,$5] } }
 	|
 		'class' 'identifier' extend_decr class_body 
-		{ $$ = { parent: 'class_decr', children: ['class','identifier',$1,$2] } }
+		{ $$ = { parent: 'class_decr', children: ['class','identifier',$3,$4] } }
 	|
 		'public' 'class' 'identifier' class_body 
-		{ $$ = { parent: 'class_decr', children: ['public','class','identifier',$1] } }
+		{ $$ = { parent: 'class_decr', children: ['public','class','identifier',$4] } }
 	|
 		'class' 'identifier' class_body 
-		{ $$ = { parent: 'class_decr', children: ['class','identifier',$1] } }
+		{ $$ = { parent: 'class_decr', children: ['class','identifier',$3] } }
 	;
 
 
@@ -253,7 +253,7 @@ extend_decr :
 
 class_body :
 		'set_start' class_body_decrs 'set_end' 
-		{ $$ = { parent: 'class_body', children: ['set_start',$1,'set_end'] } }
+		{ $$ = { parent: 'class_body', children: ['set_start',$2,'set_end'] } }
 	;
 
 
@@ -271,7 +271,7 @@ class_body_decr :
 		{ $$ = { parent: 'class_body_decr', children: [$1] } }
 	|
 		'public' consr_declarator consr_body 
-		{ $$ = { parent: 'class_body_decr', children: ['public',$1,$2] } }
+		{ $$ = { parent: 'class_body_decr', children: ['public',$2,$3] } }
 	|
 		consr_declarator consr_body 
 		{ $$ = { parent: 'class_body_decr', children: [$1,$2] } }
@@ -289,13 +289,13 @@ class_member_decr :
 
 consr_declarator :
 		'identifier' 'paranthesis_start' formal_parameter_list 'paranthesis_end' 
-		{ $$ = { parent: 'consr_declarator', children: ['identifier','paranthesis_start',$1,'paranthesis_end'] } }
+		{ $$ = { parent: 'consr_declarator', children: ['identifier','paranthesis_start',$3,'paranthesis_end'] } }
 	;
 
 
 formal_parameter_list :
 		formal_parameter_list 'separator' formal_parameter 
-		{ $$ = { parent: 'formal_parameter_list', children: [$1,'separator',$2] } }
+		{ $$ = { parent: 'formal_parameter_list', children: [$1,'separator',$3] } }
 	|
 		formal_parameter 
 		{ $$ = { parent: 'formal_parameter_list', children: [$1] } }
@@ -313,13 +313,13 @@ formal_parameter :
 
 consr_body :
 		'set_start' explicit_consr_invocation block_stmts 'set_end' 
-		{ $$ = { parent: 'consr_body', children: ['set_start',$1,$2,'set_end'] } }
+		{ $$ = { parent: 'consr_body', children: ['set_start',$2,$3,'set_end'] } }
 	|
 		'set_start' block_stmts 'set_end' 
-		{ $$ = { parent: 'consr_body', children: ['set_start',$1,'set_end'] } }
+		{ $$ = { parent: 'consr_body', children: ['set_start',$2,'set_end'] } }
 	|
 		'set_start' explicit_consr_invocation 'set_end' 
-		{ $$ = { parent: 'consr_body', children: ['set_start',$1,'set_end'] } }
+		{ $$ = { parent: 'consr_body', children: ['set_start',$2,'set_end'] } }
 	|
 		'set_start' 'set_end' 
 		{ $$ = { parent: 'consr_body', children: ['set_start','set_end'] } }
@@ -328,10 +328,10 @@ consr_body :
 
 explicit_consr_invocation :
 		'this' 'paranthesis_start' argument_list 'paranthesis_end' 
-		{ $$ = { parent: 'explicit_consr_invocation', children: ['this','paranthesis_start',$1,'paranthesis_end'] } }
+		{ $$ = { parent: 'explicit_consr_invocation', children: ['this','paranthesis_start',$3,'paranthesis_end'] } }
 	|
 		'super' 'paranthesis_start' argument_list 'paranthesis_end' 
-		{ $$ = { parent: 'explicit_consr_invocation', children: ['super','paranthesis_start',$1,'paranthesis_end'] } }
+		{ $$ = { parent: 'explicit_consr_invocation', children: ['super','paranthesis_start',$3,'paranthesis_end'] } }
 	|
 		'this' 'paranthesis_start' 'paranthesis_end' 
 		{ $$ = { parent: 'explicit_consr_invocation', children: ['this','paranthesis_start','paranthesis_end'] } }
@@ -343,7 +343,7 @@ explicit_consr_invocation :
 
 field_decr :
 		'public' type var_declarators 'terminator' 
-		{ $$ = { parent: 'field_decr', children: ['public',$1,$2,'terminator'] } }
+		{ $$ = { parent: 'field_decr', children: ['public',$2,$3,'terminator'] } }
 	|
 		type var_declarators 'terminator' 
 		{ $$ = { parent: 'field_decr', children: [$1,$2,'terminator'] } }
@@ -352,7 +352,7 @@ field_decr :
 
 var_declarators :
 		var_declarators 'separator' var_declarator 
-		{ $$ = { parent: 'var_declarators', children: [$1,'separator',$2] } }
+		{ $$ = { parent: 'var_declarators', children: [$1,'separator',$3] } }
 	|
 		var_declarator 
 		{ $$ = { parent: 'var_declarators', children: [$1] } }
@@ -364,7 +364,7 @@ var_declarator :
 		{ $$ = { parent: 'var_declarator', children: [$1] } }
 	|
 		var_declarator_id 'op_assign' var_init 
-		{ $$ = { parent: 'var_declarator', children: [$1,'op_assign',$2] } }
+		{ $$ = { parent: 'var_declarator', children: [$1,'op_assign',$3] } }
 	;
 
 
@@ -388,10 +388,10 @@ var_init :
 
 method_decr :
 		'public' method_declarator 'colon' result_type method_body 
-		{ $$ = { parent: 'method_decr', children: ['public',$1,'colon',$2,$3] } }
+		{ $$ = { parent: 'method_decr', children: ['public',$2,'colon',$4,$5] } }
 	|
 		method_declarator 'colon' result_type method_body 
-		{ $$ = { parent: 'method_decr', children: [$1,'colon',$2,$3] } }
+		{ $$ = { parent: 'method_decr', children: [$1,'colon',$3,$4] } }
 	;
 
 
@@ -406,7 +406,7 @@ result_type :
 
 method_declarator :
 		'identifier' 'paranthesis_start' formal_parameter_list 'paranthesis_end' 
-		{ $$ = { parent: 'method_declarator', children: ['identifier','paranthesis_start',$1,'paranthesis_end'] } }
+		{ $$ = { parent: 'method_declarator', children: ['identifier','paranthesis_start',$3,'paranthesis_end'] } }
 	;
 
 
@@ -418,10 +418,10 @@ method_body :
 
 array_init :
 		'set_start' var_inits 'separator' 'set_end' 
-		{ $$ = { parent: 'array_init', children: ['set_start',$1,'separator','set_end'] } }
+		{ $$ = { parent: 'array_init', children: ['set_start',$2,'separator','set_end'] } }
 	|
 		'set_start' var_inits 'set_end' 
-		{ $$ = { parent: 'array_init', children: ['set_start',$1,'set_end'] } }
+		{ $$ = { parent: 'array_init', children: ['set_start',$2,'set_end'] } }
 	|
 		'set_start' 'separator' 'set_end' 
 		{ $$ = { parent: 'array_init', children: ['set_start','separator','set_end'] } }
@@ -433,7 +433,7 @@ array_init :
 
 var_inits :
 		var_inits 'separator' var_init 
-		{ $$ = { parent: 'var_inits', children: [$1,'separator',$2] } }
+		{ $$ = { parent: 'var_inits', children: [$1,'separator',$3] } }
 	|
 		var_init 
 		{ $$ = { parent: 'var_inits', children: [$1] } }
@@ -499,7 +499,7 @@ reference_type :
 
 block :
 		'set_start' block_stmts 'set_end' 
-		{ $$ = { parent: 'block', children: ['set_start',$1,'set_end'] } }
+		{ $$ = { parent: 'block', children: ['set_start',$2,'set_end'] } }
 	|
 		'set_start' 'set_end' 
 		{ $$ = { parent: 'block', children: ['set_start','set_end'] } }
@@ -586,37 +586,37 @@ stmt_wots :
 
 if_then_stmt :
 		'if' 'paranthesis_start' expr 'paranthesis_end' stmt 
-		{ $$ = { parent: 'if_then_stmt', children: ['if','paranthesis_start',$1,'paranthesis_end',$2] } }
+		{ $$ = { parent: 'if_then_stmt', children: ['if','paranthesis_start',$3,'paranthesis_end',$5] } }
 	;
 
 
 if_then_else_stmt :
 		'if' 'paranthesis_start' expr 'paranthesis_end' stmt_nsi 'else' stmt 
-		{ $$ = { parent: 'if_then_else_stmt', children: ['if','paranthesis_start',$1,'paranthesis_end',$2,'else',$3] } }
+		{ $$ = { parent: 'if_then_else_stmt', children: ['if','paranthesis_start',$3,'paranthesis_end',$5,'else',$7] } }
 	;
 
 
 if_then_else_stmt_nsi :
 		'if' 'paranthesis_start' expr 'paranthesis_end' stmt_nsi 'else' stmt_nsi 
-		{ $$ = { parent: 'if_then_else_stmt_nsi', children: ['if','paranthesis_start',$1,'paranthesis_end',$2,'else',$3] } }
+		{ $$ = { parent: 'if_then_else_stmt_nsi', children: ['if','paranthesis_start',$3,'paranthesis_end',$5,'else',$7] } }
 	;
 
 
 switch_stmt :
 		'switch' 'paranthesis_start' expr 'paranthesis_end' switch_block 
-		{ $$ = { parent: 'switch_stmt', children: ['switch','paranthesis_start',$1,'paranthesis_end',$2] } }
+		{ $$ = { parent: 'switch_stmt', children: ['switch','paranthesis_start',$3,'paranthesis_end',$5] } }
 	;
 
 
 switch_block :
 		'set_start' switch_block_stmt_groups switch_labels 'set_end' 
-		{ $$ = { parent: 'switch_block', children: ['set_start',$1,$2,'set_end'] } }
+		{ $$ = { parent: 'switch_block', children: ['set_start',$2,$3,'set_end'] } }
 	|
 		'set_start' switch_labels 'set_end' 
-		{ $$ = { parent: 'switch_block', children: ['set_start',$1,'set_end'] } }
+		{ $$ = { parent: 'switch_block', children: ['set_start',$2,'set_end'] } }
 	|
 		'set_start' switch_block_stmt_groups 'set_end' 
-		{ $$ = { parent: 'switch_block', children: ['set_start',$1,'set_end'] } }
+		{ $$ = { parent: 'switch_block', children: ['set_start',$2,'set_end'] } }
 	|
 		'set_start' 'set_end' 
 		{ $$ = { parent: 'switch_block', children: ['set_start','set_end'] } }
@@ -649,10 +649,10 @@ switch_labels :
 
 switch_label :
 		'case' literal 'colon' 
-		{ $$ = { parent: 'switch_label', children: ['case',$1,'colon'] } }
+		{ $$ = { parent: 'switch_label', children: ['case',$2,'colon'] } }
 	|
 		'case' 'paranthesis_start' literal 'paranthesis_end' 'colon' 
-		{ $$ = { parent: 'switch_label', children: ['case','paranthesis_start',$1,'paranthesis_end','colon'] } }
+		{ $$ = { parent: 'switch_label', children: ['case','paranthesis_start',$3,'paranthesis_end','colon'] } }
 	|
 		'default' 'colon' 
 		{ $$ = { parent: 'switch_label', children: ['default','colon'] } }
@@ -661,73 +661,73 @@ switch_label :
 
 while_stmt :
 		'while' 'paranthesis_start' expr 'paranthesis_end' stmt 
-		{ $$ = { parent: 'while_stmt', children: ['while','paranthesis_start',$1,'paranthesis_end',$2] } }
+		{ $$ = { parent: 'while_stmt', children: ['while','paranthesis_start',$3,'paranthesis_end',$5] } }
 	;
 
 
 while_stmt_nsi :
 		'while' 'paranthesis_start' expr 'paranthesis_end' stmt_nsi 
-		{ $$ = { parent: 'while_stmt_nsi', children: ['while','paranthesis_start',$1,'paranthesis_end',$2] } }
+		{ $$ = { parent: 'while_stmt_nsi', children: ['while','paranthesis_start',$3,'paranthesis_end',$5] } }
 	;
 
 
 do_stmt :
 		'do' stmt 'while' 'paranthesis_start' expr 'paranthesis_end' 'terminator' 
-		{ $$ = { parent: 'do_stmt', children: ['do',$1,'while','paranthesis_start',$2,'paranthesis_end','terminator'] } }
+		{ $$ = { parent: 'do_stmt', children: ['do',$2,'while','paranthesis_start',$5,'paranthesis_end','terminator'] } }
 	;
 
 
 for_stmt :
 		'for' 'paranthesis_start' for_init 'terminator' expr 'terminator' stmt_expr_list 'paranthesis_end' stmt 
-		{ $$ = { parent: 'for_stmt', children: ['for','paranthesis_start',$1,'terminator',$2,'terminator',$3,'paranthesis_end',$4] } }
+		{ $$ = { parent: 'for_stmt', children: ['for','paranthesis_start',$3,'terminator',$5,'terminator',$7,'paranthesis_end',$9] } }
 	|
 		'for' 'paranthesis_start' 'terminator' expr 'terminator' stmt_expr_list 'paranthesis_end' stmt 
-		{ $$ = { parent: 'for_stmt', children: ['for','paranthesis_start','terminator',$1,'terminator',$2,'paranthesis_end',$3] } }
+		{ $$ = { parent: 'for_stmt', children: ['for','paranthesis_start','terminator',$4,'terminator',$6,'paranthesis_end',$8] } }
 	|
 		'for' 'paranthesis_start' for_init 'terminator' 'terminator' stmt_expr_list 'paranthesis_end' stmt 
-		{ $$ = { parent: 'for_stmt', children: ['for','paranthesis_start',$1,'terminator','terminator',$2,'paranthesis_end',$3] } }
+		{ $$ = { parent: 'for_stmt', children: ['for','paranthesis_start',$3,'terminator','terminator',$6,'paranthesis_end',$8] } }
 	|
 		'for' 'paranthesis_start' for_init 'terminator' expr 'terminator' 'paranthesis_end' stmt 
-		{ $$ = { parent: 'for_stmt', children: ['for','paranthesis_start',$1,'terminator',$2,'terminator','paranthesis_end',$3] } }
+		{ $$ = { parent: 'for_stmt', children: ['for','paranthesis_start',$3,'terminator',$5,'terminator','paranthesis_end',$8] } }
 	|
 		'for' 'paranthesis_start' 'terminator' 'terminator' stmt_expr_list 'paranthesis_end' stmt 
-		{ $$ = { parent: 'for_stmt', children: ['for','paranthesis_start','terminator','terminator',$1,'paranthesis_end',$2] } }
+		{ $$ = { parent: 'for_stmt', children: ['for','paranthesis_start','terminator','terminator',$5,'paranthesis_end',$7] } }
 	|
 		'for' 'paranthesis_start' 'terminator' expr 'terminator' 'paranthesis_end' stmt 
-		{ $$ = { parent: 'for_stmt', children: ['for','paranthesis_start','terminator',$1,'terminator','paranthesis_end',$2] } }
+		{ $$ = { parent: 'for_stmt', children: ['for','paranthesis_start','terminator',$4,'terminator','paranthesis_end',$7] } }
 	|
 		'for' 'paranthesis_start' for_init 'terminator' 'terminator' 'paranthesis_end' stmt 
-		{ $$ = { parent: 'for_stmt', children: ['for','paranthesis_start',$1,'terminator','terminator','paranthesis_end',$2] } }
+		{ $$ = { parent: 'for_stmt', children: ['for','paranthesis_start',$3,'terminator','terminator','paranthesis_end',$7] } }
 	|
 		'for' 'paranthesis_start' 'terminator' 'terminator' 'paranthesis_end' stmt 
-		{ $$ = { parent: 'for_stmt', children: ['for','paranthesis_start','terminator','terminator','paranthesis_end',$1] } }
+		{ $$ = { parent: 'for_stmt', children: ['for','paranthesis_start','terminator','terminator','paranthesis_end',$6] } }
 	;
 
 
 for_stmt_nsi :
 		'for' 'paranthesis_start' for_init 'terminator' expr 'terminator' stmt_expr_list 'paranthesis_end' stmt_nsi 
-		{ $$ = { parent: 'for_stmt_nsi', children: ['for','paranthesis_start',$1,'terminator',$2,'terminator',$3,'paranthesis_end',$4] } }
+		{ $$ = { parent: 'for_stmt_nsi', children: ['for','paranthesis_start',$3,'terminator',$5,'terminator',$7,'paranthesis_end',$9] } }
 	|
 		'for' 'paranthesis_start' 'terminator' expr 'terminator' stmt_expr_list 'paranthesis_end' stmt_nsi 
-		{ $$ = { parent: 'for_stmt_nsi', children: ['for','paranthesis_start','terminator',$1,'terminator',$2,'paranthesis_end',$3] } }
+		{ $$ = { parent: 'for_stmt_nsi', children: ['for','paranthesis_start','terminator',$4,'terminator',$6,'paranthesis_end',$8] } }
 	|
 		'for' 'paranthesis_start' for_init 'terminator' 'terminator' stmt_expr_list 'paranthesis_end' stmt_nsi 
-		{ $$ = { parent: 'for_stmt_nsi', children: ['for','paranthesis_start',$1,'terminator','terminator',$2,'paranthesis_end',$3] } }
+		{ $$ = { parent: 'for_stmt_nsi', children: ['for','paranthesis_start',$3,'terminator','terminator',$6,'paranthesis_end',$8] } }
 	|
 		'for' 'paranthesis_start' for_init 'terminator' expr 'terminator' 'paranthesis_end' stmt_nsi 
-		{ $$ = { parent: 'for_stmt_nsi', children: ['for','paranthesis_start',$1,'terminator',$2,'terminator','paranthesis_end',$3] } }
+		{ $$ = { parent: 'for_stmt_nsi', children: ['for','paranthesis_start',$3,'terminator',$5,'terminator','paranthesis_end',$8] } }
 	|
 		'for' 'paranthesis_start' 'terminator' 'terminator' stmt_expr_list 'paranthesis_end' stmt_nsi 
-		{ $$ = { parent: 'for_stmt_nsi', children: ['for','paranthesis_start','terminator','terminator',$1,'paranthesis_end',$2] } }
+		{ $$ = { parent: 'for_stmt_nsi', children: ['for','paranthesis_start','terminator','terminator',$5,'paranthesis_end',$7] } }
 	|
 		'for' 'paranthesis_start' 'terminator' expr 'terminator' 'paranthesis_end' stmt_nsi 
-		{ $$ = { parent: 'for_stmt_nsi', children: ['for','paranthesis_start','terminator',$1,'terminator','paranthesis_end',$2] } }
+		{ $$ = { parent: 'for_stmt_nsi', children: ['for','paranthesis_start','terminator',$4,'terminator','paranthesis_end',$7] } }
 	|
 		'for' 'paranthesis_start' for_init 'terminator' 'terminator' 'paranthesis_end' stmt_nsi 
-		{ $$ = { parent: 'for_stmt_nsi', children: ['for','paranthesis_start',$1,'terminator','terminator','paranthesis_end',$2] } }
+		{ $$ = { parent: 'for_stmt_nsi', children: ['for','paranthesis_start',$3,'terminator','terminator','paranthesis_end',$7] } }
 	|
 		'for' 'paranthesis_start' 'terminator' 'terminator' 'paranthesis_end' stmt_nsi 
-		{ $$ = { parent: 'for_stmt_nsi', children: ['for','paranthesis_start','terminator','terminator','paranthesis_end',$1] } }
+		{ $$ = { parent: 'for_stmt_nsi', children: ['for','paranthesis_start','terminator','terminator','paranthesis_end',$6] } }
 	;
 
 
@@ -742,7 +742,7 @@ for_init :
 
 stmt_expr_list :
 		stmt_expr_list 'separator' stmt_expr 
-		{ $$ = { parent: 'stmt_expr_list', children: [$1,'separator',$2] } }
+		{ $$ = { parent: 'stmt_expr_list', children: [$1,'separator',$3] } }
 	|
 		stmt_expr 
 		{ $$ = { parent: 'stmt_expr_list', children: [$1] } }
@@ -763,7 +763,7 @@ continue_stmt :
 
 return_stmt :
 		'return' expr 'terminator' 
-		{ $$ = { parent: 'return_stmt', children: ['return',$1,'terminator'] } }
+		{ $$ = { parent: 'return_stmt', children: ['return',$2,'terminator'] } }
 	|
 		'return' 'terminator' 
 		{ $$ = { parent: 'return_stmt', children: ['return','terminator'] } }
@@ -868,7 +868,7 @@ cond_or_expr :
 		{ $$ = { parent: 'cond_or_expr', children: [$1] } }
 	|
 		cond_or_expr 'op_oror' cond_and_expr 
-		{ $$ = { parent: 'cond_or_expr', children: [$1,'op_oror',$2] } }
+		{ $$ = { parent: 'cond_or_expr', children: [$1,'op_oror',$3] } }
 	;
 
 
@@ -877,7 +877,7 @@ cond_and_expr :
 		{ $$ = { parent: 'cond_and_expr', children: [$1] } }
 	|
 		cond_and_expr 'op_andand' incl_or_expr 
-		{ $$ = { parent: 'cond_and_expr', children: [$1,'op_andand',$2] } }
+		{ $$ = { parent: 'cond_and_expr', children: [$1,'op_andand',$3] } }
 	;
 
 
@@ -886,7 +886,7 @@ incl_or_expr :
 		{ $$ = { parent: 'incl_or_expr', children: [$1] } }
 	|
 		incl_or_expr 'op_or' excl_or_expr 
-		{ $$ = { parent: 'incl_or_expr', children: [$1,'op_or',$2] } }
+		{ $$ = { parent: 'incl_or_expr', children: [$1,'op_or',$3] } }
 	;
 
 
@@ -895,7 +895,7 @@ excl_or_expr :
 		{ $$ = { parent: 'excl_or_expr', children: [$1] } }
 	|
 		excl_or_expr 'op_xor' and_expr 
-		{ $$ = { parent: 'excl_or_expr', children: [$1,'op_xor',$2] } }
+		{ $$ = { parent: 'excl_or_expr', children: [$1,'op_xor',$3] } }
 	;
 
 
@@ -904,7 +904,7 @@ and_expr :
 		{ $$ = { parent: 'and_expr', children: [$1] } }
 	|
 		and_expr 'op_and' equality_expr 
-		{ $$ = { parent: 'and_expr', children: [$1,'op_and',$2] } }
+		{ $$ = { parent: 'and_expr', children: [$1,'op_and',$3] } }
 	;
 
 
@@ -913,10 +913,10 @@ equality_expr :
 		{ $$ = { parent: 'equality_expr', children: [$1] } }
 	|
 		equality_expr 'op_equalCompare' relational_expr 
-		{ $$ = { parent: 'equality_expr', children: [$1,'op_equalCompare',$2] } }
+		{ $$ = { parent: 'equality_expr', children: [$1,'op_equalCompare',$3] } }
 	|
 		equality_expr 'op_notequalCompare' relational_expr 
-		{ $$ = { parent: 'equality_expr', children: [$1,'op_notequalCompare',$2] } }
+		{ $$ = { parent: 'equality_expr', children: [$1,'op_notequalCompare',$3] } }
 	;
 
 
@@ -925,19 +925,19 @@ relational_expr :
 		{ $$ = { parent: 'relational_expr', children: [$1] } }
 	|
 		relational_expr 'op_greater' shift_expr 
-		{ $$ = { parent: 'relational_expr', children: [$1,'op_greater',$2] } }
+		{ $$ = { parent: 'relational_expr', children: [$1,'op_greater',$3] } }
 	|
 		relational_expr 'op_greaterEqual' shift_expr 
-		{ $$ = { parent: 'relational_expr', children: [$1,'op_greaterEqual',$2] } }
+		{ $$ = { parent: 'relational_expr', children: [$1,'op_greaterEqual',$3] } }
 	|
 		relational_expr 'op_less' shift_expr 
-		{ $$ = { parent: 'relational_expr', children: [$1,'op_less',$2] } }
+		{ $$ = { parent: 'relational_expr', children: [$1,'op_less',$3] } }
 	|
 		relational_expr 'op_lessEqual' shift_expr 
-		{ $$ = { parent: 'relational_expr', children: [$1,'op_lessEqual',$2] } }
+		{ $$ = { parent: 'relational_expr', children: [$1,'op_lessEqual',$3] } }
 	|
 		relational_expr 'instanceof' shift_expr 
-		{ $$ = { parent: 'relational_expr', children: [$1,'instanceof',$2] } }
+		{ $$ = { parent: 'relational_expr', children: [$1,'instanceof',$3] } }
 	;
 
 
@@ -946,10 +946,10 @@ shift_expr :
 		{ $$ = { parent: 'shift_expr', children: [$1] } }
 	|
 		shift_expr 'op_Lshift' additive_expr 
-		{ $$ = { parent: 'shift_expr', children: [$1,'op_Lshift',$2] } }
+		{ $$ = { parent: 'shift_expr', children: [$1,'op_Lshift',$3] } }
 	|
 		shift_expr 'op_Rshift' additive_expr 
-		{ $$ = { parent: 'shift_expr', children: [$1,'op_Rshift',$2] } }
+		{ $$ = { parent: 'shift_expr', children: [$1,'op_Rshift',$3] } }
 	;
 
 
@@ -958,10 +958,10 @@ additive_expr :
 		{ $$ = { parent: 'additive_expr', children: [$1] } }
 	|
 		additive_expr 'op_add' multiplicative_expr 
-		{ $$ = { parent: 'additive_expr', children: [$1,'op_add',$2] } }
+		{ $$ = { parent: 'additive_expr', children: [$1,'op_add',$3] } }
 	|
 		additive_expr 'op_sub' multiplicative_expr 
-		{ $$ = { parent: 'additive_expr', children: [$1,'op_sub',$2] } }
+		{ $$ = { parent: 'additive_expr', children: [$1,'op_sub',$3] } }
 	;
 
 
@@ -970,25 +970,25 @@ multiplicative_expr :
 		{ $$ = { parent: 'multiplicative_expr', children: [$1] } }
 	|
 		multiplicative_expr 'op_mul' unary_expr 
-		{ $$ = { parent: 'multiplicative_expr', children: [$1,'op_mul',$2] } }
+		{ $$ = { parent: 'multiplicative_expr', children: [$1,'op_mul',$3] } }
 	|
 		multiplicative_expr 'op_div' unary_expr 
-		{ $$ = { parent: 'multiplicative_expr', children: [$1,'op_div',$2] } }
+		{ $$ = { parent: 'multiplicative_expr', children: [$1,'op_div',$3] } }
 	|
 		multiplicative_expr 'op_mod' unary_expr 
-		{ $$ = { parent: 'multiplicative_expr', children: [$1,'op_mod',$2] } }
+		{ $$ = { parent: 'multiplicative_expr', children: [$1,'op_mod',$3] } }
 	;
 
 
 predec_expr :
 		'op_decrement' unary_expr 
-		{ $$ = { parent: 'predec_expr', children: ['op_decrement',$1] } }
+		{ $$ = { parent: 'predec_expr', children: ['op_decrement',$2] } }
 	;
 
 
 preinc_expr :
 		'op_increment' unary_expr 
-		{ $$ = { parent: 'preinc_expr', children: ['op_increment',$1] } }
+		{ $$ = { parent: 'preinc_expr', children: ['op_increment',$2] } }
 	;
 
 
@@ -1000,10 +1000,10 @@ unary_expr :
 		{ $$ = { parent: 'unary_expr', children: [$1] } }
 	|
 		'op_add' unary_expr 
-		{ $$ = { parent: 'unary_expr', children: ['op_add',$1] } }
+		{ $$ = { parent: 'unary_expr', children: ['op_add',$2] } }
 	|
 		'op_sub' unary_expr 
-		{ $$ = { parent: 'unary_expr', children: ['op_sub',$1] } }
+		{ $$ = { parent: 'unary_expr', children: ['op_sub',$2] } }
 	|
 		unary_expr_npm 
 		{ $$ = { parent: 'unary_expr', children: [$1] } }
@@ -1014,14 +1014,8 @@ unary_expr_npm :
 		postfix_expr 
 		{ $$ = { parent: 'unary_expr_npm', children: [$1] } }
 	|
-		postinc_expr 
-		{ $$ = { parent: 'unary_expr_npm', children: [$1] } }
-	|
-		postdec_expr 
-		{ $$ = { parent: 'unary_expr_npm', children: [$1] } }
-	|
 		'op_not' unary_expr 
-		{ $$ = { parent: 'unary_expr_npm', children: ['op_not',$1] } }
+		{ $$ = { parent: 'unary_expr_npm', children: ['op_not',$2] } }
 	|
 		cast_expr 
 		{ $$ = { parent: 'unary_expr_npm', children: [$1] } }
@@ -1030,7 +1024,7 @@ unary_expr_npm :
 
 cast_expr :
 		'paranthesis_start' primitive_type 'paranthesis_end' unary_expr 
-		{ $$ = { parent: 'cast_expr', children: ['paranthesis_start',$1,'paranthesis_end',$2] } }
+		{ $$ = { parent: 'cast_expr', children: ['paranthesis_start',$2,'paranthesis_end',$4] } }
 	;
 
 
@@ -1052,18 +1046,24 @@ postfix_expr :
 	|
 		expr_name 
 		{ $$ = { parent: 'postfix_expr', children: [$1] } }
+	|
+		postinc_expr 
+		{ $$ = { parent: 'postfix_expr', children: [$1] } }
+	|
+		postdec_expr 
+		{ $$ = { parent: 'postfix_expr', children: [$1] } }
 	;
 
 
 method_invocation :
 		expr_name 'paranthesis_start' argument_list 'paranthesis_end' 
-		{ $$ = { parent: 'method_invocation', children: [$1,'paranthesis_start',$2,'paranthesis_end'] } }
+		{ $$ = { parent: 'method_invocation', children: [$1,'paranthesis_start',$3,'paranthesis_end'] } }
 	|
 		primary 'field_invoker' 'identifier' 'paranthesis_start' argument_list 'paranthesis_end' 
-		{ $$ = { parent: 'method_invocation', children: [$1,'field_invoker','identifier','paranthesis_start',$2,'paranthesis_end'] } }
+		{ $$ = { parent: 'method_invocation', children: [$1,'field_invoker','identifier','paranthesis_start',$5,'paranthesis_end'] } }
 	|
 		'super' 'field_invoker' 'identifier' 'paranthesis_start' argument_list 'paranthesis_end' 
-		{ $$ = { parent: 'method_invocation', children: ['super','field_invoker','identifier','paranthesis_start',$1,'paranthesis_end'] } }
+		{ $$ = { parent: 'method_invocation', children: ['super','field_invoker','identifier','paranthesis_start',$5,'paranthesis_end'] } }
 	|
 		expr_name 'paranthesis_start' 'paranthesis_end' 
 		{ $$ = { parent: 'method_invocation', children: [$1,'paranthesis_start','paranthesis_end'] } }
@@ -1087,10 +1087,10 @@ field_access :
 
 array_access :
 		expr_name 'colon' dim_exprs 
-		{ $$ = { parent: 'array_access', children: [$1,'colon',$2] } }
+		{ $$ = { parent: 'array_access', children: [$1,'colon',$3] } }
 	|
 		primary_no_new_array 'colon' dim_exprs 
-		{ $$ = { parent: 'array_access', children: [$1,'colon',$2] } }
+		{ $$ = { parent: 'array_access', children: [$1,'colon',$3] } }
 	;
 
 
@@ -1111,7 +1111,7 @@ primary_no_new_array :
 		{ $$ = { parent: 'primary_no_new_array', children: ['this'] } }
 	|
 		'paranthesis_start' expr 'paranthesis_end' 
-		{ $$ = { parent: 'primary_no_new_array', children: ['paranthesis_start',$1,'paranthesis_end'] } }
+		{ $$ = { parent: 'primary_no_new_array', children: ['paranthesis_start',$2,'paranthesis_end'] } }
 	|
 		class_instance_creation_expr 
 		{ $$ = { parent: 'primary_no_new_array', children: [$1] } }
@@ -1129,7 +1129,7 @@ primary_no_new_array :
 
 class_instance_creation_expr :
 		'new' 'identifier' 'paranthesis_start' argument_list 'paranthesis_end' 
-		{ $$ = { parent: 'class_instance_creation_expr', children: ['new','identifier','paranthesis_start',$1,'paranthesis_end'] } }
+		{ $$ = { parent: 'class_instance_creation_expr', children: ['new','identifier','paranthesis_start',$4,'paranthesis_end'] } }
 	|
 		'new' 'identifier' 'paranthesis_start' 'paranthesis_end' 
 		{ $$ = { parent: 'class_instance_creation_expr', children: ['new','identifier','paranthesis_start','paranthesis_end'] } }
@@ -1141,22 +1141,22 @@ argument_list :
 		{ $$ = { parent: 'argument_list', children: [$1] } }
 	|
 		argument_list 'separator' expr 
-		{ $$ = { parent: 'argument_list', children: [$1,'separator',$2] } }
+		{ $$ = { parent: 'argument_list', children: [$1,'separator',$3] } }
 	;
 
 
 array_creation_expr :
 		'new' primitive_type dim_exprs dims 
-		{ $$ = { parent: 'array_creation_expr', children: ['new',$1,$2,$3] } }
+		{ $$ = { parent: 'array_creation_expr', children: ['new',$2,$3,$4] } }
 	|
 		'new' 'identifier' dim_exprs dims 
-		{ $$ = { parent: 'array_creation_expr', children: ['new','identifier',$1,$2] } }
+		{ $$ = { parent: 'array_creation_expr', children: ['new','identifier',$3,$4] } }
 	|
 		'new' primitive_type dim_exprs 
-		{ $$ = { parent: 'array_creation_expr', children: ['new',$1,$2] } }
+		{ $$ = { parent: 'array_creation_expr', children: ['new',$2,$3] } }
 	|
 		'new' 'identifier' dim_exprs 
-		{ $$ = { parent: 'array_creation_expr', children: ['new','identifier',$1] } }
+		{ $$ = { parent: 'array_creation_expr', children: ['new','identifier',$3] } }
 	;
 
 
@@ -1171,7 +1171,7 @@ dim_exprs :
 
 dim_expr :
 		'brackets_start' expr 'brackets_end' 
-		{ $$ = { parent: 'dim_expr', children: ['brackets_start',$1,'brackets_end'] } }
+		{ $$ = { parent: 'dim_expr', children: ['brackets_start',$2,'brackets_end'] } }
 	;
 
 

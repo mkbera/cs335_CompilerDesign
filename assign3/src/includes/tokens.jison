@@ -149,7 +149,7 @@
 
 [;]									return 'terminator';
 
-\[.]								return 'field_invoker';
+[.]									return 'field_invoker';
 
 [,]									return 'separator';
 
