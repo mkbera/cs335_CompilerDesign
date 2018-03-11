@@ -3,82 +3,76 @@ var parser = require('parser').parser;
 var fs = require("fs");
 
 
-function print_string(string) {
-	var s = ""
-	var flag = true;
-	for (var i = string.length - 1; i >= 0; i--) {
-		token = string[i];
-		if (typeof token === "string") {
-			s = token + " " + s;
-		}
-		else {
-			if (flag) {
-				s = "\x1b[4m" + token.nt + "\x1b[0m " + s;
-				flag = false;
+function print_rules(parse_tree) {
+	var tree = JSON.parse(JSON.stringify(parse_tree));
+
+	rules = "\n\n\t<ol>\n\n\t\t<h2>Derivations</h2>"
+
+	var nt = true, nt_index;
+	while (nt) {
+		nt = false;
+		nt_index = -1;
+
+		var s = "";
+
+		for (var index = tree.length - 1; index >= 0; index--) {
+			token = tree[index];
+
+			if (typeof token === "string") {
+				s = "\t\t\t<span>" + token + "</span>\n" + s;
 			}
 			else {
-				s = token.nt + " " + s;
-			}
-		}
-	}
-	console.log(s);
-}
-
-
-function print_rules(rules) {
-	var rule = rules.pop()
-	var s = rule.children;
-	var nt = 0;
-
-	print_string([{ nt: rule.parent }]);
-
-	while (nt != -1) {
-		nt = -1;
-		print_string(s);
-
-		for (var i = s.length - 1; i >= 0; i--) {
-			token = s[i];
-			if (typeof token !== "string") {
-				nt = i;
-				break;
-			}
-		}
-
-		rule = rules.pop();
-
-		var ss = [];
-		var flag = true;
-		s.reverse().forEach(function (token) {
-			if (typeof token !== "string" && flag) {
-				flag = false;
-				if (token.nt == rule.parent) {
-					ss = ss.concat(rule.children.reverse());
+				if (!nt) {
+					s = "\t\t\t<span class='nt current'>" + token.parent + "</span>\n" + s;
+					nt = true;
+					nt_index = index;
 				}
 				else {
-					throw Error("Not a valid string");
+					s = "\t\t\t<span class='nt'>" + token.parent + "</span>\n" + s;
 				}
 			}
-			else {
-				ss.push(token);
-			}
-		});
-		s = ss.reverse();
+		}
+
+		if (nt) {
+			var children = tree[nt_index].children;
+			children.reverse().forEach(function (child) {
+				tree.splice(nt_index, 0, child);
+			});
+			tree.splice(nt_index + children.length, 1);
+		}
+
+		rules += "\n\t\t<li class='rule'>\n" + s + "\t\t</li>";
 	}
+
+	return rules + "\n\t</ol>";
 }
 
-input = fs.readFileSync("in.java").toString();
 
-console.log("Input:\n\t" + input + "\n\n");
-
-var ctx = {
-	rules: [],
-	push: function (obj, parent, children) {
-		obj.rules.push({
-			"parent": parent,
-			"children": children
-		})
-	}
+var input_file = "in.java";
+if (process.argv.length >= 3) {
+	input_file = process.argv[2];
 }
+input = fs.readFileSync(input_file).toString();
+console.log("Reading Input from file: " + input_file);
 
-console.log(parser.parse(input));
-// print_rules(ctx.rules);
+parse_tree = parser.parse(input);
+rules = print_rules([parse_tree]);
+
+html_head = fs.readFileSync("src/includes/html-head.html")
+html_tail = fs.readFileSync("src/includes/html-tail.html")
+
+html_input = "\n\n\t<pre class='input'>\n" + input + "\n</pre>";
+
+html = html_head + html_input + rules + "\n\n" + html_tail
+
+var out_file = "out.html";
+if (process.argv.length >= 4) {
+	out_file = process.argv[3];
+}
+fs.writeFile(out_file, html, function (err) {
+	if (err) {
+		return console.log(err);
+	}
+
+	console.log("The grammar was generated and saved to " + out_file);
+});

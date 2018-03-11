@@ -361,6 +361,8 @@ rules = {
 	],
 	unary_expr_npm: [
 		[{ nt: "postfix_expr" }],
+		[{ nt: "postinc_expr" }], // CUSTOM
+		[{ nt: "postdec_expr" }], // CUSTOM
 		["op_not", { nt: "unary_expr" }],
 		[{ nt: "cast_expr" }],
 	],
@@ -380,8 +382,9 @@ rules = {
 	postfix_expr: [
 		[{ nt: "primary" }],
 		[{ nt: "expr_name" }],
-		[{ nt: "postinc_expr" }],
-		[{ nt: "postdec_expr" }]
+		// NOTE: DOES NOT ALLOW MULTIPLE POST-INCREMENTS
+		// [{ nt: "postinc_expr" }],
+		// [{ nt: "postdec_expr" }]
 	],
 
 	method_invocation: [
@@ -394,9 +397,9 @@ rules = {
 		["super", "field_invoker", "identifier"]
 	],
 	array_access: [
-		// NOTE: ARRAY ACCESS arr<...><...>
 		// [{ nt: "expr_name" }, "brackets_start", { nt: "expr" }, "brackets_end"], // TO BE REMOVED
 		// [{ nt: "primary_no_new_array" }, "brackets_start", { nt: "expr" }, "brackets_end"] // TO BE REMOVED
+		// NOTE: ARRAY ACCESS arr<...><...>
 		[{ nt: "expr_name" }, "colon", { nt: "dim_exprs" }], // CUSTOM
 		[{ nt: "primary_no_new_array" }, "colon", { nt: "dim_exprs" }] // CUSTOM
 	],

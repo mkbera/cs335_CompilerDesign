@@ -1014,6 +1014,12 @@ unary_expr_npm :
 		postfix_expr 
 		{ $$ = { parent: 'unary_expr_npm', children: [$1] } }
 	|
+		postinc_expr 
+		{ $$ = { parent: 'unary_expr_npm', children: [$1] } }
+	|
+		postdec_expr 
+		{ $$ = { parent: 'unary_expr_npm', children: [$1] } }
+	|
 		'op_not' unary_expr 
 		{ $$ = { parent: 'unary_expr_npm', children: ['op_not',$1] } }
 	|
@@ -1045,12 +1051,6 @@ postfix_expr :
 		{ $$ = { parent: 'postfix_expr', children: [$1] } }
 	|
 		expr_name 
-		{ $$ = { parent: 'postfix_expr', children: [$1] } }
-	|
-		postinc_expr 
-		{ $$ = { parent: 'postfix_expr', children: [$1] } }
-	|
-		postdec_expr 
 		{ $$ = { parent: 'postfix_expr', children: [$1] } }
 	;
 
