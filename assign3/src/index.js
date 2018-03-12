@@ -10,7 +10,8 @@ function print_rules(parse_tree) {
 
 	var rules = "\n\n\t<ol>\n\n\t\t<h2>Derivations</h2>"
 
-	var nt = true, nt_index;
+	var nt = true,
+		nt_index;
 	while (nt) {
 		nt = false;
 		nt_index = -1;
@@ -22,18 +23,15 @@ function print_rules(parse_tree) {
 
 			if ("t" in token) {
 				s = "\t\t\t<span>" + token.t + "</span>\n" + s;
-			}
-			else if ("nt" in token) {
+			} else if ("nt" in token) {
 				if (!nt) {
 					s = "\t\t\t<span class='nt current'>" + token.nt + "</span>\n" + s;
 					nt = true;
 					nt_index = index;
-				}
-				else {
+				} else {
 					s = "\t\t\t<span class='nt'>" + token.nt + "</span>\n" + s;
 				}
-			}
-			else {
+			} else {
 				throw Error("Undefined sequence returned");
 			}
 		}

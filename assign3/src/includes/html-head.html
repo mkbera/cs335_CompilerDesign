@@ -12,12 +12,12 @@
 		}
 
 		span.nt {
-			color: red;
+			color: rgb(255, 145, 0);
 		}
 
 		span.nt.current {
 			font-weight: 600;
-			color: darkblue;
+			color: darkslateblue;
 		}
 
 		pre.input,
@@ -31,6 +31,8 @@
 			border-radius: 5px;
 			display: inline-block;
 			position: relative;
+			max-width: calc(100vw - 140px);
+			overflow-x: scroll;
 		}
 
 		pre.input::before,
@@ -54,8 +56,64 @@
 			font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 			color: darkslategray;
 		}
+
+		div.legend {
+			margin-right: 35px;
+			padding: 50px 30px 30px 30px;
+			background-color: rgba(0, 0, 0, 0.03);
+			border: 1px solid gainsboro;
+			font-family: 'Courier New', Courier, monospace;
+			font-size: 13px;
+			border-radius: 5px;
+			position: relative;
+			float: right;
+		}
+
+		div.legend::before {
+			position: absolute;
+			top: 10px;
+			left: 10px;
+			font-size: 16px;
+			font-weight: 600;
+			content: "Legend";
+		}
+
+		div.ball {
+			line-height: 30px;
+			padding-left: 30px;
+			position: relative;
+		}
+
+		div.ball::before {
+			border-radius: 10px;
+			height: 20px;
+			width: 20px;
+			display: block;
+			content: "";
+			position: absolute;
+			top: 4px;
+			left: 0;
+		}
+
+		div.ball.blue::before {
+			background-color: darkslateblue;
+		}
+
+		div.ball.red::before {
+			background-color: rgb(255, 145, 0);
+		}
+
+		div.ball.black::before {
+			background-color: black;
+		}
 	</style>
 
 </head>
 
 <body>
+
+	<div class="legend">
+		<div class="ball blue">Non-Terminal (Current Reduction)</div>
+		<div class="ball red">Non-Terminal</div>
+		<div class="ball black">Terminal</div>
+	</div>

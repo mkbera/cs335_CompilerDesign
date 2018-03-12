@@ -1,11 +1,9 @@
 %lex
 
 %s BLOCKCOMMENT
+%s COMMENT
 
 %%
-\s+									/* SKIP WHITESPACES */
-
-\/\/.*								/* SKIP COMMENTS */
 
 \/\*								this.pushState('BLOCKCOMMENT');
 
@@ -13,6 +11,13 @@
 
 <BLOCKCOMMENT>(\n|\r|.)				/* SKIP BLOCKCOMMENTS */
 
+\/\/								this.pushState('COMMENT');
+
+<COMMENT>(.)						/* SKIP COMMENTS */
+
+<COMMENT>(\n|\r)					this.popState();
+
+\s+									/* SKIP WHITESPACES */
 
 "boolean"							return 'boolean';
 
@@ -150,9 +155,9 @@
 
 "null"								return 'null_literal';
 
-\"(\\.|[^\\\'])*\"					return 'string_literal';
+\'(\\[^\n\r]|[^\\\'\n\r])\'			return 'character_literal';
 
-\'(\\.|[^\\\'])\'					return 'character_literal';
+\"(\\[^\n\r]|[^\\\'\n\r])*\"		return 'string_literal';
 
 ([a-z]|[A-Z]|[$]|[_])(\w)*			return 'identifier';
 
@@ -1000,11 +1005,8 @@ unary_expr :
 		predec_expr 
 		{ $$ = { nt: 'unary_expr', children: [$1] } }
 	|
-		'op_add' unary_expr 
-		{ $$ = { nt: 'unary_expr', children: [{ t: 'op_add', l: $op_add },$2] } }
-	|
-		'op_sub' unary_expr 
-		{ $$ = { nt: 'unary_expr', children: [{ t: 'op_sub', l: $op_sub },$2] } }
+		sign unary_expr 
+		{ $$ = { nt: 'unary_expr', children: [$1,$2] } }
 	|
 		unary_expr_npm 
 		{ $$ = { nt: 'unary_expr', children: [$1] } }

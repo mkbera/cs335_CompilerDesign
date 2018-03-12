@@ -1,11 +1,9 @@
 %lex
 
 %s BLOCKCOMMENT
+%s COMMENT
 
 %%
-\s+									/* SKIP WHITESPACES */
-
-\/\/.*								/* SKIP COMMENTS */
 
 \/\*								this.pushState('BLOCKCOMMENT');
 
@@ -13,6 +11,13 @@
 
 <BLOCKCOMMENT>(\n|\r|.)				/* SKIP BLOCKCOMMENTS */
 
+\/\/								this.pushState('COMMENT');
+
+<COMMENT>(.)						/* SKIP COMMENTS */
+
+<COMMENT>(\n|\r)					this.popState();
+
+\s+									/* SKIP WHITESPACES */
 
 "boolean"							return 'boolean';
 
@@ -150,9 +155,9 @@
 
 "null"								return 'null_literal';
 
-\"(\\.|[^\\\'])*\"					return 'string_literal';
+\'(\\[^\n\r]|[^\\\'\n\r])\'			return 'character_literal';
 
-\'(\\.|[^\\\'])\'					return 'character_literal';
+\"(\\[^\n\r]|[^\\\'\n\r])*\"		return 'string_literal';
 
 ([a-z]|[A-Z]|[$]|[_])(\w)*			return 'identifier';
 
