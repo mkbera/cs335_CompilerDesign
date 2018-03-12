@@ -12,7 +12,7 @@ class Grammar {
 		var n_child = 1;
 		children.forEach(child => {
 			if (typeof child === "string") {
-				arr.push("'" + child + "'");
+				arr.push("{ t: '" + child + "', l: $" + child + " }");
 			}
 			else {
 				arr.push("$" + n_child);
@@ -44,10 +44,10 @@ class Grammar {
 			}
 		});
 		if (nt == "program") {
-			s += "\n\t\t{ return { parent: '" + nt + "', children: [" + this.stringify(rule) + "] } }"
+			s += "\n\t\t{ return { nt: '" + nt + "', children: [" + this.stringify(rule) + "] } }"
 		}
 		else {
-			s += "\n\t\t{ $$ = { parent: '" + nt + "', children: [" + this.stringify(rule) + "] } }"
+			s += "\n\t\t{ $$ = { nt: '" + nt + "', children: [" + this.stringify(rule) + "] } }"
 		}
 
 		return s;

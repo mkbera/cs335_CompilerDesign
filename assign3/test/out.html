@@ -20,7 +20,8 @@
 			color: darkblue;
 		}
 
-		pre.input {
+		pre.input,
+		pre.output {
 			margin-left: 35px;
 			padding: 50px 30px 30px 30px;
 			background-color: rgba(0, 0, 0, 0.03);
@@ -32,13 +33,21 @@
 			position: relative;
 		}
 
-		pre.input::before {
+		pre.input::before,
+		pre.output::before {
 			position: absolute;
 			top: 10px;
 			left: 10px;
-			content: "Input Code";
 			font-size: 16px;
 			font-weight: 600;
+		}
+
+		pre.input::before {
+			content: "Input Code";
+		}
+
+		pre.output::before {
+			content: "Generated Code";
 		}
 
 		h2 {
@@ -4272,6 +4281,10 @@ class test {
 			<span>EOF</span>
 		</li>
 	</ol>
+
+	<pre class='output'>
+import a ; import b ; class test { int test = new class_name ( ) ; public func ( int a , int [ ] b , String [ ] x ) : void { int v = a ; v : [ 1 ] = a ; } }  
+	</pre>
 
 </body>
 
