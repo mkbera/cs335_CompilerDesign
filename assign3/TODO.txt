@@ -1,4 +1,6 @@
 remove static from lexer as well.
+
+
+#DONE 
+Lexical error for strings.
 Parse error on comments no rule => We can just change lexer to read that line and not pass it to parser.
-#Lexical error for strings.
-"String" keyword

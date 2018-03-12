@@ -5,6 +5,15 @@
 %%
 \s+									/* SKIP WHITESPACES */
 
+\/\/.*								/* SKIP COMMENTS */
+
+\/\*								this.pushState('BLOCKCOMMENT');
+
+<BLOCKCOMMENT>\*\/					this.popState();
+
+<BLOCKCOMMENT>(\n|\r|.)				/* SKIP BLOCKCOMMENTS */
+
+
 "boolean"							return 'boolean';
 
 "break"								return 'break';
@@ -141,7 +150,7 @@
 
 "null"								return 'null_literal';
 
-\'(\\.|[^\\\'])*\'					return 'string_literal';
+\"(\\.|[^\\\'])*\"					return 'string_literal';
 
 \'(\\.|[^\\\'])\'					return 'character_literal';
 
@@ -164,14 +173,6 @@
 [{]									return 'set_start';
 
 [}]									return 'set_end';
-
-\/\/.*								/* SKIP COMMENTS */
-
-\/\*								this.begin('BLOCKCOMMENT');
-
-<BLOCKCOMMENT>\*\/					/* SKIP BLOCKCOMMENTS */
-
-<BLOCKCOMMENT>(\n|\r|.)				/* SKIP BLOCKCOMMENTS */
 
 <<EOF>>								return 'EOF';
 

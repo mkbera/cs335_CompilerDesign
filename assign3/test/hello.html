@@ -20,7 +20,8 @@
 			color: darkblue;
 		}
 
-		pre.input {
+		pre.input,
+		pre.output {
 			margin-left: 35px;
 			padding: 50px 30px 30px 30px;
 			background-color: rgba(0, 0, 0, 0.03);
@@ -32,13 +33,21 @@
 			position: relative;
 		}
 
-		pre.input::before {
+		pre.input::before,
+		pre.output::before {
 			position: absolute;
 			top: 10px;
 			left: 10px;
-			content: "Input Code";
 			font-size: 16px;
 			font-weight: 600;
+		}
+
+		pre.input::before {
+			content: "Input Code";
+		}
+
+		pre.output::before {
+			content: "Generated Code";
 		}
 
 		h2 {
@@ -55,6 +64,7 @@
 public class HelloWorld {
 
     public main(String[] args): void {
+        /*checking for comments_2*/
         System.out.println("Hello, World");
     }
 
@@ -272,215 +282,6 @@ public class HelloWorld {
 			<span class='nt'>expr_name</span>
 			<span>paranthesis_start</span>
 			<span class='nt current'>expr</span>
-			<span>paranthesis_end</span>
-			<span>terminator</span>
-			<span>set_end</span>
-			<span>set_end</span>
-			<span>EOF</span>
-		</li>
-		<li class='rule'>
-			<span>public</span>
-			<span>class</span>
-			<span>identifier</span>
-			<span>set_start</span>
-			<span>public</span>
-			<span class='nt'>method_declarator</span>
-			<span>colon</span>
-			<span class='nt'>result_type</span>
-			<span>set_start</span>
-			<span class='nt'>expr_name</span>
-			<span>paranthesis_start</span>
-			<span class='nt current'>cond_expr</span>
-			<span>paranthesis_end</span>
-			<span>terminator</span>
-			<span>set_end</span>
-			<span>set_end</span>
-			<span>EOF</span>
-		</li>
-		<li class='rule'>
-			<span>public</span>
-			<span>class</span>
-			<span>identifier</span>
-			<span>set_start</span>
-			<span>public</span>
-			<span class='nt'>method_declarator</span>
-			<span>colon</span>
-			<span class='nt'>result_type</span>
-			<span>set_start</span>
-			<span class='nt'>expr_name</span>
-			<span>paranthesis_start</span>
-			<span class='nt current'>cond_or_expr</span>
-			<span>paranthesis_end</span>
-			<span>terminator</span>
-			<span>set_end</span>
-			<span>set_end</span>
-			<span>EOF</span>
-		</li>
-		<li class='rule'>
-			<span>public</span>
-			<span>class</span>
-			<span>identifier</span>
-			<span>set_start</span>
-			<span>public</span>
-			<span class='nt'>method_declarator</span>
-			<span>colon</span>
-			<span class='nt'>result_type</span>
-			<span>set_start</span>
-			<span class='nt'>expr_name</span>
-			<span>paranthesis_start</span>
-			<span class='nt current'>cond_and_expr</span>
-			<span>paranthesis_end</span>
-			<span>terminator</span>
-			<span>set_end</span>
-			<span>set_end</span>
-			<span>EOF</span>
-		</li>
-		<li class='rule'>
-			<span>public</span>
-			<span>class</span>
-			<span>identifier</span>
-			<span>set_start</span>
-			<span>public</span>
-			<span class='nt'>method_declarator</span>
-			<span>colon</span>
-			<span class='nt'>result_type</span>
-			<span>set_start</span>
-			<span class='nt'>expr_name</span>
-			<span>paranthesis_start</span>
-			<span class='nt current'>incl_or_expr</span>
-			<span>paranthesis_end</span>
-			<span>terminator</span>
-			<span>set_end</span>
-			<span>set_end</span>
-			<span>EOF</span>
-		</li>
-		<li class='rule'>
-			<span>public</span>
-			<span>class</span>
-			<span>identifier</span>
-			<span>set_start</span>
-			<span>public</span>
-			<span class='nt'>method_declarator</span>
-			<span>colon</span>
-			<span class='nt'>result_type</span>
-			<span>set_start</span>
-			<span class='nt'>expr_name</span>
-			<span>paranthesis_start</span>
-			<span class='nt current'>excl_or_expr</span>
-			<span>paranthesis_end</span>
-			<span>terminator</span>
-			<span>set_end</span>
-			<span>set_end</span>
-			<span>EOF</span>
-		</li>
-		<li class='rule'>
-			<span>public</span>
-			<span>class</span>
-			<span>identifier</span>
-			<span>set_start</span>
-			<span>public</span>
-			<span class='nt'>method_declarator</span>
-			<span>colon</span>
-			<span class='nt'>result_type</span>
-			<span>set_start</span>
-			<span class='nt'>expr_name</span>
-			<span>paranthesis_start</span>
-			<span class='nt current'>and_expr</span>
-			<span>paranthesis_end</span>
-			<span>terminator</span>
-			<span>set_end</span>
-			<span>set_end</span>
-			<span>EOF</span>
-		</li>
-		<li class='rule'>
-			<span>public</span>
-			<span>class</span>
-			<span>identifier</span>
-			<span>set_start</span>
-			<span>public</span>
-			<span class='nt'>method_declarator</span>
-			<span>colon</span>
-			<span class='nt'>result_type</span>
-			<span>set_start</span>
-			<span class='nt'>expr_name</span>
-			<span>paranthesis_start</span>
-			<span class='nt current'>equality_expr</span>
-			<span>paranthesis_end</span>
-			<span>terminator</span>
-			<span>set_end</span>
-			<span>set_end</span>
-			<span>EOF</span>
-		</li>
-		<li class='rule'>
-			<span>public</span>
-			<span>class</span>
-			<span>identifier</span>
-			<span>set_start</span>
-			<span>public</span>
-			<span class='nt'>method_declarator</span>
-			<span>colon</span>
-			<span class='nt'>result_type</span>
-			<span>set_start</span>
-			<span class='nt'>expr_name</span>
-			<span>paranthesis_start</span>
-			<span class='nt current'>relational_expr</span>
-			<span>paranthesis_end</span>
-			<span>terminator</span>
-			<span>set_end</span>
-			<span>set_end</span>
-			<span>EOF</span>
-		</li>
-		<li class='rule'>
-			<span>public</span>
-			<span>class</span>
-			<span>identifier</span>
-			<span>set_start</span>
-			<span>public</span>
-			<span class='nt'>method_declarator</span>
-			<span>colon</span>
-			<span class='nt'>result_type</span>
-			<span>set_start</span>
-			<span class='nt'>expr_name</span>
-			<span>paranthesis_start</span>
-			<span class='nt current'>shift_expr</span>
-			<span>paranthesis_end</span>
-			<span>terminator</span>
-			<span>set_end</span>
-			<span>set_end</span>
-			<span>EOF</span>
-		</li>
-		<li class='rule'>
-			<span>public</span>
-			<span>class</span>
-			<span>identifier</span>
-			<span>set_start</span>
-			<span>public</span>
-			<span class='nt'>method_declarator</span>
-			<span>colon</span>
-			<span class='nt'>result_type</span>
-			<span>set_start</span>
-			<span class='nt'>expr_name</span>
-			<span>paranthesis_start</span>
-			<span class='nt current'>additive_expr</span>
-			<span>paranthesis_end</span>
-			<span>terminator</span>
-			<span>set_end</span>
-			<span>set_end</span>
-			<span>EOF</span>
-		</li>
-		<li class='rule'>
-			<span>public</span>
-			<span>class</span>
-			<span>identifier</span>
-			<span>set_start</span>
-			<span>public</span>
-			<span class='nt'>method_declarator</span>
-			<span>colon</span>
-			<span class='nt'>result_type</span>
-			<span>set_start</span>
-			<span class='nt'>expr_name</span>
-			<span>paranthesis_start</span>
-			<span class='nt current'>multiplicative_expr</span>
 			<span>paranthesis_end</span>
 			<span>terminator</span>
 			<span>set_end</span>
@@ -931,6 +732,10 @@ public class HelloWorld {
 			<span>EOF</span>
 		</li>
 	</ol>
+
+	<pre class='output'>
+public class HelloWorld { public main ( String [ ] args ) : void { System . out . println ( "Hello, World" ) ; } }  
+	</pre>
 
 </body>
 
