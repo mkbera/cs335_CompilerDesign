@@ -5,15 +5,12 @@ public class ArrayExamples
 		bubblesort(list);
 		showList(list);
 
-		list = new int[]{ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11};
 		bubblesort(list);
 		showList(list);
 
-		list = new int[]{11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0, -1, -2};
 		bubblesort(list);
 		showList(list);
 
-		list = new int[]{1};
 		bubblesort(list);
 		showList(list);
 	}
@@ -25,7 +22,7 @@ public class ArrayExamples
 	{	
 		int indexOfMin = 0;
 		for(int i = 1; i < list.length; i++)
-		{	if(list:[i] < list[indexOfMin])
+		{	if(list:[i] < list:[indexOfMin])
 			{	indexOfMin = i;
 			}
 		}
@@ -45,7 +42,7 @@ public class ArrayExamples
 		int limit = Math.min(list.length, newSize);
 
 		for(int i = 0; i < limit; i++)
-		{	temp:[i] = list[i];
+		{	temp:[i] = list:[i];
 		}
 
 		// uh oh!! Changing pointer, not pointee. This breaks the
@@ -101,9 +98,8 @@ public class ArrayExamples
 		for(int i = 0; i < list.length && changed; i++)
 		{	changed = false;
 			for(int j = 0; j < list.length - i - 1; j++)
-			{	assert (j > 0) && (j + 1 < list.length) : "loop counter j " + j +
-					"is out of bounds.";
-				if(list:[j] > list:[j+1])
+			{	
+                if(list:[j] > list:[j+1])
 				{	changed = true;
 					temp = list:[j + 1];
 					list:[j + 1] = list:[j];
@@ -116,7 +112,7 @@ public class ArrayExamples
 
 	public showList(int[] list) : void
 	{	for(int i = 0; i < list.length; i++)
-			System.out.print( list[i] + " " );
+			System.out.print( list:[i] + " " );
 		System.out.println();
 	}
 
@@ -128,7 +124,7 @@ public class ArrayExamples
 		int index = 1;
 		while( ascending && index < list.length )
 		{	
-			ascending = (list[index - 1] <= list[index]);
+			ascending = (list:[index - 1] <= list:[index]);
 			index++;
 		}
 
