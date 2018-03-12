@@ -5,6 +5,6 @@ class test {
 
 	public func(int a, int[] b, String[] x): void {
 		int v = a;
-		v:[1] = a;
+		v:[1] = 'a';
 	}
 }
