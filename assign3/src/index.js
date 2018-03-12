@@ -6,7 +6,9 @@ var fs = require("fs");
 function print_rules(parse_tree) {
 	var tree = JSON.parse(JSON.stringify(parse_tree));
 
-	rules = "\n\n\t<ol>\n\n\t\t<h2>Derivations</h2>"
+	var output = "";
+
+	var rules = "\n\n\t<ol>\n\n\t\t<h2>Derivations</h2>"
 
 	var nt = true, nt_index;
 	while (nt) {
@@ -18,18 +20,21 @@ function print_rules(parse_tree) {
 		for (var index = tree.length - 1; index >= 0; index--) {
 			token = tree[index];
 
-			if (typeof token === "string") {
-				s = "\t\t\t<span>" + token + "</span>\n" + s;
+			if ("t" in token) {
+				s = "\t\t\t<span>" + token.t + "</span>\n" + s;
 			}
-			else {
+			else if ("nt" in token) {
 				if (!nt) {
-					s = "\t\t\t<span class='nt current'>" + token.parent + "</span>\n" + s;
+					s = "\t\t\t<span class='nt current'>" + token.nt + "</span>\n" + s;
 					nt = true;
 					nt_index = index;
 				}
 				else {
-					s = "\t\t\t<span class='nt'>" + token.parent + "</span>\n" + s;
+					s = "\t\t\t<span class='nt'>" + token.nt + "</span>\n" + s;
 				}
+			}
+			else {
+				throw Error("Undefined sequence returned");
 			}
 		}
 
@@ -44,7 +49,17 @@ function print_rules(parse_tree) {
 		rules += "\n\t\t<li class='rule'>\n" + s + "\t\t</li>";
 	}
 
-	return rules + "\n\t</ol>";
+	rules += "\n\t</ol>";
+	output += rules;
+	output += "\n\n\t<pre class='output'>\n";
+
+	tree.forEach(function (token) {
+		output += token.l + " ";
+	});
+
+	output += "\n\t</pre>";
+
+	return output;
 }
 
 
