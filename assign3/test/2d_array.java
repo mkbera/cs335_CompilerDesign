@@ -3,14 +3,6 @@ import Scanner;
 public class Life {
     public show(boolean[][] grid) : void {
         String s = "";
-        for(boolean[] row : grid){
-            for(boolean val : row)
-                if(val)
-                    s += "*";
-                else
-                    s += ".";
-            s += "\n";
-        }
         System.out.println(s);
     }
     
@@ -19,7 +11,7 @@ public class Life {
         for(int r = 0; r < 10; r++)
             for(int c = 0; c < 10; c++)
                 if( Math.random() > 0.7 )
-                    grid[r][c] = true;
+                    grid:[r][c] = true;
         return grid;
     }
     
@@ -40,13 +32,13 @@ public class Life {
     
     public nextGen(boolean[][] world) : boolean[][]{
         boolean[][] newWorld 
-            = new boolean[world.length][world[0].length];
+            = new boolean[world.length][world:[0].length];
         int num;
         for(int r = 0; r < world.length; r++){
-            for(int c = 0; c < world[0].length; c++){
+            for(int c = 0; c < world:[0].length; c++){
                 num = numNeighbors(world, r, c);
-                if( occupiedNext(num, world[r][c]) )
-                    newWorld[r][c] = true;
+                if( occupiedNext(num, world:[r][c]) )
+                    newWorld:[r][c] = true;
             }
         }
         return newWorld;
@@ -61,19 +53,19 @@ public class Life {
             return false;
     }
 
-    private numNeighbors(boolean[][] world, int row, int col) : int {
-        int num = world[row][col] ? -1 : 0;
+    public numNeighbors(boolean[][] world, int row, int col) : int {
+        int num = world:[row][col];
         for(int r = row - 1; r <= row + 1; r++)
             for(int c = col - 1; c <= col + 1; c++)
-                if( inbounds(world, r, c) && world[r][c] )
+                if( inbounds(world, r, c) && world:[r][c] )
                     num++;
-
+            
         return num;
     }
 
-    private inbounds(boolean[][] world, int r, int c) : boolean {
+    public inbounds(boolean[][] world, int r, int c) : boolean {
         return r >= 0 && r < world.length && c >= 0 &&
-        c < world[0].length;
+        c < world:[0].length;
     }
     
     

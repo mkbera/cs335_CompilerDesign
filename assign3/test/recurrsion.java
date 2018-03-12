@@ -5,13 +5,15 @@ public class RecursionExampleDirectory
 	
 		//check files
 		File[] files = dir.getFiles();
-		for(int i = 0; i < files.length; i++)
-			total += files[i].getSize();
-			
+		for(int i = 0; i < files.length; i++) {
+			total += files:[i].getSize();
+        }
+            
 		//get sub directories and check them
 		Directory[] subs = dir.getSubs();
-		for(int i = 0; i < subs.length; i++)
-			total += getSize(subs[i]);
+		for(int i = 0; i < subs.length; i++){
+            total += getSize(subs:[i]);
+        }
 			
 		return total;
 	}
@@ -25,20 +27,24 @@ public class RecursionExampleDirectory
 	//pre: n >= 0
 	public fact(int n) : int 
 	{	int result = 0;
-		if(n == 0)
-			result = 1;
-		else
+		if(n == 0){
+            result = 1;
+        }
+		else{
 			result = n * fact(n-1);
-		return result;
+        }
+        return result;
 	}
 	
 	//pre: exp >= 0
 	public pow(int base, int exp) : int
 	{	int result = 0;
-		if(exp == 0)
-			result = 1;
-		else
-			result = base * pow(base, exp - 1);
+		if(exp == 0){
+            result = 1;
+        }
+		else{
+            result = base * pow(base, exp - 1);
+        }
 		return result;
 	}
 	
@@ -46,23 +52,27 @@ public class RecursionExampleDirectory
 	//pre: n >= 1
 	public fib(int n) : int
 	{	int result = 0;
-		if(n == 1 || n == 2)
-			result = 1;
-		else
-			result = fib(n-1) + fib(n-2);
+		if(n == 1 || n == 2){
+            result = 1;
+        }
+		else{
+            result = fib(n-1) + fib(n-2);
+        }
 		return result;
 	}
 	
 	public minWasted(int[] items, int itemNum, int capLeft) : int 
 	{	int result = 0;
-		if(itemNum >= items.length)
-			result = capLeft;
-		else if( capLeft == 0)
-			result = 0;
+		if(itemNum >= items.length){
+            result = capLeft;
+        }
+		else if( capLeft == 0){
+            result = 0;
+        }
 		else
 		{	int minWithout = minWasted(items, itemNum + 1, capLeft);
-			if( capLeft <= items[itemNum])		
-			{	int minWith = minWasted(items, itemNum + 1, capLeft - items[itemNum]);
+			if( capLeft <= items:[itemNum])		
+			{	int minWith = minWasted(items, itemNum + 1, capLeft - items:[itemNum]);
 				result = Math.min(minWith, minWithout);
 			}
 			else
@@ -73,8 +83,8 @@ public class RecursionExampleDirectory
 }
 
 class Directory
-{	private Directory[] mySubs;
-	private File[] myFiles;
+{	Directory[] mySubs;
+	File[] myFiles;
 	
 	public Directory()
 	{	int numSubs = (int)(Math.random() * 3);
@@ -83,9 +93,9 @@ class Directory
 		myFiles = new File[numFiles];
 		
 		for(int i = 0; i < myFiles.length; i++)
-			myFiles[i] = new File( (int)(Math.random() * 1000 ) );
+		{	myFiles:[i] = new File( (int)(Math.random() * 1000 ) );}
 		for(int i = 0; i < mySubs.length; i++)
-			mySubs[i] = new Directory();
+		{	mySubs:[i] = new Directory();}
 	}
 	
 	public getSubs() : Directory[] 
@@ -98,7 +108,7 @@ class Directory
 }
 
 class File
-{	private int iMySize;
+{	int iMySize;
 
 	public File(int size)
 	{	iMySize = size;

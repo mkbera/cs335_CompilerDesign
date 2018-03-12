@@ -29,9 +29,6 @@ public class PrimeEx {
 		s.start();
 		boolean[] primes = getPrimes(10000000);
 		int np = 0;
-		for(boolean b : primes)
-			if(b)
-				np++;
 		s.stop();
 		System.out.println(np + " " + s);
 
@@ -41,14 +38,14 @@ public class PrimeEx {
 	public getPrimes(int max) : boolean[]{
 		boolean[] result = new boolean[max + 1];
 		for(int i = 2; i < result.length; i++)
-			result[i] = true;
-		final double LIMIT = Math.sqrt(max);
+		{	result:[i] = true;}
+		double LIMIT = Math.sqrt(max);
 		for(int i = 2; i <= LIMIT; i++) {
-			if(result[i]) {
+			if(result:[i]) {
 				// cross out all multiples;
 				int index = 2 * i;
 				while(index < result.length){
-					result[index] = false;
+					result:[index] = false;
 					 index += i;
 				}
 			}
@@ -74,8 +71,7 @@ public class PrimeEx {
 	// pre: num >= 2
 	public isPrime(int num) : boolean{
 		
-		final double LIMIT = Math.sqrt(num);
-		boolean isPrime = (num == 2) ? true : num % 2 != 0;
+		double LIMIT = Math.sqrt(num);
 		int div = 3;
 		while(div <= LIMIT && isPrime) {
 			isPrime = num % div != 0;
@@ -85,10 +81,10 @@ public class PrimeEx {
 	}
 
 	// pre: num >= 2
-	public static int numFactors(int num) {
+	public numFactors(int num) : int {
 		
 		int result = 0;
-		final double SQRT = Math.sqrt(num);
+		double SQRT = Math.sqrt(num);
 		for(int i = 1; i < SQRT; i++) {
 			if(num % i == 0) {
 				result += 2;
