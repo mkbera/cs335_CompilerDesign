@@ -1,8 +1,8 @@
 class T{
 	public T(){
 
-	}
-	void f(){
+    }
+    f() : void {
 		a = 'a';
 		b = 47114711;
 		c = 'c';

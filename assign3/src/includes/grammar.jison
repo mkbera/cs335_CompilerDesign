@@ -78,16 +78,6 @@
 
 [-][-]								return 'op_decrement';
 
-[+]									return 'op_add';
-
-[-]									return 'op_sub';
-
-[*]									return 'op_mul';
-
-[/]									return 'op_div';
-
-[%]									return 'op_mod';
-
 [+][=]								return 'op_addAssign';
 
 [-][=]								return 'op_subAssign';
@@ -119,6 +109,16 @@
 [<][<]								return 'op_Lshift';
 
 [>][>]								return 'op_Rshift';
+
+[+]									return 'op_add';
+
+[-]									return 'op_sub';
+
+[*]									return 'op_mul';
+
+[/]									return 'op_div';
+
+[%]									return 'op_mod';
 
 [>]									return 'op_greater';
 
