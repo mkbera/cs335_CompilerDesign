@@ -556,10 +556,7 @@ rules = {
 			nt: "predec_expr"
 		}],
 		[{
-			nt: "postinc_expr"
-		}],
-		[{
-			nt: "postdec_expr"
+			nt: "post_expr"
 		}],
 		[{
 			nt: "method_invocation"
@@ -788,6 +785,9 @@ rules = {
 		[{
 			nt: "postfix_expr"
 		}],
+		[{
+			nt: "post_expr"
+		}],
 		// [{ nt: "postinc_expr" }], // CUSTOM
 		// [{ nt: "postdec_expr" }], // CUSTOM
 		["op_not", {
@@ -809,13 +809,28 @@ rules = {
 
 	postdec_expr: [
 		[{
-			nt: "postfix_expr"
+			nt: "postfix_expr",
+		}, "op_decrement"],
+		[{
+			nt: "post_expr",
 		}, "op_decrement"]
 	],
 	postinc_expr: [
 		[{
 			nt: "postfix_expr"
+		}, "op_increment"],
+		[{
+			nt: "post_expr"
 		}, "op_increment"]
+	],
+
+	post_expr: [
+		[{
+			nt: "postinc_expr"
+		}],
+		[{
+			nt: "postdec_expr"
+		}]
 	],
 
 	postfix_expr: [
@@ -824,13 +839,6 @@ rules = {
 		}],
 		[{
 			nt: "expr_name"
-		}],
-		// NOTE: DOES NOT ALLOW MULTIPLE POST-INCREMENTS
-		[{
-			nt: "postinc_expr"
-		}],
-		[{
-			nt: "postdec_expr"
 		}]
 	],
 

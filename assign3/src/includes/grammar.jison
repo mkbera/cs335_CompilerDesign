@@ -795,10 +795,7 @@ stmt_expr :
 		predec_expr 
 		{ $$ = { nt: 'stmt_expr', children: [$1] } }
 	|
-		postinc_expr 
-		{ $$ = { nt: 'stmt_expr', children: [$1] } }
-	|
-		postdec_expr 
+		post_expr 
 		{ $$ = { nt: 'stmt_expr', children: [$1] } }
 	|
 		method_invocation 
@@ -1017,6 +1014,9 @@ unary_expr_npm :
 		postfix_expr 
 		{ $$ = { nt: 'unary_expr_npm', children: [$1] } }
 	|
+		post_expr 
+		{ $$ = { nt: 'unary_expr_npm', children: [$1] } }
+	|
 		'op_not' unary_expr 
 		{ $$ = { nt: 'unary_expr_npm', children: [{ t: 'op_not', l: $op_not },$2] } }
 	|
@@ -1034,12 +1034,27 @@ cast_expr :
 postdec_expr :
 		postfix_expr 'op_decrement' 
 		{ $$ = { nt: 'postdec_expr', children: [$1,{ t: 'op_decrement', l: $op_decrement }] } }
+	|
+		post_expr 'op_decrement' 
+		{ $$ = { nt: 'postdec_expr', children: [$1,{ t: 'op_decrement', l: $op_decrement }] } }
 	;
 
 
 postinc_expr :
 		postfix_expr 'op_increment' 
 		{ $$ = { nt: 'postinc_expr', children: [$1,{ t: 'op_increment', l: $op_increment }] } }
+	|
+		post_expr 'op_increment' 
+		{ $$ = { nt: 'postinc_expr', children: [$1,{ t: 'op_increment', l: $op_increment }] } }
+	;
+
+
+post_expr :
+		postinc_expr 
+		{ $$ = { nt: 'post_expr', children: [$1] } }
+	|
+		postdec_expr 
+		{ $$ = { nt: 'post_expr', children: [$1] } }
 	;
 
 
@@ -1048,12 +1063,6 @@ postfix_expr :
 		{ $$ = { nt: 'postfix_expr', children: [$1] } }
 	|
 		expr_name 
-		{ $$ = { nt: 'postfix_expr', children: [$1] } }
-	|
-		postinc_expr 
-		{ $$ = { nt: 'postfix_expr', children: [$1] } }
-	|
-		postdec_expr 
 		{ $$ = { nt: 'postfix_expr', children: [$1] } }
 	;
 
