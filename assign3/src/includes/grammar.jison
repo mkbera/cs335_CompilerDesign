@@ -686,6 +686,15 @@ statement :
 	;
 
 
+post_expression :
+		post_increment_expression 
+		{ $$ = { nt: 'post_expression', children: [$1] } }
+	|
+		post_decrement_expression 
+		{ $$ = { nt: 'post_expression', children: [$1] } }
+	;
+
+
 statement_expression :
 		assignment 
 		{ $$ = { nt: 'statement_expression', children: [$1] } }
@@ -696,10 +705,7 @@ statement_expression :
 		pre_decrement_expression 
 		{ $$ = { nt: 'statement_expression', children: [$1] } }
 	|
-		post_increment_expression 
-		{ $$ = { nt: 'statement_expression', children: [$1] } }
-	|
-		post_decrement_expression 
+		post_expression 
 		{ $$ = { nt: 'statement_expression', children: [$1] } }
 	|
 		method_invocation 
@@ -948,6 +954,9 @@ unary_expression_not_plus_minus :
 		postfix_expression 
 		{ $$ = { nt: 'unary_expression_not_plus_minus', children: [$1] } }
 	|
+		post_expression 
+		{ $$ = { nt: 'unary_expression_not_plus_minus', children: [$1] } }
+	|
 		'op_not' unary_expression 
 		{ $$ = { nt: 'unary_expression_not_plus_minus', children: [{ t: 'op_not', l: $op_not },$2] } }
 	|
@@ -982,6 +991,9 @@ dim_exprs :
 
 post_decrement_expression :
 		postfix_expression 'op_decrement' 
+		{ $$ = { nt: 'post_decrement_expression', children: [$1,{ t: 'op_decrement', l: $op_decrement }] } }
+	|
+		post_expression 'op_decrement' 
 		{ $$ = { nt: 'post_decrement_expression', children: [$1,{ t: 'op_decrement', l: $op_decrement }] } }
 	;
 
@@ -1018,12 +1030,6 @@ postfix_expression :
 		{ $$ = { nt: 'postfix_expression', children: [$1] } }
 	|
 		name 
-		{ $$ = { nt: 'postfix_expression', children: [$1] } }
-	|
-		post_increment_expression 
-		{ $$ = { nt: 'postfix_expression', children: [$1] } }
-	|
-		post_decrement_expression 
 		{ $$ = { nt: 'postfix_expression', children: [$1] } }
 	;
 
@@ -1240,6 +1246,9 @@ pre_increment_expression :
 
 post_increment_expression :
 		postfix_expression 'op_increment' 
+		{ $$ = { nt: 'post_increment_expression', children: [$1,{ t: 'op_increment', l: $op_increment }] } }
+	|
+		post_expression 'op_increment' 
 		{ $$ = { nt: 'post_increment_expression', children: [$1,{ t: 'op_increment', l: $op_increment }] } }
 	;
 

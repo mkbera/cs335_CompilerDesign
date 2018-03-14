@@ -570,6 +570,14 @@ rules = {
 			"nt": "for_statement"
 		}]
 	],
+	"post_expression": [
+		[{
+			"nt": "post_increment_expression"
+		}],
+		[{
+			"nt": "post_decrement_expression"
+		}],
+	],
 	"statement_expression": [
 		[{
 			"nt": "assignment"
@@ -581,10 +589,7 @@ rules = {
 			"nt": "pre_decrement_expression"
 		}],
 		[{
-			"nt": "post_increment_expression"
-		}],
-		[{
-			"nt": "post_decrement_expression"
+			"nt": "post_expression"
 		}],
 		[{
 			"nt": "method_invocation"
@@ -871,6 +876,9 @@ rules = {
 		[{
 			"nt": "postfix_expression"
 		}],
+		[{
+			"nt": "post_expression"
+		}],
 		[
 			"op_not",
 			{
@@ -924,6 +932,11 @@ rules = {
 	"post_decrement_expression": [
 		[{
 				"nt": "postfix_expression"
+			},
+			"op_decrement"
+		],
+		[{
+				"nt": "post_expression"
 			},
 			"op_decrement"
 		]
@@ -984,12 +997,6 @@ rules = {
 		}],
 		[{
 			"nt": "name"
-		}],
-		[{
-			"nt": "post_increment_expression"
-		}],
-		[{
-			"nt": "post_decrement_expression"
 		}]
 	],
 	"primary_no_new_array": [
@@ -1343,6 +1350,11 @@ rules = {
 	"post_increment_expression": [
 		[{
 				"nt": "postfix_expression"
+			},
+			"op_increment"
+		],
+		[{
+				"nt": "post_expression"
 			},
 			"op_increment"
 		]
