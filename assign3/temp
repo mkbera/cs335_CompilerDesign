@@ -1,0 +1,27 @@
+CompilationUnit:
+
+	ImportDeclarations-opt TypeDeclarations-opt
+
+ImportDeclarations:
+
+	ImportDeclaration
+
+	ImportDeclarations ImportDeclaration
+
+TypeDeclarations:
+
+	TypeDeclaration
+
+	TypeDeclarations TypeDeclaration
+
+ImportDeclaration:
+
+	"import" Name "terminator"
+
+TypeDeclaration:
+
+	ClassDeclaration
+
+	InterfaceDeclaration
+
+	"terminator"

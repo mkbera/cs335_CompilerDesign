@@ -1,7 +1,7 @@
 all:
 	mkdir -p src/node_modules/parser
 	node src/parsergen.js src/includes/grammar.jison
-	# jison -p lr -o src/node_modules/parser/index.js src/includes/grammar.jison
+	jison -p lalr -o src/node_modules/parser/index.js src/includes/grammar.jison
 	mkdir -p out
 	mkdir -p bin
 	cp src/parser bin/parser
