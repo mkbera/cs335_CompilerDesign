@@ -79,7 +79,6 @@ rules = {
 		[{
 			nt: "class_member_decr"
 		}],
-		// ["static", { nt: "block" }], // TO BE REMOVED (PROBABLY)
 		["public", {
 			nt: "consr_declarator"
 		}, {
@@ -191,8 +190,6 @@ rules = {
 	],
 
 	method_decr: [
-		// ["public", { nt: "result_type" }, { nt: "method_declarator" }, { nt: "method_body" }], // TO BE REMOVED
-		// [{ nt: "result_type" }, { nt: "method_declarator" }, { nt: "method_body" }] // TO BE REMOVED
 		["public", {
 			nt: "method_declarator"
 		}, "colon", {
@@ -604,7 +601,6 @@ rules = {
 		[{
 			nt: "cond_or_expr"
 		}],
-		// [{ nt: "cond_or_expr", optional: true }, { nt: "expr" }, "colon", { nt: "cond_expr" }] // TO BE REMOVED
 	],
 	cond_or_expr: [
 		[{
@@ -788,8 +784,6 @@ rules = {
 		[{
 			nt: "post_expr"
 		}],
-		// [{ nt: "postinc_expr" }], // CUSTOM
-		// [{ nt: "postdec_expr" }], // CUSTOM
 		["op_not", {
 			nt: "unary_expr"
 		}],
@@ -803,8 +797,7 @@ rules = {
 			nt: "primitive_type"
 		}, "paranthesis_end", {
 			"nt": "unary_expr"
-		}],
-		// ["paranthesis_start", { nt: "primitive_type" }, "paranthesis_end", { "nt": "unary_expr_npm" }] // TO BE REMOVED
+		}]
 	],
 
 	postdec_expr: [
@@ -927,7 +920,6 @@ rules = {
 		}]
 	],
 	array_creation_expr: [
-		// [{ nt: "expr" }], // TO BE REMOVED
 		["new", {
 			nt: "primitive_type"
 		}, {
@@ -975,9 +967,7 @@ rules = {
 	],
 	literal: [
 		["integer_literal"],
-		// [{ nt: "signed_integer_literal" }], // TO BE REMOVED
 		["float_literal"],
-		// [{ nt: "signed_float_literal" }], // TO BE REMOVED
 		["boolean_literal"],
 		["character_literal"],
 		["string_literal"],
@@ -987,12 +977,6 @@ rules = {
 		["op_add"],
 		["op_sub"]
 	],
-	// signed_integer_literal: [ // TO BE REMOVED
-	// 	[{ nt: "sign" }, "integer_literal"]
-	// ],
-	// signed_float_literal: [ // TO BE REMOVED
-	// 	[{ nt: "sign" }, "float_literal"]
-	// ]
 }
 
 module.exports = {
