@@ -1,5 +1,5 @@
 public class DemoTranslation {
-	public main(String[] args) : void {
+	public void main(String[] args) {
 		boolean wflg = false, tflg = false;
 		boolean dflg = false;
 		byte c = 0;

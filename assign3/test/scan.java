@@ -3,7 +3,7 @@ import Scanner;
 public class ScannerAndKeyboard
 {
 
-	public main(String[] args) : void
+	public void main(String[] args) 
 	{	Scanner s = new Scanner(System.in);
 		System.out.print( "Enter your name: "  );
 		String name = s.nextLine();

@@ -6,7 +6,7 @@ public class PrimeEx {
 	/**
 	 * @param args
 	 */
-	public main(String[] args) : void {
+	public void main(String[] args) {
 		printTest(10, 4);
 		printTest(2, 2);
 		printTest(54161329, 4);
@@ -35,7 +35,7 @@ public class PrimeEx {
 		System.out.println(new BigInteger(1024, 10, new Random()));
 	}
 
-	public getPrimes(int max) : boolean[]{
+	public boolean[][] getPrimes(int max) {
 		boolean[] result = new boolean[max + 1];
 		for(int i = 2; i < result.length; i++)
 		{	result:[i] = true;}
@@ -54,7 +54,7 @@ public class PrimeEx {
 	}
 
 
-	public printTest(int num, int expectedFactors) : void {
+	public void printTest(int num, int expectedFactors) {
 		Stopwatch st = new Stopwatch();
 		st.start();
 		int actualFactors = numFactors(num);
@@ -68,8 +68,8 @@ public class PrimeEx {
 		System.out.println(st.time());
 	}
 
-	// pre: num >= 2
-	public isPrime(int num) : boolean{
+	// pre{
+	public boolean isPrime(int num) {
 		
 		double LIMIT = Math.sqrt(num);
 		int div = 3;
@@ -80,8 +80,8 @@ public class PrimeEx {
 		return isPrime;
 	}
 
-	// pre: num >= 2
-	public numFactors(int num) : int {
+	// pre{
+	public int numFactors(int num) {
 		
 		int result = 0;
 		double SQRT = Math.sqrt(num);

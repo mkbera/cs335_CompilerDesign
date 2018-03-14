@@ -1,6 +1,6 @@
 public class EnhancedFor
 {
-	public main(String[] args) : void{
+	public void main(String[] args) {
 	System.out.println("Calling addOneError");
 	}
 
@@ -21,7 +21,7 @@ public class EnhancedFor
 	//pre: list != null
 	//post: none.
 	//The code appears to add one to every element in the list, but does not
-	public addOneError(int[] list) : void
+	public void addOneError(int[] list) 
 	{	
 		val = val + 1;
 		String null_string = "";
@@ -35,7 +35,7 @@ public class EnhancedFor
 		}
 	}*/
 
-	public printList(int[] list) : void
+	public void printList(int[] list) 
 	{	System.out.println("index, value");
 	}
 

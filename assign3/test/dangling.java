@@ -1,5 +1,5 @@
 public class dangling {
-	public main(String[] args) : void  {
+	public void main(String[] args) {
 		int i = 0;
 		int[] a = {1, 2, 3};
 		if(i <= 3) {

@@ -1,5 +1,5 @@
 public class ArrayExamples
-{	public main(String[] args) : void
+{	public void main(String[] args)
 	{	int[] list = {1, 2, 3, 4, 1, 2, 3};
 		findAndPrintPairs(list, 5);
 		bubblesort(list);
@@ -18,7 +18,7 @@ public class ArrayExamples
 
 	// pre: list != null, list.length > 0
 	// post: return index of minimum element of array
-	public findMin(int[] list) : int
+	public int findMin(int[] list)
 	{	
 		int indexOfMin = 0;
 		for(int i = 1; i < list.length; i++)
@@ -36,7 +36,7 @@ public class ArrayExamples
 	 *post: nothing. the method does not succeed it resizing the
 	 * argument
 	 */
-	public badResize(int[] list, int newSize) : void
+	public void badResize(int[] list, int newSize)
 	{	
 		int[] temp = new int[newSize];
 		int limit = Math.min(list.length, newSize);
@@ -56,7 +56,7 @@ public class ArrayExamples
 	 *post: returns an array of size newSize. Elements from 0 to newSize - 1
 	 *	will be copied into the new array
 	 */
-	public goodResize(int[] list, int newSize) : int
+	public int goodResize(int[] list, int newSize)
 	{	
 		int[] result = new int[newSize];
 		int limit = Math.min(list.length, newSize);
@@ -74,7 +74,7 @@ public class ArrayExamples
 	 *post: prints out the indices and values of all pairs of numbers
 	 *in list such that list[a] + list[b] = target
 	 */
-	public findAndPrintPairs(int[] list, int target) : void
+	public void findAndPrintPairs(int[] list, int target)
 	{	
 		for(int i = 0; i < list.length; i++)
 		{	for(int j = i + 1; j < list.length; j++)
@@ -91,7 +91,7 @@ public class ArrayExamples
 	 *pre: list != null;
 	 *post: sort the elements of list so that they are in ascending order
 	 */
-	public bubblesort(int[] list) : void
+	public void bubblesort(int[] list)
 	{
 		int temp;
 		boolean changed = true;
@@ -110,7 +110,7 @@ public class ArrayExamples
     }
 
 
-	public showList(int[] list) : void
+	public void showList(int[] list)
 	{	for(int i = 0; i < list.length; i++)
 			System.out.print( list:[i] + " " );
 		System.out.println();
@@ -119,7 +119,7 @@ public class ArrayExamples
 	/* 	pre: list != null
 		post: return true if list is sorted in ascedning order, false otherwise
 	*/
-	public isAscending( int[] list ) : boolean
+	public boolean isAscending( int[] list )
 	{	boolean ascending = true;
 		int index = 1;
 		while( ascending && index < list.length )

@@ -1,5 +1,5 @@
 public class StringExample
-{	public main(String[] args) : void
+{	public void main(String[] args) 
 	{	String s1 = "Computer Science";
 		int x = 307;
 		String s2 = s1 + " " + x;

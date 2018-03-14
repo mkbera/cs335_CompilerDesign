@@ -1,6 +1,6 @@
 public class RecursionExampleDirectory
 {	
-	public getSize(Directory dir) : int
+	public int getSize(Directory dir) 
 	{	int total = 0;
 	
 		//check files
@@ -18,14 +18,14 @@ public class RecursionExampleDirectory
 		return total;
 	}
 	
-	public main(String[] args) : void
+	public void main(String[] args) 
 	{	RecursionExampleDirectory r = new RecursionExampleDirectory();
 		Directory d = new Directory();
 		System.out.println( r.getSize(d) );
 	}
 	
-	//pre: n >= 0
-	public fact(int n) : int 
+	//pre
+	public int fact(int n) 
 	{	int result = 0;
 		if(n == 0){
             result = 1;
@@ -36,8 +36,8 @@ public class RecursionExampleDirectory
         return result;
 	}
 	
-	//pre: exp >= 0
-	public pow(int base, int exp) : int
+	//pre
+	public int pow(int base, int exp) 
 	{	int result = 0;
 		if(exp == 0){
             result = 1;
@@ -49,8 +49,8 @@ public class RecursionExampleDirectory
 	}
 	
 	//slow fib
-	//pre: n >= 1
-	public fib(int n) : int
+	//pre
+	public int fib(int n) 
 	{	int result = 0;
 		if(n == 1 || n == 2){
             result = 1;
@@ -61,7 +61,7 @@ public class RecursionExampleDirectory
 		return result;
 	}
 	
-	public minWasted(int[] items, int itemNum, int capLeft) : int 
+	public int minWasted(int[] items, int itemNum, int capLeft) 
 	{	int result = 0;
 		if(itemNum >= items.length){
             result = capLeft;
@@ -98,11 +98,11 @@ class Directory
 		{	mySubs:[i] = new Directory();}
 	}
 	
-	public getSubs() : Directory[] 
+	public Directory[] getSubs() 
 	{	return mySubs;
 	}
 	
-	public getFiles() : File[] 
+	public File[] getFiles() 
 	{	return myFiles;
 	}
 }
@@ -114,7 +114,7 @@ class File
 	{	iMySize = size;
 	}
 	
-	public getSize() : int 
+	public int getSize() 
 	{	return iMySize;
 	}
 }

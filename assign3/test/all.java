@@ -29,8 +29,8 @@ public class EnhancedFor
 	public int sumListOld(int[] list)
 	{	int total = 0;
 		for(int i = 0; i < list.length; i++)
-		{	total += list[i];
-			System.out.println( list[i] );
+		{	total += list:[i];
+			System.out.println( list:[i] );
 		}
 		return total;
 	}
@@ -45,14 +45,14 @@ public class EnhancedFor
 
 	public void addOne(int[] list)
 	{	for(int i = 0; i < list.length; i++)
-		{	list[i]++;
+		{	list:[i]++;
 		}
 	}
 
 	public void printList(int[] list)
 	{	System.out.println("index, value");
 		for(int i = 0; i < list.length; i++)
-		{	System.out.println(i + ", " + list[i]);
+		{	System.out.println(i + ", " + list:[i]);
 		}
 	}
 

@@ -1,7 +1,7 @@
 
 public class BinaryConverter {
     
-    public main(String[] args) : void {
+    public void main(String[] args) {
         for(int i = -5; i < 33; i++){
             System.out.println(i + ": " + toBinary(i));
             System.out.println(i);
@@ -14,7 +14,7 @@ public class BinaryConverter {
      * pre: none
      * post: returns a String with base10Num in base 2
      */
-    public toBinary(int base10Num) : String {
+    public String toBinary(int base10Num) {
         boolean isNeg = base10Num < 0;
         base10Num = Math.abs(base10Num);        
         String result = "";
@@ -36,7 +36,7 @@ public class BinaryConverter {
      * pre: cal != null
      * post: return true if val consists only of characters 1 and 0, false otherwise
      */
-    public all0sAnd1s(String val) : boolean {
+    public boolean all0sAnd1s(String val) {
         boolean all = true;
         int i = 0;
         char c;

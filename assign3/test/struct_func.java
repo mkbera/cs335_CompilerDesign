@@ -2,7 +2,7 @@ class T{
 	public T(){
 
     }
-    f() : void {
+    void f() {
 		a = 'a';
 		b = 47114711;
 		c = 'c';
@@ -21,7 +21,7 @@ class T{
 }
 
 public class struct_func{
-	public main(String[] args) : void {
+	public void main(String[] args) {
 		T k = new T();
 		k.f();
 	}

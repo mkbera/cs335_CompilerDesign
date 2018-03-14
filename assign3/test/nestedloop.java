@@ -1,5 +1,5 @@
 public class loop {
-	public main(String[] args) : void {
+	public void main(String[] args) {
 		int i,j,k, res;
 		for(res = 0, i = 0; i < 10; i++) {
 			for( j = 0; j < 10; j++) {

@@ -1,16 +1,16 @@
 public class CallingMethodsInSameClass
 {
-	public main(String[] args) : void {
+	public void main(String[] args) {
 		printOne();
 		printOne();
 		printTwo();
 	}
 
-	public printOne() : void {
+	public void printOne() {
 		System.out.println("Hello World");
 	}
 
-	public printTwo() : void {
+	public void printTwo() {
 		printOne();
 		printOne();
 	}
