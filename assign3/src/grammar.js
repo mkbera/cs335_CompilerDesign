@@ -190,26 +190,30 @@ rules = {
 	],
 
 	method_decr: [
+		["public", "void", {
+			nt: "method_declarator"
+		}, {
+			nt: "method_body"
+		}],
 		["public", {
+			nt: "type"
+		}, {
 			nt: "method_declarator"
-		}, "colon", {
-			nt: "result_type"
 		}, {
 			nt: "method_body"
-		}], // NEW RULE
-		[{
+		}],
+		["void", {
 			nt: "method_declarator"
-		}, "colon", {
-			nt: "result_type"
 		}, {
 			nt: "method_body"
-		}] // NEW RULE
-	],
-	result_type: [
+		}],
 		[{
 			nt: "type"
+		}, {
+			nt: "method_declarator"
+		}, {
+			nt: "method_body"
 		}],
-		["void"]
 	],
 	method_declarator: [
 		["identifier", "paranthesis_start", {

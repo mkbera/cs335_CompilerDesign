@@ -393,20 +393,17 @@ var_init :
 
 
 method_decr :
-		'public' method_declarator 'colon' result_type method_body 
-		{ $$ = { nt: 'method_decr', children: [{ t: 'public', l: $public },$2,{ t: 'colon', l: $colon },$4,$5] } }
+		'public' 'void' method_declarator method_body 
+		{ $$ = { nt: 'method_decr', children: [{ t: 'public', l: $public },{ t: 'void', l: $void },$3,$4] } }
 	|
-		method_declarator 'colon' result_type method_body 
-		{ $$ = { nt: 'method_decr', children: [$1,{ t: 'colon', l: $colon },$3,$4] } }
-	;
-
-
-result_type :
-		type 
-		{ $$ = { nt: 'result_type', children: [$1] } }
+		'public' type method_declarator method_body 
+		{ $$ = { nt: 'method_decr', children: [{ t: 'public', l: $public },$2,$3,$4] } }
 	|
-		'void' 
-		{ $$ = { nt: 'result_type', children: [{ t: 'void', l: $void }] } }
+		'void' method_declarator method_body 
+		{ $$ = { nt: 'method_decr', children: [{ t: 'void', l: $void },$2,$3] } }
+	|
+		type method_declarator method_body 
+		{ $$ = { nt: 'method_decr', children: [$1,$2,$3] } }
 	;
 
 

@@ -1,9 +1,9 @@
 public class func {
-	public foo() : void {
+	public void foo() {
 		int i = 1;
 	}
 
-	public main(String[] args) : void {
-		foo();
+	public int main(String[] args) {
+		return foo();
 	}
 }
