@@ -32,14 +32,6 @@ The default output file will be created as 'out.html',	in	the  'asgn3'  folder
 Before the square brackets, there needs to be a 'colon' (':'), i.e. the (i, j)th
 element    of	 Array	  'arr'    can	  be	accessed	as	  =>	a:[i][j]
 
-## Method Declaration
-
-For a method, with some return type,  following  is  be  the  declaration  rule:
-
-	[public] function_name( [argument_list] ) : return_type {
-		...
-	}
-
 
 ---------------------------------- TOOLS USED ----------------------------------
 
