@@ -1,0 +1,5 @@
+#!/bin/sh
+node src/index.js $1 $2 $3
+
+#nasm -f elf32 $2 -o t.o
+#gcc -m32 t.o -o t

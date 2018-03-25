@@ -1,0 +1,16 @@
+1	=	res	0
+2	=	i	0
+3	jump	14
+4	=	j	0
+5	jump	12
+6	=	k	0
+7	jump	10
+8	+	res	res	1
+9	+	k	k	1
+10	if	le	k	9	8
+11	+	j	j	1
+12	if	le	j	9	6
+13	+	i	i	1
+14	if	le	i	9	4
+15	print	res
+16	exit
