@@ -71,14 +71,14 @@ class ScopeTable {
 
         for (var variable_name in this.variables) {
             if (!this.variables[variable_name].isparam) {
-                console.log(spaces + this.variables[variable_name].name + ": " + this.variables[variable_name].type.get_type())
+                console.log(spaces + this.variables[variable_name].name + " :: " + this.variables[variable_name].type.get_type())
             }
         }
 
-        console.log("")
-
         for (var child in this.children) {
-            child.print();
+            console.log("\n" + spaces + "{")
+            this.children[child].print(indent + 4);
+            console.log(spaces + "}")
         }
     }
 }
@@ -113,15 +113,15 @@ class Method {
     }
 
     print(indent) {
-        var spaces = " ".repeat(indent + 4)
+        var spaces = " ".repeat(indent)
 
         var parameters = ""
         for (var parameter in this.parameters) {
             parameters += this.parameters[parameter].name + " :: " + this.parameters[parameter].type.get_type() + ", "
         }
-        console.log(" ".repeat(indent) + "Method: " + this.name + " ( " + parameters.substr(0, parameters.length - 2) + " )")
+        console.log(spaces + "Method: " + this.name + " ( " + parameters.substr(0, parameters.length - 2) + " ) {")
         this.table.print(indent + 4)
-        console.log("")
+        console.log(spaces + "}")
     }
 }
 
@@ -185,7 +185,7 @@ class Class {
     print(indent) {
         var spaces = " ".repeat(indent + 4)
 
-        console.log(" ".repeat(indent) + "Class: " + this.name)
+        console.log(" ".repeat(indent) + "Class: " + this.name + " {")
         for (var variable_name in this.variables) {
             console.log(spaces + variable_name + " :: " + this.variables[variable_name].type.get_type())
         }
@@ -193,7 +193,9 @@ class Class {
         console.log("")
         for (var method_name in this.methods) {
             this.methods[method_name].print(indent = 4)
+            console.log("")
         }
+        console.log("}\n")
     }
 }
 
@@ -259,23 +261,34 @@ class SymbolTable {
     }
 
     scope_start() {
-        var table = new ScopeTable(this.current_class, this.current_class)
+        var table = new ScopeTable(this.current_class, this.current_scope)
 
-        this.current_scope.children.push(table)
-        this.current_class = table
+        if (this.current_scope != this.current_class) {
+            this.current_scope.children.push(table)
+            table.parent = this.current_scope
+        }
+
+        this.current_scope = table
 
         return table
     }
 
     scope_end() {
+        var table = this.current_scope
+
         this.current_scope = this.current_scope.parent
+
+        return table
     }
 
     print() {
+        console.log("-".repeat(30) + "\n")
+
         for (var class_name in this.classes) {
-            console.log("-".repeat(30))
             this.classes[class_name].print(0)
         }
+
+        console.log("-".repeat(30) + "\n")
     }
 
 }

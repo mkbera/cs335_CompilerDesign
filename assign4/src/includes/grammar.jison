@@ -472,25 +472,25 @@ var_init :
 method_decr :
 		'public' 'void' method_declarator method_body 
 		{
-			ST.add_method($3.name, new Type("void", "basic", 0, null), $3.parameters, $4, main = false)
+			ST.add_method($3.name, new Type("void", "basic", 0, null), $3.parameters, $4.scope, main = false)
 			$$ = null
 		}
 	|
 		'public' type method_declarator method_body 
 		{
-			ST.add_method($3.name, $2, $3.parameters, $4, main = false)
+			ST.add_method($3.name, $2, $3.parameters, $4.scope, main = false)
 			$$ = null
 		}
 	|
 		'void' method_declarator method_body 
 		{
-			ST.add_method($2.name, new Type("void", "basic", 0, null), $2.parameters, $3, main = false)
+			ST.add_method($2.name, new Type("void", "basic", 0, null), $2.parameters, $3.scope, main = false)
 			$$ = null
 		}
 	|
 		type method_declarator method_body 
 		{
-			ST.add_method($2.name, $1, $2.parameters, $3, main = false)
+			ST.add_method($2.name, $1, $2.parameters, $3.scope, main = false)
 			$$ = null
 		}
 	;
@@ -510,7 +510,7 @@ method_declarator :
 method_body :
 		block 
 		{
-			$$ = new ScopeTable(ST.current_class, ST.current_class)
+			$$ = $1
 		}
 	;
 
@@ -677,31 +677,38 @@ reference_type :
 block :
 		'set_start' block_scope_start block_stmts 'set_end' 
 		{
-			$$ = $3
-			// ST.end_scope()
+			$$ = {
+				scope: ST.scope_end()
+			}
 		}
 	|
-		'set_start' 'set_end' 
+		'set_start' block_scope_start 'set_end' 
 		{
-			$$ = []
+			$$ = {
+				scope: ST.scope_end()
+			}
 		}
 	;
 
 block_scope_start :
 
 		{
-			$$ = null
-			// ST.begin_scope()
+			$$ = ST.scope_start()
 		}
 	;
 
 
 block_stmts :
 		block_stmts block_stmt 
-		{ $$ = { nt: 'block_stmts', children: [$1,$2] } }
+		{
+			$$ = $1
+			$$.push($2)
+		}
 	|
 		block_stmt 
-		{ $$ = { nt: 'block_stmts', children: [$1] } }
+		{
+			$$ = [$1]
+		}
 	;
 
 
@@ -709,94 +716,128 @@ block_stmt :
 		type var_declarators 'terminator' 
 		{
 			$2.forEach(function(var_decr) {
-				ST.insert_variable($1, var_decr[0]);
+				ST.add_variable(var_decr[0], $1);
 			})
-			$$ = {
-				code: "",
-				value: null
-			}
+			$$ = null
 		}
 	|
 		stmt 
-		{ $$ = { nt: 'block_stmt', children: [$1] } }
+		{
+			$$ = $1
+		}
 	;
 
 
 stmt :
 		stmt_wots 
-		{ $$ = { nt: 'stmt', children: [$1] } }
+		{
+			$$ = $1
+		}
 	;
 
 
 stmt_nsi :
 		stmt_wots 
-		{ $$ = { nt: 'stmt_nsi', children: [$1] } }
+		{
+			$$ = $1
+		}
 	;
 
 
 stmt_wots :
 		block 
-		{ $$ = { nt: 'stmt_wots', children: [$1] } }
+		{
+			$$ = $1
+		}
 	|
 		break_stmt 
-		{ $$ = { nt: 'stmt_wots', children: [$1] } }
+		{
+			$$ = $1
+		}
 	|
 		continue_stmt 
-		{ $$ = { nt: 'stmt_wots', children: [$1] } }
+		{
+			$$ = $1
+		}
 	|
 		return_stmt 
-		{ $$ = { nt: 'stmt_wots', children: [$1] } }
+		{
+			$$ = $1
+		}
 	|
 		stmt_expr 'terminator' 
-		{ $$ = { nt: 'stmt_wots', children: [$1,{ t: 'terminator', l: $terminator }] } }
+		{
+			$$ = $1
+		}
 	|
 		'terminator' 
-		{ $$ = { nt: 'stmt_wots', children: [{ t: 'terminator', l: $terminator }] } }
+		{
+			$$ = null
+		}
 	;
 
 
 stmt_expr_list :
 		stmt_expr_list 'separator' stmt_expr 
-		{ $$ = { nt: 'stmt_expr_list', children: [$1,{ t: 'separator', l: $separator },$3] } }
+		{
+			$$ = $1
+			$$.push($3)
+		}
 	|
 		stmt_expr 
-		{ $$ = { nt: 'stmt_expr_list', children: [$1] } }
+		{
+			$$ = [$1]
+		}
 	;
 
 
 break_stmt :
 		'break' 'terminator' 
-		{ $$ = { nt: 'break_stmt', children: [{ t: 'break', l: $break },{ t: 'terminator', l: $terminator }] } }
+		{
+			$$ = null
+		}
 	;
 
 
 continue_stmt :
 		'continue' 'terminator' 
-		{ $$ = { nt: 'continue_stmt', children: [{ t: 'continue', l: $continue },{ t: 'terminator', l: $terminator }] } }
+		{
+			$$ = null
+		}
 	;
 
 
 return_stmt :
 		'return' expr 'terminator' 
-		{ $$ = { nt: 'return_stmt', children: [{ t: 'return', l: $return },$2,{ t: 'terminator', l: $terminator }] } }
+		{
+			$$ = null
+		}
 	|
 		'return' 'terminator' 
-		{ $$ = { nt: 'return_stmt', children: [{ t: 'return', l: $return },{ t: 'terminator', l: $terminator }] } }
+		{
+			$$ = null
+		}
 	;
 
 
 expr :
 		additive_expr 
-		{ $$ = { nt: 'expr', children: [$1] } }
+		{
+			$$ = $1
+		}
 	|
 		assignment 
-		{ $$ = { nt: 'expr', children: [$1] } }
+		{
+			$$ = $1
+		}
 	;
 
 
 stmt_expr :
 		assignment 
-		{ $$ = { nt: 'stmt_expr', children: [$1] } }
+		{
+			$$ = $1
+		}
 	;
 
 
