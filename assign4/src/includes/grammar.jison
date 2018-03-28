@@ -289,25 +289,41 @@ class_member_decr :
 
 consr_declarator :
 		'identifier' 'paranthesis_start' formal_parameter_list 'paranthesis_end' 
-		{ $$ = { nt: 'consr_declarator', children: [{ t: 'identifier', l: $identifier },{ t: 'paranthesis_start', l: $paranthesis_start },$3,{ t: 'paranthesis_end', l: $paranthesis_end }] } }
+		{
+			param_types = []
+			$3.forEach(function(param) {
+				param_types.push(param[0])
+			})
+
+			ST.insert_constructor($identifier, param_types)
+		}
 	;
 
 
 formal_parameter_list :
 		formal_parameter_list 'separator' formal_parameter 
-		{ $$ = { nt: 'formal_parameter_list', children: [$1,{ t: 'separator', l: $separator },$3] } }
+		{
+			$$ = $1
+			$$.push($3)
+		}
 	|
 		formal_parameter 
-		{ $$ = { nt: 'formal_parameter_list', children: [$1] } }
+		{
+			$$ = [$1]
+		}
 	|
 		
-		{ $$ = { nt: 'formal_parameter_list', children: [] } }
+		{
+			$$ = []
+		}
 	;
 
 
 formal_parameter :
 		type var_declarator_id 
-		{ $$ = { nt: 'formal_parameter', children: [$1,$2] } }
+		{
+			$$ = [$1, $2]
+		}
 	;
 
 
@@ -417,14 +433,41 @@ var_init :
 
 method_decr :
 		'public' 'void' method_declarator method_body 
-		{ $$ = { nt: 'method_decr', children: [{ t: 'public', l: $public },{ t: 'void', l: $void },$3,$4] } }
+		{
+			param_types = []
+			$3.params.forEach(function(param) {
+				param_types.push(param[0])
+			})
+
+			ST.insert_function($2.name, new Type("void", "basic", null, null, null), param_types)
+			$$ = {
+				code: "",
+				value: null
+			}
+		}
 	|
 		'public' type method_declarator method_body 
-		{ $$ = { nt: 'method_decr', children: [{ t: 'public', l: $public },$2,$3,$4] } }
+		{
+			param_types = []
+			$3.params.forEach(function(param) {
+				param_types.push(param[0])
+			})
+
+			ST.insert_function($3.name, $2, param_types)
+			$$ = {
+				code: "",
+				value: null
+			}
+		}
 	|
 		'void' method_declarator method_body 
 		{
-			ST.insert_function($2, new Type("void", "basic", null, null, null), [], 0)
+			param_types = []
+			$2.params.forEach(function(param) {
+				param_types.push(param[0])
+			})
+
+			ST.insert_function($2.name, new Type("void", "basic", null, null, null), param_types)
 			$$ = {
 				code: "",
 				value: null
@@ -433,7 +476,12 @@ method_decr :
 	|
 		type method_declarator method_body 
 		{
-			ST.insert_function($2, $1, [], 0)
+			param_types = []
+			$2.params.forEach(function(param) {
+				param_types.push(param[0])
+			})
+
+			ST.insert_function($2.name, $1, param_types)
 			$$ = {
 				code: "",
 				value: null
@@ -445,14 +493,19 @@ method_decr :
 method_declarator :
 		'identifier' 'paranthesis_start' formal_parameter_list 'paranthesis_end' 
 		{
-			$$ = $identifier
+			$$ = {
+				name: $identifier,
+				params: $3
+			}
 		}
 	;
 
 
 method_body :
 		block 
-		{ $$ = { nt: 'method_body', children: [$1] } }
+		{
+			$$ = $1
+		}
 	;
 
 
@@ -610,11 +663,24 @@ reference_type :
 
 
 block :
-		'set_start' block_stmts 'set_end' 
-		{ $$ = { nt: 'block', children: [{ t: 'set_start', l: $set_start },$2,{ t: 'set_end', l: $set_end }] } }
+		'set_start' block_scope_start block_stmts 'set_end' 
+		{
+			$$ = $3
+			ST.end_scope()
+		}
 	|
 		'set_start' 'set_end' 
-		{ $$ = { nt: 'block', children: [{ t: 'set_start', l: $set_start },{ t: 'set_end', l: $set_end }] } }
+		{
+			$$ = []
+		}
+	;
+
+block_scope_start :
+
+		{
+			$$ = null
+			ST.begin_scope()
+		}
 	;
 
 

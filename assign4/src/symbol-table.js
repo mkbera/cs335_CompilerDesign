@@ -2,145 +2,183 @@ global.base_table = null
 
 
 class Type {
-    constructor(name, type, width, elem_type, length) {
-        this.name = name
-
-        if (typeof (type) === "string") {
-            if (type == "basic") {
-                this.isbasic = true
-            }
-            if (type == "array") {
-                this.isarray = true
-            }
-            if (type == "pointer") {
-                this.ispointer = true
-            }
-        }
-        else {
-            if (type.indexOf("basic") > -1) {
-                this.isbasic = true
-            }
-            if (type.indexOf("array") > -1) {
-                this.isarray = true
-            }
-            if (type.indexOf("pointer") > -1) {
-                this.ispointer = true
-            }
-        }
+    constructor(type, category, width, length) {
+        this.type = type
+        this.category = category
 
         this.width = width
         this.length = length
-
-        this.elem_type = elem_type
     }
 
-
-    type_name() {
-        if (this.isbasic) {
-            return this.name
-        }
-        else if (this.isarray) {
-            return "array of " + this.elem_type.type_name() + ", length " + this.length
+    get_type() {
+        switch (this.category) {
+            case "basic": {
+                return this.type
+            }
+            case "array": {
+                return "Array :: { " + this.type.get_type() + ", length: " + this.length + " }"
+            }
+            case "object": {
+                return "Object :: { " + this.type.name + " }"
+            }
         }
     }
 }
 
 
-class Table {
-    constructor(prev = null) {
-        this.hash = {}
-        this.width = 0
-        this.parent = prev
+class ScopeTable {
+    constructor(class_instance, parent) {
+        this.class = class_instance
+        this.variables = {}
+
+        this.parent = parent
         this.children = []
     }
 
-    insert_variable(var_type, identifier) {
-        this.hash[identifier] = {}
-        this.hash[identifier]["type"] = var_type
-        this.hash[identifier]["category"] = "variable"
+    add_variable(name, type) {
+        if (name in this.variables) {
+            throw Error("The variable " + name + " has already been defined!")
+        }
+
+        var variable = new Variable(name, type)
+        this.variables[name] = variable;
     }
 
-    insert_temp(var_type, identifier) {
-        if (identifier in this.hash) {
-            this.hash[identifier] = {}
-            this.hash[identifier]["type"] = var_type
-            this.hash[identifier]["category"] = "temporary"
-            return True
+    add_temporary(var_type, identifier) {
+        // TODO
+    }
+
+    lookup_variable(variable_name) {
+        if (variable_name in this.variables) {
+            return this.variables[identifier]
+        }
+        else if (this.parent != null) {
+            return this.parent.lookup_variable()
         }
         else {
-            return False
+            throw Error("The variable " + variable_name + " was not declared in the current scope!")
         }
     }
 
-    insert_array(var_type, identifier) {
-        this.hash[identifier] = {}
-        this.hash[identifier]["type"] = var_type
-        this.hash[identifier]["category"] = "array"
+    lookup_method(method_name) {
+        this.class.lookup_method(method_name)
+    }
+}
+
+
+class Variable {
+    constructor(name, type) {
+        this.category = "variable"
+
+        this.name = name
+        this.type = type
+    }
+}
+
+
+class Method {
+    constructor(name, return_type, argument, scope_table, main = false) {
+        this.main = main
+        this.type = "method"
+
+        this.name = name
+        this.arguments = arguments
+        this.return_type = return_type
+        this.scope_table = scope_table
+
+        this.arguments.forEach(function (argument) {
+            this.scope_table.add_variable(argument);
+        })
+    }
+}
+
+
+class Class {
+    constructor(name, parent = null) {
+        this.name = name
+
+        this.methods = {}
+        this.variables = {}
+
+        this.parent = parent
     }
 
-    insert_function(method_name, return_type, param_types, param_num) {
-        if (!(method_name in this.hash)) {
-            this.hash[method_name] = {}
-            this.hash[method_name]["type"] = return_type
-            this.hash[method_name]["category"] = "function"
-            this.hash[method_name]["arg_num"] = param_num
-            this.hash[method_name]["arg_types"] = param_types
+    add_method(name, return_type, argument, scope_table, main = false) {
+        if (name in this.variables) {
+            throw Error("The method " + name + " has already been defined!")
         }
+
+        var method = new Method(name, return_type, argument, scope_table, main)
+        this.methods[name] = method;
     }
 
-    lookup_in_this(identifier) {
-        if (identifier in this.hash) {
-            return this.hash[identifier]
+    add_variable(name, type) {
+        if (name in this.variables) {
+            throw Error("The variable " + name + " has already been defined!")
+        }
+
+        var variable = new Variable(name, type)
+        this.variables[name] = variable;
+    }
+
+    lookup_variable(variable_name) {
+        if (variable_name in this.variables) {
+            return this.variables[identifier]
+        }
+        else if (this.parent != null) {
+            return this.parent.lookup_variable()
         }
         else {
-            return None
+            throw Error("The variable " + variable_name + " was not declared in the current scope!")
         }
     }
 
-    print_symbol_table() {
-        var self = this;
-
-        console.log("")
-        console.log(Object.keys(this.hash))
-        Object.keys(self.hash).forEach(function (key) {
-            console.log("NAME: " + key)
-            Object.keys(self.hash[key]).forEach(function (k) {
-                if (k == "type" && typeof self.hash[key][k] !== "string") {
-                    console.log(k + ": " + self.hash[key][k].type_name())
-                }
-                else if (k == "arg_types") {
-                    var types = []
-                    self.hash[key][k].forEach(function (t) {
-                        if (typeof t !== "string") {
-                            types.append(t.type_name())
-                        }
-                        else {
-                            types.append(t)
-                        }
-                    });
-                    console.log(k + ": " + types)
-                }
-                else {
-                    console.log(k + ": " + self.hash[key][k])
-                }
-            });
-            console.log("")
-        });
+    lookup_method(method_name) {
+        if (method_name in this.methods) {
+            return this.methods[method_name]
+        }
+        else if (this.parent != null) {
+            return this.parent.lookup_method(method_name)
+        }
+        else {
+            throw Error("The method " + method_name + " was not declared in the current scope!")
+        }
     }
 }
 
 
 class SymbolTable {
     constructor() {
-        this.curr_table = new Table(null)
-
-        base_table = this.curr_table
-
-        // this.label_count = 0
         this.temp_count = 0
+
+        this.classes = {}
+
+        this.current_class = null
+        this.current_scope = null
     }
 
-    maketemp(temp_type, table) {
+    add_class(name, parent = null) {
+        if (name in this.classes) {
+            throw Error("The class " + name + " has already been declared!")
+        }
+
+        var class_instance = new Class(name, parent)
+        this.classes[name] = class_instance
+
+        this.current_class = class_instance
+        this.current_scope = class_instance
+    }
+
+    add_method(name, return_type, argument, scope_table, main = false) {
+        this.current_class.add_method(name, return_type, argument, scope_table, main = false)
+    }
+
+    add_variable(variable) {
+        this.current_scope.add_variable(name, type)
+    }
+
+    add_temporary(temp_type, table) {
+        // TODO
         success = False
         while (success > 0) {
             name = "t" + str(this.temp_count)
@@ -150,63 +188,17 @@ class SymbolTable {
         return name
     }
 
-    newlabel() {
-        label = "L" + str(this.label_count)
-        this.label_count += 1
-        return label
+    scope_start() {
+        var table = new ScopeTable(this.current_class, this.current_class)
+
+        this.current_scope.children.push(table)
+        this.current_class = table
+
+        return table
     }
 
-    begin_scope() {
-        new_table = table(this.curr_table)
-        this.curr_table.children.append(new_table)
-        this.curr_table = new_table
-        return this.curr_table
-    }
-
-    end_scope() {
-        this.curr_table = this.curr_table.parent
-    }
-
-    insert_variable(var_type, identifier) {
-        this.curr_table.insert_variable(var_type, identifier)
-    }
-
-    insert_temp(var_type, identifier) {
-        this.curr_table.insert_temp(var_type, identifier)
-    }
-
-    insert_array(var_type, identifier) {
-        this.curr_table.insert_array(var_type, identifier)
-    }
-
-    lookup(identifier, table) {
-        if (table != None) {
-            v = table.lookup_in_this(identifier)
-            if (v == None) {
-                return this.lookup(identifier, table.parent)
-            }
-            return v
-        }
-        else {
-            return None
-        }
-    }
-
-    insert_function(method_name, return_type, param_types, param_num) {
-        console.log("####################################")
-        this.curr_table.insert_function(method_name, return_type, param_types, param_num)
-    }
-
-    lookup_in_this(identifier) {
-        this.curr_table.lookup_in_this(identifier)
-    }
-
-    print_symbol_table(t) {
-        t.print_symbol_table()
-        console.log("----------------")
-        t.children.forEach(function (c) {
-            this.print_symbol_table(c)
-        });
+    scope_end() {
+        this.current_scope = this.current_scope.parent
     }
 
 }
