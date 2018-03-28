@@ -190,7 +190,9 @@
 
 program :
 		type_decrs 'EOF' 
-		{ return { nt: 'program', children: [$1,{ t: 'EOF', l: $EOF }] } }
+		{
+			return { nt: 'program', children: [$1,{ t: 'EOF', l: $EOF }] } 
+		}
 	|
 		'EOF' 
 		{ return { nt: 'program', children: [{ t: 'EOF', l: $EOF }] } }
@@ -214,61 +216,99 @@ import_decr :
 
 type_decrs :
 		type_decrs type_decr 
-		{ $$ = { nt: 'type_decrs', children: [$1,$2] } }
+		{
+			$$ = null
+		}
 	|
 		type_decr 
-		{ $$ = { nt: 'type_decrs', children: [$1] } }
+		{
+			$$ = null
+		}
 	;
 
 
 type_decr :
 		class_decr 
-		{ $$ = { nt: 'type_decr', children: [$1] } }
+		{
+			$$ = null
+		}
 	|
 		'terminator' 
-		{ $$ = { nt: 'type_decr', children: [{ t: 'terminator', l: $terminator }] } }
+		{
+			$$ = null
+		}
 	;
 
 
 class_decr :
-		'public' 'class' 'identifier' extend_decr class_body 
-		{ $$ = { nt: 'class_decr', children: [{ t: 'public', l: $public },{ t: 'class', l: $class },{ t: 'identifier', l: $identifier },$4,$5] } }
+		class_header class_body 
+		{
+			$$ = null
+		}
+	;
+
+
+class_header :
+		'public' 'class' 'identifier' extend_decr
+		{
+			ST.add_class($identifier, $4)
+			$$ = null
+		}
 	|
-		'class' 'identifier' extend_decr class_body 
-		{ $$ = { nt: 'class_decr', children: [{ t: 'class', l: $class },{ t: 'identifier', l: $identifier },$3,$4] } }
+		'class' 'identifier' extend_decr 
+		{
+			ST.add_class($identifier, $3)
+			$$ = null
+		}
 	|
-		'public' 'class' 'identifier' class_body 
-		{ $$ = { nt: 'class_decr', children: [{ t: 'public', l: $public },{ t: 'class', l: $class },{ t: 'identifier', l: $identifier },$4] } }
+		'public' 'class' 'identifier' 
+		{
+			ST.add_class($identifier, "")
+			$$ = null
+		}
 	|
-		'class' 'identifier' class_body 
-		{ $$ = { nt: 'class_decr', children: [{ t: 'class', l: $class },{ t: 'identifier', l: $identifier },$3] } }
+		'class' 'identifier' 
+		{
+			ST.add_class($identifier, "")
+			$$ = null
+		}
 	;
 
 
 extend_decr :
 		'extends' 'identifier' 
-		{ $$ = { nt: 'extend_decr', children: [{ t: 'extends', l: $extends },{ t: 'identifier', l: $identifier }] } }
+		{
+			$$ = $identifier
+		}
 	;
 
 
 class_body :
 		'set_start' class_body_decrs 'set_end' 
-		{ $$ = { nt: 'class_body', children: [{ t: 'set_start', l: $set_start },$2,{ t: 'set_end', l: $set_end }] } }
+		{
+			$$ = null
+		}
 	;
 
 
 class_body_decrs :
 		class_body_decrs class_body_decr 
-		{ $$ = { nt: 'class_body_decrs', children: [$1,$2] } }
+		{
+			$$ = null
+		}
 	|
 		class_body_decr 
-		{ $$ = { nt: 'class_body_decrs', children: [$1] } }
+		{
+			$$ = null
+		}
 	;
 
 
 class_body_decr :
 		class_member_decr 
-		{ $$ = { nt: 'class_body_decr', children: [$1] } }
+		{
+			$$ = null
+		}
 	|
 		'public' consr_declarator consr_body 
 		{ $$ = { nt: 'class_body_decr', children: [{ t: 'public', l: $public },$2,$3] } }
@@ -280,10 +320,14 @@ class_body_decr :
 
 class_member_decr :
 		field_decr 
-		{ $$ = { nt: 'class_member_decr', children: [$1] } }
+		{
+			$$ = null
+		}
 	|
 		method_decr 
-		{ $$ = { nt: 'class_member_decr', children: [$1] } }
+		{
+			$$ = null
+		}
 	;
 
 
@@ -322,7 +366,7 @@ formal_parameter_list :
 formal_parameter :
 		type var_declarator_id 
 		{
-			$$ = [$1, $2]
+			$$ = new Variable($2, $1)
 		}
 	;
 
@@ -361,23 +405,17 @@ field_decr :
 		'public' type var_declarators 'terminator' 
 		{
 			$3.forEach(function(var_decr) {
-				ST.insert_variable($2, var_decr[0]);
+				ST.add_variable(var_decr[0], $2);
 			})
-			$$ = {
-				code: "",
-				value: null
-			}
+			$$ = null
 		}
 	|
 		type var_declarators 'terminator' 
 		{
 			$2.forEach(function(var_decr) {
-				ST.insert_variable($1, var_decr[0]);
+				ST.add_variable(var_decr[0] , $1);
 			})
-			$$ = {
-				code: "",
-				value: null
-			}
+			$$ = null
 		}
 	;
 
@@ -434,58 +472,26 @@ var_init :
 method_decr :
 		'public' 'void' method_declarator method_body 
 		{
-			param_types = []
-			$3.params.forEach(function(param) {
-				param_types.push(param[0])
-			})
-
-			ST.insert_function($2.name, new Type("void", "basic", null, null, null), param_types)
-			$$ = {
-				code: "",
-				value: null
-			}
+			ST.add_method($3.name, new Type("void", "basic", 0, null), $3.parameters, $4, main = false)
+			$$ = null
 		}
 	|
 		'public' type method_declarator method_body 
 		{
-			param_types = []
-			$3.params.forEach(function(param) {
-				param_types.push(param[0])
-			})
-
-			ST.insert_function($3.name, $2, param_types)
-			$$ = {
-				code: "",
-				value: null
-			}
+			ST.add_method($3.name, $2, $3.parameters, $4, main = false)
+			$$ = null
 		}
 	|
 		'void' method_declarator method_body 
 		{
-			param_types = []
-			$2.params.forEach(function(param) {
-				param_types.push(param[0])
-			})
-
-			ST.insert_function($2.name, new Type("void", "basic", null, null, null), param_types)
-			$$ = {
-				code: "",
-				value: null
-			}
+			ST.add_method($2.name, new Type("void", "basic", 0, null), $2.parameters, $3, main = false)
+			$$ = null
 		}
 	|
 		type method_declarator method_body 
 		{
-			param_types = []
-			$2.params.forEach(function(param) {
-				param_types.push(param[0])
-			})
-
-			ST.insert_function($2.name, $1, param_types)
-			$$ = {
-				code: "",
-				value: null
-			}
+			ST.add_method($2.name, $1, $2.parameters, $3, main = false)
+			$$ = null
 		}
 	;
 
@@ -495,7 +501,7 @@ method_declarator :
 		{
 			$$ = {
 				name: $identifier,
-				params: $3
+				parameters: $3
 			}
 		}
 	;
@@ -504,7 +510,7 @@ method_declarator :
 method_body :
 		block 
 		{
-			$$ = $1
+			$$ = new ScopeTable(ST.current_class, ST.current_class)
 		}
 	;
 
@@ -536,12 +542,12 @@ var_inits :
 type :
 		primitive_type 
 		{
-			$$ = new Type($1.name, $1.type, $1.width, $1.elem_type, $1.length)
+			$$ = new Type($1.type, $1.category, $1.width, $1.length)
 		}
 	|
 		reference_type 
 		{
-			$$ = new Type($1.name, $1.type, $1.width, $1.elem_type, $1.length)
+			$$ = new Type($1.type, $1.category, $1.width, $1.length)
 		}
 	;
 
@@ -560,10 +566,9 @@ primitive_type :
 		'boolean' 
 		{
 			$$ = {
-				name: "boolean",
-				type: "basic",
+				type: "boolean",
+				category: "basic",
 				width: 1,
-				elem_type: null,
 				length: null
 			}
 		}
@@ -574,10 +579,9 @@ integral_type :
 		'byte' 
 		{
 			$$ = {
-				name: "byte",
-				type: "basic",
+				type: "byte",
+				category: "basic",
 				width: 1,
-				elem_type: null,
 				length: null
 			}
 		}
@@ -585,10 +589,9 @@ integral_type :
 		'short' 
 		{
 			$$ = {
-				name: "short",
-				type: "basic",
+				type: "short",
+				category: "basic",
 				width: 2,
-				elem_type: null,
 				length: null
 			}
 		}
@@ -596,10 +599,9 @@ integral_type :
 		'int' 
 		{
 			$$ = {
-				name: "int",
-				type: "basic",
+				type: "int",
+				category: "basic",
 				width: 4,
-				elem_type: null,
 				length: null
 			}
 		}
@@ -607,10 +609,9 @@ integral_type :
 		'long' 
 		{
 			$$ = {
-				name: "long",
-				type: "basic",
+				type: "long",
+				category: "basic",
 				width: 8,
-				elem_type: null,
 				length: null
 			}
 		}
@@ -618,10 +619,9 @@ integral_type :
 		'char' 
 		{
 			$$ = {
-				name: "char",
-				type: "basic",
+				type: "char",
+				category: "basic",
 				width: 1,
-				elem_type: null,
 				length: null
 			}
 		}
@@ -632,10 +632,9 @@ floating_type :
 		'float' 
 		{
 			$$ = {
-				name: "float",
-				type: "basic",
+				type: "float",
+				category: "basic",
 				width: 4,
-				elem_type: null,
 				length: null
 			}
 		}
@@ -643,10 +642,9 @@ floating_type :
 		'double' 
 		{
 			$$ = {
-				name: "boolean",
-				type: "basic",
+				type: "boolean",
+				category: "basic",
 				width: 8,
-				elem_type: null,
 				length: null
 			}
 		}
@@ -655,10 +653,24 @@ floating_type :
 
 reference_type :
 		'identifier' 
-		{ $$ = { nt: 'reference_type', children: [{ t: 'identifier', l: $identifier }] } }
+		{
+			$$ = {
+				type: ST.get_class($identifier),
+				category: "object",
+				width: null,
+				length: null
+			}
+		}
 	|
 		type 'brackets_start' 'brackets_end' 
-		{ $$ = { nt: 'reference_type', children: [$1,{ t: 'brackets_start', l: $brackets_start },{ t: 'brackets_end', l: $brackets_end }] } }
+		{
+			$$ = {
+				type: $1,
+				category: "array",
+				width: null,
+				length: 0
+			}
+		}
 	;
 
 
@@ -666,7 +678,7 @@ block :
 		'set_start' block_scope_start block_stmts 'set_end' 
 		{
 			$$ = $3
-			ST.end_scope()
+			// ST.end_scope()
 		}
 	|
 		'set_start' 'set_end' 
@@ -679,7 +691,7 @@ block_scope_start :
 
 		{
 			$$ = null
-			ST.begin_scope()
+			// ST.begin_scope()
 		}
 	;
 

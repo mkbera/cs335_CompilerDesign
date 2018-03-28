@@ -42,6 +42,8 @@ class ScopeTable {
 
         var variable = new Variable(name, type)
         this.variables[name] = variable;
+
+        return variable;
     }
 
     add_temporary(var_type, identifier) {
@@ -63,32 +65,63 @@ class ScopeTable {
     lookup_method(method_name) {
         this.class.lookup_method(method_name)
     }
+
+    print(indent) {
+        var spaces = " ".repeat(indent)
+
+        for (var variable_name in this.variables) {
+            if (!this.variables[variable_name].isparam) {
+                console.log(spaces + this.variables[variable_name].name + ": " + this.variables[variable_name].type.get_type())
+            }
+        }
+
+        console.log("")
+
+        for (var child in this.children) {
+            child.print();
+        }
+    }
 }
 
 
 class Variable {
-    constructor(name, type) {
+    constructor(name, type, isparam = false) {
         this.category = "variable"
 
         this.name = name
         this.type = type
+
+        this.isparam = isparam
     }
 }
 
 
 class Method {
-    constructor(name, return_type, argument, scope_table, main = false) {
+    constructor(name, return_type, parameters, scope_table, main = false) {
         this.main = main
         this.type = "method"
 
         this.name = name
-        this.arguments = arguments
+        this.parameters = parameters
         this.return_type = return_type
-        this.scope_table = scope_table
+        this.table = scope_table
 
-        this.arguments.forEach(function (argument) {
-            this.scope_table.add_variable(argument);
+        this.parameters.forEach(function (parameter) {
+            parameter.isparam = true
+            scope_table.variables[parameter.name] = parameter;
         })
+    }
+
+    print(indent) {
+        var spaces = " ".repeat(indent + 4)
+
+        var parameters = ""
+        for (var parameter in this.parameters) {
+            parameters += this.parameters[parameter].name + " :: " + this.parameters[parameter].type.get_type() + ", "
+        }
+        console.log(" ".repeat(indent) + "Method: " + this.name + " ( " + parameters.substr(0, parameters.length - 2) + " )")
+        this.table.print(indent + 4)
+        console.log("")
     }
 }
 
@@ -103,13 +136,15 @@ class Class {
         this.parent = parent
     }
 
-    add_method(name, return_type, argument, scope_table, main = false) {
+    add_method(name, return_type, parameters, scope_table, main = false) {
         if (name in this.variables) {
             throw Error("The method " + name + " has already been defined!")
         }
 
-        var method = new Method(name, return_type, argument, scope_table, main)
+        var method = new Method(name, return_type, parameters, scope_table, main)
         this.methods[name] = method;
+
+        return method
     }
 
     add_variable(name, type) {
@@ -119,6 +154,8 @@ class Class {
 
         var variable = new Variable(name, type)
         this.variables[name] = variable;
+
+        return variable
     }
 
     lookup_variable(variable_name) {
@@ -144,6 +181,20 @@ class Class {
             throw Error("The method " + method_name + " was not declared in the current scope!")
         }
     }
+
+    print(indent) {
+        var spaces = " ".repeat(indent + 4)
+
+        console.log(" ".repeat(indent) + "Class: " + this.name)
+        for (var variable_name in this.variables) {
+            console.log(spaces + variable_name + " :: " + this.variables[variable_name].type.get_type())
+        }
+
+        console.log("")
+        for (var method_name in this.methods) {
+            this.methods[method_name].print(indent = 4)
+        }
+    }
 }
 
 
@@ -157,9 +208,26 @@ class SymbolTable {
         this.current_scope = null
     }
 
-    add_class(name, parent = null) {
+    get_class(name) {
+        if (!(name in this.classes)) {
+            throw Error("The class " + name + " has not been declared in the current scope!")
+        }
+
+        return this.classes[name]
+    }
+
+    add_class(name, parent_name = null) {
         if (name in this.classes) {
             throw Error("The class " + name + " has already been declared!")
+        }
+
+        var parent = null
+        if (parent_name != "") {
+            if (!(parent_name in this.classes)) {
+                throw Error("The class " + parent_name + " has not been declared in the current scope!")
+            }
+
+            parent = this.classes[parent_name];
         }
 
         var class_instance = new Class(name, parent)
@@ -167,14 +235,16 @@ class SymbolTable {
 
         this.current_class = class_instance
         this.current_scope = class_instance
+
+        return class_instance
     }
 
-    add_method(name, return_type, argument, scope_table, main = false) {
-        this.current_class.add_method(name, return_type, argument, scope_table, main = false)
+    add_method(name, return_type, parameters, scope_table, main = false) {
+        return this.current_class.add_method(name, return_type, parameters, scope_table, main = false)
     }
 
-    add_variable(variable) {
-        this.current_scope.add_variable(name, type)
+    add_variable(name, type) {
+        return this.current_scope.add_variable(name, type)
     }
 
     add_temporary(temp_type, table) {
@@ -201,10 +271,20 @@ class SymbolTable {
         this.current_scope = this.current_scope.parent
     }
 
+    print() {
+        for (var class_name in this.classes) {
+            console.log("-".repeat(30))
+            this.classes[class_name].print(0)
+        }
+    }
+
 }
 
 module.exports = {
     SymbolTable: SymbolTable,
-    Table: Table,
+    ScopeTable: ScopeTable,
+    Variable: Variable,
+    Method: Method,
+    Class: Class,
     Type: Type
 }

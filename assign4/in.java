@@ -1,15 +1,11 @@
 class test {
-	byte a, c;
+	int a, b, c;
 
-	test(int z) {
-		float t;
+	int test_func(int a, int b) {
+		;
 	}
+}
 
-	int main(int x, float y) {
-		int b;
-	}
-
-	void main2() {
-		int d;
-	}
+class test2 {
+	int a, d;
 }
