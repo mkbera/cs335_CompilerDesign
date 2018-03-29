@@ -1,14 +1,8 @@
+import a;
+
 class test {
-	int a, b, c;
-
-	int test_func(int a, int b) {
-		int x = 1, y = 5;
-		float r;
-
-		{
-			boolean t = false;
-		}
-	}
+	int a, b, c = 5;
+	int[3][2] d = {{1, 2, 3}, {4, 5, 6}};
 }
 
 class test2 {

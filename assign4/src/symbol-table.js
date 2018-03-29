@@ -2,12 +2,13 @@ global.base_table = null
 
 
 class Type {
-    constructor(type, category, width, length) {
+    constructor(type, category, width, length, dimension = 0) {
         this.type = type
         this.category = category
 
         this.width = width
         this.length = length
+        this.dimension = dimension
     }
 
     get_type() {
@@ -16,7 +17,7 @@ class Type {
                 return this.type
             }
             case "array": {
-                return "Array :: { " + this.type.get_type() + ", length: " + this.length + " }"
+                return "Array :: { " + this.type.get_type() + ", length: " + this.length + ", width: " + this.width + ", dimension: " + this.dimension + " }"
             }
             case "object": {
                 return "Object :: { " + this.type.name + " }"
@@ -50,20 +51,22 @@ class ScopeTable {
         // TODO
     }
 
-    lookup_variable(variable_name) {
+    lookup_variable(variable_name, error) {
         if (variable_name in this.variables) {
             return this.variables[identifier]
         }
         else if (this.parent != null) {
-            return this.parent.lookup_variable()
+            return this.parent.lookup_variable(variable_name, error)
         }
         else {
-            throw Error("The variable " + variable_name + " was not declared in the current scope!")
+            if (error) {
+                throw Error("The variable " + variable_name + " was not declared in the current scope!")
+            }
         }
     }
 
-    lookup_method(method_name) {
-        this.class.lookup_method(method_name)
+    lookup_method(method_name, error) {
+        this.class.lookup_method(method_name, error)
     }
 
     print(indent) {
@@ -158,27 +161,31 @@ class Class {
         return variable
     }
 
-    lookup_variable(variable_name) {
+    lookup_variable(variable_name, error) {
         if (variable_name in this.variables) {
             return this.variables[identifier]
         }
         else if (this.parent != null) {
-            return this.parent.lookup_variable()
+            return this.parent.lookup_variable(variable_name, error)
         }
         else {
-            throw Error("The variable " + variable_name + " was not declared in the current scope!")
+            if (error) {
+                throw Error("The variable " + variable_name + " was not declared in the current scope!")
+            }
         }
     }
 
-    lookup_method(method_name) {
+    lookup_method(method_name, error) {
         if (method_name in this.methods) {
             return this.methods[method_name]
         }
         else if (this.parent != null) {
-            return this.parent.lookup_method(method_name)
+            return this.parent.lookup_method(method_name, error)
         }
         else {
-            throw Error("The method " + method_name + " was not declared in the current scope!")
+            if (error) {
+                throw Error("The method " + method_name + " was not declared in the current scope!")
+            }
         }
     }
 
@@ -202,12 +209,12 @@ class Class {
 
 class SymbolTable {
     constructor() {
-        this.temp_count = 0
-
         this.classes = {}
 
         this.current_class = null
         this.current_scope = null
+
+        this.temporaries_count = 0
     }
 
     get_class(name) {
@@ -249,14 +256,16 @@ class SymbolTable {
         return this.current_scope.add_variable(name, type)
     }
 
-    add_temporary(temp_type, table) {
-        // TODO
-        success = False
-        while (success > 0) {
-            name = "t" + str(this.temp_count)
-            this.temp_count += 1
-            success = table.insert_temp(temp_type, name)
+    create_temporary() {
+        this.temporaries_count += 1
+
+        name = "t_" + this.temporaries_count
+
+        while (this.lookup_variable(name, error = false)) {
+            this.temporaries_count += 1
+            name = "t_" + this.temporaries_count
         }
+
         return name
     }
 
@@ -279,6 +288,14 @@ class SymbolTable {
         this.current_scope = this.current_scope.parent
 
         return table
+    }
+
+    lookup_variable(variable_name, error = true) {
+        return this.current_scope.lookup_variable(variable_name, error)
+    }
+
+    lookup_method(method_name, error = true) {
+        return this.current_scope.lookup_method(method_name, error)
     }
 
     print() {

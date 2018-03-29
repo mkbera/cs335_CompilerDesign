@@ -1,0 +1,1 @@
+Note: The array declaration is in reverse manner
