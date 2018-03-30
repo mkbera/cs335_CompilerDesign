@@ -1057,13 +1057,11 @@ stmt_expr :
 
 
 assignment :
-		left_hand_side assignment_operator expr 
+		left_hand_side_non_array assignment_operator expr 
 		{
 			$$ = { code: [], place: null }
 
 			ST.lookup_variable($1.place)
-
-			$$.place = $1.place
 
 			$$.code = $3.code.concat($1.code)
 			if ($2.third) {
@@ -1077,21 +1075,37 @@ assignment :
 				)
 			}
 		}
+	|
+		array_access assignment_operator expr
+		{
+			$$ = { code: [], place: null }
+
+			$$.code = $3.code.concat($1.code)
+			if ($2.third) {
+				var temp = ST.create_temporary()
+
+				$$.code = $$.code.concat([
+					"arrget" + ir_sep + temp + ir_sep + $1.place + ir_sep + $1.offset,
+					$2.operator + ir_sep + temp + ir_sep + temp + ir_sep + $3.place,
+					"arrset" + ir_sep + $1.place + ir_sep + $1.offset + ir_sep + temp,
+				])
+			}
+			else {
+				$$.code.push(
+					"arrset" + ir_sep + $1.place + ir_sep + $1.offset + ir_sep + $3.place,
+				)
+			}
+		}
 	;
 
 
-left_hand_side :
+left_hand_side_non_array :
 		expr_name 
 		{
 			$$ = $1
 		}
 	|
 		field_access 
-		{
-			$$ = $1
-		}
-	|
-		array_access 
 		{
 			$$ = $1
 		}
@@ -1102,6 +1116,11 @@ assignment_operator :
 		'op_assign' 
 		{
 			$$ = { operator: "=", third: false }
+		}
+	|
+		'op_addAssign' 
+		{
+			$$ = { operator: "+", third: true }
 		}
 	;
 
@@ -1411,7 +1430,7 @@ field_access :
 array_access :
 		expr_name 'colon' dim_exprs 
 		{
-			$$ = { code: [], place: null }
+			$$ = { code: [], place: null, offset: null }
 
 			var temp = ST.create_temporary()
 
@@ -1448,11 +1467,8 @@ array_access :
 				throw Error("Array dimensions do not match")
 			}
 
-			$$.place = ST.create_temporary()
-
-			$$.code.push(
-				"arrget" + ir_sep + $$.place + ir_sep + array.name + ir_sep + temp
-			)
+			$$.place = array.name
+			$$.offset = temp
 		}
 	;
 
@@ -1483,7 +1499,13 @@ primary :
 	|
 		array_access 
 		{
-			$$ = $1
+			$$ = { code: $1.code, place: null }
+
+			$$.place = ST.create_temporary()
+
+			$$.code.push(
+				"arrget" + ir_sep + $$.place + ir_sep + $1.place + ir_sep + $1.offset
+			)
 		}
 	|
 		method_invocation 
