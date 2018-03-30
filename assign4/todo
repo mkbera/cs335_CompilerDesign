@@ -1,7 +1,1 @@
-expr_name
 field_access
-array_access
-
-field_decr
-
-var_init expr -> integer_literal

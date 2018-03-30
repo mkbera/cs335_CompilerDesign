@@ -636,7 +636,7 @@ type :
 	|
 		reference_type 
 		{
-			$$ = new Type($1.type, $1.category, $1.width, $1.length, $1.dimension)
+			$$ = $1
 		}
 	;
 
@@ -760,15 +760,32 @@ reference_type :
 			}
 		}
 	|
-		type 'brackets_start' 'integer_literal' 'brackets_end' 
+		'identifier' dim_exprs 
 		{
-			$$ = {
-				type: $1,
-				category: "array",
-				width: 4,
-				length: parseInt($integer_literal),
-				dimension: $1.dimension + 1
+			var type = new Type(ST.get_class($identifier), "object", null, null, 0)
+
+			var l = $2.length - 1
+			while (l >= 0) {
+				type = new Type(type, "array", 4, $2[l].place, $2.length - l)
+
+				l -= 1
 			}
+
+			$$ = type
+		}
+	|
+		primitive_type dim_exprs 
+		{
+			var type = new Type($1.type, $1.category, $1.width, $1.length, $1.dimension)
+
+			var l = $2.length - 1
+			while (l >= 0) {
+				type = new Type(type, "array", 4, $2[l].place, $2.length - l)
+
+				l -= 1
+			}
+
+			$$ = type
 		}
 	;
 
@@ -788,7 +805,7 @@ method_decr :
 					"pop" + ir_sep + method.parameters[index].name
 				)
 			}
-			$$.code = $$.code.concat($3.code)
+			$$.code = $$.code.concat($4.code)
 		}
 	|
 		'public' type method_declarator method_body 
@@ -805,7 +822,7 @@ method_decr :
 					"pop" + ir_sep + method.parameters[index].name
 				)
 			}
-			$$.code = $$.code.concat($3.code)
+			$$.code = $$.code.concat($4.code)
 		}
 	|
 		'void' method_declarator method_body 
@@ -822,7 +839,7 @@ method_decr :
 					"pop" + ir_sep + method.parameters[index].name
 				)
 			}
-			$$.code = $$.code.concat($2.code)
+			$$.code = $$.code.concat($3.code)
 		}
 	|
 		type method_declarator method_body 
@@ -839,7 +856,7 @@ method_decr :
 					"pop" + ir_sep + method.parameters[index].name
 				)
 			}
-			$$.code = $$.code.concat($2.code)
+			$$.code = $$.code.concat($3.code)
 		}
 	;
 
@@ -867,13 +884,19 @@ block :
 		'set_start' block_scope_start block_stmts 'set_end' 
 		{
 			$$ = {
+				code: [],
 				scope: ST.scope_end()
+			}
+
+			for (var index in $3) {
+				$$.code = $$.code.concat($3[index].code)
 			}
 		}
 	|
 		'set_start' block_scope_start 'set_end' 
 		{
 			$$ = {
+				code: [],
 				scope: ST.scope_end()
 			}
 		}
@@ -999,12 +1022,15 @@ continue_stmt :
 return_stmt :
 		'return' expr 'terminator' 
 		{
-			$$ = null
+			$$ = $2
+			$$.code.push(
+				"return" + ir_sep + $2.place
+			)
 		}
 	|
 		'return' 'terminator' 
 		{
-			$$ = null
+			$$ = { code: ["return"], place: null }
 		}
 	;
 
@@ -1041,12 +1067,12 @@ assignment :
 
 			$$.code = $3.code.concat($1.code)
 			if ($2.third) {
-				$$.code = $$.code.push(
+				$$.code.push(
 					$2.operator + ir_sep + $1.place + ir_sep + $1.place + ir_sep + $3.place
 				)
 			}
 			else {
-				$$.code = $$.code.push(
+				$$.code.push(
 					$2.operator + ir_sep + $1.place + ir_sep + $3.place
 				)
 			}
@@ -1295,7 +1321,7 @@ method_invocation :
 		{
 			$$ = { code: [], place: null }
 
-			var method = ST.lookup_method($1)
+			var method = ST.lookup_method($1.place)
 
 			if ($3.length != method.num_parameters) {
 				throw Error("The method " + method.name + " requires " + method.num_parameters + ", provided" + $3.length)
@@ -1315,12 +1341,12 @@ method_invocation :
 
 				$$.place = temp
 				$$.code.push(
-					"call" + ir_sep + $1 + ir_sep + method.num_parameters + ir_sep + temp
+					"call" + ir_sep + $1.place + ir_sep + method.num_parameters + ir_sep + temp
 				)
 			}
 			else {
 				$$.code.push(
-					"call" + ir_sep + $1 + ir_sep + method.num_parameters
+					"call" + ir_sep + $1.place + ir_sep + method.num_parameters
 				)
 			}
 		}
@@ -1329,7 +1355,7 @@ method_invocation :
 		{
 			$$ = { code: [], place: null }
 
-			var method = ST.lookup_method($1)
+			var method = ST.lookup_method($1.place)
 
 			if ($3.length != method.num_parameters) {
 				throw Error("The method " + method.name + " requires " + method.num_parameters + ", provided " + $3.length)
@@ -1349,12 +1375,12 @@ method_invocation :
 
 				$$.place = temp
 				$$.code.push(
-					"call" + ir_sep + $1 + ir_sep + method.num_parameters + ir_sep + temp
+					"call" + ir_sep + $1.place + ir_sep + method.num_parameters + ir_sep + temp
 				)
 			}
 			else {
 				$$.code.push(
-					"call" + ir_sep + $1 + ir_sep + method.num_parameters
+					"call" + ir_sep + $1.place + ir_sep + method.num_parameters
 				)
 			}
 		}
@@ -1384,31 +1410,86 @@ field_access :
 
 array_access :
 		expr_name 'colon' dim_exprs 
-		{ $$ = { nt: 'array_access', children: [$1,{ t: 'colon', l: $colon },$3] } }
-	|
-		primary_no_new_array 'colon' dim_exprs 
-		{ $$ = { nt: 'array_access', children: [$1,{ t: 'colon', l: $colon },$3] } }
+		{
+			$$ = { code: [], place: null }
+
+			var temp = ST.create_temporary()
+
+			var array = ST.lookup_variable($1.place)
+			var type = array.type
+
+			$$.code.push(
+				"=" + ir_sep + temp + ir_sep + "0"
+			)
+
+			var offset = 0
+
+			for (var index in $3) {
+				var dim = $3[index]
+
+				if (dim.literal && dim.type != "integer") {
+					throw Error("Array indices can only be of type (int)")
+				}
+				if (type.category != "array") {
+					throw Error("Array dimensions do not match")
+				}
+				
+				$$.code = $$.code.concat(dim.code)
+
+				$$.code = $$.code.concat([
+					"*" + ir_sep + temp + ir_sep + temp + ir_sep + type.length,
+					"+" + ir_sep + temp + ir_sep + temp + ir_sep + dim.place
+				])
+
+				type = type.type
+			}
+
+			if (type.category == "array") {
+				throw Error("Array dimensions do not match")
+			}
+
+			$$.place = ST.create_temporary()
+
+			$$.code.push(
+				"arrget" + ir_sep + $$.place + ir_sep + array.name + ir_sep + temp
+			)
+		}
 	;
 
 
 primary :
-		primary_no_new_array 
-		{ $$ = { nt: 'primary', children: [$1] } }
-	|
-		array_creation_expr 
-		{ $$ = { nt: 'primary', children: [$1] } }
-	;
-
-
-primary_no_new_array :
 		literal 
-		{ $$ = { nt: 'primary_no_new_array', children: [$1] } }
+		{
+			$$ = $1
+		}
 	|
 		'this' 
 		{ $$ = { nt: 'primary_no_new_array', children: [{ t: 'this', l: $this }] } }
 	|
 		'paranthesis_start' expr 'paranthesis_end' 
-		{ $$ = { nt: 'primary_no_new_array', children: [{ t: 'paranthesis_start', l: $paranthesis_start },$2,{ t: 'paranthesis_end', l: $paranthesis_end }] } }
+		{
+			$$ = $2
+		}
+	|
+		class_instance_creation_expr 
+		{
+			$$ = $1
+		}
+	|
+		field_access 
+		{
+			$$ = $1
+		}
+	|
+		array_access 
+		{
+			$$ = $1
+		}
+	|
+		method_invocation 
+		{
+			$$ = $1
+		}
 	;
 
 
@@ -1423,79 +1504,119 @@ class_instance_creation_expr :
 
 argument_list :
 		expr 
-		{ $$ = { nt: 'argument_list', children: [$1] } }
+		{
+			$$ = [$1]
+		}
 	|
 		argument_list 'separator' expr 
-		{ $$ = { nt: 'argument_list', children: [$1,{ t: 'separator', l: $separator },$3] } }
-	;
-
-
-array_creation_expr :
-		'new' primitive_type dim_exprs dims 
-		{ $$ = { nt: 'array_creation_expr', children: [{ t: 'new', l: $new },$2,$3,$4] } }
-	|
-		'new' 'identifier' dim_exprs dims 
-		{ $$ = { nt: 'array_creation_expr', children: [{ t: 'new', l: $new },{ t: 'identifier', l: $identifier },$3,$4] } }
-	|
-		'new' primitive_type dim_exprs 
-		{ $$ = { nt: 'array_creation_expr', children: [{ t: 'new', l: $new },$2,$3] } }
-	|
-		'new' 'identifier' dim_exprs 
-		{ $$ = { nt: 'array_creation_expr', children: [{ t: 'new', l: $new },{ t: 'identifier', l: $identifier },$3] } }
+		{
+			$$ = $1
+			$$.push($3)
+		}
 	;
 
 
 dim_exprs :
 		dim_exprs dim_expr 
-		{ $$ = { nt: 'dim_exprs', children: [$1,$2] } }
+		{
+			$$ = $1
+			$$.push($2)
+		}
 	|
 		dim_expr 
-		{ $$ = { nt: 'dim_exprs', children: [$1] } }
+		{
+			$$ = [$1]
+		}
 	;
 
 
 dim_expr :
 		'brackets_start' expr 'brackets_end' 
-		{ $$ = { nt: 'dim_expr', children: [{ t: 'brackets_start', l: $brackets_start },$2,{ t: 'brackets_end', l: $brackets_end }] } }
-	;
-
-
-dims :
-		'brackets_start' 'brackets_end' 
-		{ $$ = { nt: 'dims', children: [{ t: 'brackets_start', l: $brackets_start },{ t: 'brackets_end', l: $brackets_end }] } }
-	|
-		dims 'brackets_start' 'brackets_end' 
-		{ $$ = { nt: 'dims', children: [$1,{ t: 'brackets_start', l: $brackets_start },{ t: 'brackets_end', l: $brackets_end }] } }
+		{
+			$$ = $2
+		}
 	;
 
 
 expr_name :
 		'identifier' 
-		{ $$ = { nt: 'expr_name', children: [{ t: 'identifier', l: $identifier }] } }
+		{
+			$$ = {
+				code: [],
+				place: $identifier
+			}
+		}
 	|
 		expr_name 'field_invoker' 'identifier' 
-		{ $$ = { nt: 'expr_name', children: [$1,{ t: 'field_invoker', l: $field_invoker },{ t: 'identifier', l: $identifier }] } }
+		{
+			$$ = {
+				code: [],
+				place: $identifier
+			}
+		}
 	;
 
 
 literal :
 		'integer_literal' 
-		{ $$ = { nt: 'literal', children: [{ t: 'integer_literal', l: $integer_literal }] } }
+		{
+			$$ = {
+				code: [],
+				place: $integer_literal,
+				literal: true,
+				type: "integer"
+			}
+		}
 	|
 		'float_literal' 
-		{ $$ = { nt: 'literal', children: [{ t: 'float_literal', l: $float_literal }] } }
+		{
+			$$ = {
+				code: [],
+				place: $float_literal,
+				literal: true,
+				type: "float"
+			}
+		}
 	|
 		'boolean_literal' 
-		{ $$ = { nt: 'literal', children: [{ t: 'boolean_literal', l: $boolean_literal }] } }
+		{
+			$$ = {
+				code: [],
+				place: $boolean_literal,
+				literal: true,
+				type: "boolean"
+			}
+		}
 	|
 		'character_literal' 
-		{ $$ = { nt: 'literal', children: [{ t: 'character_literal', l: $character_literal }] } }
+		{
+			$$ = {
+				code: [],
+				place: $character_literal,
+				literal: true,
+				type: "character"
+			}
+		}
 	|
 		'string_literal' 
-		{ $$ = { nt: 'literal', children: [{ t: 'string_literal', l: $string_literal }] } }
+		{
+			$$ = {
+				code: [],
+				place: $string_literal,
+				literal: true,
+				type: "string"
+			}
+		}
 	|
 		'null_literal' 
-		{ $$ = { nt: 'literal', children: [{ t: 'null_literal', l: $null_literal }] } }
+		{
+			$$ = {
+				code: [],
+				place: $null_literal,
+				literal: true,
+				type: "null"
+			}
+		}
 	;
 
 

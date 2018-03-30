@@ -49,7 +49,7 @@ class ScopeTable {
 
     lookup_variable(variable_name, error) {
         if (variable_name in this.variables) {
-            return this.variables[identifier]
+            return this.variables[variable_name]
         }
         else if (this.parent != null) {
             return this.parent.lookup_variable(variable_name, error)
@@ -160,7 +160,7 @@ class Class {
 
     lookup_variable(variable_name, error) {
         if (variable_name in this.variables) {
-            return this.variables[identifier]
+            return this.variables[variable_name]
         }
         else if (this.parent != null) {
             return this.parent.lookup_variable(variable_name, error)
@@ -256,9 +256,9 @@ class SymbolTable {
     create_temporary() {
         this.temporaries_count += 1
 
-        name = "t_" + this.temporaries_count
+        var name = "t_" + this.temporaries_count
 
-        while (this.lookup_variable(name, error = false)) {
+        while (this.lookup_variable(name, false)) {
             this.temporaries_count += 1
             name = "t_" + this.temporaries_count
         }
