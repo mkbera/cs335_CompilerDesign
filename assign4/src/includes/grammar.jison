@@ -900,9 +900,17 @@ block :
 				scope: ST.scope_end()
 			}
 
+			$$.code.push(
+				"label" + ir_sep + $$.scope.label_start
+			)
+
 			for (var index in $3) {
 				$$.code = $$.code.concat($3[index].code)
 			}
+
+			$$.code.push(
+				"label" + ir_sep + $$.scope.label_end
+			)
 		}
 	|
 		'set_start' block_scope_start 'set_end' 
@@ -911,6 +919,11 @@ block :
 				code: [],
 				scope: ST.scope_end()
 			}
+
+			$$.code = $$.code.concat([
+				"label" + ir_sep + $$.scope.label_start,
+				"label" + ir_sep + $$.scope.label_end
+			])
 		}
 	;
 
@@ -957,11 +970,21 @@ stmt :
 		{
 			$$ = $1
 		}
+	|
+		for_stmt 
+		{
+			$$ = $1
+		}
 	;
 
 
 stmt_nsi :
 		stmt_wots 
+		{
+			$$ = $1
+		}
+	|
+		for_stmt_nsi 
 		{
 			$$ = $1
 		}
@@ -1018,7 +1041,28 @@ stmt_expr_list :
 break_stmt :
 		'break' 'terminator' 
 		{
-			$$ = null
+			$$ = { code: [], place: null }
+
+			var scope = ST.current_scope
+
+			while (scope instanceof ScopeTable) {
+				if (scope.category == "while") {
+					$$.code.push(
+						"jump" + ir_sep + scope.label_end
+					)
+				}
+				else if (scope.category == "for_inner") {
+					$$.code.push(
+						"jump" + ir_sep + scope.parent.label_end
+					)
+				}
+
+				scope = scope.parent
+			}
+	
+			if ($$.code.length == 0) {
+				throw Error("Continue statement not inside a loop")
+			}
 		}
 	;
 
@@ -1026,7 +1070,28 @@ break_stmt :
 continue_stmt :
 		'continue' 'terminator' 
 		{
-			$$ = null
+			$$ = { code: [], place: null }
+
+			var scope = ST.current_scope
+
+			while (scope instanceof ScopeTable) {
+				if (scope.category == "while") {
+					$$.code.push(
+						"jump" + ir_sep + scope.label_start
+					)
+				}
+				else if (scope.category == "for_inner") {
+					$$.code.push(
+						"jump" + ir_sep + scope.label_end
+					)
+				}
+
+				scope = scope.parent
+			}
+	
+			if ($$.code.length == 0) {
+				throw Error("Continue statement not inside a loop")
+			}
 		}
 	;
 
@@ -1047,8 +1112,309 @@ return_stmt :
 	;
 
 
+if_then_stmt :
+		'if' 'paranthesis_start' expr 'paranthesis_end' stmt 
+		{
+			$$ = { code: $3.code, place: null }
+
+			var label_start;
+			var label_end;
+			if ($5.scope == null) {
+				label_start = ST.create_label()
+				label_end = ST.create_label()
+			}
+			else {
+				label_start = $5.scope.label_start
+				label_end = $5.scope.label_end
+			}
+
+			$$.code.push(
+				"ifgoto" + ir_sep + "eq" + ir_sep + $3.place + ir_sep + "1" + ir_sep + label_start
+			)
+
+			$$.code.push(
+				"jump" + ir_sep + label_end
+			)
+
+			if ($5.scope == null) {
+				$$.code.push(
+					"label" + ir_sep + label_start
+				)
+			}
+
+			$$.code = $$.code.concat($5.code)
+
+			if ($5.scope == null) {
+				$$.code.push(
+					"label" + ir_sep + label_end
+				)
+			}
+		}
+	;
+
+
+if_then_else_stmt :
+		'if' 'paranthesis_start' expr 'paranthesis_end' stmt_nsi 'else' stmt 
+		{
+			$$ = { code: $3.code, place: null }
+
+			var label_start;
+			var label_end;
+			if ($5.scope == null) {
+				label_start = ST.create_label()
+				label_end = ST.create_label()
+			}
+			else {
+				label_start = $5.scope.label_start
+				label_end = $5.scope.label_end
+			}
+
+			$$.code.push(
+				"ifgoto" + ir_sep + "eq" + ir_sep + $3.place + ir_sep + "1" + ir_sep + label_start
+			)
+
+			$$.code = $$.code.concat($7.code)
+
+			$$.code.push(
+				"jump" + ir_sep + label_end
+			)
+
+			if ($5.scope == null) {
+				$$.code.push(
+					"label" + ir_sep + label_start
+				)
+			}
+
+			$$.code = $$.code.concat($5.code)
+
+			if ($5.scope == null) {
+				$$.code.push(
+					"label" + ir_sep + label_end
+				)
+			}
+		}
+	;
+
+
+if_then_else_stmt_nsi :
+		'if' 'paranthesis_start' expr 'paranthesis_end' stmt_nsi 'else' stmt_nsi 
+		{
+			$$ = { code: $3.code, place: null }
+
+			var label_start;
+			var label_end;
+			if ($5.scope == null) {
+				label_start = ST.create_label()
+				label_end = ST.create_label()
+			}
+			else {
+				label_start = $5.scope.label_start
+				label_end = $5.scope.label_end
+			}
+
+			$$.code.push(
+				"ifgoto" + ir_sep + "eq" + ir_sep + $3.place + ir_sep + "1" + ir_sep + label_start
+			)
+
+			$$.code = $$.code.concat($7.code)
+
+			$$.code.push(
+				"jump" + ir_sep + label_end
+			)
+
+			if ($5.scope == null) {
+				$$.code.push(
+					"label" + ir_sep + label_start
+				)
+			}
+
+			$$.code = $$.code.concat($5.code)
+
+			if ($5.scope == null) {
+				$$.code.push(
+					"label" + ir_sep + label_end
+				)
+			}
+		}
+	;
+
+while_stmt :
+		while_scope_start 'while' 'paranthesis_start' expr 'paranthesis_end' stmt 
+		{
+			$$ = { code: [], place: null, scope: ST.scope_end() }
+			
+			$$.code.push(
+				"label" + ir_sep + $$.scope.label_start
+			)
+
+			$$.code = $$.code.concat($4.code)
+
+			$$.code.push(
+				"ifgoto" + ir_sep + "eq" + ir_sep + $4.place + ir_sep + "0" + ir_sep + $$.scope.label_end
+			)
+			
+			$$.code = $$.code.concat($6.code)
+
+			$$.code = $$.code.concat([
+				"jump" + ir_sep + $$.scope.label_start,
+				"label" + ir_sep + $$.scope.label_end
+			])
+		}
+	;
+
+
+while_stmt_nsi :
+		while_scope_start 'while' 'paranthesis_start' expr 'paranthesis_end' stmt_nsi 
+		{
+			$$ = { code: [], place: null, scope: ST.scope_end() }
+			
+			$$.code.push(
+				"label" + ir_sep + $$.scope.label_start
+			)
+
+			$$.code = $$.code.concat($4.code)
+
+			$$.code.push(
+				"ifgoto" + ir_sep + "eq" + ir_sep + $4.place + ir_sep + "0" + ir_sep + $$.scope.label_end
+			)
+			
+			$$.code = $$.code.concat($6.code)
+
+			$$.code = $$.code.concat([
+				"jump" + ir_sep + $$.scope.label_start,
+				"label" + ir_sep + $$.scope.label_end
+			])
+		}
+	;
+
+while_scope_start :
+
+		{
+			$$ = ST.scope_start(category = "while")
+		}
+	;
+
+for_stmt :
+		for_scope_start 'for' 'paranthesis_start' for_init 'terminator' expr 'terminator' stmt_expr_list 'paranthesis_end' for_inner_scope_start stmt 
+		{
+			var inner_scope = ST.scope_end()
+
+			$$ = { code: [], place: null, scope: ST.scope_end() }
+
+			$$.code.push(
+				"label" + ir_sep + $$.scope.label_start
+			)
+
+			$$.code = $$.code.concat($4.code)
+			
+			$$.code.push(
+				"label" + ir_sep + inner_scope.label_start
+			)
+
+			$$.code = $$.code.concat($6.code)
+
+			$$.code.push(
+				"ifgoto" + ir_sep + "eq" + ir_sep + $6.place + ir_sep + "0" + ir_sep + $$.scope.label_end
+			)
+			
+			$$.code = $$.code.concat($11.code)
+
+			$$.code.push(
+				"label" + ir_sep + inner_scope.label_end
+			)
+
+			for (var index in $8) {
+				$$.code = $$.code.concat($8[index].code)
+			}
+
+			$$.code = $$.code.concat([
+				"jump" + ir_sep + inner_scope.label_start,
+				"label" + ir_sep + $$.scope.label_end
+			])
+		}
+	;
+
+
+for_stmt_nsi :
+		for_scope_start 'for' 'paranthesis_start' for_init 'terminator' expr 'terminator' stmt_expr_list 'paranthesis_end' for_inner_scope_start stmt_nsi 
+		{
+			
+			var inner_scope = ST.scope_end()
+
+			$$ = { code: [], place: null, scope: ST.scope_end() }
+
+			$$.code.push(
+				"label" + ir_sep + $$.scope.label_start
+			)
+
+			$$.code = $$.code.concat($4.code)
+			
+			$$.code.push(
+				"label" + ir_sep + inner_scope.label_start
+			)
+
+			$$.code = $$.code.concat($6.code)
+
+			$$.code.push(
+				"ifgoto" + ir_sep + "eq" + ir_sep + $6.place + ir_sep + "0" + ir_sep + $$.scope.label_end
+			)
+			
+			$$.code = $$.code.concat($11.code)
+
+			$$.code.push(
+				"label" + ir_sep + inner_scope.label_end
+			)
+
+			for (var index in $8) {
+				$$.code = $$.code.concat($8[index].code)
+			}
+
+			$$.code = $$.code.concat([
+				"jump" + ir_sep + inner_scope.label_start,
+				"label" + ir_sep + $$.scope.label_end
+			])
+		}
+	;
+
+
+for_init :
+		stmt_expr_list 
+		{
+			$$ = { code: [], place: null }
+
+			for (var index in $1) {
+				$$.code = $$.code.concat($1[index].code)
+			}
+		}
+	|
+		type var_declarators 
+		{
+			$$ = utils.init({
+				type: $1,
+				var_declarators: $2
+			})
+		}
+	;
+
+
+for_scope_start :
+
+		{
+			$$ = ST.scope_start(category = "for")
+		}
+	;
+
+
+for_inner_scope_start :
+
+		{
+			$$ = ST.scope_start(category = "for_inner")
+		}
+	;
+
+
 expr :
-		cond_or_expr 
+		additive_expr 
 		{
 			$$ = $1
 		}
@@ -1062,6 +1428,31 @@ expr :
 
 stmt_expr :
 		assignment 
+		{
+			$$ = $1
+		}
+	|
+		preinc_expr 
+		{
+			$$ = $1
+		}
+	|
+		predec_expr 
+		{
+			$$ = $1
+		}
+	|
+		post_expr 
+		{
+			$$ = $1
+		}
+	|
+		method_invocation 
+		{
+			$$ = $1
+		}
+	|
+		class_instance_creation_expr 
 		{
 			$$ = $1
 		}

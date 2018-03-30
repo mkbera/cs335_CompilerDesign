@@ -28,12 +28,16 @@ class Type {
 
 
 class ScopeTable {
-    constructor(class_instance, parent) {
+    constructor(class_instance, parent, category) {
         this.class = class_instance
         this.variables = {}
 
         this.parent = parent
         this.children = []
+
+        this.category = category
+        this.label_start = this.class.create_label()
+        this.label_end = this.class.create_label()
     }
 
     add_variable(name, type) {
@@ -162,7 +166,7 @@ class Class {
         if (variable_name in this.variables) {
             return this.variables[variable_name]
         }
-        else if (this.parent != null) {
+        else if (this.parent instanceof Class) {
             return this.parent.lookup_variable(variable_name, error)
         }
         else {
@@ -176,7 +180,7 @@ class Class {
         if (method_name in this.methods) {
             return this.methods[method_name]
         }
-        else if (this.parent != null) {
+        else if (this.parent instanceof Class) {
             return this.parent.lookup_method(method_name, error)
         }
         else {
@@ -184,6 +188,10 @@ class Class {
                 throw Error("The method " + method_name + " was not declared in the current scope!")
             }
         }
+    }
+
+    create_label() {
+        return this.parent.create_label()
     }
 
     print(indent) {
@@ -212,6 +220,8 @@ class SymbolTable {
         this.current_scope = null
 
         this.temporaries_count = 0
+
+        this.labels_count = 0
     }
 
     get_class(name) {
@@ -222,12 +232,12 @@ class SymbolTable {
         return this.classes[name]
     }
 
-    add_class(name, parent_name = null) {
+    add_class(name, parent_name = "") {
         if (name in this.classes) {
             throw Error("The class " + name + " has already been declared!")
         }
 
-        var parent = null
+        var parent = this
         if (parent_name != "") {
             if (!(parent_name in this.classes)) {
                 throw Error("The class " + parent_name + " has not been declared in the current scope!")
@@ -266,8 +276,8 @@ class SymbolTable {
         return name
     }
 
-    scope_start() {
-        var table = new ScopeTable(this.current_class, this.current_scope)
+    scope_start(category = null) {
+        var table = new ScopeTable(this.current_class, this.current_scope, category = category)
 
         if (this.current_scope != this.current_class) {
             this.current_scope.children.push(table)
@@ -285,6 +295,12 @@ class SymbolTable {
         this.current_scope = this.current_scope.parent
 
         return table
+    }
+
+    create_label() {
+        this.labels_count += 1
+
+        return "l_" + this.labels_count
     }
 
     lookup_variable(variable_name, error = true) {
