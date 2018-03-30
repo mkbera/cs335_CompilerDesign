@@ -47,10 +47,6 @@ class ScopeTable {
         return variable;
     }
 
-    add_temporary(var_type, identifier) {
-        // TODO
-    }
-
     lookup_variable(variable_name, error) {
         if (variable_name in this.variables) {
             return this.variables[identifier]
@@ -106,6 +102,7 @@ class Method {
 
         this.name = name
         this.parameters = parameters
+        this.num_parameters = parameters.length
         this.return_type = return_type
         this.table = scope_table
 

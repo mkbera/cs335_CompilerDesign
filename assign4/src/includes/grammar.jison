@@ -1,3 +1,90 @@
+%{
+	var utils = {
+		init: function(obj) {
+			var self = { code: [], place: null }
+
+			for (var var_index in obj.var_declarators) {
+				variable = obj.var_declarators[var_index]
+				
+				ST.add_variable(variable.identifier, obj.type);
+
+				if (obj.type.category == "array") {
+					
+					if (variable.init != null) {
+						var inits = variable.init
+						var type = obj.type
+
+						var length = 1
+
+						if (type.dimension == 0 || type.length != inits.length) {
+							throw Error("Array dimensions do not match");
+						}
+
+						while (type.dimension != 0) {
+							length *= type.length
+
+							type = type.type
+							
+							var inits_serial = []
+							for (var index in inits) {
+								if (type.length != inits[index].length) {
+									throw Error("Array dimensions do not match");
+								}
+
+								inits_serial = inits_serial.concat(inits[index])
+							}
+							inits = inits_serial
+						}
+
+						if (inits[0].length) {
+							throw Error("Array dimensions do not match");
+						}
+
+						self.code.push(
+							"decr" + ir_sep + variable.identifier + ir_sep + "array" + ir_sep + type.get_type() + ir_sep + length + ir_sep
+						)
+
+						for (var index in inits) {
+							self.code = self.code.concat(inits[index].code)
+							self.code.push(
+								"arrset" + ir_sep + variable.identifier + ir_sep + index + ir_sep + inits[index].place
+							)
+						}
+					}
+					else {
+						var length = 1;
+						var type = obj.type;
+
+						while (type.dimension != 0) {
+							length *= type.length
+
+							type = type.type
+						}
+
+						self.code.push(
+							"decr" + ir_sep + variable.identifier + ir_sep + "array" + ir_sep + type.get_type() + ir_sep + length + ir_sep
+						)
+					}
+				}
+				else {
+					self.code.push(
+						"decr" + ir_sep + variable.identifier + ir_sep + obj.type.get_type()
+					)
+
+					if (variable.init != null) {
+						self.code = self.code.concat(variable.init.code)
+						self.code.push(
+							"=" + ir_sep + variable.identifier + ir_sep + variable.init.place
+						)
+					}
+				}
+			}
+
+			return self
+		}
+	}
+%}
+
 %lex
 
 %s BLOCKCOMMENT
@@ -373,33 +460,6 @@ consr_declarator :
 	;
 
 
-formal_parameter_list :
-		formal_parameter_list 'separator' formal_parameter 
-		{
-			$$ = $1
-			$$.push($3)
-		}
-	|
-		formal_parameter 
-		{
-			$$ = [$1]
-		}
-	|
-		
-		{
-			$$ = []
-		}
-	;
-
-
-formal_parameter :
-		type var_declarator_id 
-		{
-			$$ = new Variable($2, $1)
-		}
-	;
-
-
 consr_body :
 		'set_start' explicit_consr_invocation block_stmts 'set_end' 
 		{
@@ -446,103 +506,49 @@ explicit_consr_invocation :
 	;
 
 
+
+formal_parameter_list :
+		formal_parameter_list 'separator' formal_parameter 
+		{
+			$$ = $1
+			$$.push($3)
+		}
+	|
+		formal_parameter 
+		{
+			$$ = [$1]
+		}
+	|
+		
+		{
+			$$ = []
+		}
+	;
+
+
+formal_parameter :
+		type var_declarator_id 
+		{
+			$$ = new Variable($2, $1)
+		}
+	;
+
+
 field_decr :
 		'public' type var_declarators 'terminator' 
 		{
-			$$ = { code: [], place: null }
-
-			$3.forEach(function(variable) {
-				ST.add_variable(variable[0], $2);
-
-				console.log(variable);
-				if ($2.category == "array") {
-					/*$$.code.push(
-						"decr" + ir_sep + "array" + ir_sep + $2.type + ir_sep + variable[0]
-					)
-
-					if (variable[1] != null) {
-						$$.code = $$.code.concat(variable[1].code)
-						$$.code.push(
-							"=" + ir_sep + variable[0] + ir_sep + variable[1].place
-						)
-					}*/
-				}
-				else {
-					/*$$.code.push(
-						"decr" + ir_sep + $2.type + ir_sep + variable[0]
-					)
-
-					if (variable[1] != null) {
-						$$.code = $$.code.concat(variable[1].code)
-						$$.code.push(
-							"=" + ir_sep + variable[0] + ir_sep + variable[1].place
-						)
-					}*/
-				}
+			$$ = utils.init({
+				type: $2,
+				var_declarators: $3
 			})
 		}
 	|
 		type var_declarators 'terminator' 
 		{
-			$$ = { code: [], place: null }
-
-			for (var var_index in $2) {
-				variable = $2[var_index]
-				
-				ST.add_variable(variable.identifier, $1);
-
-				if ($1.category == "array") {
-
-					var inits = variable.init
-					var type = $1
-
-					if (type.dimension == 0 || type.length != inits.length) {
-						throw Error("Array dimensions do not match");
-					}
-
-					while (type.dimension != 0) {
-						type = type.type
-						
-						var inits_serial = []
-						for (var index in inits) {
-							if (type.length != inits[index].length) {
-								throw Error("Array dimensions do not match");
-							}
-
-							inits_serial = inits_serial.concat(inits[index])
-						}
-						inits = inits_serial
-					}
-
-					if (inits[0].length) {
-						throw Error("Array dimensions do not match");
-					}
-
-					$$.code.push(
-						"decr" + ir_sep + "array" + ir_sep + type.get_type() + ir_sep + variable.identifier
-					)
-
-					for (var index in inits) {
-						$$.code = $$.code.concat(inits[index].code)
-						$$.code.push(
-							"arrset" + ir_sep + variable.identifier + ir_sep + index + ir_sep + inits[index].place
-						)
-					}
-
-				}
-				else {
-					/*$$.code.push(
-						"decr" + ir_sep + $1.type + ir_sep + variable[0]
-					)
-
-					if (variable[1] != null) {
-						$$.code = $$.code.concat(variable[1].code)
-						$$.code.push(
-							"=" + ir_sep + variable[0] + ir_sep + variable[1].place
-						)
-					}*/
-				}
-			}
+			$$ = utils.init({
+				type: $1,
+				var_declarators: $2
+			})
 		}
 	;
 
@@ -583,12 +589,9 @@ var_declarator_id :
 
 
 var_init :
-		'integer_literal'
+		expr
 		{
-			$$ = {
-				code: [],
-				place: $integer_literal
-			}
+			$$ = $1
 		}
 	|
 		array_init 
@@ -773,26 +776,70 @@ reference_type :
 method_decr :
 		'public' 'void' method_declarator method_body 
 		{
-			ST.add_method($3.name, new Type("void", "basic", 0, null), $3.parameters, $4.scope, main = false)
-			$$ = null
+			var method = ST.add_method($3.name, new Type("void", "basic", 0, null), $3.parameters, $4.scope, main = false)
+
+			$$ = { code: [], place: null }
+
+			$$.code.push(
+				"function" + ir_sep + method.name
+			)
+			for (var index in method.parameters) {
+				$$.code.push(
+					"pop" + ir_sep + method.parameters[index].name
+				)
+			}
+			$$.code = $$.code.concat($3.code)
 		}
 	|
 		'public' type method_declarator method_body 
 		{
-			ST.add_method($3.name, $2, $3.parameters, $4.scope, main = false)
-			$$ = null
+			var method = ST.add_method($3.name, $2, $3.parameters, $4.scope, main = false)
+
+			$$ = { code: [], place: null }
+
+			$$.code.push(
+				"function" + ir_sep + method.name
+			)
+			for (var index in method.parameters) {
+				$$.code.push(
+					"pop" + ir_sep + method.parameters[index].name
+				)
+			}
+			$$.code = $$.code.concat($3.code)
 		}
 	|
 		'void' method_declarator method_body 
 		{
-			ST.add_method($2.name, new Type("void", "basic", 0, null), $2.parameters, $3.scope, main = false)
-			$$ = null
+			var method = ST.add_method($2.name, new Type("void", "basic", 0, null), $2.parameters, $3.scope, main = false)
+
+			$$ = { code: [], place: null }
+
+			$$.code.push(
+				"function" + ir_sep + method.name
+			)
+			for (var index in method.parameters) {
+				$$.code.push(
+					"pop" + ir_sep + method.parameters[index].name
+				)
+			}
+			$$.code = $$.code.concat($2.code)
 		}
 	|
 		type method_declarator method_body 
 		{
-			ST.add_method($2.name, $1, $2.parameters, $3.scope, main = false)
-			$$ = null
+			var method = ST.add_method($2.name, $1, $2.parameters, $3.scope, main = false)
+
+			$$ = { code: [], place: null }
+
+			$$.code.push(
+				"function" + ir_sep + method.name
+			)
+			for (var index in method.parameters) {
+				$$.code.push(
+					"pop" + ir_sep + method.parameters[index].name
+				)
+			}
+			$$.code = $$.code.concat($2.code)
 		}
 	;
 
@@ -857,10 +904,10 @@ block_stmts :
 block_stmt :
 		type var_declarators 'terminator' 
 		{
-			for (var var_index in $2) {
-				ST.add_variable($2[var_index].identifier, $1);
-			}
-			$$ = null
+			$$ = utils.init({
+				type: $1,
+				var_declarators: $2
+			})
 		}
 	|
 		stmt 
@@ -914,7 +961,7 @@ stmt_wots :
 	|
 		'terminator' 
 		{
-			$$ = null
+			$$ = { code: [], place: null }
 		}
 	;
 
@@ -1245,16 +1292,78 @@ postfix_expr :
 
 method_invocation :
 		expr_name 'paranthesis_start' argument_list 'paranthesis_end' 
-		{ $$ = { nt: 'method_invocation', children: [$1,{ t: 'paranthesis_start', l: $paranthesis_start },$3,{ t: 'paranthesis_end', l: $paranthesis_end }] } }
+		{
+			$$ = { code: [], place: null }
+
+			var method = ST.lookup_method($1)
+
+			if ($3.length != method.num_parameters) {
+				throw Error("The method " + method.name + " requires " + method.num_parameters + ", provided" + $3.length)
+			}
+
+			for (var index in $3) {
+				$$.code = $$.code.concat($3[index].code)
+			}
+			for (var index in $3) {
+				$$.code.push(
+					"param" + ir_sep + $3[index].place
+				)
+			}
+
+			if (method.type != "void") {
+				temp = ST.create_temporary()
+
+				$$.place = temp
+				$$.code.push(
+					"call" + ir_sep + $1 + ir_sep + method.num_parameters + ir_sep + temp
+				)
+			}
+			else {
+				$$.code.push(
+					"call" + ir_sep + $1 + ir_sep + method.num_parameters
+				)
+			}
+		}
+	|
+		expr_name 'paranthesis_start' 'paranthesis_end' 
+		{
+			$$ = { code: [], place: null }
+
+			var method = ST.lookup_method($1)
+
+			if ($3.length != method.num_parameters) {
+				throw Error("The method " + method.name + " requires " + method.num_parameters + ", provided " + $3.length)
+			}
+
+			for (var index in $3) {
+				$$.code = $$.code.concat($3[index].code)
+			}
+			for (var index in $3) {
+				$$.code.push(
+					"param" + ir_sep + $3[index].place
+				)
+			}
+
+			if (method.type != "void") {
+				temp = ST.create_temporary()
+
+				$$.place = temp
+				$$.code.push(
+					"call" + ir_sep + $1 + ir_sep + method.num_parameters + ir_sep + temp
+				)
+			}
+			else {
+				$$.code.push(
+					"call" + ir_sep + $1 + ir_sep + method.num_parameters
+				)
+			}
+		}
 	|
 		primary 'field_invoker' 'identifier' 'paranthesis_start' argument_list 'paranthesis_end' 
 		{ $$ = { nt: 'method_invocation', children: [$1,{ t: 'field_invoker', l: $field_invoker },{ t: 'identifier', l: $identifier },{ t: 'paranthesis_start', l: $paranthesis_start },$5,{ t: 'paranthesis_end', l: $paranthesis_end }] } }
 	|
 		'super' 'field_invoker' 'identifier' 'paranthesis_start' argument_list 'paranthesis_end' 
 		{ $$ = { nt: 'method_invocation', children: [{ t: 'super', l: $super },{ t: 'field_invoker', l: $field_invoker },{ t: 'identifier', l: $identifier },{ t: 'paranthesis_start', l: $paranthesis_start },$5,{ t: 'paranthesis_end', l: $paranthesis_end }] } }
-	|
-		expr_name 'paranthesis_start' 'paranthesis_end' 
-		{ $$ = { nt: 'method_invocation', children: [$1,{ t: 'paranthesis_start', l: $paranthesis_start },{ t: 'paranthesis_end', l: $paranthesis_end }] } }
 	|
 		primary 'field_invoker' 'identifier' 'paranthesis_start' 'paranthesis_end' 
 		{ $$ = { nt: 'method_invocation', children: [$1,{ t: 'field_invoker', l: $field_invoker },{ t: 'identifier', l: $identifier },{ t: 'paranthesis_start', l: $paranthesis_start },{ t: 'paranthesis_end', l: $paranthesis_end }] } }
