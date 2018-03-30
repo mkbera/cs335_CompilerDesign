@@ -81,6 +81,18 @@
 			}
 
 			return self
+		},
+		binary: function (obj) {
+			var temp = ST.create_temporary()
+
+			var self = { code: [], place: temp }
+
+			self.code = obj.op1.code.concat(obj.op2.code)
+			self.code.push(
+				obj.operator + ir_sep + temp + ir_sep + obj.op1.place + ir_sep + obj.op2.place
+			)
+
+			return self
 		}
 	}
 %}
@@ -1036,7 +1048,7 @@ return_stmt :
 
 
 expr :
-		additive_expr 
+		cond_or_expr 
 		{
 			$$ = $1
 		}
@@ -1125,6 +1137,190 @@ assignment_operator :
 	;
 
 
+cond_or_expr :
+		cond_and_expr 
+		{
+			$$ = $1
+		}
+	|
+		cond_or_expr 'op_oror' cond_and_expr 
+		{
+			$$ = utils.binary({
+				op1: $1,
+				op2: $3,
+				operator: "||"
+			})
+		}
+	;
+
+
+cond_and_expr :
+		incl_or_expr 
+		{
+			$$ = $1
+		}
+	|
+		cond_and_expr 'op_andand' incl_or_expr 
+		{
+			$$ = utils.binary({
+				op1: $1,
+				op2: $3,
+				operator: "&&"
+			})
+		}
+	;
+
+
+incl_or_expr :
+		excl_or_expr 
+		{
+			$$ = $1
+		}
+	|
+		incl_or_expr 'op_or' excl_or_expr 
+		{
+			$$ = utils.binary({
+				op1: $1,
+				op2: $3,
+				operator: "|"
+			})
+		}
+	;
+
+
+excl_or_expr :
+		and_expr 
+		{
+			$$ = $1
+		}
+	|
+		excl_or_expr 'op_xor' and_expr 
+		{
+			$$ = utils.binary({
+				op1: $1,
+				op2: $3,
+				operator: "^"
+			})
+		}
+	;
+
+
+and_expr :
+		equality_expr 
+		{
+			$$ = $1
+		}
+	|
+		and_expr 'op_and' equality_expr 
+		{
+			$$ = utils.binary({
+				op1: $1,
+				op2: $3,
+				operator: "&"
+			})
+		}
+	;
+
+
+equality_expr :
+		relational_expr 
+		{
+			$$ = $1
+		}
+	|
+		equality_expr 'op_equalCompare' relational_expr 
+		{
+			$$ = utils.binary({
+				op1: $1,
+				op2: $3,
+				operator: "=="
+			})
+		}
+	|
+		equality_expr 'op_notequalCompare' relational_expr 
+		{
+			$$ = utils.binary({
+				op1: $1,
+				op2: $3,
+				operator: "!="
+			})
+		}
+	;
+
+
+relational_expr :
+		shift_expr 
+		{
+			$$ = $1
+		}
+	|
+		relational_expr 'op_greater' shift_expr 
+		{
+			$$ = utils.binary({
+				op1: $1,
+				op2: $3,
+				operator: ">"
+			})
+		}
+	|
+		relational_expr 'op_greaterEqual' shift_expr 
+		{
+			$$ = utils.binary({
+				op1: $1,
+				op2: $3,
+				operator: ">="
+			})
+		}
+	|
+		relational_expr 'op_less' shift_expr 
+		{
+			$$ = utils.binary({
+				op1: $1,
+				op2: $3,
+				operator: "<"
+			})
+		}
+	|
+		relational_expr 'op_lessEqual' shift_expr 
+		{
+			$$ = utils.binary({
+				op1: $1,
+				op2: $3,
+				operator: "<="
+			})
+		}
+	|
+		relational_expr 'instanceof' shift_expr 
+		{ $$ = { nt: 'relational_expr', children: [$1,{ t: 'instanceof', l: $instanceof },$3] } }
+	;
+
+
+shift_expr :
+		additive_expr 
+		{
+			$$ = $1
+		}
+	|
+		shift_expr 'op_Lshift' additive_expr 
+		{
+			$$ = utils.binary({
+				op1: $1,
+				op2: $3,
+				operator: "<<"
+			})
+		}
+	|
+		shift_expr 'op_Rshift' additive_expr 
+		{
+			$$ = utils.binary({
+				op1: $1,
+				op2: $3,
+				operator: ">>"
+			})
+		}
+	;
+
+
 additive_expr :
 		multiplicative_expr 
 		{
@@ -1133,26 +1329,20 @@ additive_expr :
 	|
 		additive_expr 'op_add' multiplicative_expr 
 		{
-			temp = ST.create_temporary()
-
-			$$ = { code: [], place: temp }
-
-			$$.code = $1.code.concat($3.code)
-			$$.code.push(
-				"+" + ir_sep + temp + ir_sep + $1.place + ir_sep + $3.place
-			)
+			$$ = utils.binary({
+				op1: $1,
+				op2: $3,
+				operator: "+"
+			})
 		}
 	|
 		additive_expr 'op_sub' multiplicative_expr 
 		{
-			temp = ST.create_temporary()
-
-			$$ = { code: [], place: temp }
-
-			$$.code = $1.code.concat($3.code)
-			$$.code.push(
-				"-" + ir_sep + temp + ir_sep + $1.place + ir_sep + $3.place
-			)
+			$$ = utils.binary({
+				op1: $1,
+				op2: $3,
+				operator: "-"
+			})
 		}
 	;
 
@@ -1165,38 +1355,29 @@ multiplicative_expr :
 	|
 		multiplicative_expr 'op_mul' unary_expr 
 		{
-			temp = ST.create_temporary()
-
-			$$ = { code: [], place: temp }
-
-			$$.code = $1.code.concat($3.code)
-			$$.code.push(
-				"*" + ir_sep + temp + ir_sep + $1.place + ir_sep + $3.place
-			)
+			$$ = utils.binary({
+				op1: $1,
+				op2: $3,
+				operator: "*"
+			})
 		}
 	|
 		multiplicative_expr 'op_div' unary_expr 
 		{
-			temp = ST.create_temporary()
-
-			$$ = { code: [], place: temp }
-
-			$$.code = $1.code.concat($3.code)
-			$$.code.push(
-				"/" + ir_sep + temp + ir_sep + $1.place + ir_sep + $3.place
-			)
+			$$ = utils.binary({
+				op1: $1,
+				op2: $3,
+				operator: "/"
+			})
 		}
 	|
 		multiplicative_expr 'op_mod' unary_expr 
 		{
-			temp = ST.create_temporary()
-
-			$$ = { code: [], place: temp }
-
-			$$.code = $1.code.concat($3.code)
-			$$.code.push(
-				"%" + ir_sep + temp + ir_sep + $1.place + ir_sep + $3.place
-			)
+			$$ = utils.binary({
+				op1: $1,
+				op2: $3,
+				operator: "%"
+			})
 		}
 	;
 
