@@ -62,7 +62,7 @@ class ScopeTable {
     }
 
     lookup_method(method_name, error) {
-        this.class.lookup_method(method_name, error)
+        return this.class.lookup_method(method_name, error)
     }
 
     print(indent) {
