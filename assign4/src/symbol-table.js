@@ -38,6 +38,8 @@ class ScopeTable {
         this.category = category
         this.label_start = this.class.create_label()
         this.label_end = this.class.create_label()
+
+        this.return_type = null
     }
 
     add_variable(name, type) {
@@ -256,7 +258,7 @@ class SymbolTable {
     }
 
     add_method(name, return_type, parameters, scope_table, main = false) {
-        return this.current_class.add_method(name, return_type, parameters, scope_table, main = false)
+        return this.current_class.add_method(name, return_type, parameters, scope_table, main = main)
     }
 
     add_variable(name, type) {

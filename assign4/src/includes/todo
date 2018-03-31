@@ -2,3 +2,11 @@ CodeGen
 
     >   Shift Expression
     >   Relational Expression
+    >   Functions
+
+Parser
+
+    >   Main Function
+    >   String Assignment
+    >   Binary operators check if both are constants
+    >   Convert labels to line numbers
