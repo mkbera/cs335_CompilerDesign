@@ -41,14 +41,29 @@
 						}
 
 						self.code.push(
-							"decr" + ir_sep + variable.identifier + ir_sep + "array" + ir_sep + type.get_type() + ir_sep + length + ir_sep
+							"decr" + ir_sep + variable.identifier + ir_sep + "array" + ir_sep + type.type + ir_sep + length + ir_sep
 						)
 
 						for (var index in inits) {
+							if (!(inits[index].type.type == type.type || (inits[index].type.numeric() && type.numeric()))) {
+								throw Error("Cannot convert '" + inits[index].type.type + "' to '" + type.type + "'")
+							}
+
 							self.code = self.code.concat(inits[index].code)
-							self.code.push(
-								"arrset" + ir_sep + variable.identifier + ir_sep + index + ir_sep + inits[index].place
-							)
+
+							if (inits[index].type.type != type.type) {
+								var temp = ST.create_temporary()
+
+								self.code = self.code.concat([
+									"cast" + ir_sep + temp + ir_sep + inits[index].type.type + ir_sep + type.type + ir_sep + inits[index].place,
+									"arrset" + ir_sep + variable.identifier + ir_sep + index + ir_sep + temp
+								])
+							}
+							else {
+								self.code.push(
+									"arrset" + ir_sep + variable.identifier + ir_sep + index + ir_sep + inits[index].place
+								)
+							}
 						}
 					}
 					else {
@@ -72,10 +87,25 @@
 					)
 
 					if (variable.init != null) {
+						if (!(variable.init.type.type == obj.type.type || (variable.init.type.numeric() && obj.type.numeric()))) {
+							throw Error("Cannot convert '" + variable.init.type.type + "' to '" + obj.type.type + "'")
+						}
+
 						self.code = self.code.concat(variable.init.code)
-						self.code.push(
-							"=" + ir_sep + variable.identifier + ir_sep + variable.init.place
-						)
+
+						if (variable.init.type.type != obj.type.type) {
+							var temp = ST.create_temporary()
+
+							self.code = self.code.concat([
+								"cast" + ir_sep + temp + ir_sep + variable.init.type.type + ir_sep + obj.type.type + ir_sep + variable.init.place,
+								"=" + ir_sep + variable.identifier + ir_sep + temp
+							])
+						}
+						else {
+							self.code.push(
+								"=" + ir_sep + variable.identifier + ir_sep + variable.init.place
+							)
+						}
 					}
 				}
 			}
@@ -122,6 +152,9 @@
 			}
 			else if (obj.op1.type.type == "short" || obj.op2.type.type == "short") {
 				self.type = new Type("short", "basic", 2, 0, 0)
+			}
+			else if (obj.op1.type.type == "byte" || obj.op2.type.type == "byte") {
+				self.type = new Type("byte", "basic", 1, 0, 0)
 			}
 			else if (obj.op1.type.type == "boolean" || obj.op2.type.type == "boolean") {
 				self.type = new Type("boolean", "basic", 1, 0, 0)
@@ -170,9 +203,8 @@
 			return self
 		},
 
-		string_type_array: ["string"],
 		boolean_type_array: ["boolean"],
-		numeric_type_array: ["int", "short", "long", "char", "float"],
+		numeric_type_array: ["int", "short", "long", "char", "byte", "float"],
 		
 		serialize_type: function(type) {
 			var serial_type = ""
@@ -348,8 +380,6 @@
 "null"								return 'null_literal';
 
 \'(\\[^\n\r]|[^\\\'\n\r])\'			return 'character_literal';
-
-\"(\\[^\n\r]|[^\\\'\n\r])*\"		return 'string_literal';
 
 ([a-z]|[A-Z]|[$]|[_])(\w)*			return 'identifier';
 
@@ -957,12 +987,12 @@ reference_type :
 method_decr :
 		'public' 'void' method_declarator method_body 
 		{
-			var method = ST.add_method($3.name, new Type("null", "basic", null, null), $3.parameters, $4.scope, main = false)
+			var method = ST.add_method($3.name, new Type("null", "basic", null, null), $3.parameters, $4.scope)
 
 			if ($4.scope.return_type == null && method.return_type.type != "null") {
 				throw Error("A method with a defined return type must have a return statement")
 			}
-			else if (!(utils.serialize_type($4.scope.return_type) == utils.serialize_type(method.return_type) || (utils.numeric_type_array.indexOf(utils.serialize_type(method.return_type)) > -1 && utils.serialize_type($4.scope.return_type) > -1))) {
+			else if ($4.scope.return_type != null && !(utils.serialize_type($4.scope.return_type) == utils.serialize_type(method.return_type) || (utils.numeric_type_array.indexOf(utils.serialize_type(method.return_type)) > -1 && utils.serialize_type($4.scope.return_type) > -1))) {
 				throw Error("The return type '" + utils.serialize_type($4.scope.return_type) + "' does not match with the method's return type '" + utils.serialize_type(method.return_type) + "'")
 			}
 
@@ -973,20 +1003,24 @@ method_decr :
 			)
 			for (var index in method.parameters) {
 				$$.code.push(
-					"pop" + ir_sep + method.parameters[index].name
+					"arg" + ir_sep + method.parameters[index].name + ir_sep + method.parameters[index].type.category + ir_sep + method.parameters[index].type.get_basic_type() + ir_sep + method.parameters[index].type.get_size()
 				)
 			}
 			$$.code = $$.code.concat($4.code)
+
+			if ($4.scope.return_type == null) {
+				$$.code.push("return")
+			}
 		}
 	|
 		'public' type method_declarator method_body 
 		{
-			var method = ST.add_method($3.name, $2, $3.parameters, $4.scope, main = false)
+			var method = ST.add_method($3.name, $2, $3.parameters, $4.scope)
 
 			if ($4.scope.return_type == null && method.return_type.type != "null") {
 				throw Error("A method with a defined return type must have a return statement")
 			}
-			else if (utils.serialize_type($4.scope.return_type) != utils.serialize_type(method.return_type)) {
+			else if ($4.scope.return_type != null && !(utils.serialize_type($4.scope.return_type) == utils.serialize_type(method.return_type) || (utils.numeric_type_array.indexOf(utils.serialize_type(method.return_type)) > -1 && utils.serialize_type($4.scope.return_type) > -1))) {
 				throw Error("The return type '" + utils.serialize_type($4.scope.return_type) + "' does not match with the method's return type '" + utils.serialize_type(method.return_type) + "'")
 			}
 
@@ -997,20 +1031,24 @@ method_decr :
 			)
 			for (var index in method.parameters) {
 				$$.code.push(
-					"pop" + ir_sep + method.parameters[index].name
+					"arg" + ir_sep + method.parameters[index].name + ir_sep + method.parameters[index].type.category + ir_sep + method.parameters[index].type.get_basic_type() + ir_sep + method.parameters[index].type.get_size()
 				)
 			}
 			$$.code = $$.code.concat($4.code)
+
+			if ($4.scope.return_type == null) {
+				$$.code.push("return")
+			}
 		}
 	|
 		'void' method_declarator method_body 
 		{
-			var method = ST.add_method($2.name, new Type("null", "basic", null, null), $2.parameters, $3.scope, main = false)
+			var method = ST.add_method($2.name, new Type("null", "basic", null, null), $2.parameters, $3.scope)
 
 			if ($3.scope.return_type == null && method.return_type.type != "null") {
 				throw Error("A method with a defined return type must have a return statement")
 			}
-			else if (utils.serialize_type($3.scope.return_type) != utils.serialize_type(method.return_type)) {
+			else if ($3.scope.return_type != null && !(utils.serialize_type($3.scope.return_type) == utils.serialize_type(method.return_type) || (utils.numeric_type_array.indexOf(utils.serialize_type(method.return_type)) > -1 && utils.serialize_type($3.scope.return_type) > -1))) {
 				throw Error("The return type '" + utils.serialize_type($3.scope.return_type) + "' does not match with the method's return type '" + utils.serialize_type(method.return_type) + "'")
 			}
 
@@ -1021,20 +1059,24 @@ method_decr :
 			)
 			for (var index in method.parameters) {
 				$$.code.push(
-					"pop" + ir_sep + method.parameters[index].name
+					"arg" + ir_sep + method.parameters[index].name + ir_sep + method.parameters[index].type.category + ir_sep + method.parameters[index].type.get_basic_type() + ir_sep + method.parameters[index].type.get_size()
 				)
 			}
 			$$.code = $$.code.concat($3.code)
+
+			if ($3.scope.return_type == null) {
+				$$.code.push("return")
+			}
 		}
 	|
 		type method_declarator method_body 
 		{
-			var method = ST.add_method($2.name, $1, $2.parameters, $3.scope, main = false)
+			var method = ST.add_method($2.name, $1, $2.parameters, $3.scope)
 
 			if ($3.scope.return_type == null && method.return_type.type != "null") {
 				throw Error("A method with a defined return type must have a return statement")
 			}
-			else if (utils.serialize_type($3.scope.return_type) != utils.serialize_type(method.return_type)) {
+			else if ($3.scope.return_type != null && !(utils.serialize_type($3.scope.return_type) == utils.serialize_type(method.return_type) || (utils.numeric_type_array.indexOf(utils.serialize_type(method.return_type)) > -1 && utils.serialize_type($3.scope.return_type) > -1))) {
 				throw Error("The return type '" + utils.serialize_type($3.scope.return_type) + "' does not match with the method's return type '" + utils.serialize_type(method.return_type) + "'")
 			}
 
@@ -1045,10 +1087,14 @@ method_decr :
 			)
 			for (var index in method.parameters) {
 				$$.code.push(
-					"pop" + ir_sep + method.parameters[index].name
+					"arg" + ir_sep + method.parameters[index].name + ir_sep + method.parameters[index].type.category + ir_sep + method.parameters[index].type.get_basic_type() + ir_sep + method.parameters[index].type.get_size()
 				)
 			}
 			$$.code = $$.code.concat($3.code)
+
+			if ($3.scope.return_type == null) {
+				$$.code.push("return")
+			}
 		}
 	;
 
@@ -2127,7 +2173,7 @@ switch_label :
 
 
 expr :
-		equality_expr 
+		additive_expr 
 		{
 			$$ = $1
 		}
@@ -2265,7 +2311,7 @@ cond_or_expr :
 	|
 		cond_or_expr 'op_oror' cond_and_expr 
 		{
-			var invalid = ["float", "string"]
+			var invalid = ["float"]
 			if (invalid.indexOf(utils.serialize_type($1.type)) > -1 || invalid.indexOf(utils.serialize_type($3.type)) > -1) {
 				throw Error("Bad operand types '" + utils.serialize_type($1.type) + "' and '" + utils.serialize_type($3.type) + "' on binary operator '||'")
 			}
@@ -2287,7 +2333,7 @@ cond_and_expr :
 	|
 		cond_and_expr 'op_andand' incl_or_expr 
 		{
-			var invalid = ["float", "string"]
+			var invalid = ["float"]
 			if (invalid.indexOf(utils.serialize_type($1.type)) > -1 || invalid.indexOf(utils.serialize_type($3.type)) > -1) {
 				throw Error("Bad operand types '" + utils.serialize_type($1.type) + "' and '" + utils.serialize_type($3.type) + "' on binary operator '&&'")
 			}
@@ -2309,7 +2355,7 @@ incl_or_expr :
 	|
 		incl_or_expr 'op_or' excl_or_expr 
 		{
-			var invalid = ["float", "string"]
+			var invalid = ["float"]
 			if (invalid.indexOf(utils.serialize_type($1.type)) > -1 || invalid.indexOf(utils.serialize_type($3.type)) > -1) {
 				throw Error("Bad operand types '" + utils.serialize_type($1.type) + "' and '" + utils.serialize_type($3.type) + "' on binary operator '|'")
 			}
@@ -2331,7 +2377,7 @@ excl_or_expr :
 	|
 		excl_or_expr 'op_xor' and_expr 
 		{
-			var invalid = ["float", "string"]
+			var invalid = ["float"]
 			if (invalid.indexOf(utils.serialize_type($1.type)) > -1 || invalid.indexOf(utils.serialize_type($3.type)) > -1) {
 				throw Error("Bad operand types '" + utils.serialize_type($1.type) + "' and '" + utils.serialize_type($3.type) + "' on binary operator '^'")
 			}
@@ -2353,7 +2399,7 @@ and_expr :
 	|
 		and_expr 'op_and' equality_expr 
 		{
-			var invalid = ["float", "string"]
+			var invalid = ["float"]
 			if (invalid.indexOf(utils.serialize_type($1.type)) > -1 || invalid.indexOf(utils.serialize_type($3.type)) > -1) {
 				throw Error("Bad operand types '" + utils.serialize_type($1.type) + "' and '" + utils.serialize_type($3.type) + "' on binary operator '&'")
 			}
@@ -3021,16 +3067,6 @@ literal :
 				place: $character_literal.charCodeAt(1).toString(),
 				literal: true,
 				type: new Type("int", "basic", 4, null, 0)
-			}
-		}
-	|
-		'string_literal' 
-		{
-			$$ = {
-				code: [],
-				place: $string_literal,
-				literal: true,
-				type: new Type("string", "basic", null, null, 0)
 			}
 		}
 	|
