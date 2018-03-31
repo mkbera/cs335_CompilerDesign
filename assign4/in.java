@@ -20,11 +20,12 @@ class test {
 		a = b + 5;
 		a = -b;
 
-		a += d:[0][1];
+		for (int i = 0; i < 5; ++i) {
+			for (int j = 0; j < 5; ++j) {
+				d:[i][j] = a;
+			}
+		}
 
-		d:[1][0] = 5;
-		d:[1][0] += 5;
-
-		return function_name();
+		return a;
 	}
 }

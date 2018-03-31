@@ -2113,6 +2113,8 @@ left_hand_side_non_array :
 		expr_name 
 		{
 			$$ = $1
+
+			$$.type = ST.lookup_variable($$.place).type
 		}
 	|
 		field_access 
@@ -2602,6 +2604,8 @@ postfix_expr :
 		expr_name 
 		{
 			$$ = $1
+			
+			$$.type = ST.lookup_variable($$.place).type
 		}
 	;
 
@@ -2640,7 +2644,7 @@ method_invocation :
 				)
 			}
 
-			$$.type = method.return_type		
+			$$.type = method.return_type
 		}
 	|
 		expr_name 'paranthesis_start' 'paranthesis_end' 
@@ -2844,17 +2848,16 @@ expr_name :
 			$$ = {
 				code: [],
 				place: $identifier,
-				type: ST.lookup_variable($identifier).type
+				type: null
 			}
 		}
 	|
 		expr_name 'field_invoker' 'identifier' 
 		{
-		
 			$$ = {
 				code: [],
 				place: $identifier,
-				type: $1.type.lookup_variable($identifier).type
+				type: null
 			}
 		}
 	;
