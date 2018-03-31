@@ -1,4 +1,4 @@
-import a;
+import IO;
 
 class test {
 	public int x = 10;
@@ -19,12 +19,15 @@ class test {
 
 		a = b + 5;
 		a = -b;
+		c = a == b;
 
-		for (int i = 0; i < 5; ++i) {
+		for (int i = 0; i; ++i) {
 			for (int j = 0; j < 5; ++j) {
-				d:[i][j] = a;
+				d:[i][j] = 1 + b;
 			}
 		}
+
+		print_string("asd");
 
 		return a;
 	}

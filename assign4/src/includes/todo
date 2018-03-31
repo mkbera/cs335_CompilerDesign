@@ -1,12 +1,11 @@
 CodeGen
 
-    >   Shift Expression
-    >   Relational Expression
     >   Functions
+    >   Strings
+    >   Import
 
 Parser
 
     >   Main Function
-    >   String Assignment
-    >   Binary operators check if both are constants
-    >   Convert labels to line numbers
+    >   String Assignment (Print, Scan)
+    >   Type Casting

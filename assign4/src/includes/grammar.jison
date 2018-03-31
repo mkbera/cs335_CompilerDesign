@@ -82,15 +82,34 @@
 
 			return self
 		},
+
 		binary: function (obj) {
-			var temp = ST.create_temporary()
 
-			var self = { code: [], place: temp, type: null }
+			var self = { code: [], place: null, type: null, literal: false }
 
-			self.code = obj.op1.code.concat(obj.op2.code)
-			self.code.push(
-				obj.operator + ir_sep + temp + ir_sep + obj.op1.place + ir_sep + obj.op2.place
-			)
+			if (!obj.op1.literal) {
+				var temp = ST.create_temporary()
+
+				self.code = obj.op1.code.concat(obj.op2.code)
+				self.code.push(
+					obj.operator + ir_sep + temp + ir_sep + obj.op1.place + ir_sep + obj.op2.place
+				)
+
+				self.place = temp
+			}
+			else if (!obj.op2.literal) {
+				var temp = ST.create_temporary()
+			
+				self.code = obj.op2.code.concat(obj.op1.code)
+				self.code.push(
+					obj.operator + ir_sep + temp + ir_sep + obj.op2.place + ir_sep + obj.op1.place
+				)
+				self.place = temp
+			}
+			else {
+				self.place = eval(obj.op1.place + " " + obj.operator + " " + obj.op2.place)
+				self.literal = true
+			}
 
 			if (obj.op1.type.type == "float" || obj.op2.type.type == "float") {
 				self.type = new Type("float", "basic", 4, 0, 0)
@@ -107,6 +126,46 @@
 			else if (obj.op1.type.type == "boolean" || obj.op2.type.type == "boolean") {
 				self.type = new Type("boolean", "basic", 1, 0, 0)
 			}
+
+			return self
+		},
+
+		relational: function (obj) {
+
+			var self = { code: [], place: null, type: null, literal: false }
+
+			if (!obj.op1.literal) {
+				var temp = ST.create_temporary()
+				var label = ST.create_label()
+			
+				self.code = obj.op1.code.concat(obj.op2.code)
+				self.code = self.code.concat([
+					"=" + ir_sep + temp + ir_sep + "1",
+					"ifgoto" + ir_sep + obj.operator + ir_sep + obj.op1.place + ir_sep + obj.op2.place + ir_sep + label,
+					"=" + ir_sep + temp + ir_sep + "0",
+					"label" + ir_sep + label
+				])
+				self.place = temp
+			}
+			else if (!obj.op2.literal) {
+				var temp = ST.create_temporary()
+				var label = ST.create_label()
+			
+				self.code = obj.op2.code.concat(obj.op1.code)
+				self.code = self.code.concat([
+					"=" + ir_sep + temp + ir_sep + "1",
+					"ifgoto" + ir_sep + obj.operator + ir_sep + obj.op2.place + ir_sep + obj.op1.place + ir_sep + label,
+					"=" + ir_sep + temp + ir_sep + "0",
+					"label" + ir_sep + label
+				])
+				self.place = temp
+			}
+			else {
+				self.place = eval(obj.op1.place + " " + obj.operator + " " + obj.op2.place) ? 1 : 0
+				self.literal = true
+			}
+
+			self.type = new Type("boolean", "basic", 1, 0, 0)
 
 			return self
 		},
@@ -324,7 +383,37 @@
 program :
 		import_decrs type_decrs 'EOF' 
 		{
-			return $1.code.concat($2.code)
+			var labels = {}
+			var line_number = 0
+			var code = $1.code.concat($2.code)
+			var filtered_code = []
+
+			for (var index in code) {
+				var line = code[index].split(ir_sep)
+
+				if (line[0] == "label") {
+					labels[line[1]] = line_number + 1
+				}
+				else {
+					line_number += 1
+					filtered_code.push(code[index])
+				}
+			}
+
+			for (var index in filtered_code) {
+				var line = filtered_code[index].split(ir_sep)
+
+				if (line[0] == "jump") {
+					line[1] = labels[line[1]]
+				}
+				else if (line[0] == "ifgoto") {
+					line[4] = labels[line[4]]
+				}
+
+				filtered_code[index] = line.join("\t")
+			}
+
+			return filtered_code
 		}
 	|
 		import_decrs 'EOF' 
@@ -334,7 +423,37 @@ program :
 	|
 		type_decrs 'EOF' 
 		{
-			return $1.code
+			var labels = {}
+			var line_number = 0
+			var code = $1.code
+			var filtered_code = []
+
+			for (var index in code) {
+				var line = code[index].split(ir_sep)
+
+				if (line[0] == "label") {
+					labels[line[1]] = line_number + 1
+				}
+				else {
+					line_number += 1
+					filtered_code.push(code[index])
+				}
+			}
+
+			for (var index in filtered_code) {
+				var line = filtered_code[index].split(ir_sep)
+
+				if (line[0] == "jump") {
+					line[1] = labels[line[1]]
+				}
+				else if (line[0] == "ifgoto") {
+					line[4] = labels[line[4]]
+				}
+
+				filtered_code[index] = line.join("\t")
+			}
+
+			return filtered_code
 		}
 	|
 		'EOF' 
@@ -362,6 +481,7 @@ import_decr :
 		'import' 'identifier' 'terminator' 
 		{
 			$$ = { code: "import" + ir_sep + $identifier, place: null }
+			ST.import($identifier)
 		}
 	;
 
@@ -2007,7 +2127,7 @@ switch_label :
 
 
 expr :
-		cond_or_expr 
+		equality_expr 
 		{
 			$$ = $1
 		}
@@ -2259,10 +2379,10 @@ equality_expr :
 				throw Error("Incomparable operand types '" + utils.serialize_type($1.type) + "' and '" + utils.serialize_type($3.type) + "' on binary operator '<='")
 			}
 
-			$$ = utils.binary({
+			$$ = utils.relational({
 				op1: $1,
 				op2: $3,
-				operator: "=="
+				operator: "eq"
 			})
 		}
 	|
@@ -2272,74 +2392,74 @@ equality_expr :
 				throw Error("Incomparable operand types '" + utils.serialize_type($1.type) + "' and '" + utils.serialize_type($3.type) + "' on operator '!='")
 			}
 
-			$$ = utils.binary({
+			$$ = utils.relational({
 				op1: $1,
 				op2: $3,
-				operator: "!="
+				operator: "ne"
 			})
 		}
 	;
 
 
 relational_expr :
-		shift_expr 
+		additive_expr 
 		{
 			$$ = $1
 		}
 	|
-		relational_expr 'op_greater' shift_expr 
+		relational_expr 'op_greater' additive_expr 
 		{
 			if (utils.numeric_type_array.indexOf(utils.serialize_type($1.type)) == -1 || utils.numeric_type_array.indexOf(utils.serialize_type($3.type)) == -1) {
 				throw Error("Incomparable operand types '" + utils.serialize_type($1.type) + "' and '" + utils.serialize_type($3.type) + "' on operator '>'")
 			}
 
-			$$ = utils.binary({
+			$$ = utils.relational({
 				op1: $1,
 				op2: $3,
-				operator: ">"
+				operator: "gt"
 			})
 		}
 	|
-		relational_expr 'op_greaterEqual' shift_expr 
+		relational_expr 'op_greaterEqual' additive_expr 
 		{
 			if (utils.numeric_type_array.indexOf(utils.serialize_type($1.type)) == -1 || utils.numeric_type_array.indexOf(utils.serialize_type($3.type)) == -1) {
 				throw Error("Incomparable operand types '" + utils.serialize_type($1.type) + "' and '" + utils.serialize_type($3.type) + "' on operator '>='")
 			}
 
-			$$ = utils.binary({
+			$$ = utils.relational({
 				op1: $1,
 				op2: $3,
-				operator: ">="
+				operator: "ge"
 			})
 		}
 	|
-		relational_expr 'op_less' shift_expr 
+		relational_expr 'op_less' additive_expr 
 		{
 			if (utils.numeric_type_array.indexOf(utils.serialize_type($1.type)) == -1 || utils.numeric_type_array.indexOf(utils.serialize_type($3.type)) == -1) {
 				throw Error("Incomparable operand types '" + utils.serialize_type($1.type) + "' and '" + utils.serialize_type($3.type) + "' on operator '<'")
 			}
 
-			$$ = utils.binary({
+			$$ = utils.relational({
 				op1: $1,
 				op2: $3,
-				operator: "<"
+				operator: "lt"
 			})
 		}
 	|
-		relational_expr 'op_lessEqual' shift_expr 
+		relational_expr 'op_lessEqual' additive_expr 
 		{
 			if (utils.numeric_type_array.indexOf(utils.serialize_type($1.type)) == -1 || utils.numeric_type_array.indexOf(utils.serialize_type($3.type)) == -1) {
 				throw Error("Incomparable operand types '" + utils.serialize_type($1.type) + "' and '" + utils.serialize_type($3.type) + "' on operator '<='")
 			}
 
-			$$ = utils.binary({
+			$$ = utils.relational({
 				op1: $1,
 				op2: $3,
-				operator: "<="
+				operator: "le"
 			})
 		}
 	|
-		relational_expr 'instanceof' shift_expr 
+		relational_expr 'instanceof' additive_expr 
 		{ $$ = { nt: 'relational_expr', children: [$1,{ t: 'instanceof', l: $instanceof },$3] } }
 	;
 
@@ -2888,7 +3008,7 @@ literal :
 		{
 			$$ = {
 				code: [],
-				place: $boolean_literal,
+				place: ($boolean_literal == "true") ? 1 : 0,
 				literal: true,
 				type: new Type("boolean", "basic", 1, null, 0)
 			}

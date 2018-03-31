@@ -112,10 +112,12 @@ class Method {
         this.return_type = return_type
         this.table = scope_table
 
-        this.parameters.forEach(function (parameter) {
-            parameter.isparam = true
-            scope_table.variables[parameter.name] = parameter;
-        })
+        if (scope_table != null) {
+            this.parameters.forEach(function (parameter) {
+                parameter.isparam = true
+                scope_table.variables[parameter.name] = parameter;
+            })
+        }
     }
 
     print(indent) {
@@ -224,6 +226,8 @@ class SymbolTable {
         this.temporaries_count = 0
 
         this.labels_count = 0
+
+        this.import_methods = {}
     }
 
     get_class(name) {
@@ -258,6 +262,10 @@ class SymbolTable {
     }
 
     add_method(name, return_type, parameters, scope_table, main = false) {
+        if (name in this.import_methods) {
+            throw Error("The method " + method_name + " has already been declared as part of the " + this.import_methods[method_name] + " library")
+        }
+
         return this.current_class.add_method(name, return_type, parameters, scope_table, main = main)
     }
 
@@ -310,7 +318,58 @@ class SymbolTable {
     }
 
     lookup_method(method_name, error = true) {
+        if (method_name in this.import_methods) {
+            return this.import_methods[method_name]
+        }
+
         return this.current_scope.lookup_method(method_name, error)
+    }
+
+    import(library) {
+        console.log("Importing " + library)
+        switch (library) {
+            case "IO": {
+                ST.import_methods = {}
+                ST.import_methods["print_string"] = new Method(
+                    "print_string",
+                    new Type("null", "basic", null, null, 0),
+                    [new Variable("print_string_param", new Type("string", "basic", null, null, 0), true)],
+                    null,
+                    false
+                )
+                ST.import_methods["print_float"] = new Method(
+                    "print_float",
+                    new Type("null", "basic", null, null, 0),
+                    [new Variable("print_float_param", new Type("float", "basic", 4, null, 0), true)],
+                    null,
+                    false
+                )
+                ST.import_methods["print_char"] = new Method(
+                    "print_char",
+                    new Type("null", "basic", null, null, 0),
+                    [new Variable("print_char_param", new Type("char", "basic", 1, null, 0), true)],
+                    null,
+                    false
+                )
+                ST.import_methods["print_int"] = new Method(
+                    "print_int",
+                    new Type("null", "basic", null, null, 0),
+                    [new Variable("print_int_param", new Type("int", "basic", 4, null, 0), true)],
+                    null,
+                    false
+                )
+
+                ST.import_methods["scan_string"] = new Method("scan_string", new Type("string", "basic", null, null, 0), [new Type("null", "basic", null, null, 0)], null, false)
+                ST.import_methods["scan_float"] = new Method("scan_float", new Type("float", "basic", 4, null, 0), [new Type("null", "basic", null, null, 0)], null, false)
+                ST.import_methods["scan_char"] = new Method("scan_char", new Type("char", "basic", 1, null, 0), [new Type("null", "basic", null, null, 0)], null, false)
+                ST.import_methods["scan_int"] = new Method("scan_int", new Type("int", "basic", 4, null, 0), [new Type("null", "basic", null, null, 0)], null, false)
+
+                break
+            }
+            default: {
+                throw Error("Library " + library + " not found")
+            }
+        }
     }
 
     print() {

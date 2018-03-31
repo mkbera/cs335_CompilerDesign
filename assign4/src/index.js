@@ -27,6 +27,6 @@ output = parser.parse(input)
 console.log("")
 ST.print()
 
-output.forEach(function (line) {
-    console.log(line)
+output.forEach(function (line, index) {
+    console.log((index + 1) + ir_sep + line)
 });
