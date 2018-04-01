@@ -22,11 +22,26 @@ if (process.argv.length >= 3) {
 input = fs.readFileSync(input_file).toString();
 console.log("Reading Input from file: " + input_file);
 
-output = parser.parse(input)
+code = parser.parse(input)
 
 console.log("")
 ST.print()
 
-output.forEach(function (line) {
-    console.log(line)
-});
+output = ""
+
+code.forEach(function (line, index) {
+    console.log((index + 1) + ir_sep + line)
+    output += (index + 1) + ir_sep + line + "\n"
+})
+
+if (process.argv.length >= 4) {
+    out_file = process.argv[3]
+
+    fs.writeFile(out_file, output, function (err) {
+        if (err) {
+            return console.log(err)
+        }
+
+        console.log("The IR code was generated and saved to " + out_file)
+    })
+}

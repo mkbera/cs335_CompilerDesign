@@ -24,6 +24,52 @@ class Type {
             }
         }
     }
+
+    get_serial_type() {
+        var serial_type = ""
+        var type = this
+
+        while (category == "array") {
+            serial_type += "array."
+
+            type = type.type
+        }
+
+        serial_type += type.type
+
+        return serial_type
+    }
+
+    numeric() {
+        return ["int", "short", "long", "char", "float"].indexOf(this.type) > -1
+    }
+
+    get_basic_type() {
+        var type = this
+
+        while (type.category == "array") {
+            type = type.type
+        }
+
+        return type.type
+    }
+
+    get_size() {
+        if (this.category != "array") {
+            return 1
+        }
+
+        var type = this
+        var size = 1
+
+        while (type.category == "array") {
+            size = size * type.length
+
+            type = type.type
+        }
+
+        return size
+    }
 }
 
 
@@ -38,6 +84,8 @@ class ScopeTable {
         this.category = category
         this.label_start = this.class.create_label()
         this.label_end = this.class.create_label()
+
+        this.return_type = null
     }
 
     add_variable(name, type) {
@@ -51,30 +99,30 @@ class ScopeTable {
         return variable;
     }
 
-    lookup_variable(variable_name, error) {
-        if (variable_name in this.variables) {
-            return this.variables[variable_name]
+    lookup_variable(name, error) {
+        if (name in this.variables) {
+            return this.variables[name]
         }
         else if (this.parent != null) {
-            return this.parent.lookup_variable(variable_name, error)
+            return this.parent.lookup_variable(name, error)
         }
         else {
             if (error) {
-                throw Error("The variable " + variable_name + " was not declared in the current scope!")
+                throw Error("The variable " + name + " was not declared in the current scope!")
             }
         }
     }
 
-    lookup_method(method_name, error) {
-        return this.class.lookup_method(method_name, error)
+    lookup_method(name, error) {
+        return this.class.lookup_method(name, error)
     }
 
     print(indent) {
         var spaces = " ".repeat(indent)
 
-        for (var variable_name in this.variables) {
-            if (!this.variables[variable_name].isparam) {
-                console.log(spaces + this.variables[variable_name].name + " :: " + this.variables[variable_name].type.get_type())
+        for (var name in this.variables) {
+            if (!this.variables[name].isparam) {
+                console.log(spaces + this.variables[name].name + " :: " + this.variables[name].type.get_type())
             }
         }
 
@@ -110,10 +158,21 @@ class Method {
         this.return_type = return_type
         this.table = scope_table
 
-        this.parameters.forEach(function (parameter) {
-            parameter.isparam = true
-            scope_table.variables[parameter.name] = parameter;
-        })
+        if (this.main) {
+            if (this.num_parameters != 0) {
+                throw Error("The main function can not have any arguments")
+            }
+            if (this.return_type.type != "null") {
+                throw Error("The return type of the main function must be void")
+            }
+        }
+
+        if (scope_table != null) {
+            this.parameters.forEach(function (parameter) {
+                parameter.isparam = true
+                scope_table.variables[parameter.name] = parameter;
+            })
+        }
     }
 
     print(indent) {
@@ -140,7 +199,7 @@ class Class {
         this.parent = parent
     }
 
-    add_method(name, return_type, parameters, scope_table, main = false) {
+    add_method(name, return_type, parameters, scope_table, main) {
         if (name in this.variables) {
             throw Error("The method " + name + " has already been defined!")
         }
@@ -162,30 +221,30 @@ class Class {
         return variable
     }
 
-    lookup_variable(variable_name, error) {
-        if (variable_name in this.variables) {
-            return this.variables[variable_name]
+    lookup_variable(name, error) {
+        if (name in this.variables) {
+            return this.variables[name]
         }
         else if (this.parent instanceof Class) {
-            return this.parent.lookup_variable(variable_name, error)
+            return this.parent.lookup_variable(name, error)
         }
         else {
             if (error) {
-                throw Error("The variable " + variable_name + " was not declared in the current scope!")
+                throw Error("The variable " + name + " was not declared in the current scope!")
             }
         }
     }
 
-    lookup_method(method_name, error) {
-        if (method_name in this.methods) {
-            return this.methods[method_name]
+    lookup_method(name, error) {
+        if (name in this.methods) {
+            return this.methods[name]
         }
         else if (this.parent instanceof Class) {
-            return this.parent.lookup_method(method_name, error)
+            return this.parent.lookup_method(name, error)
         }
         else {
             if (error) {
-                throw Error("The method " + method_name + " was not declared in the current scope!")
+                throw Error("The method " + name + " was not declared in the current scope!")
             }
         }
     }
@@ -198,13 +257,13 @@ class Class {
         var spaces = " ".repeat(indent + 4)
 
         console.log(" ".repeat(indent) + "Class: " + this.name + " {")
-        for (var variable_name in this.variables) {
-            console.log(spaces + variable_name + " :: " + this.variables[variable_name].type.get_type())
+        for (var name in this.variables) {
+            console.log(spaces + name + " :: " + this.variables[name].type.get_type())
         }
 
         console.log("")
-        for (var method_name in this.methods) {
-            this.methods[method_name].print(indent = 4)
+        for (var name in this.methods) {
+            this.methods[name].print(indent = 4)
             console.log("")
         }
         console.log("}\n")
@@ -222,6 +281,10 @@ class SymbolTable {
         this.temporaries_count = 0
 
         this.labels_count = 0
+
+        this.import_methods = {}
+
+        this.main_function = null
     }
 
     get_class(name) {
@@ -255,8 +318,22 @@ class SymbolTable {
         return class_instance
     }
 
-    add_method(name, return_type, parameters, scope_table, main = false) {
-        return this.current_class.add_method(name, return_type, parameters, scope_table, main = false)
+    add_method(name, return_type, parameters, scope_table) {
+        if (name == "main") {
+            if (this.main_function != null) {
+                throw Error("The method " + name + " can be defined only once")
+            }
+
+            this.main_function = this.current_class.add_method(name, return_type, parameters, scope_table, true)
+
+            return this.main_function
+        }
+
+        if (name in this.import_methods) {
+            throw Error("The method " + name + " has already been declared as part of the " + this.import_methods[name] + " library")
+        }
+
+        return this.current_class.add_method(name, return_type, parameters, scope_table, false)
     }
 
     add_variable(name, type) {
@@ -303,12 +380,87 @@ class SymbolTable {
         return "l_" + this.labels_count
     }
 
-    lookup_variable(variable_name, error = true) {
-        return this.current_scope.lookup_variable(variable_name, error)
+    lookup_variable(name, error = true) {
+        return this.current_scope.lookup_variable(name, error)
     }
 
-    lookup_method(method_name, error = true) {
-        return this.current_scope.lookup_method(method_name, error)
+    lookup_method(name, error = true) {
+        if (name in this.import_methods) {
+            return this.import_methods[name]
+        }
+
+        return this.current_scope.lookup_method(name, error)
+    }
+
+    import(library) {
+        console.log("Importing " + library)
+        switch (library) {
+            case "IO": {
+                ST.import_methods = {}
+                ST.import_methods["print_string"] = new Method(
+                    "print_string",
+                    new Type("null", "basic", null, null, 0),
+                    [new Variable("print_string_param", new Type("string", "basic", null, null, 0), true)],
+                    null,
+                    false
+                )
+                ST.import_methods["print_float"] = new Method(
+                    "print_float",
+                    new Type("null", "basic", null, null, 0),
+                    [new Variable("print_float_param", new Type("float", "basic", 4, null, 0), true)],
+                    null,
+                    false
+                )
+                ST.import_methods["print_char"] = new Method(
+                    "print_char",
+                    new Type("null", "basic", null, null, 0),
+                    [new Variable("print_char_param", new Type("char", "basic", 1, null, 0), true)],
+                    null,
+                    false
+                )
+                ST.import_methods["print_int"] = new Method(
+                    "print_int",
+                    new Type("null", "basic", null, null, 0),
+                    [new Variable("print_int_param", new Type("int", "basic", 4, null, 0), true)],
+                    null,
+                    false
+                )
+
+                ST.import_methods["scan_string"] = new Method(
+                    "scan_string",
+                    new Type("string", "basic", null, null, 0),
+                    [],
+                    null,
+                    false
+                )
+                ST.import_methods["scan_float"] = new Method(
+                    "scan_float",
+                    new Type("float", "basic", 4, null, 0),
+                    [],
+                    null,
+                    false
+                )
+                ST.import_methods["scan_char"] = new Method(
+                    "scan_char",
+                    new Type("char", "basic", 1, null, 0),
+                    [],
+                    null,
+                    false
+                )
+                ST.import_methods["scan_int"] = new Method(
+                    "scan_int",
+                    new Type("int", "basic", 4, null, 0),
+                    [],
+                    null,
+                    false
+                )
+
+                break
+            }
+            default: {
+                throw Error("Library " + library + " not found")
+            }
+        }
     }
 
     print() {

@@ -1,6 +1,6 @@
 %{
 	var utils = {
-		init: function(obj) {
+		assign: function(obj) {
 			var self = { code: [], place: null }
 
 			for (var var_index in obj.var_declarators) {
@@ -41,14 +41,29 @@
 						}
 
 						self.code.push(
-							"decr" + ir_sep + variable.identifier + ir_sep + "array" + ir_sep + type.get_type() + ir_sep + length + ir_sep
+							"decr" + ir_sep + variable.identifier + ir_sep + "array" + ir_sep + type.type + ir_sep + length + ir_sep
 						)
 
 						for (var index in inits) {
+							if (!(inits[index].type.type == type.type || (inits[index].type.numeric() && type.numeric()))) {
+								throw Error("Cannot convert '" + inits[index].type.type + "' to '" + type.type + "'")
+							}
+
 							self.code = self.code.concat(inits[index].code)
-							self.code.push(
-								"arrset" + ir_sep + variable.identifier + ir_sep + index + ir_sep + inits[index].place
-							)
+
+							if (inits[index].type.type != type.type) {
+								var temp = ST.create_temporary()
+
+								self.code = self.code.concat([
+									"cast" + ir_sep + temp + ir_sep + inits[index].type.type + ir_sep + type.type + ir_sep + inits[index].place,
+									"arrset" + ir_sep + variable.identifier + ir_sep + index + ir_sep + temp
+								])
+							}
+							else {
+								self.code.push(
+									"arrset" + ir_sep + variable.identifier + ir_sep + index + ir_sep + inits[index].place
+								)
+							}
 						}
 					}
 					else {
@@ -72,27 +87,137 @@
 					)
 
 					if (variable.init != null) {
+						if (!(variable.init.type.type == obj.type.type || (variable.init.type.numeric() && obj.type.numeric()))) {
+							throw Error("Cannot convert '" + variable.init.type.type + "' to '" + obj.type.type + "'")
+						}
+
 						self.code = self.code.concat(variable.init.code)
-						self.code.push(
-							"=" + ir_sep + variable.identifier + ir_sep + variable.init.place
-						)
+
+						if (variable.init.type.type != obj.type.type) {
+							var temp = ST.create_temporary()
+
+							self.code = self.code.concat([
+								"cast" + ir_sep + temp + ir_sep + variable.init.type.type + ir_sep + obj.type.type + ir_sep + variable.init.place,
+								"=" + ir_sep + variable.identifier + ir_sep + temp
+							])
+						}
+						else {
+							self.code.push(
+								"=" + ir_sep + variable.identifier + ir_sep + variable.init.place
+							)
+						}
 					}
 				}
 			}
 
 			return self
 		},
+
 		binary: function (obj) {
-			var temp = ST.create_temporary()
 
-			var self = { code: [], place: temp }
+			var self = { code: [], place: null, type: null, literal: false }
 
-			self.code = obj.op1.code.concat(obj.op2.code)
-			self.code.push(
-				obj.operator + ir_sep + temp + ir_sep + obj.op1.place + ir_sep + obj.op2.place
-			)
+			if (!obj.op1.literal) {
+				var temp = ST.create_temporary()
+
+				self.code = obj.op1.code.concat(obj.op2.code)
+				self.code.push(
+					obj.operator + ir_sep + temp + ir_sep + obj.op1.place + ir_sep + obj.op2.place
+				)
+
+				self.place = temp
+			}
+			else if (!obj.op2.literal) {
+				var temp = ST.create_temporary()
+			
+				self.code = obj.op2.code.concat(obj.op1.code)
+				self.code.push(
+					obj.operator + ir_sep + temp + ir_sep + obj.op2.place + ir_sep + obj.op1.place
+				)
+				self.place = temp
+			}
+			else {
+				self.place = eval(obj.op1.place + " " + obj.operator + " " + obj.op2.place)
+				self.literal = true
+			}
+
+			if (obj.op1.type.type == "float" || obj.op2.type.type == "float") {
+				self.type = new Type("float", "basic", 4, 0, 0)
+			}
+			else if (obj.op1.type.type == "long" || obj.op2.type.type == "long") {
+				self.type = new Type("long", "basic", 8, 0, 0)
+			}
+			else if (obj.op1.type.type == "int" || obj.op2.type.type == "int") {
+				self.type = new Type("int", "basic", 4, 0, 0)
+			}
+			else if (obj.op1.type.type == "short" || obj.op2.type.type == "short") {
+				self.type = new Type("short", "basic", 2, 0, 0)
+			}
+			else if (obj.op1.type.type == "byte" || obj.op2.type.type == "byte") {
+				self.type = new Type("byte", "basic", 1, 0, 0)
+			}
+			else if (obj.op1.type.type == "boolean" || obj.op2.type.type == "boolean") {
+				self.type = new Type("boolean", "basic", 1, 0, 0)
+			}
 
 			return self
+		},
+
+		relational: function (obj) {
+
+			var self = { code: [], place: null, type: null, literal: false }
+
+			if (!obj.op1.literal) {
+				var temp = ST.create_temporary()
+				var label = ST.create_label()
+			
+				self.code = obj.op1.code.concat(obj.op2.code)
+				self.code = self.code.concat([
+					"=" + ir_sep + temp + ir_sep + "1",
+					"ifgoto" + ir_sep + obj.operator + ir_sep + obj.op1.place + ir_sep + obj.op2.place + ir_sep + label,
+					"=" + ir_sep + temp + ir_sep + "0",
+					"label" + ir_sep + label
+				])
+				self.place = temp
+			}
+			else if (!obj.op2.literal) {
+				var temp = ST.create_temporary()
+				var label = ST.create_label()
+			
+				self.code = obj.op2.code.concat(obj.op1.code)
+				self.code = self.code.concat([
+					"=" + ir_sep + temp + ir_sep + "1",
+					"ifgoto" + ir_sep + obj.operator + ir_sep + obj.op2.place + ir_sep + obj.op1.place + ir_sep + label,
+					"=" + ir_sep + temp + ir_sep + "0",
+					"label" + ir_sep + label
+				])
+				self.place = temp
+			}
+			else {
+				self.place = eval(obj.op1.place + " " + obj.operator + " " + obj.op2.place) ? 1 : 0
+				self.literal = true
+			}
+
+			self.type = new Type("boolean", "basic", 1, 0, 0)
+
+			return self
+		},
+
+		boolean_type_array: ["boolean"],
+		numeric_type_array: ["int", "short", "long", "char", "byte", "float"],
+		
+		serialize_type: function(type) {
+			var serial_type = ""
+
+			while (type.category == "array") {
+				serial_type += "array."
+
+				type = type.type
+			}
+
+			serial_type += type.type
+
+			return serial_type
 		}
 	}
 %}
@@ -256,8 +381,6 @@
 
 \'(\\[^\n\r]|[^\\\'\n\r])\'			return 'character_literal';
 
-\"(\\[^\n\r]|[^\\\'\n\r])*\"		return 'string_literal';
-
 ([a-z]|[A-Z]|[$]|[_])(\w)*			return 'identifier';
 
 [;]									return 'terminator';
@@ -290,7 +413,37 @@
 program :
 		import_decrs type_decrs 'EOF' 
 		{
-			return $1.code.concat($2.code)
+			var labels = {}
+			var line_number = 0
+			var code = $1.code.concat($2.code)
+			var filtered_code = []
+
+			for (var index in code) {
+				var line = code[index].split(ir_sep)
+
+				if (line[0] == "label") {
+					labels[line[1]] = line_number + 1
+				}
+				else {
+					line_number += 1
+					filtered_code.push(code[index])
+				}
+			}
+
+			for (var index in filtered_code) {
+				var line = filtered_code[index].split(ir_sep)
+
+				if (line[0] == "jump") {
+					line[1] = labels[line[1]]
+				}
+				else if (line[0] == "ifgoto") {
+					line[4] = labels[line[4]]
+				}
+
+				filtered_code[index] = line.join("\t")
+			}
+
+			return filtered_code
 		}
 	|
 		import_decrs 'EOF' 
@@ -300,7 +453,37 @@ program :
 	|
 		type_decrs 'EOF' 
 		{
-			return $1.code
+			var labels = {}
+			var line_number = 0
+			var code = $1.code
+			var filtered_code = []
+
+			for (var index in code) {
+				var line = code[index].split(ir_sep)
+
+				if (line[0] == "label") {
+					labels[line[1]] = line_number + 1
+				}
+				else {
+					line_number += 1
+					filtered_code.push(code[index])
+				}
+			}
+
+			for (var index in filtered_code) {
+				var line = filtered_code[index].split(ir_sep)
+
+				if (line[0] == "jump") {
+					line[1] = labels[line[1]]
+				}
+				else if (line[0] == "ifgoto") {
+					line[4] = labels[line[4]]
+				}
+
+				filtered_code[index] = line.join("\t")
+			}
+
+			return filtered_code
 		}
 	|
 		'EOF' 
@@ -328,6 +511,7 @@ import_decr :
 		'import' 'identifier' 'terminator' 
 		{
 			$$ = { code: "import" + ir_sep + $identifier, place: null }
+			ST.import($identifier)
 		}
 	;
 
@@ -466,9 +650,7 @@ class_member_decr :
 
 consr_declarator :
 		'identifier' 'paranthesis_start' formal_parameter_list 'paranthesis_end' 
-		{
-			$$ = { code: [], place: null }
-		}
+		{ $$ = { code: [], place: null } }
 	;
 
 
@@ -549,7 +731,7 @@ formal_parameter :
 field_decr :
 		'public' type var_declarators 'terminator' 
 		{
-			$$ = utils.init({
+			$$ = utils.assign({
 				type: $2,
 				var_declarators: $3
 			})
@@ -557,7 +739,7 @@ field_decr :
 	|
 		type var_declarators 'terminator' 
 		{
-			$$ = utils.init({
+			$$ = utils.assign({
 				type: $1,
 				var_declarators: $2
 			})
@@ -805,7 +987,14 @@ reference_type :
 method_decr :
 		'public' 'void' method_declarator method_body 
 		{
-			var method = ST.add_method($3.name, new Type("void", "basic", 0, null), $3.parameters, $4.scope, main = false)
+			var method = ST.add_method($3.name, new Type("null", "basic", null, null), $3.parameters, $4.scope)
+
+			if ($4.scope.return_type == null && method.return_type.type != "null") {
+				throw Error("A method with a defined return type must have a return statement")
+			}
+			else if ($4.scope.return_type != null && !(utils.serialize_type($4.scope.return_type) == utils.serialize_type(method.return_type) || (utils.numeric_type_array.indexOf(utils.serialize_type(method.return_type)) > -1 && utils.serialize_type($4.scope.return_type) > -1))) {
+				throw Error("The return type '" + utils.serialize_type($4.scope.return_type) + "' does not match with the method's return type '" + utils.serialize_type(method.return_type) + "'")
+			}
 
 			$$ = { code: [], place: null }
 
@@ -814,15 +1003,26 @@ method_decr :
 			)
 			for (var index in method.parameters) {
 				$$.code.push(
-					"pop" + ir_sep + method.parameters[index].name
+					"arg" + ir_sep + method.parameters[index].name + ir_sep + method.parameters[index].type.category + ir_sep + method.parameters[index].type.get_basic_type() + ir_sep + method.parameters[index].type.get_size()
 				)
 			}
 			$$.code = $$.code.concat($4.code)
+
+			if ($4.scope.return_type == null) {
+				$$.code.push("return")
+			}
 		}
 	|
 		'public' type method_declarator method_body 
 		{
-			var method = ST.add_method($3.name, $2, $3.parameters, $4.scope, main = false)
+			var method = ST.add_method($3.name, $2, $3.parameters, $4.scope)
+
+			if ($4.scope.return_type == null && method.return_type.type != "null") {
+				throw Error("A method with a defined return type must have a return statement")
+			}
+			else if ($4.scope.return_type != null && !(utils.serialize_type($4.scope.return_type) == utils.serialize_type(method.return_type) || (utils.numeric_type_array.indexOf(utils.serialize_type(method.return_type)) > -1 && utils.serialize_type($4.scope.return_type) > -1))) {
+				throw Error("The return type '" + utils.serialize_type($4.scope.return_type) + "' does not match with the method's return type '" + utils.serialize_type(method.return_type) + "'")
+			}
 
 			$$ = { code: [], place: null }
 
@@ -831,15 +1031,26 @@ method_decr :
 			)
 			for (var index in method.parameters) {
 				$$.code.push(
-					"pop" + ir_sep + method.parameters[index].name
+					"arg" + ir_sep + method.parameters[index].name + ir_sep + method.parameters[index].type.category + ir_sep + method.parameters[index].type.get_basic_type() + ir_sep + method.parameters[index].type.get_size()
 				)
 			}
 			$$.code = $$.code.concat($4.code)
+
+			if ($4.scope.return_type == null) {
+				$$.code.push("return")
+			}
 		}
 	|
 		'void' method_declarator method_body 
 		{
-			var method = ST.add_method($2.name, new Type("void", "basic", 0, null), $2.parameters, $3.scope, main = false)
+			var method = ST.add_method($2.name, new Type("null", "basic", null, null), $2.parameters, $3.scope)
+
+			if ($3.scope.return_type == null && method.return_type.type != "null") {
+				throw Error("A method with a defined return type must have a return statement")
+			}
+			else if ($3.scope.return_type != null && !(utils.serialize_type($3.scope.return_type) == utils.serialize_type(method.return_type) || (utils.numeric_type_array.indexOf(utils.serialize_type(method.return_type)) > -1 && utils.serialize_type($3.scope.return_type) > -1))) {
+				throw Error("The return type '" + utils.serialize_type($3.scope.return_type) + "' does not match with the method's return type '" + utils.serialize_type(method.return_type) + "'")
+			}
 
 			$$ = { code: [], place: null }
 
@@ -848,15 +1059,26 @@ method_decr :
 			)
 			for (var index in method.parameters) {
 				$$.code.push(
-					"pop" + ir_sep + method.parameters[index].name
+					"arg" + ir_sep + method.parameters[index].name + ir_sep + method.parameters[index].type.category + ir_sep + method.parameters[index].type.get_basic_type() + ir_sep + method.parameters[index].type.get_size()
 				)
 			}
 			$$.code = $$.code.concat($3.code)
+
+			if ($3.scope.return_type == null) {
+				$$.code.push("return")
+			}
 		}
 	|
 		type method_declarator method_body 
 		{
-			var method = ST.add_method($2.name, $1, $2.parameters, $3.scope, main = false)
+			var method = ST.add_method($2.name, $1, $2.parameters, $3.scope)
+
+			if ($3.scope.return_type == null && method.return_type.type != "null") {
+				throw Error("A method with a defined return type must have a return statement")
+			}
+			else if ($3.scope.return_type != null && !(utils.serialize_type($3.scope.return_type) == utils.serialize_type(method.return_type) || (utils.numeric_type_array.indexOf(utils.serialize_type(method.return_type)) > -1 && utils.serialize_type($3.scope.return_type) > -1))) {
+				throw Error("The return type '" + utils.serialize_type($3.scope.return_type) + "' does not match with the method's return type '" + utils.serialize_type(method.return_type) + "'")
+			}
 
 			$$ = { code: [], place: null }
 
@@ -865,10 +1087,14 @@ method_decr :
 			)
 			for (var index in method.parameters) {
 				$$.code.push(
-					"pop" + ir_sep + method.parameters[index].name
+					"arg" + ir_sep + method.parameters[index].name + ir_sep + method.parameters[index].type.category + ir_sep + method.parameters[index].type.get_basic_type() + ir_sep + method.parameters[index].type.get_size()
 				)
 			}
 			$$.code = $$.code.concat($3.code)
+
+			if ($3.scope.return_type == null) {
+				$$.code.push("return")
+			}
 		}
 	;
 
@@ -952,7 +1178,7 @@ block_stmts :
 block_stmt :
 		type var_declarators 'terminator' 
 		{
-			$$ = utils.init({
+			$$ = utils.assign({
 				type: $1,
 				var_declarators: $2
 			})
@@ -971,6 +1197,21 @@ stmt :
 			$$ = $1
 		}
 	|
+		if_then_stmt 
+		{
+			$$ = $1
+		}
+	|
+		if_then_else_stmt 
+		{
+			$$ = $1
+		}
+	|
+		while_stmt 
+		{
+			$$ = $1
+		}
+	|
 		for_stmt 
 		{
 			$$ = $1
@@ -980,6 +1221,16 @@ stmt :
 
 stmt_nsi :
 		stmt_wots 
+		{
+			$$ = $1
+		}
+	|
+		if_then_else_stmt_nsi 
+		{
+			$$ = $1
+		}
+	|
+		while_stmt_nsi 
 		{
 			$$ = $1
 		}
@@ -1099,7 +1350,15 @@ continue_stmt :
 return_stmt :
 		'return' expr 'terminator' 
 		{
-			$$ = $2
+			$$ = { code: $2.code, place: null }
+
+			var scope = ST.current_scope
+			while (!(scope.parent instanceof Class)) {
+				scope = scope.parent
+			}
+
+			scope.return_type = $2.type
+
 			$$.code.push(
 				"return" + ir_sep + $2.place
 			)
@@ -1108,6 +1367,13 @@ return_stmt :
 		'return' 'terminator' 
 		{
 			$$ = { code: ["return"], place: null }
+
+			var scope = ST.current_scope
+			while (!(scope.parent instanceof Class)) {
+				scope = scope.parent
+			}
+
+			scope.return_type = new Type("null", "basic", null, null, 0)
 		}
 	;
 
@@ -1332,13 +1598,230 @@ for_stmt :
 				"label" + ir_sep + $$.scope.label_end
 			])
 		}
+	|
+		for_scope_start 'for' 'paranthesis_start' for_init 'terminator' expr 'terminator' 'paranthesis_end' for_inner_scope_start stmt 
+		{
+			var inner_scope = ST.scope_end()
+
+			$$ = { code: [], place: null, scope: ST.scope_end() }
+
+			$$.code.push(
+				"label" + ir_sep + $$.scope.label_start
+			)
+
+			$$.code = $$.code.concat($4.code)
+			
+			$$.code.push(
+				"label" + ir_sep + inner_scope.label_start
+			)
+
+			$$.code = $$.code.concat($6.code)
+
+			$$.code.push(
+				"ifgoto" + ir_sep + "eq" + ir_sep + $6.place + ir_sep + "0" + ir_sep + $$.scope.label_end
+			)
+			
+			$$.code = $$.code.concat($10.code)
+
+			$$.code.push(
+				"label" + ir_sep + inner_scope.label_end
+			)
+
+			$$.code = $$.code.concat([
+				"jump" + ir_sep + inner_scope.label_start,
+				"label" + ir_sep + $$.scope.label_end
+			])
+		}
+	|
+		for_scope_start 'for' 'paranthesis_start' for_init 'terminator' 'terminator' stmt_expr_list 'paranthesis_end' for_inner_scope_start stmt 
+		{
+			var inner_scope = ST.scope_end()
+
+			$$ = { code: [], place: null, scope: ST.scope_end() }
+
+			$$.code.push(
+				"label" + ir_sep + $$.scope.label_start
+			)
+
+			$$.code = $$.code.concat($4.code)
+			
+			$$.code.push(
+				"label" + ir_sep + inner_scope.label_start
+			)
+			
+			$$.code = $$.code.concat($10.code)
+
+			$$.code.push(
+				"label" + ir_sep + inner_scope.label_end
+			)
+
+			for (var index in $7) {
+				$$.code = $$.code.concat($7[index].code)
+			}
+
+			$$.code = $$.code.concat([
+				"jump" + ir_sep + inner_scope.label_start,
+				"label" + ir_sep + $$.scope.label_end
+			])
+		}
+	|
+		for_scope_start 'for' 'paranthesis_start' for_init 'terminator' 'terminator' 'paranthesis_end' for_inner_scope_start stmt 
+		{
+			var inner_scope = ST.scope_end()
+
+			$$ = { code: [], place: null, scope: ST.scope_end() }
+
+			$$.code.push(
+				"label" + ir_sep + $$.scope.label_start
+			)
+
+			$$.code = $$.code.concat($4.code)
+			
+			$$.code.push(
+				"label" + ir_sep + inner_scope.label_start
+			)
+
+			$$.code = $$.code.concat($9.code)
+
+			$$.code.push(
+				"label" + ir_sep + inner_scope.label_end
+			)
+
+			$$.code = $$.code.concat([
+				"jump" + ir_sep + inner_scope.label_start,
+				"label" + ir_sep + $$.scope.label_end
+			])
+		}
+	|
+		for_scope_start 'for' 'paranthesis_start' 'terminator' expr 'terminator' stmt_expr_list 'paranthesis_end' for_inner_scope_start stmt 
+		{
+			var inner_scope = ST.scope_end()
+
+			$$ = { code: [], place: null, scope: ST.scope_end() }
+
+			$$.code.push(
+				"label" + ir_sep + $$.scope.label_start
+			)
+			
+			$$.code.push(
+				"label" + ir_sep + inner_scope.label_start
+			)
+
+			$$.code = $$.code.concat($5.code)
+
+			$$.code.push(
+				"ifgoto" + ir_sep + "eq" + ir_sep + $5.place + ir_sep + "0" + ir_sep + $$.scope.label_end
+			)
+			
+			$$.code = $$.code.concat($10.code)
+
+			$$.code.push(
+				"label" + ir_sep + inner_scope.label_end
+			)
+
+			for (var index in $7) {
+				$$.code = $$.code.concat($7[index].code)
+			}
+
+			$$.code = $$.code.concat([
+				"jump" + ir_sep + inner_scope.label_start,
+				"label" + ir_sep + $$.scope.label_end
+			])
+		}
+	|
+		for_scope_start 'for' 'paranthesis_start' 'terminator' expr 'terminator' 'paranthesis_end' for_inner_scope_start stmt 
+		{
+			var inner_scope = ST.scope_end()
+
+			$$ = { code: [], place: null, scope: ST.scope_end() }
+
+			$$.code.push(
+				"label" + ir_sep + $$.scope.label_start
+			)
+			
+			$$.code.push(
+				"label" + ir_sep + inner_scope.label_start
+			)
+
+			$$.code = $$.code.concat($5.code)
+
+			$$.code.push(
+				"ifgoto" + ir_sep + "eq" + ir_sep + $5.place + ir_sep + "0" + ir_sep + $$.scope.label_end
+			)
+			
+			$$.code = $$.code.concat($9.code)
+
+			$$.code.push(
+				"label" + ir_sep + inner_scope.label_end
+			)
+
+			$$.code = $$.code.concat([
+				"jump" + ir_sep + inner_scope.label_start,
+				"label" + ir_sep + $$.scope.label_end
+			])
+		}
+	|
+		for_scope_start 'for' 'paranthesis_start' 'terminator' 'terminator' stmt_expr_list 'paranthesis_end' for_inner_scope_start stmt 
+		{
+			var inner_scope = ST.scope_end()
+
+			$$ = { code: [], place: null, scope: ST.scope_end() }
+
+			$$.code.push(
+				"label" + ir_sep + $$.scope.label_start
+			)
+			
+			$$.code.push(
+				"label" + ir_sep + inner_scope.label_start
+			)
+
+			$$.code = $$.code.concat($9.code)
+
+			$$.code.push(
+				"label" + ir_sep + inner_scope.label_end
+			)
+
+			for (var index in $6) {
+				$$.code = $$.code.concat($6[index].code)
+			}
+
+			$$.code = $$.code.concat([
+				"jump" + ir_sep + inner_scope.label_start,
+				"label" + ir_sep + $$.scope.label_end
+			])
+		}
+	|
+		for_scope_start 'for' 'paranthesis_start' 'terminator' 'terminator' 'paranthesis_end' for_inner_scope_start stmt 
+		{
+			var inner_scope = ST.scope_end()
+
+			$$ = { code: [], place: null, scope: ST.scope_end() }
+
+			$$.code.push(
+				"label" + ir_sep + $$.scope.label_start
+			)
+			
+			$$.code.push(
+				"label" + ir_sep + inner_scope.label_start
+			)
+
+			$$.code = $$.code.concat($8.code)
+
+			$$.code.push(
+				"label" + ir_sep + inner_scope.label_end
+			)
+
+			$$.code = $$.code.concat([
+				"jump" + ir_sep + inner_scope.label_start,
+				"label" + ir_sep + $$.scope.label_end
+			])
+		}
 	;
 
 
 for_stmt_nsi :
-		for_scope_start 'for' 'paranthesis_start' for_init 'terminator' expr 'terminator' stmt_expr_list 'paranthesis_end' for_inner_scope_start stmt_nsi 
+		for_scope_start 'for' 'paranthesis_start' for_init 'terminator' expr 'terminator' stmt_expr_list 'paranthesis_end' for_inner_scope_start stmt_nsi
 		{
-			
 			var inner_scope = ST.scope_end()
 
 			$$ = { code: [], place: null, scope: ST.scope_end() }
@@ -1374,6 +1857,224 @@ for_stmt_nsi :
 				"label" + ir_sep + $$.scope.label_end
 			])
 		}
+	|
+		for_scope_start 'for' 'paranthesis_start' for_init 'terminator' expr 'terminator' 'paranthesis_end' for_inner_scope_start stmt_nsi
+		{
+			var inner_scope = ST.scope_end()
+
+			$$ = { code: [], place: null, scope: ST.scope_end() }
+
+			$$.code.push(
+				"label" + ir_sep + $$.scope.label_start
+			)
+
+			$$.code = $$.code.concat($4.code)
+			
+			$$.code.push(
+				"label" + ir_sep + inner_scope.label_start
+			)
+
+			$$.code = $$.code.concat($6.code)
+
+			$$.code.push(
+				"ifgoto" + ir_sep + "eq" + ir_sep + $6.place + ir_sep + "0" + ir_sep + $$.scope.label_end
+			)
+			
+			$$.code = $$.code.concat($10.code)
+
+			$$.code.push(
+				"label" + ir_sep + inner_scope.label_end
+			)
+
+			$$.code = $$.code.concat([
+				"jump" + ir_sep + inner_scope.label_start,
+				"label" + ir_sep + $$.scope.label_end
+			])
+		}
+	|
+		for_scope_start 'for' 'paranthesis_start' for_init 'terminator' 'terminator' stmt_expr_list 'paranthesis_end' for_inner_scope_start stmt_nsi
+		{
+			var inner_scope = ST.scope_end()
+
+			$$ = { code: [], place: null, scope: ST.scope_end() }
+
+			$$.code.push(
+				"label" + ir_sep + $$.scope.label_start
+			)
+
+			$$.code = $$.code.concat($4.code)
+			
+			$$.code.push(
+				"label" + ir_sep + inner_scope.label_start
+			)
+			
+			$$.code = $$.code.concat($10.code)
+
+			$$.code.push(
+				"label" + ir_sep + inner_scope.label_end
+			)
+
+			for (var index in $7) {
+				$$.code = $$.code.concat($7[index].code)
+			}
+
+			$$.code = $$.code.concat([
+				"jump" + ir_sep + inner_scope.label_start,
+				"label" + ir_sep + $$.scope.label_end
+			])
+		}
+	|
+		for_scope_start 'for' 'paranthesis_start' for_init 'terminator' 'terminator' 'paranthesis_end' for_inner_scope_start stmt_nsi
+		{
+			var inner_scope = ST.scope_end()
+
+			$$ = { code: [], place: null, scope: ST.scope_end() }
+
+			$$.code.push(
+				"label" + ir_sep + $$.scope.label_start
+			)
+
+			$$.code = $$.code.concat($4.code)
+			
+			$$.code.push(
+				"label" + ir_sep + inner_scope.label_start
+			)
+
+			$$.code = $$.code.concat($9.code)
+
+			$$.code.push(
+				"label" + ir_sep + inner_scope.label_end
+			)
+
+			$$.code = $$.code.concat([
+				"jump" + ir_sep + inner_scope.label_start,
+				"label" + ir_sep + $$.scope.label_end
+			])
+		}
+	|
+		for_scope_start 'for' 'paranthesis_start' 'terminator' expr 'terminator' stmt_expr_list 'paranthesis_end' for_inner_scope_start stmt_nsi
+		{
+			var inner_scope = ST.scope_end()
+
+			$$ = { code: [], place: null, scope: ST.scope_end() }
+
+			$$.code.push(
+				"label" + ir_sep + $$.scope.label_start
+			)
+			
+			$$.code.push(
+				"label" + ir_sep + inner_scope.label_start
+			)
+
+			$$.code = $$.code.concat($5.code)
+
+			$$.code.push(
+				"ifgoto" + ir_sep + "eq" + ir_sep + $5.place + ir_sep + "0" + ir_sep + $$.scope.label_end
+			)
+			
+			$$.code = $$.code.concat($10.code)
+
+			$$.code.push(
+				"label" + ir_sep + inner_scope.label_end
+			)
+
+			for (var index in $7) {
+				$$.code = $$.code.concat($7[index].code)
+			}
+
+			$$.code = $$.code.concat([
+				"jump" + ir_sep + inner_scope.label_start,
+				"label" + ir_sep + $$.scope.label_end
+			])
+		}
+	|
+		for_scope_start 'for' 'paranthesis_start' 'terminator' expr 'terminator' 'paranthesis_end' for_inner_scope_start stmt_nsi
+		{
+			var inner_scope = ST.scope_end()
+
+			$$ = { code: [], place: null, scope: ST.scope_end() }
+
+			$$.code.push(
+				"label" + ir_sep + $$.scope.label_start
+			)
+			
+			$$.code.push(
+				"label" + ir_sep + inner_scope.label_start
+			)
+
+			$$.code = $$.code.concat($5.code)
+
+			$$.code.push(
+				"ifgoto" + ir_sep + "eq" + ir_sep + $5.place + ir_sep + "0" + ir_sep + $$.scope.label_end
+			)
+			
+			$$.code = $$.code.concat($9.code)
+
+			$$.code.push(
+				"label" + ir_sep + inner_scope.label_end
+			)
+
+			$$.code = $$.code.concat([
+				"jump" + ir_sep + inner_scope.label_start,
+				"label" + ir_sep + $$.scope.label_end
+			])
+		}
+	|
+		for_scope_start 'for' 'paranthesis_start' 'terminator' 'terminator' stmt_expr_list 'paranthesis_end' for_inner_scope_start stmt_nsi
+		{
+			var inner_scope = ST.scope_end()
+
+			$$ = { code: [], place: null, scope: ST.scope_end() }
+
+			$$.code.push(
+				"label" + ir_sep + $$.scope.label_start
+			)
+			
+			$$.code.push(
+				"label" + ir_sep + inner_scope.label_start
+			)
+
+			$$.code = $$.code.concat($9.code)
+
+			$$.code.push(
+				"label" + ir_sep + inner_scope.label_end
+			)
+
+			for (var index in $6) {
+				$$.code = $$.code.concat($6[index].code)
+			}
+
+			$$.code = $$.code.concat([
+				"jump" + ir_sep + inner_scope.label_start,
+				"label" + ir_sep + $$.scope.label_end
+			])
+		}
+	|
+		for_scope_start 'for' 'paranthesis_start' 'terminator' 'terminator' 'paranthesis_end' for_inner_scope_start stmt_nsi
+		{
+			var inner_scope = ST.scope_end()
+
+			$$ = { code: [], place: null, scope: ST.scope_end() }
+
+			$$.code.push(
+				"label" + ir_sep + $$.scope.label_start
+			)
+			
+			$$.code.push(
+				"label" + ir_sep + inner_scope.label_start
+			)
+
+			$$.code = $$.code.concat($8.code)
+
+			$$.code.push(
+				"label" + ir_sep + inner_scope.label_end
+			)
+
+			$$.code = $$.code.concat([
+				"jump" + ir_sep + inner_scope.label_start,
+				"label" + ir_sep + $$.scope.label_end
+			])
+		}
 	;
 
 
@@ -1389,7 +2090,7 @@ for_init :
 	|
 		type var_declarators 
 		{
-			$$ = utils.init({
+			$$ = utils.assign({
 				type: $1,
 				var_declarators: $2
 			})
@@ -1411,6 +2112,64 @@ for_inner_scope_start :
 			$$ = ST.scope_start(category = "for_inner")
 		}
 	;
+
+
+switch_stmt :
+		'switch' 'paranthesis_start' expr 'paranthesis_end' switch_block 
+		{ $$ = { nt: 'switch_stmt', children: [{ t: 'switch', l: $switch },{ t: 'paranthesis_start', l: $paranthesis_start },$3,{ t: 'paranthesis_end', l: $paranthesis_end },$5] } }
+	;
+
+
+switch_block :
+		'set_start' switch_block_stmt_groups switch_labels 'set_end' 
+		{ $$ = { nt: 'switch_block', children: [{ t: 'set_start', l: $set_start },$2,$3,{ t: 'set_end', l: $set_end }] } }
+	|
+		'set_start' switch_labels 'set_end' 
+		{ $$ = { nt: 'switch_block', children: [{ t: 'set_start', l: $set_start },$2,{ t: 'set_end', l: $set_end }] } }
+	|
+		'set_start' switch_block_stmt_groups 'set_end' 
+		{ $$ = { nt: 'switch_block', children: [{ t: 'set_start', l: $set_start },$2,{ t: 'set_end', l: $set_end }] } }
+	|
+		'set_start' 'set_end' 
+		{ $$ = { nt: 'switch_block', children: [{ t: 'set_start', l: $set_start },{ t: 'set_end', l: $set_end }] } }
+	;
+
+
+switch_block_stmt_groups :
+		switch_block_stmt_groups switch_block_stmt_group 
+		{ $$ = { nt: 'switch_block_stmt_groups', children: [$1,$2] } }
+	|
+		switch_block_stmt_group 
+		{ $$ = { nt: 'switch_block_stmt_groups', children: [$1] } }
+	;
+
+
+switch_block_stmt_group :
+		switch_labels block_stmts 
+		{ $$ = { nt: 'switch_block_stmt_group', children: [$1,$2] } }
+	;
+
+
+switch_labels :
+		switch_labels switch_label 
+		{ $$ = { nt: 'switch_labels', children: [$1,$2] } }
+	|
+		switch_label 
+		{ $$ = { nt: 'switch_labels', children: [$1] } }
+	;
+
+
+switch_label :
+		'case' literal 'colon' 
+		{ $$ = { nt: 'switch_label', children: [{ t: 'case', l: $case },$2,{ t: 'colon', l: $colon }] } }
+	|
+		'case' 'paranthesis_start' literal 'paranthesis_end' 'colon' 
+		{ $$ = { nt: 'switch_label', children: [{ t: 'case', l: $case },{ t: 'paranthesis_start', l: $paranthesis_start },$3,{ t: 'paranthesis_end', l: $paranthesis_end },{ t: 'colon', l: $colon }] } }
+	|
+		'default' 'colon' 
+		{ $$ = { nt: 'switch_label', children: [{ t: 'default', l: $default },{ t: 'colon', l: $colon }] } }
+	;
+
 
 
 expr :
@@ -1462,11 +2221,16 @@ stmt_expr :
 assignment :
 		left_hand_side_non_array assignment_operator expr 
 		{
-			$$ = { code: [], place: null }
+			$$ = { code: [], place: $1.place, type: $1.type }
+
+			if (!(utils.serialize_type($1.type) == utils.serialize_type($3.type) || (utils.numeric_type_array.indexOf(utils.serialize_type($1.type)) > -1 && utils.numeric_type_array.indexOf(utils.serialize_type($3.type)) > -1))) {
+				throw Error("Cannot convert '" + utils.serialize_type($3.type) + "' to '" + utils.serialize_type($1.type) + "'")
+			}
 
 			ST.lookup_variable($1.place)
 
 			$$.code = $3.code.concat($1.code)
+
 			if ($2.third) {
 				$$.code.push(
 					$2.operator + ir_sep + $1.place + ir_sep + $1.place + ir_sep + $3.place
@@ -1481,9 +2245,14 @@ assignment :
 	|
 		array_access assignment_operator expr
 		{
-			$$ = { code: [], place: null }
+			$$ = { code: [], place: null, type: $1.type }
+
+			if (!(utils.serialize_type($1.type) == utils.serialize_type($3.type) || (utils.numeric_type_array.indexOf(utils.serialize_type($1.type)) > -1 && utils.numeric_type_array.indexOf(utils.serialize_type($3.type)) > -1))) {
+				throw Error("Cannot convert '" + utils.serialize_type($3.type) + "' to '" + utils.serialize_type($1.type) + "'")
+			}
 
 			$$.code = $3.code.concat($1.code)
+
 			if ($2.third) {
 				var temp = ST.create_temporary()
 
@@ -1492,11 +2261,15 @@ assignment :
 					$2.operator + ir_sep + temp + ir_sep + temp + ir_sep + $3.place,
 					"arrset" + ir_sep + $1.place + ir_sep + $1.offset + ir_sep + temp,
 				])
+
+				$$.place = temp
 			}
 			else {
 				$$.code.push(
 					"arrset" + ir_sep + $1.place + ir_sep + $1.offset + ir_sep + $3.place,
 				)
+				
+				$$.place = $3.place
 			}
 		}
 	;
@@ -1506,6 +2279,8 @@ left_hand_side_non_array :
 		expr_name 
 		{
 			$$ = $1
+
+			$$.type = ST.lookup_variable($$.place).type
 		}
 	|
 		field_access 
@@ -1536,6 +2311,11 @@ cond_or_expr :
 	|
 		cond_or_expr 'op_oror' cond_and_expr 
 		{
+			var invalid = ["float"]
+			if (invalid.indexOf(utils.serialize_type($1.type)) > -1 || invalid.indexOf(utils.serialize_type($3.type)) > -1) {
+				throw Error("Bad operand types '" + utils.serialize_type($1.type) + "' and '" + utils.serialize_type($3.type) + "' on binary operator '||'")
+			}
+
 			$$ = utils.binary({
 				op1: $1,
 				op2: $3,
@@ -1553,6 +2333,11 @@ cond_and_expr :
 	|
 		cond_and_expr 'op_andand' incl_or_expr 
 		{
+			var invalid = ["float"]
+			if (invalid.indexOf(utils.serialize_type($1.type)) > -1 || invalid.indexOf(utils.serialize_type($3.type)) > -1) {
+				throw Error("Bad operand types '" + utils.serialize_type($1.type) + "' and '" + utils.serialize_type($3.type) + "' on binary operator '&&'")
+			}
+
 			$$ = utils.binary({
 				op1: $1,
 				op2: $3,
@@ -1570,6 +2355,11 @@ incl_or_expr :
 	|
 		incl_or_expr 'op_or' excl_or_expr 
 		{
+			var invalid = ["float"]
+			if (invalid.indexOf(utils.serialize_type($1.type)) > -1 || invalid.indexOf(utils.serialize_type($3.type)) > -1) {
+				throw Error("Bad operand types '" + utils.serialize_type($1.type) + "' and '" + utils.serialize_type($3.type) + "' on binary operator '|'")
+			}
+
 			$$ = utils.binary({
 				op1: $1,
 				op2: $3,
@@ -1587,6 +2377,11 @@ excl_or_expr :
 	|
 		excl_or_expr 'op_xor' and_expr 
 		{
+			var invalid = ["float"]
+			if (invalid.indexOf(utils.serialize_type($1.type)) > -1 || invalid.indexOf(utils.serialize_type($3.type)) > -1) {
+				throw Error("Bad operand types '" + utils.serialize_type($1.type) + "' and '" + utils.serialize_type($3.type) + "' on binary operator '^'")
+			}
+
 			$$ = utils.binary({
 				op1: $1,
 				op2: $3,
@@ -1604,6 +2399,11 @@ and_expr :
 	|
 		and_expr 'op_and' equality_expr 
 		{
+			var invalid = ["float"]
+			if (invalid.indexOf(utils.serialize_type($1.type)) > -1 || invalid.indexOf(utils.serialize_type($3.type)) > -1) {
+				throw Error("Bad operand types '" + utils.serialize_type($1.type) + "' and '" + utils.serialize_type($3.type) + "' on binary operator '&'")
+			}
+
 			$$ = utils.binary({
 				op1: $1,
 				op2: $3,
@@ -1621,67 +2421,91 @@ equality_expr :
 	|
 		equality_expr 'op_equalCompare' relational_expr 
 		{
-			$$ = utils.binary({
+			if (utils.numeric_type_array.indexOf(utils.serialize_type($1.type)) == -1 || utils.numeric_type_array.indexOf(utils.serialize_type($3.type)) == -1) {
+				throw Error("Incomparable operand types '" + utils.serialize_type($1.type) + "' and '" + utils.serialize_type($3.type) + "' on binary operator '<='")
+			}
+
+			$$ = utils.relational({
 				op1: $1,
 				op2: $3,
-				operator: "=="
+				operator: "eq"
 			})
 		}
 	|
 		equality_expr 'op_notequalCompare' relational_expr 
 		{
-			$$ = utils.binary({
+			if (utils.numeric_type_array.indexOf(utils.serialize_type($1.type)) == -1 || utils.numeric_type_array.indexOf(utils.serialize_type($3.type)) == -1) {
+				throw Error("Incomparable operand types '" + utils.serialize_type($1.type) + "' and '" + utils.serialize_type($3.type) + "' on operator '!='")
+			}
+
+			$$ = utils.relational({
 				op1: $1,
 				op2: $3,
-				operator: "!="
+				operator: "ne"
 			})
 		}
 	;
 
 
 relational_expr :
-		shift_expr 
+		additive_expr 
 		{
 			$$ = $1
 		}
 	|
-		relational_expr 'op_greater' shift_expr 
+		relational_expr 'op_greater' additive_expr 
 		{
-			$$ = utils.binary({
+			if (utils.numeric_type_array.indexOf(utils.serialize_type($1.type)) == -1 || utils.numeric_type_array.indexOf(utils.serialize_type($3.type)) == -1) {
+				throw Error("Incomparable operand types '" + utils.serialize_type($1.type) + "' and '" + utils.serialize_type($3.type) + "' on operator '>'")
+			}
+
+			$$ = utils.relational({
 				op1: $1,
 				op2: $3,
-				operator: ">"
+				operator: "gt"
 			})
 		}
 	|
-		relational_expr 'op_greaterEqual' shift_expr 
+		relational_expr 'op_greaterEqual' additive_expr 
 		{
-			$$ = utils.binary({
+			if (utils.numeric_type_array.indexOf(utils.serialize_type($1.type)) == -1 || utils.numeric_type_array.indexOf(utils.serialize_type($3.type)) == -1) {
+				throw Error("Incomparable operand types '" + utils.serialize_type($1.type) + "' and '" + utils.serialize_type($3.type) + "' on operator '>='")
+			}
+
+			$$ = utils.relational({
 				op1: $1,
 				op2: $3,
-				operator: ">="
+				operator: "ge"
 			})
 		}
 	|
-		relational_expr 'op_less' shift_expr 
+		relational_expr 'op_less' additive_expr 
 		{
-			$$ = utils.binary({
+			if (utils.numeric_type_array.indexOf(utils.serialize_type($1.type)) == -1 || utils.numeric_type_array.indexOf(utils.serialize_type($3.type)) == -1) {
+				throw Error("Incomparable operand types '" + utils.serialize_type($1.type) + "' and '" + utils.serialize_type($3.type) + "' on operator '<'")
+			}
+
+			$$ = utils.relational({
 				op1: $1,
 				op2: $3,
-				operator: "<"
+				operator: "lt"
 			})
 		}
 	|
-		relational_expr 'op_lessEqual' shift_expr 
+		relational_expr 'op_lessEqual' additive_expr 
 		{
-			$$ = utils.binary({
+			if (utils.numeric_type_array.indexOf(utils.serialize_type($1.type)) == -1 || utils.numeric_type_array.indexOf(utils.serialize_type($3.type)) == -1) {
+				throw Error("Incomparable operand types '" + utils.serialize_type($1.type) + "' and '" + utils.serialize_type($3.type) + "' on operator '<='")
+			}
+
+			$$ = utils.relational({
 				op1: $1,
 				op2: $3,
-				operator: "<="
+				operator: "le"
 			})
 		}
 	|
-		relational_expr 'instanceof' shift_expr 
+		relational_expr 'instanceof' additive_expr 
 		{ $$ = { nt: 'relational_expr', children: [$1,{ t: 'instanceof', l: $instanceof },$3] } }
 	;
 
@@ -1694,6 +2518,10 @@ shift_expr :
 	|
 		shift_expr 'op_Lshift' additive_expr 
 		{
+			if (utils.numeric_type_array.indexOf(utils.serialize_type($1.type)) == -1 || utils.numeric_type_array.indexOf(utils.serialize_type($3.type)) == -1) {
+				throw Error("Bad operand types '" + utils.serialize_type($1.type) + "' and '" + utils.serialize_type($3.type) + "' on binary operator '<<'")
+			}
+
 			$$ = utils.binary({
 				op1: $1,
 				op2: $3,
@@ -1703,6 +2531,10 @@ shift_expr :
 	|
 		shift_expr 'op_Rshift' additive_expr 
 		{
+			if (utils.numeric_type_array.indexOf(utils.serialize_type($1.type)) == -1 || utils.numeric_type_array.indexOf(utils.serialize_type($3.type)) == -1) {
+				throw Error("Bad operand types '" + utils.serialize_type($1.type) + "' and '" + utils.serialize_type($3.type) + "' on binary operator '>>'")
+			}
+
 			$$ = utils.binary({
 				op1: $1,
 				op2: $3,
@@ -1720,6 +2552,10 @@ additive_expr :
 	|
 		additive_expr 'op_add' multiplicative_expr 
 		{
+			if (utils.numeric_type_array.indexOf(utils.serialize_type($1.type)) == -1 || utils.numeric_type_array.indexOf(utils.serialize_type($3.type)) == -1) {
+				throw Error("Bad operand types '" + utils.serialize_type($1.type) + "' and '" + utils.serialize_type($3.type) + "' on binary operator '+'")
+			}
+
 			$$ = utils.binary({
 				op1: $1,
 				op2: $3,
@@ -1729,6 +2565,10 @@ additive_expr :
 	|
 		additive_expr 'op_sub' multiplicative_expr 
 		{
+			if (utils.numeric_type_array.indexOf(utils.serialize_type($1.type)) == -1 || utils.numeric_type_array.indexOf(utils.serialize_type($3.type)) == -1) {
+				throw Error("Bad operand types '" + utils.serialize_type($1.type) + "' and '" + utils.serialize_type($3.type) + "' on binary operator '-'")
+			}
+
 			$$ = utils.binary({
 				op1: $1,
 				op2: $3,
@@ -1746,6 +2586,10 @@ multiplicative_expr :
 	|
 		multiplicative_expr 'op_mul' unary_expr 
 		{
+			if (utils.numeric_type_array.indexOf(utils.serialize_type($1.type)) == -1 || utils.numeric_type_array.indexOf(utils.serialize_type($3.type)) == -1) {
+				throw Error("Bad operand types '" + utils.serialize_type($1.type) + "' and '" + utils.serialize_type($3.type) + "' on binary operator '*'")
+			}
+
 			$$ = utils.binary({
 				op1: $1,
 				op2: $3,
@@ -1755,6 +2599,10 @@ multiplicative_expr :
 	|
 		multiplicative_expr 'op_div' unary_expr 
 		{
+			if (utils.numeric_type_array.indexOf(utils.serialize_type($1.type)) == -1 || utils.numeric_type_array.indexOf(utils.serialize_type($3.type)) == -1) {
+				throw Error("Bad operand types '" + utils.serialize_type($1.type) + "' and '" + utils.serialize_type($3.type) + "' on binary operator '/'")
+			}
+
 			$$ = utils.binary({
 				op1: $1,
 				op2: $3,
@@ -1764,6 +2612,10 @@ multiplicative_expr :
 	|
 		multiplicative_expr 'op_mod' unary_expr 
 		{
+			if (utils.numeric_type_array.indexOf(utils.serialize_type($1.type)) == -1 || utils.numeric_type_array.indexOf(utils.serialize_type($3.type)) == -1 || utils.serialize_type($3.type) == "float") {
+				throw Error("Bad operand types '" + utils.serialize_type($3.type) + "' and '" + utils.serialize_type($3.type) + "' on binary operator '%'")
+			}
+
 			$$ = utils.binary({
 				op1: $1,
 				op2: $3,
@@ -1778,6 +2630,10 @@ predec_expr :
 		{
 			$$ = $2
 
+			if (utils.numeric_type_array.indexOf(utils.serialize_type($$.type)) == -1) {
+				throw Error("Bad operand type '" + utils.serialize_type($$.type) + "' on unary operator '++'")
+			}
+
 			$$.code.push(
 				"dec" + ir_sep + $$.place
 			)
@@ -1789,6 +2645,10 @@ preinc_expr :
 		'op_increment' unary_expr 
 		{
 			$$ = $2
+
+			if (utils.numeric_type_array.indexOf(utils.serialize_type($$.type)) == -1) {
+				throw Error("Bad operand type '" + utils.serialize_type($$.type) + "' on unary operator '++'")
+			}
 
 			$$.code.push(
 				"inc" + ir_sep + $$.place
@@ -1814,12 +2674,14 @@ unary_expr :
 				$$ = $2
 			}
 			else {
-				temp = ST.create_temporary()
-
-				$$ = {code: $2.code, place: temp}
+				$$ = $2
+				
+				if (utils.numeric_type_array.indexOf(utils.serialize_type($$.type)) == -1) {
+					throw Error("Bad operand type '" + utils.serialize_type($$.type) + "' on unary operator '-'")
+				}
 
 				$$.code.push(
-					"*" + ir_sep + $$.place + ir_sep + $2.place + ir_sep + "-1"
+					"neg" + ir_sep + $$.place
 				)
 			}
 		}
@@ -1845,6 +2707,11 @@ unary_expr_npm :
 		'op_not' unary_expr 
 		{
 			$$ = $2
+			
+			if (utils.serialize_type($$.type) != "boolean") {
+				throw Error("Bad operand type '" + utils.serialize_type($$.type) + "' on unary operator '!'")
+			}
+
 			$$.code.push(
 				"not" + ir_sep + $$.place
 			)
@@ -1903,6 +2770,8 @@ postfix_expr :
 		expr_name 
 		{
 			$$ = $1
+			
+			$$.type = ST.lookup_variable($$.place).type
 		}
 	;
 
@@ -1910,7 +2779,7 @@ postfix_expr :
 method_invocation :
 		expr_name 'paranthesis_start' argument_list 'paranthesis_end' 
 		{
-			$$ = { code: [], place: null }
+			$$ = { code: [], place: null, type: null }
 
 			var method = ST.lookup_method($1.place)
 
@@ -1927,7 +2796,7 @@ method_invocation :
 				)
 			}
 
-			if (method.type != "void") {
+			if (method.type != "null") {
 				temp = ST.create_temporary()
 
 				$$.place = temp
@@ -1940,11 +2809,13 @@ method_invocation :
 					"call" + ir_sep + $1.place + ir_sep + method.num_parameters
 				)
 			}
+
+			$$.type = method.return_type
 		}
 	|
 		expr_name 'paranthesis_start' 'paranthesis_end' 
 		{
-			$$ = { code: [], place: null }
+			$$ = { code: [], place: null, type: null }
 
 			var method = ST.lookup_method($1.place)
 
@@ -1961,7 +2832,7 @@ method_invocation :
 				)
 			}
 
-			if (method.type != "void") {
+			if (method.type != "null") {
 				temp = ST.create_temporary()
 
 				$$.place = temp
@@ -1974,6 +2845,8 @@ method_invocation :
 					"call" + ir_sep + $1.place + ir_sep + method.num_parameters
 				)
 			}
+
+			$$.type = method.return_type
 		}
 	|
 		primary 'field_invoker' 'identifier' 'paranthesis_start' argument_list 'paranthesis_end' 
@@ -2002,7 +2875,7 @@ field_access :
 array_access :
 		expr_name 'colon' dim_exprs 
 		{
-			$$ = { code: [], place: null, offset: null }
+			$$ = { code: [], place: null, offset: null, type: null }
 
 			var temp = ST.create_temporary()
 
@@ -2018,7 +2891,7 @@ array_access :
 			for (var index in $3) {
 				var dim = $3[index]
 
-				if (dim.literal && dim.type != "integer") {
+				if (dim.type.category != "basic" && dim.type.type != "int") {
 					throw Error("Array indices can only be of type (int)")
 				}
 				if (type.category != "array") {
@@ -2041,6 +2914,7 @@ array_access :
 
 			$$.place = array.name
 			$$.offset = temp
+			$$.type = type
 		}
 	;
 
@@ -2071,13 +2945,15 @@ primary :
 	|
 		array_access 
 		{
-			$$ = { code: $1.code, place: null }
+			$$ = { code: $1.code, place: null, type: null }
 
 			$$.place = ST.create_temporary()
 
 			$$.code.push(
 				"arrget" + ir_sep + $$.place + ir_sep + $1.place + ir_sep + $1.offset
 			)
+
+			$$.type = $1.type
 		}
 	|
 		method_invocation 
@@ -2137,7 +3013,8 @@ expr_name :
 		{
 			$$ = {
 				code: [],
-				place: $identifier
+				place: $identifier,
+				type: null
 			}
 		}
 	|
@@ -2145,7 +3022,8 @@ expr_name :
 		{
 			$$ = {
 				code: [],
-				place: $identifier
+				place: $identifier,
+				type: null
 			}
 		}
 	;
@@ -2158,7 +3036,7 @@ literal :
 				code: [],
 				place: $integer_literal,
 				literal: true,
-				type: "integer"
+				type: new Type("int", "basic", 4, null, 0)
 			}
 		}
 	|
@@ -2168,7 +3046,7 @@ literal :
 				code: [],
 				place: $float_literal,
 				literal: true,
-				type: "float"
+				type: new Type("float", "basic", 4, null, 0)
 			}
 		}
 	|
@@ -2176,9 +3054,9 @@ literal :
 		{
 			$$ = {
 				code: [],
-				place: $boolean_literal,
+				place: ($boolean_literal == "true") ? 1 : 0,
 				literal: true,
-				type: "boolean"
+				type: new Type("boolean", "basic", 1, null, 0)
 			}
 		}
 	|
@@ -2186,19 +3064,9 @@ literal :
 		{
 			$$ = {
 				code: [],
-				place: $character_literal,
+				place: $character_literal.charCodeAt(1).toString(),
 				literal: true,
-				type: "character"
-			}
-		}
-	|
-		'string_literal' 
-		{
-			$$ = {
-				code: [],
-				place: $string_literal,
-				literal: true,
-				type: "string"
+				type: new Type("int", "basic", 4, null, 0)
 			}
 		}
 	|
@@ -2208,7 +3076,7 @@ literal :
 				code: [],
 				place: $null_literal,
 				literal: true,
-				type: "null"
+				type: new Type("null", "basic", null, null, 0)
 			}
 		}
 	;
