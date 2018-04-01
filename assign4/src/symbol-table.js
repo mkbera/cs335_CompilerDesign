@@ -85,12 +85,17 @@ class ScopeTable {
         this.label_start = this.class.create_label()
         this.label_end = this.class.create_label()
 
+        this.parameters = {}
+
         this.return_type = null
     }
 
     add_variable(name, type) {
         if (name in this.variables) {
-            throw Error("The variable " + name + " has already been defined!")
+            throw Error("The variable '" + name + "' has already been defined!")
+        }
+        if (name in this.parameters) {
+            throw Error("The variable '" + name + "' has already been defined as the function parameter!")
         }
 
         var variable = new Variable(name, type)
@@ -108,7 +113,7 @@ class ScopeTable {
         }
         else {
             if (error) {
-                throw Error("The variable " + name + " was not declared in the current scope!")
+                throw Error("The variable '" + name + "' was not declared in the current scope!")
             }
         }
     }
@@ -166,13 +171,6 @@ class Method {
                 throw Error("The return type of the main function must be void")
             }
         }
-
-        if (scope_table != null) {
-            this.parameters.forEach(function (parameter) {
-                parameter.isparam = true
-                scope_table.variables[parameter.name] = parameter;
-            })
-        }
     }
 
     print(indent) {
@@ -201,7 +199,7 @@ class Class {
 
     add_method(name, return_type, parameters, scope_table, main) {
         if (name in this.variables) {
-            throw Error("The method " + name + " has already been defined!")
+            throw Error("The method '" + name + "' has already been defined!")
         }
 
         var method = new Method(name, return_type, parameters, scope_table, main)
@@ -212,7 +210,7 @@ class Class {
 
     add_variable(name, type) {
         if (name in this.variables) {
-            throw Error("The variable " + name + " has already been defined!")
+            throw Error("The variable '" + name + "' has already been defined!")
         }
 
         var variable = new Variable(name, type)
@@ -230,7 +228,7 @@ class Class {
         }
         else {
             if (error) {
-                throw Error("The variable " + name + " was not declared in the current scope!")
+                throw Error("The variable '" + name + "' was not declared in the current scope!")
             }
         }
     }
@@ -244,7 +242,7 @@ class Class {
         }
         else {
             if (error) {
-                throw Error("The method " + name + " was not declared in the current scope!")
+                throw Error("The method '" + name + "' was not declared in the current scope!")
             }
         }
     }
@@ -289,7 +287,7 @@ class SymbolTable {
 
     get_class(name) {
         if (!(name in this.classes)) {
-            throw Error("The class " + name + " has not been declared in the current scope!")
+            throw Error("The class '" + name + "' has not been declared in the current scope!")
         }
 
         return this.classes[name]
@@ -297,13 +295,13 @@ class SymbolTable {
 
     add_class(name, parent_name = "") {
         if (name in this.classes) {
-            throw Error("The class " + name + " has already been declared!")
+            throw Error("The class '" + name + "' has already been declared!")
         }
 
         var parent = this
         if (parent_name != "") {
             if (!(parent_name in this.classes)) {
-                throw Error("The class " + parent_name + " has not been declared in the current scope!")
+                throw Error("The class '" + parent_name + "' has not been declared in the current scope!")
             }
 
             parent = this.classes[parent_name];
@@ -321,7 +319,7 @@ class SymbolTable {
     add_method(name, return_type, parameters, scope_table) {
         if (name == "main") {
             if (this.main_function != null) {
-                throw Error("The method " + name + " can be defined only once")
+                throw Error("The method '" + name + "' can be defined only once")
             }
 
             this.main_function = this.current_class.add_method(name, return_type, parameters, scope_table, true)
@@ -330,7 +328,7 @@ class SymbolTable {
         }
 
         if (name in this.import_methods) {
-            throw Error("The method " + name + " has already been declared as part of the " + this.import_methods[name] + " library")
+            throw Error("The method '" + name + "' has already been declared as part of the " + this.import_methods[name] + " library")
         }
 
         return this.current_class.add_method(name, return_type, parameters, scope_table, false)
@@ -358,7 +356,8 @@ class SymbolTable {
 
         if (this.current_scope != this.current_class) {
             this.current_scope.children.push(table)
-            table.parent = this.current_scope
+
+            table.parameters = this.current_scope.parameters
         }
 
         this.current_scope = table

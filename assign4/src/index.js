@@ -22,6 +22,7 @@ if (process.argv.length >= 3) {
 input = fs.readFileSync(input_file).toString();
 console.log("Reading Input from file: " + input_file);
 
+console.log("")
 code = parser.parse(input)
 
 console.log("")
@@ -42,6 +43,6 @@ if (process.argv.length >= 4) {
             return console.log(err)
         }
 
-        console.log("The IR code was generated and saved to " + out_file)
+        console.log("\nThe IR code was generated and saved to " + out_file + "\n")
     })
 }

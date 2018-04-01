@@ -987,13 +987,15 @@ reference_type :
 method_decr :
 		'public' 'void' method_declarator method_body 
 		{
-			var method = ST.add_method($3.name, new Type("null", "basic", null, null), $3.parameters, $4.scope)
+			var scope = ST.scope_end()
+			
+			var method = ST.add_method($3.name, new Type("null", "basic", null, null), $3.parameters, scope)
 
-			if ($4.scope.return_type == null && method.return_type.type != "null") {
+			if (scope.return_type == null && method.return_type.type != "null") {
 				throw Error("A method with a defined return type must have a return statement")
 			}
-			else if ($4.scope.return_type != null && !(utils.serialize_type($4.scope.return_type) == utils.serialize_type(method.return_type) || (utils.numeric_type_array.indexOf(utils.serialize_type(method.return_type)) > -1 && utils.serialize_type($4.scope.return_type) > -1))) {
-				throw Error("The return type '" + utils.serialize_type($4.scope.return_type) + "' does not match with the method's return type '" + utils.serialize_type(method.return_type) + "'")
+			else if (scope.return_type != null && !(utils.serialize_type(scope.return_type) == utils.serialize_type(method.return_type) || (utils.numeric_type_array.indexOf(utils.serialize_type(method.return_type)) > -1 && utils.serialize_type(scope.return_type) > -1))) {
+				throw Error("The return type '" + utils.serialize_type(scope.return_type) + "' does not match with the method's return type '" + utils.serialize_type(method.return_type) + "'")
 			}
 
 			$$ = { code: [], place: null }
@@ -1008,20 +1010,22 @@ method_decr :
 			}
 			$$.code = $$.code.concat($4.code)
 
-			if ($4.scope.return_type == null) {
+			if (scope.return_type == null) {
 				$$.code.push("return")
 			}
 		}
 	|
 		'public' type method_declarator method_body 
 		{
-			var method = ST.add_method($3.name, $2, $3.parameters, $4.scope)
+			var scope = ST.scope_end()
 
-			if ($4.scope.return_type == null && method.return_type.type != "null") {
+			var method = ST.add_method($3.name, $2, $3.parameters, scope)
+
+			if (scope.return_type == null && method.return_type.type != "null") {
 				throw Error("A method with a defined return type must have a return statement")
 			}
-			else if ($4.scope.return_type != null && !(utils.serialize_type($4.scope.return_type) == utils.serialize_type(method.return_type) || (utils.numeric_type_array.indexOf(utils.serialize_type(method.return_type)) > -1 && utils.serialize_type($4.scope.return_type) > -1))) {
-				throw Error("The return type '" + utils.serialize_type($4.scope.return_type) + "' does not match with the method's return type '" + utils.serialize_type(method.return_type) + "'")
+			else if (scope.return_type != null && !(utils.serialize_type(scope.return_type) == utils.serialize_type(method.return_type) || (utils.numeric_type_array.indexOf(utils.serialize_type(method.return_type)) > -1 && utils.serialize_type(scope.return_type) > -1))) {
+				throw Error("The return type '" + utils.serialize_type(scope.return_type) + "' does not match with the method's return type '" + utils.serialize_type(method.return_type) + "'")
 			}
 
 			$$ = { code: [], place: null }
@@ -1036,20 +1040,22 @@ method_decr :
 			}
 			$$.code = $$.code.concat($4.code)
 
-			if ($4.scope.return_type == null) {
+			if (scope.return_type == null) {
 				$$.code.push("return")
 			}
 		}
 	|
 		'void' method_declarator method_body 
 		{
-			var method = ST.add_method($2.name, new Type("null", "basic", null, null), $2.parameters, $3.scope)
+			var scope = ST.scope_end()
 
-			if ($3.scope.return_type == null && method.return_type.type != "null") {
+			var method = ST.add_method($2.name, new Type("null", "basic", null, null), $2.parameters, scope)
+
+			if (scope.return_type == null && method.return_type.type != "null") {
 				throw Error("A method with a defined return type must have a return statement")
 			}
-			else if ($3.scope.return_type != null && !(utils.serialize_type($3.scope.return_type) == utils.serialize_type(method.return_type) || (utils.numeric_type_array.indexOf(utils.serialize_type(method.return_type)) > -1 && utils.serialize_type($3.scope.return_type) > -1))) {
-				throw Error("The return type '" + utils.serialize_type($3.scope.return_type) + "' does not match with the method's return type '" + utils.serialize_type(method.return_type) + "'")
+			else if (scope.return_type != null && !(utils.serialize_type(scope.return_type) == utils.serialize_type(method.return_type) || (utils.numeric_type_array.indexOf(utils.serialize_type(method.return_type)) > -1 && utils.serialize_type(scope.return_type) > -1))) {
+				throw Error("The return type '" + utils.serialize_type(scope.return_type) + "' does not match with the method's return type '" + utils.serialize_type(method.return_type) + "'")
 			}
 
 			$$ = { code: [], place: null }
@@ -1064,20 +1070,22 @@ method_decr :
 			}
 			$$.code = $$.code.concat($3.code)
 
-			if ($3.scope.return_type == null) {
+			if (scope.return_type == null) {
 				$$.code.push("return")
 			}
 		}
 	|
 		type method_declarator method_body 
 		{
-			var method = ST.add_method($2.name, $1, $2.parameters, $3.scope)
+			var scope = ST.scope_end()
 
-			if ($3.scope.return_type == null && method.return_type.type != "null") {
+			var method = ST.add_method($2.name, $1, $2.parameters, scope)
+
+			if (scope.return_type == null && method.return_type.type != "null") {
 				throw Error("A method with a defined return type must have a return statement")
 			}
-			else if ($3.scope.return_type != null && !(utils.serialize_type($3.scope.return_type) == utils.serialize_type(method.return_type) || (utils.numeric_type_array.indexOf(utils.serialize_type(method.return_type)) > -1 && utils.serialize_type($3.scope.return_type) > -1))) {
-				throw Error("The return type '" + utils.serialize_type($3.scope.return_type) + "' does not match with the method's return type '" + utils.serialize_type(method.return_type) + "'")
+			else if (scope.return_type != null && !(utils.serialize_type(scope.return_type) == utils.serialize_type(method.return_type) || (utils.numeric_type_array.indexOf(utils.serialize_type(method.return_type)) > -1 && utils.serialize_type(scope.return_type) > -1))) {
+				throw Error("The return type '" + utils.serialize_type(scope.return_type) + "' does not match with the method's return type '" + utils.serialize_type(method.return_type) + "'")
 			}
 
 			$$ = { code: [], place: null }
@@ -1092,7 +1100,7 @@ method_decr :
 			}
 			$$.code = $$.code.concat($3.code)
 
-			if ($3.scope.return_type == null) {
+			if (scope.return_type == null) {
 				$$.code.push("return")
 			}
 		}
@@ -1104,8 +1112,18 @@ method_declarator :
 		{
 			$$ = {
 				name: $identifier,
-				parameters: $3
+				parameters: $3,
+				scope: null
 			}
+
+			var scope = ST.scope_start();
+			for (var index in $3) {
+				var variable = scope.add_variable($3[index].name, $3[index].type)
+				scope.parameters[variable.name] = variable
+				variable.isparam = true
+			}
+
+			$$.scope = scope
 		}
 	;
 
@@ -1301,11 +1319,13 @@ break_stmt :
 					$$.code.push(
 						"jump" + ir_sep + scope.label_end
 					)
+					break
 				}
 				else if (scope.category == "for_inner") {
 					$$.code.push(
 						"jump" + ir_sep + scope.parent.label_end
 					)
+					break
 				}
 
 				scope = scope.parent
@@ -1330,11 +1350,13 @@ continue_stmt :
 					$$.code.push(
 						"jump" + ir_sep + scope.label_start
 					)
+					break
 				}
 				else if (scope.category == "for_inner") {
 					$$.code.push(
 						"jump" + ir_sep + scope.label_end
 					)
+					break
 				}
 
 				scope = scope.parent

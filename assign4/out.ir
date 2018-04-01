@@ -1,0 +1,55 @@
+1	import	IO
+2	class	test
+3	decr	x	int
+4	=	x	10
+5	decr	a	int
+6	decr	c	int
+7	cast	t_1	float	int	5.012
+8	=	c	t_1
+9	decr	d	array	int	4	
+10	cast	t_2	float	int	1.0
+11	arrset	d	0	t_2
+12	arrset	d	1	0
+13	arrset	d	2	0
+14	arrset	d	3	0
+15	function	function_name
+16	arg	x	basic	int	1
+17	decr	b	float
+18	=	x	a
+19	return
+20	function	test_func
+21	arg	arr	array	int	25
+22	decr	a	int
+23	=	a	1
+24	decr	b	int
+25	=	b	0
+26	decr	c	boolean
+27	=	c	1
+28	+	t_3	b	5
+29	=	a	t_3
+30	neg	b
+31	=	a	b
+32	decr	arr2	int
+33	decr	i	int
+34	=	i	0
+35	=	i	5
+36	ifgoto	eq	i	0	52
+37	decr	j	int
+38	=	j	0
+39	=	j	5
+40	ifgoto	eq	j	0	50
+41	+	t_5	b	1
+42	=	t_4	0
+43	*	t_4	t_4	2
+44	+	t_4	t_4	i
+45	*	t_4	t_4	2
+46	+	t_4	t_4	j
+47	arrset	d	t_4	t_5
+48	inc	j
+49	jump	39
+50	inc	i
+51	jump	35
+52	return	a
+53	function	main
+54	decr	a	int
+55	return
