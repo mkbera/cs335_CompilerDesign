@@ -1,7 +1,7 @@
 1	decr	g	int
 2	=	g	7
 3	param	g	int
-4	call	myfunc
+4	call	myfunc	g
 5	exit
 6	function	myfunc
 7	arg	g	int

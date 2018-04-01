@@ -607,12 +607,23 @@ function codeGen(instr, next_use_table, line_nr) {
 
 		assembly.add("call func_" + instr[2]);
 		assembly.add("add esp, " + registers.n_params + "* 4")
+		if (instr[3] != null) {
+			var variable = instr[3]
+			assembly.add("mov [ebp - " + registers.address_descriptor[variable]["offset"] + "], eax")
+		}
 		registers.n_params = 0;
 		
 	
 	}
 	else if (op == "return") {
 		registers.unloadRegisters(line_nr - 1);
+		// var variable = registers.register_descriptor['eax']
+		// assembly.add("mov	[ebp - " + registers.address_descriptor[variable]["offset"] + "], eax")
+		var x;
+		if (instr[2] != null){
+			x = instr[2]
+			assembly.add("mov eax, [ebp - " + registers.address_descriptor[x]["offset"] + "]")
+		}
 		assembly.add("mov	esp, ebp");
 		assembly.add("pop ebp");
 		assembly.add("ret");
