@@ -32,12 +32,20 @@ function getVariables(arrays) {
 	var variables = [];
 
 	tac.forEach(function (instr) {
-		if (math_ops.indexOf(instr[1]) > -1 && keywords.indexOf(instr[2]) == -1 && arrays.indexOf(instr[1]) == -1) {
+		// if (math_ops.indexOf(instr[1]) > -1 && keywords.indexOf(instr[2]) == -1 && arrays.indexOf(instr[1]) == -1) {
+		// 	variables.push(instr[2]);
+		// }
+		if (instr[1] == "decr"){ //|| instr[1] == "byte" || instr[1] == "char" || instr[1] == "float" || instr[1] == "short" || instr[1] == "param") {
 			variables.push(instr[2]);
 		}
-		if (instr[1] == "scan") {
-			variables.push(instr[2]);
-		}
+		// if (instr[1] == 'int') {
+		// 	variable = {id:instr[2], type:'int'};
+		// 	variables.push(variable);
+		// }
+		// if (instr[1] == 'float') {
+		// 	variable = {id:instr[2], type:'float'};
+		// 	variables.push(variable);
+		// }
 	});
 
 	return variables.unique();

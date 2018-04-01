@@ -1,6 +1,14 @@
-1	=	a	5
-2	=	b	3
-3	=	c	2
-3	-	b	a	c
-4	print	b
-5	exit
+1	decr	a	array	int	2
+2	arrset	a	0	69
+3	decr	b	int
+4	=	b	20
+5	arrget	b	a	0
+6	arrset	a	1	b
+7	decr	c	int
+8	arrget	c	a	0
+9	decr	d	int
+10	arrget	d	a	1
+11	print	b
+12	print	c
+13	print	d
+14	exit

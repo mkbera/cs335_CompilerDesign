@@ -11,8 +11,13 @@ class Registers {
 		this.address_descriptor = {
 			// value is a hashmap of two elements: name(iden) and type("mem"/"reg")
 		};
+
+		this.counter = 0; // global offset counter from ebp downwards so that to set offset for local variables
+		this.n_params = 0; // number of params to be passed to the function to be called
+		this.arg_counter = 0; // global counter for number of args
 	}
 
+	// counter
 
 	spillVariable(variable, line_nr, print = true) {
 		var self = this;
@@ -31,10 +36,12 @@ class Registers {
 					}
 				});
 
-				if (print) assembly.add("mov dword [" + variable + "], " + reg);
+				// if (print) assembly.add("mov dword [" + variable + "], " + reg);
+				if (print) assembly.add("mov dword [ ebp - " + self.address_descriptor[variable]["offset"] + "], " + reg);
 			}
-
-			self.address_descriptor[variable] = { "type": "mem", "name": variable };
+			// self.address_descriptor[variable] = { "type": "mem", "name": variable};
+			self.address_descriptor[variable]["type"] = "mem";
+			self.address_descriptor[variable]["name"] = variable;
 			self.register_descriptor[reg] = null;
 		}
 	}
@@ -47,7 +54,11 @@ class Registers {
 		registers_list.some(function (register) {
 			if (safe_regs.indexOf(register) == -1 && self.register_descriptor[register] == null) {
 				self.register_descriptor[register] = variable;
-				self.address_descriptor[variable] = { "type": "reg", "name": register };
+				// self.address_descriptor[variable] = { "type": "reg", "name": register };
+				self.address_descriptor[variable]["type"] = "reg";
+				self.address_descriptor[variable]["name"] = register;
+
+
 
 				rep_reg = register;
 				return true;
@@ -70,7 +81,9 @@ class Registers {
 				if (safe.indexOf(rep_var) == -1 && next_use_table[line_nr][rep_var][1] == Infinity) {	//no next use empty it
 					self.spillVariable(rep_var, line_nr, print = true);
 
-					self.address_descriptor[variable] = { "type": "reg", "name": register };
+					// self.address_descriptor[variable] = { "type": "reg", "name": register };
+					self.address_descriptor[variable]["type"] = "reg";
+					self.address_descriptor[variable]["name"] = register;
 					self.register_descriptor[register] = variable;
 
 					rep_reg = register;
@@ -113,7 +126,9 @@ class Registers {
 		self.spillVariable(rep_var, line_nr, print = true);
 
 		self.register_descriptor[rep_reg] = variable;
-		self.address_descriptor[variable] = { "type": "reg", "name": rep_reg };
+		// self.address_descriptor[variable] = { "type": "reg", "name": register };
+		self.address_descriptor[variable]["type"] = "reg";
+		self.address_descriptor[variable]["name"] = register;
 
 		return rep_reg;
 	}
@@ -145,7 +160,9 @@ class Registers {
 
 		var des_variable = self.address_descriptor[variable]["name"];
 		if (des_variable == null) {
-			self.address_descriptor[variable] = { "type": "mem", "name": variable };
+			// self.address_descriptor[variable] = { "type": "mem", "name": variable };
+			self.address_descriptor[variable]["type"] = "mem";
+			self.address_descriptor[variable]["name"] = variable;
 			des_variable = variable;
 		}
 
@@ -158,24 +175,30 @@ class Registers {
 
 		var reg;
 		if (next_use_table[line_nr][variable][1] == Infinity) {			// variable has no next use
-			des_variable = "[" + des_variable + "]";
+			// des_variable = "[" + des_variable + "]";
+			des_variable = "[ ebp - " + self.address_descriptor[variable]["offset"] + "]";
 		}
 		else if (self.checkFarthestNextUse(variable, line_nr, next_use_table)) {	// variable has farthest use
 			if ((reg = self.getEmptyReg(variable, line_nr, next_use_table, safe, safe_regs)) != null) {	// there is an empy register
 				des_variable = reg;
-				if (print) assembly.add("mov dword " + des_variable + ", [" + variable + "]");
+				// if (print) assembly.add("mov dword " + des_variable + ", [" + variable + "]");
+				if (print) assembly.add("mov dword " + des_variable + ", [ ebp - " + self.address_descriptor[variable]["offset"] + "]");
 			}
 			else if ((reg = self.getNoUseReg(variable, line_nr, next_use_table, safe, safe_regs)) != null) {				// there is a no use register
 				des_variable = reg;
-				if (print) assembly.add("mov dword " + des_variable + ", [" + variable + "]");
+				if (print) assembly.add("mov dword " + des_variable + ", [ ebp - " + self.address_descriptor[variable]["offset"] + "]");
+				// if (print) assembly.add("mov dword " + des_variable + ", [" + variable + "]");
 			}
 			else {
-				des_variable = "[" + des_variable + "]";
+				// des_variable = "[" + des_variable + "]";
+				des_variable = "[ ebp - " + self.address_descriptor[variable]["offset"] + "]";
+				
 			}
 		}
 		else {																						// variable has some use
 			des_variable = self.getReg(variable, line_nr, next_use_table, safe, safe_regs);
-			if (print) assembly.add("mov dword " + des_variable + ", [" + variable + "]");
+			// if (print) assembly.add("mov dword " + des_variable + ", [" + variable + "]");
+			if (print) assembly.add("mov dword " + des_variable + ", [ ebp - " + self.address_descriptor[variable]["offset"] + "]");
 		}
 
 		return des_variable;
