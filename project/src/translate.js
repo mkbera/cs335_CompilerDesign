@@ -20,11 +20,35 @@ function codeGen(instr, next_use_table, line_nr) {
 			assembly.add("sub esp, 4")
 			registers.counter = registers.counter + 4
 			registers.address_descriptor[x] = {"type": "mem", "name": x, "offset":registers.counter}
+			
 		}else {
+			// size = instr[5] * 4
+			// assembly.add("sub esp, " +  size)
+			// registers.counter = registers.counter + size
+			// registers.address_descriptor[x] = {"type": "mem", "name": x, "offset":registers.counter}
 			size = instr[5] * 4
-			assembly.add("sub esp, " +  size)
-			registers.counter = registers.counter + size
+			var variable
+			var flag = 0
+			if (registers.register_descriptor["eax"] != null){
+				flag = 1
+				variable = registers.register_descriptor["eax"]
+				assembly.add("mov [ebp - " + registers.address_descriptor[variable]["offset"] + "]", eax)
+				registers.register_descriptor["eax"] = null
+				registers.address_descriptor[variable]["type"] = "mem"
+				registers.address_descriptor[variable]["name"] = variable
+			}
+			assembly.add("push " + size)
+			assembly.add("call malloc")
+			assembly.add("add esp, " +  4)
+			assembly.add("push eax")
+			registers.counter = registers.counter + 4
 			registers.address_descriptor[x] = {"type": "mem", "name": x, "offset":registers.counter}
+			if (flag) {
+				assembly.add("mov eax, [ebp - " + registers.address_descriptor[variable]["offset"] + "]")
+				registers.register_descriptor["eax"] = variable
+				registers.address_descriptor[variable]["type"] = "reg"
+				registers.address_descriptor[variable]["name"] = "eax"
+			}
 		}
 	}
 	
@@ -595,11 +619,13 @@ function codeGen(instr, next_use_table, line_nr) {
 			registers.address_descriptor[x] = {"type": "mem", "name": x, "offset":registers.args_counter};
 			registers.args_counter -= 4;
 		}else {
-			size = instr[5] * 4
-			assembly.add("sub esp, " +  size)
-			registers.counter = registers.counter + size
+			// size = instr[5] * 4
+			// assembly.add("sub esp, " +  size)
+			// registers.counter = registers.counter + size
 			// registers.address_descriptor[x] = {"type": "mem", "name": x, "offset":registers.args_counter};
 			// registers.args_counter -= 4;
+			registers.address_descriptor[x] = {"type": "mem", "name": x, "offset":registers.args_counter};
+			registers.args_counter -= 4;
 		}
 	}
 	else if (op == "call") {
@@ -689,13 +715,15 @@ function codeGen(instr, next_use_table, line_nr) {
 
 		if (registers.address_descriptor[z]["type"] == "mem") {	// z in mem
 			des_z = registers.getReg(z, line_nr, next_use_table, safe = [y], safe_regs = [], print = true);
+			assembly.add("mov dword " + des_z + ", [ebp - " + registers.address_descriptor[z]["offset"] + "]");
 		}
 		else if (registers.address_descriptor[z]["type"] == "reg") {	// z in reg
 			des_z = registers.address_descriptor[z]["name"];
 		}
 		if (variables.indexOf(y) == -1) {	// y is constant
-			var place = "(" + registers.address_descriptor[arr]["offset"] + "- (" + y + " * 4))";
-			assembly.add("mov dword " + des_z + ", [ebp - " + place + "]");
+			// var place = "(" + registers.address_descriptor[arr]["offset"] + "- (" + y + " * 4))";
+			// assembly.add("mov dword " + des_z + ", [ebp - " + place + "]");
+			des_y = y;
 		}
 		else {	//	y not constant
 			des_y = registers.address_descriptor[y]["name"];
@@ -704,9 +732,12 @@ function codeGen(instr, next_use_table, line_nr) {
 				// assembly.add("mov dword " + des_y + ", [" + y + "]");
 				assembly.add("mov dword " + des_y + ", [ebp - " + registers.address_descriptor[y]["offset"] + "]");
 			}
-			var place = "(" + registers.address_descriptor[arr]["offset"] + "- (" + des_y + " * 4))";			
-			assembly.add("mov dword " + des_z + ", [ebp - " + place + "]");
+			// var place = "(" + registers.address_descriptor[arr]["offset"] + "- (" + des_y + " * 4))";			
+			// assembly.add("mov dword " + des_z + ", [ebp - " + place + "]");
 		}
+		var des_pointer = registers.getReg(arr, line_nr, next_use_table, safe = [y, z], safe_regs = [], print = true);
+		assembly.add("mov dword " + des_pointer + ", [ebp - " + registers.address_descriptor[arr]["offset"] + "]")
+		assembly.add("mov dword " + des_z + ", [" +  des_pointer  + " + " + des_y + " * 4], ");
 	}
 	// else if (op == "arr=") {	// a[10] = z
 	else if (op == "arrset") {	// a[10] = z
@@ -718,28 +749,31 @@ function codeGen(instr, next_use_table, line_nr) {
 		if (variables.indexOf(y) == -1) { // y is constant
 			des_y = y;
 		}
-		else if (registers.address_descriptor[y]["type"] == "mem") {
+		else if (registers.address_descriptor[y]["type"] == "mem") {	//y in mem
 			des_y = registers.getReg(y, line_nr, next_use_table, safe = [z], safe_regs = [], print = true);
 			// assembly.add("mov dword " + des_y + ", [" + y + "]");
 			assembly.add("mov dword " + des_y + ", [ebp - " + registers.address_descriptor[y]["offset"] + "]");
 		}
-		else {
+		else {	//y in reg
 			des_y = registers.address_descriptor[y]["name"];
 		}
 
 		if (variables.indexOf(z) == -1) { // z is constant
 			des_z = z;
 		}
-		else if (registers.address_descriptor[z]["type"] == "mem") {
+		else if (registers.address_descriptor[z]["type"] == "mem") {	//z in mem
 			des_z = registers.getReg(z, line_nr, next_use_table, safe = [y], safe_regs = [], print = true);
 			// assembly.add("mov dword " + des_z + ", [" + z + "]");
 			assembly.add("mov dword " + des_z + ", [ebp - " + registers.address_descriptor[z]["offset"] + "]");
 		}
-		else {
+		else {	//z in reg
 			des_z = registers.address_descriptor[z]["name"];
 		}
-		var place = "(" + registers.address_descriptor[arr]["offset"] + "- (" + y + " * 4))";		
-		assembly.add("mov dword [ebp - " + place + "], " + des_z);
+		// var place = "(" + registers.address_descriptor[arr]["offset"] + "- (" + y + " * 4))";		
+		// assembly.add("mov dword [ebp - " + place + "], " + des_z);
+		var des_pointer = registers.getReg(arr, line_nr, next_use_table, safe = [y, z], safe_regs = [], print = true);
+		assembly.add("mov dword " + des_pointer + ", [ebp - " + registers.address_descriptor[arr]["offset"] + "]")
+		assembly.add("mov dword [" + des_pointer  + " + " + des_y + " * 4], " + des_z);
 	}
 	else if (op == "scan") {
 		var x = instr[2];

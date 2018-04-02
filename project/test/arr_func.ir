@@ -1,0 +1,35 @@
+1	decr	a	array	int	25
+2	decr	b	int
+3	=	b	9
+4	param	a
+5	param	b
+6	call	array_func	2	t_6
+7	=	a	t_6
+8	return
+9	function	array_func
+10	arg	a	array	int	25
+11	arg	b	basic	int	1
+12	decr	i	int
+13	=	i	0
+14	=	t_1	1
+15	ifgoto	lt	i	5	17
+16	=	t_1	0
+17	ifgoto	eq	t_1	0	32
+18	decr	j	int
+19	=	j	0
+20	=	t_3	1
+21	ifgoto	lt	j	5	23
+22	=	t_3	0
+23	ifgoto	eq	t_3	0	32
+24	=	t_5	0
+25	+	t_5	t_5	i
+26	*	t_5	t_5	5
+27	+	t_5	t_5	j
+28	arrset	a	t_5	b
+29	=	t_4	j
+30	+	j	j	1
+31	jump	20
+32	=	t_2	i
+33	+	i	i	1
+34	jump	14
+35	return	a

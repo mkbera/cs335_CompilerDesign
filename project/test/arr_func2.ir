@@ -1,0 +1,35 @@
+1	decr	a	array	int	25
+2	decr	b	int
+3	=	b	9
+4	param	b
+5	param	a
+6	call	array_func	a
+7	arrget	b	a	18
+8	print	b
+9	arrget	b	a	19
+10	print	b
+11	arrget	b	a	20
+12	print	b
+13	arrget	b	a	21
+14	print	b
+15	arrget	b	a	22
+16	print	b
+17	arrget	b	a	23
+18	print	b
+19	arrget	b	a	24
+20	print	b
+21	exit
+22	function	array_func
+23	arg	a	array	int	25
+24	arg	b	int
+25	decr	i	int
+26	=	i	0
+27	arrset	a	21	5
+28	arrset	a	22	1
+29	arrset	a	23	2
+30	arrset	a	24	3
+31	arrset	a	20	4
+32	arrset	a	19	6
+33	arrset	a	18	7
+34	arrget	b	a	20
+35	return	a

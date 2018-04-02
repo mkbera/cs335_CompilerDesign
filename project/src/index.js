@@ -67,6 +67,7 @@ function main() {
     assembly.add("");
     assembly.add("extern printf");
     assembly.add("extern scanf");
+    assembly.add("extern malloc");
     assembly.add("");
     assembly.add("section .data");
 
