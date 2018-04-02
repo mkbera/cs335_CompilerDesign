@@ -2957,7 +2957,7 @@ array_access :
 				"=" + ir_sep + temp + ir_sep + "0"
 			)
 
-			var offset = 0
+			var first = true
 
 			for (var index in $3) {
 				var dim = $3[index]
@@ -2971,10 +2971,18 @@ array_access :
 				
 				$$.code = $$.code.concat(dim.code)
 
-				$$.code = $$.code.concat([
-					"*" + ir_sep + temp + ir_sep + temp + ir_sep + type.length,
-					"+" + ir_sep + temp + ir_sep + temp + ir_sep + dim.place
-				])
+				if (first) {
+					$$.code.push(
+						"+" + ir_sep + temp + ir_sep + temp + ir_sep + dim.place
+					)
+					first = false
+				}
+				else {
+					$$.code = $$.code.concat([
+						"*" + ir_sep + temp + ir_sep + temp + ir_sep + type.length,
+						"+" + ir_sep + temp + ir_sep + temp + ir_sep + dim.place
+					])
+				}
 
 				type = type.type
 			}

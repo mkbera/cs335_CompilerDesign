@@ -32,26 +32,25 @@
 32	decr	i	int
 33	=	i	0
 34	=	i	5
-35	ifgoto	eq	i	0	51
+35	ifgoto	eq	i	0	50
 36	decr	j	int
 37	=	j	0
 38	=	j	5
-39	ifgoto	eq	j	0	49
+39	ifgoto	eq	j	0	48
 40	+	t_5	b	1
 41	=	t_4	0
-42	*	t_4	t_4	2
-43	+	t_4	t_4	i
-44	*	t_4	t_4	2
-45	+	t_4	t_4	j
-46	arrset	d	t_4	t_5
-47	inc	j
-48	jump	38
-49	inc	i
-50	jump	34
-51	return	a
-52	function	main
-53	decr	a	int
-54	param	d
-55	call	test_func	1	t_6
-56	=	a	t_6
-57	return
+42	+	t_4	t_4	i
+43	*	t_4	t_4	2
+44	+	t_4	t_4	j
+45	arrset	d	t_4	t_5
+46	inc	j
+47	jump	38
+48	inc	i
+49	jump	34
+50	return	a
+51	function	main
+52	decr	a	int
+53	param	d
+54	call	test_func	1	t_6
+55	=	a	t_6
+56	return
