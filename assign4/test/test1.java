@@ -30,6 +30,6 @@ class test {
 	}
 
 	public void main() {
-		int a;
+		int a = test_func(d);
 	}
 }

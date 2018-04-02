@@ -1022,7 +1022,7 @@ method_declarator :
 		{
 			$$ = {
 				name: $identifier,
-				parameters: $3,
+				parameters: $5,
 				scope: null,
 				method: null
 			}
@@ -1045,13 +1045,18 @@ method_declarator :
 		{
 			$$ = {
 				name: $identifier,
-				parameters: $3,
-				scope: null
+				parameters: $5,
+				scope: null,
+				method: null
 			}
 
-			var scope = ST.scope_start(category = "function", name = $identifier);
-			for (var index in $3) {
-				var variable = scope.add_variable($3[index].name, $3[index].type)
+			var scope = ST.scope_start(category = "function")
+			var method = ST.add_method($identifier, $2, $5, scope)
+
+			$$.method = method
+
+			for (var index in $5) {
+				var variable = scope.add_variable($5[index].name, $5[index].type)
 				scope.parameters[variable.name] = variable
 				variable.isparam = true
 			}
@@ -1063,13 +1068,18 @@ method_declarator :
 		{
 			$$ = {
 				name: $identifier,
-				parameters: $3,
-				scope: null
+				parameters: $4,
+				scope: null,
+				method: null
 			}
 
-			var scope = ST.scope_start(category = "function", name = $identifier);
-			for (var index in $3) {
-				var variable = scope.add_variable($3[index].name, $3[index].type)
+			var scope = ST.scope_start(category = "function")
+			var method = ST.add_method($identifier, new Type("null", "basic", null, null, 0), $4, scope)
+
+			$$.method = method
+
+			for (var index in $4) {
+				var variable = scope.add_variable($4[index].name, $4[index].type)
 				scope.parameters[variable.name] = variable
 				variable.isparam = true
 			}
@@ -1081,13 +1091,18 @@ method_declarator :
 		{
 			$$ = {
 				name: $identifier,
-				parameters: $3,
-				scope: null
+				parameters: $4,
+				scope: null,
+				method: null
 			}
 
-			var scope = ST.scope_start(category = "function", name = $identifier);
-			for (var index in $3) {
-				var variable = scope.add_variable($3[index].name, $3[index].type)
+			var scope = ST.scope_start(category = "function")
+			var method = ST.add_method($identifier, $1, $4, scope)
+
+			$$.method = method
+
+			for (var index in $4) {
+				var variable = scope.add_variable($4[index].name, $4[index].type)
 				scope.parameters[variable.name] = variable
 				variable.isparam = true
 			}
@@ -2164,7 +2179,7 @@ switch_label :
 
 
 expr :
-		additive_expr 
+		cond_or_expr 
 		{
 			$$ = $1
 		}
