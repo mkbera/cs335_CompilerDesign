@@ -12,6 +12,6 @@ class rec {
 	public void main() {
 		int a = 90;
 		int b = 9;
-		int c = gcd(a, b);
+		// int c = gcd(a, b);
 	}
 }
