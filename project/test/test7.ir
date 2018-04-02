@@ -1,0 +1,6 @@
+1	=	a	2
+2	=	b	3
+3	=	c	9
+4	%	a	c	b
+5	print	a
+6	exit

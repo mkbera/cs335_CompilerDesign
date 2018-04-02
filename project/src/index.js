@@ -74,19 +74,24 @@ function main() {
     assembly.add("_int db \"%i\", 0x0a, 0x00");
     assembly.add("_int_scan db \"%d\", 0");
 
-    variables.forEach(function (variable) {
-        assembly.add(variable + "\tDD\t0");
-        registers.address_descriptor[variable] = { "type": null, "name": null };
-    });
+    // variables.forEach(function (variable) {
+	// 	if (variable.type = 'int'){
+			// assembly.add(variable + "\tDD\t0");
+			// registers.address_descriptor[variable] = { "type": null, "name": null, "offset": null };
+	// 	}
+    // });
 
-    Object.keys(arrays).forEach(function (identifier) {
-        assembly.add(identifier + "\tTIMES\t" + arrays[identifier] + "\tDD\t0")
-    })
+    // Object.keys(arrays).forEach(function (identifier) {
+    //     assembly.add(identifier + "\tTIMES\t" + arrays[identifier] + "\tDD\t0")
+    // })
 
     assembly.shiftLeft();
     assembly.add("section .text")
-    assembly.add("main:");
+	assembly.add("main:");
     assembly.shiftRight();
+	assembly.add("push ebp");
+	assembly.add("mov	ebp, esp");
+	
 
     basic_blocks.forEach(function (block) {
         block.forEach(function (line) {

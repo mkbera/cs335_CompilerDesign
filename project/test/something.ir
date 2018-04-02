@@ -1,7 +1,9 @@
-1	scan	g
-2	call	myfunc
-3	exit
-4	function	myfunc
+1	decr	g
+2	scan	g
+3	call	myfunc
+4	exit
+5	function	myfunc
+6	decr	
 5	=	g_0	g
 6	if	ne	g_0	0	8
 7	return

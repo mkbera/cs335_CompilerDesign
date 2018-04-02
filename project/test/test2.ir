@@ -1,0 +1,13 @@
+1	=	b	1
+2	scan	n
+3	call	fac
+4	=	a	10
+5	if	eq	n	1	8
+6	*	b	a	n
+7	-	n	n	1
+8	print	b
+9	exit
+10	function	fac
+11	=	b	1000
+12	=	a	100
+13	return

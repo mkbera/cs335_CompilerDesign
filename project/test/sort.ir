@@ -1,0 +1,39 @@
+1	array	arr	100
+2	scan	n
+3	print	n
+4	if	gt	n	100	12
+5	=	i	0
+6	if	eq	i	n	11
+7	scan	t
+8	arr=	arr	i	t
+9	+	i	i	1
+10	jump	6
+11	call	print_array
+12	=	i	0
+13	-	n	n	1
+14	if	eq	i	n	29
+15	=	j	0
+16	-	t	n	i
+17	if	eq	j	t	27
+18	=arr	x	arr	j
+19	+	j	j	1
+20	=arr	y	arr	j
+21	if	le	x	y	17
+22	arr=	arr	j	x
+23	-	j	j	1
+24	arr=	arr	j	y
+25	+	j	j	1
+26	jump	17
+27	+	i	i	1
+28	jump	14
+29	+	n	n	1
+30	call	print_array
+31	exit
+32	function	print_array
+33	=	i	0
+34	if	eq	i	n	39
+35	=arr	t	arr	i
+36	print	t
+37	+	i	i	1
+38	jump	34
+39	return

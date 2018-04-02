@@ -1,0 +1,11 @@
+1	=	a	3
+2	=	b	3
+3	if	eq	a	b	7
+4	=	a	5
+5	call	foo
+6	jump	8
+7	=	a	10
+8	exit
+9	function	foo
+10	=	b	5
+11	return

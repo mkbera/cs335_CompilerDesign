@@ -1,0 +1,33 @@
+1	=	a	90
+2	=	b	3
+3	=	c	360
+4	=	d	48
+5	=	e	10
+6	=	f	5
+7	/	g	a	b
+8	print	g
+9	/	e	d	e
+10	print	e
+11	*	a	a	e
+12	print	a
+13	+	g	a	a
+14	print	g
+15	=	h	c
+16	=	i	20
+17	*	e	f	g
+18	print	e
+19	-	a	a	9
+20	print	a
+21	%	c	c	h
+22	print	c
+23	|	h	a	b
+24	print	h
+25	/	j	a	f	
+26	print	j
+27	-	j	c	d
+28	print	j
+29	/	g	j	i
+30	print	g
+31	/	a	a	1
+32	print	a
+33	exit

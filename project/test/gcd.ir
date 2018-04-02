@@ -1,0 +1,12 @@
+1	scan	a
+2	scan	b
+3	call	gcd
+4	print	b
+5	exit
+6	function	gcd
+7	%	r	a	b
+8	if	eq	r	0	12
+9	=	a	b
+10	=	b	r
+11	call	gcd
+12	return

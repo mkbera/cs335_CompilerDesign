@@ -2,9 +2,9 @@ global.math_ops = ["+", "-", "^", "|", "&", "*", "/", "%", "=", "=arr"]
 global.math_ops_binary = ["+", "-", "^", "|", "&"]
 global.math_ops_unary = ["not", "inc", "dec"]
 global.math_ops_involved = ["*", "/", "%"]
-global.array_ops = ["arr=", "=arr"]
+global.array_ops = ["arrset", "arrget"]
 
-global.keywords = ["if", "return", "function", "call", "block", "jump", "le", "ge", "lt", "gt", "eq", "ne", "print", "scan", "array"]
+global.keywords = ["if", "return", "function", "call", "block", "jump", "le", "ge", "lt", "gt", "eq", "ne", "print", "scan", "array", "param", "int", "float", "char", "byte", "bool", "short"]
 
 global.map_op = {
 	"+": "add",
