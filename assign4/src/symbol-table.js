@@ -29,7 +29,7 @@ class Type {
         var serial_type = ""
         var type = this
 
-        while (category == "array") {
+        while (type.category == "array") {
             serial_type += "array."
 
             type = type.type

@@ -985,11 +985,11 @@ reference_type :
 
 
 method_decr :
-		'public' 'void' method_declarator method_body 
+		method_declarator method_body 
 		{
 			var scope = ST.scope_end()
-			
-			var method = ST.add_method($3.name, new Type("null", "basic", null, null), $3.parameters, scope)
+
+			var method = $1.method
 
 			if (scope.return_type == null && method.return_type.type != "null") {
 				throw Error("A method with a defined return type must have a return statement")
@@ -1008,97 +1008,7 @@ method_decr :
 					"arg" + ir_sep + method.parameters[index].name + ir_sep + method.parameters[index].type.category + ir_sep + method.parameters[index].type.get_basic_type() + ir_sep + method.parameters[index].type.get_size()
 				)
 			}
-			$$.code = $$.code.concat($4.code)
-
-			if (scope.return_type == null) {
-				$$.code.push("return")
-			}
-		}
-	|
-		'public' type method_declarator method_body 
-		{
-			var scope = ST.scope_end()
-
-			var method = ST.add_method($3.name, $2, $3.parameters, scope)
-
-			if (scope.return_type == null && method.return_type.type != "null") {
-				throw Error("A method with a defined return type must have a return statement")
-			}
-			else if (scope.return_type != null && !(utils.serialize_type(scope.return_type) == utils.serialize_type(method.return_type) || (utils.numeric_type_array.indexOf(utils.serialize_type(method.return_type)) > -1 && utils.serialize_type(scope.return_type) > -1))) {
-				throw Error("The return type '" + utils.serialize_type(scope.return_type) + "' does not match with the method's return type '" + utils.serialize_type(method.return_type) + "'")
-			}
-
-			$$ = { code: [], place: null }
-
-			$$.code.push(
-				"function" + ir_sep + method.name
-			)
-			for (var index in method.parameters) {
-				$$.code.push(
-					"arg" + ir_sep + method.parameters[index].name + ir_sep + method.parameters[index].type.category + ir_sep + method.parameters[index].type.get_basic_type() + ir_sep + method.parameters[index].type.get_size()
-				)
-			}
-			$$.code = $$.code.concat($4.code)
-
-			if (scope.return_type == null) {
-				$$.code.push("return")
-			}
-		}
-	|
-		'void' method_declarator method_body 
-		{
-			var scope = ST.scope_end()
-
-			var method = ST.add_method($2.name, new Type("null", "basic", null, null), $2.parameters, scope)
-
-			if (scope.return_type == null && method.return_type.type != "null") {
-				throw Error("A method with a defined return type must have a return statement")
-			}
-			else if (scope.return_type != null && !(utils.serialize_type(scope.return_type) == utils.serialize_type(method.return_type) || (utils.numeric_type_array.indexOf(utils.serialize_type(method.return_type)) > -1 && utils.serialize_type(scope.return_type) > -1))) {
-				throw Error("The return type '" + utils.serialize_type(scope.return_type) + "' does not match with the method's return type '" + utils.serialize_type(method.return_type) + "'")
-			}
-
-			$$ = { code: [], place: null }
-
-			$$.code.push(
-				"function" + ir_sep + method.name
-			)
-			for (var index in method.parameters) {
-				$$.code.push(
-					"arg" + ir_sep + method.parameters[index].name + ir_sep + method.parameters[index].type.category + ir_sep + method.parameters[index].type.get_basic_type() + ir_sep + method.parameters[index].type.get_size()
-				)
-			}
-			$$.code = $$.code.concat($3.code)
-
-			if (scope.return_type == null) {
-				$$.code.push("return")
-			}
-		}
-	|
-		type method_declarator method_body 
-		{
-			var scope = ST.scope_end()
-
-			var method = ST.add_method($2.name, $1, $2.parameters, scope)
-
-			if (scope.return_type == null && method.return_type.type != "null") {
-				throw Error("A method with a defined return type must have a return statement")
-			}
-			else if (scope.return_type != null && !(utils.serialize_type(scope.return_type) == utils.serialize_type(method.return_type) || (utils.numeric_type_array.indexOf(utils.serialize_type(method.return_type)) > -1 && utils.serialize_type(scope.return_type) > -1))) {
-				throw Error("The return type '" + utils.serialize_type(scope.return_type) + "' does not match with the method's return type '" + utils.serialize_type(method.return_type) + "'")
-			}
-
-			$$ = { code: [], place: null }
-
-			$$.code.push(
-				"function" + ir_sep + method.name
-			)
-			for (var index in method.parameters) {
-				$$.code.push(
-					"arg" + ir_sep + method.parameters[index].name + ir_sep + method.parameters[index].type.category + ir_sep + method.parameters[index].type.get_basic_type() + ir_sep + method.parameters[index].type.get_size()
-				)
-			}
-			$$.code = $$.code.concat($3.code)
+			$$.code = $$.code.concat($2.code)
 
 			if (scope.return_type == null) {
 				$$.code.push("return")
@@ -1108,7 +1018,30 @@ method_decr :
 
 
 method_declarator :
-		'identifier' 'paranthesis_start' formal_parameter_list 'paranthesis_end' 
+		'public' 'void' 'identifier' 'paranthesis_start' formal_parameter_list 'paranthesis_end' 
+		{
+			$$ = {
+				name: $identifier,
+				parameters: $3,
+				scope: null,
+				method: null
+			}
+
+			var scope = ST.scope_start(category = "function")
+			var method = ST.add_method($identifier, new Type("null", "basic", null, null, 0), $5, scope)
+
+			$$.method = method
+
+			for (var index in $5) {
+				var variable = scope.add_variable($5[index].name, $5[index].type)
+				scope.parameters[variable.name] = variable
+				variable.isparam = true
+			}
+
+			$$.scope = scope
+		}
+	|
+		'public' type 'identifier' 'paranthesis_start' formal_parameter_list 'paranthesis_end' 
 		{
 			$$ = {
 				name: $identifier,
@@ -1116,7 +1049,43 @@ method_declarator :
 				scope: null
 			}
 
-			var scope = ST.scope_start();
+			var scope = ST.scope_start(category = "function", name = $identifier);
+			for (var index in $3) {
+				var variable = scope.add_variable($3[index].name, $3[index].type)
+				scope.parameters[variable.name] = variable
+				variable.isparam = true
+			}
+
+			$$.scope = scope
+		}
+	|
+		'void' 'identifier' 'paranthesis_start' formal_parameter_list 'paranthesis_end' 
+		{
+			$$ = {
+				name: $identifier,
+				parameters: $3,
+				scope: null
+			}
+
+			var scope = ST.scope_start(category = "function", name = $identifier);
+			for (var index in $3) {
+				var variable = scope.add_variable($3[index].name, $3[index].type)
+				scope.parameters[variable.name] = variable
+				variable.isparam = true
+			}
+
+			$$.scope = scope
+		}
+	|
+		type 'identifier' 'paranthesis_start' formal_parameter_list 'paranthesis_end' 
+		{
+			$$ = {
+				name: $identifier,
+				parameters: $3,
+				scope: null
+			}
+
+			var scope = ST.scope_start(category = "function", name = $identifier);
 			for (var index in $3) {
 				var variable = scope.add_variable($3[index].name, $3[index].type)
 				scope.parameters[variable.name] = variable
@@ -2195,7 +2164,7 @@ switch_label :
 
 
 expr :
-		cond_or_expr 
+		additive_expr 
 		{
 			$$ = $1
 		}
@@ -2748,25 +2717,99 @@ unary_expr_npm :
 
 cast_expr :
 		'paranthesis_start' primitive_type 'paranthesis_end' unary_expr 
-		{ $$ = { nt: 'cast_expr', children: [{ t: 'paranthesis_start', l: $paranthesis_start },$2,{ t: 'paranthesis_end', l: $paranthesis_end },$4] } }
+		{
+			$$ = $4
+
+			if (!($4.type.category == "basic" && ($4.type.type == $2.type || ($4.type.numeric() && $2.numeric())))) {
+				throw Error("Cannot convert '" + $4.type.get_serial_type() + "' to '" + $2.type + "'")
+			}
+
+			temp = ST.create_temporary()
+
+			$$.code.push(
+				"cast" + ir_sep + temp + ir_sep + $4.type.type + ir_sep + $2.type + ir_sep + $4.place
+			)
+
+			$$.place = temp
+		}
 	;
 
 
 postdec_expr :
 		postfix_expr 'op_decrement' 
-		{ $$ = { nt: 'postdec_expr', children: [$1,{ t: 'op_decrement', l: $op_decrement }] } }
+		{
+			$$ = { code: $1.code, place: null, type: $1.type }
+
+			if (!$1.type.numeric()) {
+				throw Error("Bad operand type '" + $1.type.get_serial_type() + "' on unary operator '++'")
+			}
+
+			var temp = ST.create_temporary()
+
+			$$.code = $$.code.concat([
+				"=" + ir_sep + temp + ir_sep + $1.place,
+				"+" + ir_sep + $1.place + ir_sep + $1.place + ir_sep + "1"
+			])
+
+			$$.place = temp
+		}
 	|
 		post_expr 'op_decrement' 
-		{ $$ = { nt: 'postdec_expr', children: [$1,{ t: 'op_decrement', l: $op_decrement }] } }
+		{
+			$$ = { code: $1.code, place: null, type: $1.type }
+
+			if (!$1.type.numeric()) {
+				throw Error("Bad operand type '" + $1.type.get_serial_type() + "' on unary operator '++'")
+			}
+
+			var temp = ST.create_temporary()
+
+			$$.code = $$.code.concat([
+				"=" + ir_sep + temp + ir_sep + $1.place,
+				"-" + ir_sep + $1.place + ir_sep + $1.place + ir_sep + "1"
+			])
+
+			$$.place = temp
+		}
 	;
 
 
 postinc_expr :
 		postfix_expr 'op_increment' 
-		{ $$ = { nt: 'postinc_expr', children: [$1,{ t: 'op_increment', l: $op_increment }] } }
+		{
+			$$ = { code: $1.code, place: null, type: $1.type }
+
+			if (!$1.type.numeric()) {
+				throw Error("Bad operand type '" + $1.type.get_serial_type() + "' on unary operator '++'")
+			}
+
+			var temp = ST.create_temporary()
+
+			$$.code = $$.code.concat([
+				"=" + ir_sep + temp + ir_sep + $1.place,
+				"+" + ir_sep + $1.place + ir_sep + $1.place + ir_sep + "1"
+			])
+
+			$$.place = temp
+		}
 	|
 		post_expr 'op_increment' 
-		{ $$ = { nt: 'postinc_expr', children: [$1,{ t: 'op_increment', l: $op_increment }] } }
+		{
+			$$ = { code: $1.code, place: null, type: $1.type }
+
+			if (!$1.type.numeric()) {
+				throw Error("Bad operand type '" + $1.type.get_serial_type() + "' on unary operator '++'")
+			}
+
+			var temp = ST.create_temporary()
+
+			$$.code = $$.code.concat([
+				"=" + ir_sep + temp + ir_sep + $1.place,
+				"+" + ir_sep + $1.place + ir_sep + $1.place + ir_sep + "1"
+			])
+
+			$$.place = temp
+		}
 	;
 
 
@@ -2818,7 +2861,7 @@ method_invocation :
 				)
 			}
 
-			if (method.type != "null") {
+			if (method.return_type.type != "null") {
 				temp = ST.create_temporary()
 
 				$$.place = temp
@@ -2841,20 +2884,11 @@ method_invocation :
 
 			var method = ST.lookup_method($1.place)
 
-			if ($3.length != method.num_parameters) {
-				throw Error("The method " + method.name + " requires " + method.num_parameters + ", provided " + $3.length)
+			if (method.num_parameters) {
+				throw Error("The method " + method.name + " requires " + method.num_parameters + ", provided 0")
 			}
 
-			for (var index in $3) {
-				$$.code = $$.code.concat($3[index].code)
-			}
-			for (var index in $3) {
-				$$.code.push(
-					"param" + ir_sep + $3[index].place
-				)
-			}
-
-			if (method.type != "null") {
+			if (method.return_type.type != "null") {
 				temp = ST.create_temporary()
 
 				$$.place = temp
