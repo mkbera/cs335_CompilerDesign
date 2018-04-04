@@ -204,7 +204,10 @@
 		},
 
 		boolean_type_array: ["boolean"],
-		numeric_type_array: ["int", "short", "long", "char", "byte", "float"]
+		numeric_type_array: ["int", "short", "long", "char", "byte", "float"],
+
+		compare_types: function(type1, type2) {
+		}
 	}
 %}
 
@@ -977,14 +980,19 @@ method_decr :
 
 			var method = $1.method
 
-			if (scope.return_type == null && method.return_type.type != "null") {
+			if (scope.return_types.length == 0 && method.return_type.type != "null") {
 				throw Error("A method with a defined return type must have a return statement")
 			}
-			else if (scope.return_type != null && !(scope.return_type.get_serial_type() == method.return_type.get_serial_type() || (utils.numeric_type_array.indexOf(method.return_type.get_serial_type()) > -1 && scope.return_type.get_serial_type() > -1))) {
-				throw Error("The return type '" + scope.return_type.get_serial_type() + "' does not match with the method's return type '" + method.return_type.get_serial_type() + "'")
-			}
-			else if (scope.return_type != null && scope.return_type.category == "array" && scope.return_type.get_size() != method.return_type.get_size()) {
-				throw Error("Array dimensions do not match")
+			else {
+				for (var index in scope.return_types) {
+					var return_type = scope.return_types[index]
+					if (!(return_type.get_serial_type() == method.return_type.get_serial_type() || (method.return_type.numeric() && return_type.numeric()))) {
+						throw Error("The return type '" + return_type.get_serial_type() + "' does not match with the method's return type '" + method.return_type.get_serial_type() + "'")
+					}
+					else if (return_type.category == "array" && return_type.get_size() != method.return_type.get_size()) {
+						throw Error("Array dimensions do not match")
+					}
+				}
 			}
 
 			$$ = { code: [], place: null }
@@ -992,15 +1000,22 @@ method_decr :
 			$$.code.push(
 				"function" + ir_sep + method.name
 			)
-			for (var index in method.parameters) {
+
+			for (var index = method.parameters.length - 1; index >= 0; index--) {
 				$$.code.push(
 					"arg" + ir_sep + method.parameters[index].name + ir_sep + method.parameters[index].type.category + ir_sep + method.parameters[index].type.get_basic_type() + ir_sep + method.parameters[index].type.get_size()
 				)
 			}
 			$$.code = $$.code.concat($2.code)
 
-			if (scope.return_type == null) {
+			if (method.return_type.type == "null") {
 				$$.code.push("return")
+			}
+			else {
+				$$.code = $$.code.concat([
+					"error" + ir_sep + "Error: no return statement found for function '" + method.name + "' with return type " + method.return_type.get_serial_type(),
+					"exit"
+				])
 			}
 		}
 	;
@@ -1352,7 +1367,7 @@ return_stmt :
 				scope = scope.parent
 			}
 
-			scope.return_type = $2.type
+			scope.return_types.push($2.type)
 
 			$$.code.push(
 				"return" + ir_sep + $2.place
@@ -3083,6 +3098,10 @@ dim_expr :
 		'brackets_start' expr 'brackets_end' 
 		{
 			$$ = $2
+			
+			if ($2.type.get_serial_type() != "int") {
+				throw Error("Array dimension should be of int type")
+			}
 		}
 	;
 

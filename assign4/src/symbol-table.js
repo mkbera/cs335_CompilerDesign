@@ -87,7 +87,7 @@ class ScopeTable {
 
         this.parameters = {}
 
-        this.return_type = null
+        this.return_types = []
     }
 
     add_variable(name, type) {

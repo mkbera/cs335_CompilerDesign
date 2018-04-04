@@ -5,10 +5,10 @@ class test {
 	int a, c = 5.012;
 	int[2][5] d;
 
-	void function_name(int x) {
+	int function_name(int x, int y) {
 		float b;
 		x = a;
-		return;
+		return 5;
 	}
 
 	int[2][5] test2(int[2][5] arr) {
@@ -29,6 +29,7 @@ class test {
 		for (int i = 0; i = 5; ++i) {
 			for (int j = 0; j = 5; ++j) {
 				d:[i][j] = 1 + b;
+				return 1;
 			}
 		}
 
@@ -37,5 +38,6 @@ class test {
 
 	public void main() {
 		int a = test_func(d);
+		int b = function_name(1, 2);
 	}
 }
