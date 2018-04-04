@@ -6,51 +6,52 @@
 6	decr	c	int
 7	cast	t_1	float	int	5.012
 8	=	c	t_1
-9	decr	d	array	int	4	
-10	cast	t_2	float	int	1.0
-11	arrset	d	0	t_2
-12	arrset	d	1	0
-13	arrset	d	2	0
-14	arrset	d	3	0
-15	function	function_name
-16	arg	x	basic	int	1
-17	decr	b	float
-18	=	x	a
-19	return
-20	function	test_func
-21	arg	arr	array	int	25
-22	decr	a	int
-23	=	a	1
-24	decr	b	int
-25	=	b	0
-26	decr	c	boolean
-27	=	c	1
-28	+	t_3	b	5
-29	=	a	t_3
-30	neg	b
-31	=	a	b
-32	decr	i	int
-33	=	i	0
-34	=	i	5
-35	ifgoto	eq	i	0	50
-36	decr	j	int
-37	=	j	0
-38	=	j	5
-39	ifgoto	eq	j	0	48
-40	+	t_5	b	1
-41	=	t_4	0
-42	+	t_4	t_4	i
-43	*	t_4	t_4	2
-44	+	t_4	t_4	j
-45	arrset	d	t_4	t_5
-46	inc	j
-47	jump	38
-48	inc	i
-49	jump	34
-50	return	a
-51	function	main
-52	decr	a	int
-53	param	d
-54	call	test_func	1	t_6
-55	=	a	t_6
-56	return
+9	decr	d	array	int	10	
+10	function	function_name
+11	arg	x	basic	int	1
+12	decr	b	float
+13	=	x	a
+14	return
+15	function	test2
+16	arg	arr	array	int	10
+17	return	arr
+18	function	test_func
+19	arg	arr	array	int	10
+20	decr	a	int
+21	=	a	1
+22	decr	b	int
+23	=	b	0
+24	decr	c	boolean
+25	=	c	1
+26	param	arr
+27	call	test2	1	t_2
+28	=	d	t_2
+29	+	t_3	b	5
+30	=	a	t_3
+31	neg	b
+32	=	a	b
+33	decr	i	int
+34	=	i	0
+35	=	i	5
+36	ifgoto	eq	i	0	51
+37	decr	j	int
+38	=	j	0
+39	=	j	5
+40	ifgoto	eq	j	0	49
+41	+	t_5	b	1
+42	=	t_4	0
+43	+	t_4	t_4	i
+44	*	t_4	t_4	5
+45	+	t_4	t_4	j
+46	arrset	d	t_4	t_5
+47	inc	j
+48	jump	39
+49	inc	i
+50	jump	35
+51	return	a
+52	function	main
+53	decr	a	int
+54	param	d
+55	call	test_func	1	t_6
+56	=	a	t_6
+57	return

@@ -204,21 +204,7 @@
 		},
 
 		boolean_type_array: ["boolean"],
-		numeric_type_array: ["int", "short", "long", "char", "byte", "float"],
-		
-		serialize_type: function(type) {
-			var serial_type = ""
-
-			while (type.category == "array") {
-				serial_type += "array."
-
-				type = type.type
-			}
-
-			serial_type += type.type
-
-			return serial_type
-		}
+		numeric_type_array: ["int", "short", "long", "char", "byte", "float"]
 	}
 %}
 
@@ -994,8 +980,11 @@ method_decr :
 			if (scope.return_type == null && method.return_type.type != "null") {
 				throw Error("A method with a defined return type must have a return statement")
 			}
-			else if (scope.return_type != null && !(utils.serialize_type(scope.return_type) == utils.serialize_type(method.return_type) || (utils.numeric_type_array.indexOf(utils.serialize_type(method.return_type)) > -1 && utils.serialize_type(scope.return_type) > -1))) {
-				throw Error("The return type '" + utils.serialize_type(scope.return_type) + "' does not match with the method's return type '" + utils.serialize_type(method.return_type) + "'")
+			else if (scope.return_type != null && !(scope.return_type.get_serial_type() == method.return_type.get_serial_type() || (utils.numeric_type_array.indexOf(method.return_type.get_serial_type()) > -1 && scope.return_type.get_serial_type() > -1))) {
+				throw Error("The return type '" + scope.return_type.get_serial_type() + "' does not match with the method's return type '" + method.return_type.get_serial_type() + "'")
+			}
+			else if (scope.return_type != null && scope.return_type.category == "array" && scope.return_type.get_size() != method.return_type.get_size()) {
+				throw Error("Array dimensions do not match")
 			}
 
 			$$ = { code: [], place: null }
@@ -2179,7 +2168,7 @@ switch_label :
 
 
 expr :
-		cond_or_expr 
+		additive_expr 
 		{
 			$$ = $1
 		}
@@ -2225,12 +2214,16 @@ stmt_expr :
 
 
 assignment :
-		left_hand_side_non_array assignment_operator expr 
+		left_hand_side assignment_operator expr 
 		{
 			$$ = { code: [], place: $1.place, type: $1.type }
 
-			if (!(utils.serialize_type($1.type) == utils.serialize_type($3.type) || (utils.numeric_type_array.indexOf(utils.serialize_type($1.type)) > -1 && utils.numeric_type_array.indexOf(utils.serialize_type($3.type)) > -1))) {
-				throw Error("Cannot convert '" + utils.serialize_type($3.type) + "' to '" + utils.serialize_type($1.type) + "'")
+			if (!($1.type.get_serial_type() == $3.type.get_serial_type() || ($1.type.numeric() && $3.type.numeric()))) {
+				throw Error("Cannot convert '" + $3.type.get_serial_type() + "' to '" + $1.type.get_serial_type + "'")
+			}
+
+			if ($1.type.category == "array" && $1.type.get_size() != $3.type.get_size()) {
+				throw Error("Array dimensions do not match")
 			}
 
 			ST.lookup_variable($1.place)
@@ -2253,8 +2246,8 @@ assignment :
 		{
 			$$ = { code: [], place: null, type: $1.type }
 
-			if (!(utils.serialize_type($1.type) == utils.serialize_type($3.type) || (utils.numeric_type_array.indexOf(utils.serialize_type($1.type)) > -1 && utils.numeric_type_array.indexOf(utils.serialize_type($3.type)) > -1))) {
-				throw Error("Cannot convert '" + utils.serialize_type($3.type) + "' to '" + utils.serialize_type($1.type) + "'")
+			if (!($1.type.get_serial_type() == $3.type.get_serial_type() || ($1.type.numeric() && $3.type.numeric()))) {
+				throw Error("Cannot convert '" + $3.type.get_serial_type() + "' to '" + $1.type.get_serial_type() + "'")
 			}
 
 			$$.code = $3.code.concat($1.code)
@@ -2281,7 +2274,7 @@ assignment :
 	;
 
 
-left_hand_side_non_array :
+left_hand_side :
 		expr_name 
 		{
 			$$ = $1
@@ -2318,8 +2311,8 @@ cond_or_expr :
 		cond_or_expr 'op_oror' cond_and_expr 
 		{
 			var invalid = ["float"]
-			if (invalid.indexOf(utils.serialize_type($1.type)) > -1 || invalid.indexOf(utils.serialize_type($3.type)) > -1) {
-				throw Error("Bad operand types '" + utils.serialize_type($1.type) + "' and '" + utils.serialize_type($3.type) + "' on binary operator '||'")
+			if (invalid.indexOf($1.type.get_serial_type()) > -1 || invalid.indexOf($3.type.get_serial_type()) > -1) {
+				throw Error("Bad operand types '" + $1.type.get_serial_type() + "' and '" + $3.type.get_serial_type() + "' on binary operator '||'")
 			}
 
 			$$ = utils.binary({
@@ -2340,8 +2333,8 @@ cond_and_expr :
 		cond_and_expr 'op_andand' incl_or_expr 
 		{
 			var invalid = ["float"]
-			if (invalid.indexOf(utils.serialize_type($1.type)) > -1 || invalid.indexOf(utils.serialize_type($3.type)) > -1) {
-				throw Error("Bad operand types '" + utils.serialize_type($1.type) + "' and '" + utils.serialize_type($3.type) + "' on binary operator '&&'")
+			if (invalid.indexOf($1.type.get_serial_type()) > -1 || invalid.indexOf($3.type.get_serial_type()) > -1) {
+				throw Error("Bad operand types '" + $1.type.get_serial_type() + "' and '" + $3.type.get_serial_type() + "' on binary operator '&&'")
 			}
 
 			$$ = utils.binary({
@@ -2362,8 +2355,8 @@ incl_or_expr :
 		incl_or_expr 'op_or' excl_or_expr 
 		{
 			var invalid = ["float"]
-			if (invalid.indexOf(utils.serialize_type($1.type)) > -1 || invalid.indexOf(utils.serialize_type($3.type)) > -1) {
-				throw Error("Bad operand types '" + utils.serialize_type($1.type) + "' and '" + utils.serialize_type($3.type) + "' on binary operator '|'")
+			if (invalid.indexOf($1.type.get_serial_type()) > -1 || invalid.indexOf($3.type.get_serial_type()) > -1) {
+				throw Error("Bad operand types '" + $1.type.get_serial_type() + "' and '" + $3.type.get_serial_type() + "' on binary operator '|'")
 			}
 
 			$$ = utils.binary({
@@ -2384,8 +2377,8 @@ excl_or_expr :
 		excl_or_expr 'op_xor' and_expr 
 		{
 			var invalid = ["float"]
-			if (invalid.indexOf(utils.serialize_type($1.type)) > -1 || invalid.indexOf(utils.serialize_type($3.type)) > -1) {
-				throw Error("Bad operand types '" + utils.serialize_type($1.type) + "' and '" + utils.serialize_type($3.type) + "' on binary operator '^'")
+			if (invalid.indexOf($1.type.get_serial_type()) > -1 || invalid.indexOf($3.type.get_serial_type()) > -1) {
+				throw Error("Bad operand types '" + $1.type.get_serial_type() + "' and '" + $3.type.get_serial_type() + "' on binary operator '^'")
 			}
 
 			$$ = utils.binary({
@@ -2406,8 +2399,8 @@ and_expr :
 		and_expr 'op_and' equality_expr 
 		{
 			var invalid = ["float"]
-			if (invalid.indexOf(utils.serialize_type($1.type)) > -1 || invalid.indexOf(utils.serialize_type($3.type)) > -1) {
-				throw Error("Bad operand types '" + utils.serialize_type($1.type) + "' and '" + utils.serialize_type($3.type) + "' on binary operator '&'")
+			if (invalid.indexOf($1.type.get_serial_type()) > -1 || invalid.indexOf($3.type.get_serial_type()) > -1) {
+				throw Error("Bad operand types '" + $1.type.get_serial_type() + "' and '" + $3.type.get_serial_type() + "' on binary operator '&'")
 			}
 
 			$$ = utils.binary({
@@ -2427,8 +2420,8 @@ equality_expr :
 	|
 		equality_expr 'op_equalCompare' relational_expr 
 		{
-			if (utils.numeric_type_array.indexOf(utils.serialize_type($1.type)) == -1 || utils.numeric_type_array.indexOf(utils.serialize_type($3.type)) == -1) {
-				throw Error("Incomparable operand types '" + utils.serialize_type($1.type) + "' and '" + utils.serialize_type($3.type) + "' on binary operator '<='")
+			if (utils.numeric_type_array.indexOf($1.type.get_serial_type()) == -1 || utils.numeric_type_array.indexOf($3.type.get_serial_type()) == -1) {
+				throw Error("Incomparable operand types '" + $1.type.get_serial_type() + "' and '" + $3.type.get_serial_type() + "' on binary operator '<='")
 			}
 
 			$$ = utils.relational({
@@ -2440,8 +2433,8 @@ equality_expr :
 	|
 		equality_expr 'op_notequalCompare' relational_expr 
 		{
-			if (utils.numeric_type_array.indexOf(utils.serialize_type($1.type)) == -1 || utils.numeric_type_array.indexOf(utils.serialize_type($3.type)) == -1) {
-				throw Error("Incomparable operand types '" + utils.serialize_type($1.type) + "' and '" + utils.serialize_type($3.type) + "' on operator '!='")
+			if (utils.numeric_type_array.indexOf($1.type.get_serial_type()) == -1 || utils.numeric_type_array.indexOf($3.type.get_serial_type()) == -1) {
+				throw Error("Incomparable operand types '" + $1.type.get_serial_type() + "' and '" + $3.type.get_serial_type() + "' on operator '!='")
 			}
 
 			$$ = utils.relational({
@@ -2461,8 +2454,8 @@ relational_expr :
 	|
 		relational_expr 'op_greater' additive_expr 
 		{
-			if (utils.numeric_type_array.indexOf(utils.serialize_type($1.type)) == -1 || utils.numeric_type_array.indexOf(utils.serialize_type($3.type)) == -1) {
-				throw Error("Incomparable operand types '" + utils.serialize_type($1.type) + "' and '" + utils.serialize_type($3.type) + "' on operator '>'")
+			if (utils.numeric_type_array.indexOf($1.type.get_serial_type()) == -1 || utils.numeric_type_array.indexOf($3.type.get_serial_type()) == -1) {
+				throw Error("Incomparable operand types '" + $1.type.get_serial_type() + "' and '" + $3.type.get_serial_type() + "' on operator '>'")
 			}
 
 			$$ = utils.relational({
@@ -2474,8 +2467,8 @@ relational_expr :
 	|
 		relational_expr 'op_greaterEqual' additive_expr 
 		{
-			if (utils.numeric_type_array.indexOf(utils.serialize_type($1.type)) == -1 || utils.numeric_type_array.indexOf(utils.serialize_type($3.type)) == -1) {
-				throw Error("Incomparable operand types '" + utils.serialize_type($1.type) + "' and '" + utils.serialize_type($3.type) + "' on operator '>='")
+			if (utils.numeric_type_array.indexOf($1.type.get_serial_type()) == -1 || utils.numeric_type_array.indexOf($3.type.get_serial_type()) == -1) {
+				throw Error("Incomparable operand types '" + $1.type.get_serial_type() + "' and '" + $3.type.get_serial_type() + "' on operator '>='")
 			}
 
 			$$ = utils.relational({
@@ -2487,8 +2480,8 @@ relational_expr :
 	|
 		relational_expr 'op_less' additive_expr 
 		{
-			if (utils.numeric_type_array.indexOf(utils.serialize_type($1.type)) == -1 || utils.numeric_type_array.indexOf(utils.serialize_type($3.type)) == -1) {
-				throw Error("Incomparable operand types '" + utils.serialize_type($1.type) + "' and '" + utils.serialize_type($3.type) + "' on operator '<'")
+			if (utils.numeric_type_array.indexOf($1.type.get_serial_type()) == -1 || utils.numeric_type_array.indexOf($3.type.get_serial_type()) == -1) {
+				throw Error("Incomparable operand types '" + $1.type.get_serial_type() + "' and '" + $3.type.get_serial_type() + "' on operator '<'")
 			}
 
 			$$ = utils.relational({
@@ -2500,8 +2493,8 @@ relational_expr :
 	|
 		relational_expr 'op_lessEqual' additive_expr 
 		{
-			if (utils.numeric_type_array.indexOf(utils.serialize_type($1.type)) == -1 || utils.numeric_type_array.indexOf(utils.serialize_type($3.type)) == -1) {
-				throw Error("Incomparable operand types '" + utils.serialize_type($1.type) + "' and '" + utils.serialize_type($3.type) + "' on operator '<='")
+			if (utils.numeric_type_array.indexOf($1.type.get_serial_type()) == -1 || utils.numeric_type_array.indexOf($3.type.get_serial_type()) == -1) {
+				throw Error("Incomparable operand types '" + $1.type.get_serial_type() + "' and '" + $3.type.get_serial_type() + "' on operator '<='")
 			}
 
 			$$ = utils.relational({
@@ -2524,8 +2517,8 @@ shift_expr :
 	|
 		shift_expr 'op_Lshift' additive_expr 
 		{
-			if (utils.numeric_type_array.indexOf(utils.serialize_type($1.type)) == -1 || utils.numeric_type_array.indexOf(utils.serialize_type($3.type)) == -1) {
-				throw Error("Bad operand types '" + utils.serialize_type($1.type) + "' and '" + utils.serialize_type($3.type) + "' on binary operator '<<'")
+			if (utils.numeric_type_array.indexOf($1.type.get_serial_type()) == -1 || utils.numeric_type_array.indexOf($3.type.get_serial_type()) == -1) {
+				throw Error("Bad operand types '" + $1.type.get_serial_type() + "' and '" + $3.type.get_serial_type() + "' on binary operator '<<'")
 			}
 
 			$$ = utils.binary({
@@ -2537,8 +2530,8 @@ shift_expr :
 	|
 		shift_expr 'op_Rshift' additive_expr 
 		{
-			if (utils.numeric_type_array.indexOf(utils.serialize_type($1.type)) == -1 || utils.numeric_type_array.indexOf(utils.serialize_type($3.type)) == -1) {
-				throw Error("Bad operand types '" + utils.serialize_type($1.type) + "' and '" + utils.serialize_type($3.type) + "' on binary operator '>>'")
+			if (utils.numeric_type_array.indexOf($1.type.get_serial_type()) == -1 || utils.numeric_type_array.indexOf($3.type.get_serial_type()) == -1) {
+				throw Error("Bad operand types '" + $1.type.get_serial_type() + "' and '" + $3.type.get_serial_type() + "' on binary operator '>>'")
 			}
 
 			$$ = utils.binary({
@@ -2558,8 +2551,8 @@ additive_expr :
 	|
 		additive_expr 'op_add' multiplicative_expr 
 		{
-			if (utils.numeric_type_array.indexOf(utils.serialize_type($1.type)) == -1 || utils.numeric_type_array.indexOf(utils.serialize_type($3.type)) == -1) {
-				throw Error("Bad operand types '" + utils.serialize_type($1.type) + "' and '" + utils.serialize_type($3.type) + "' on binary operator '+'")
+			if (utils.numeric_type_array.indexOf($1.type.get_serial_type()) == -1 || utils.numeric_type_array.indexOf($3.type.get_serial_type()) == -1) {
+				throw Error("Bad operand types '" + $1.type.get_serial_type() + "' and '" + $3.type.get_serial_type() + "' on binary operator '+'")
 			}
 
 			$$ = utils.binary({
@@ -2571,8 +2564,8 @@ additive_expr :
 	|
 		additive_expr 'op_sub' multiplicative_expr 
 		{
-			if (utils.numeric_type_array.indexOf(utils.serialize_type($1.type)) == -1 || utils.numeric_type_array.indexOf(utils.serialize_type($3.type)) == -1) {
-				throw Error("Bad operand types '" + utils.serialize_type($1.type) + "' and '" + utils.serialize_type($3.type) + "' on binary operator '-'")
+			if (utils.numeric_type_array.indexOf($1.type.get_serial_type()) == -1 || utils.numeric_type_array.indexOf($3.type.get_serial_type()) == -1) {
+				throw Error("Bad operand types '" + $1.type.get_serial_type() + "' and '" + $3.type.get_serial_type() + "' on binary operator '-'")
 			}
 
 			$$ = utils.binary({
@@ -2592,8 +2585,8 @@ multiplicative_expr :
 	|
 		multiplicative_expr 'op_mul' unary_expr 
 		{
-			if (utils.numeric_type_array.indexOf(utils.serialize_type($1.type)) == -1 || utils.numeric_type_array.indexOf(utils.serialize_type($3.type)) == -1) {
-				throw Error("Bad operand types '" + utils.serialize_type($1.type) + "' and '" + utils.serialize_type($3.type) + "' on binary operator '*'")
+			if (utils.numeric_type_array.indexOf($1.type.get_serial_type()) == -1 || utils.numeric_type_array.indexOf($3.type.get_serial_type()) == -1) {
+				throw Error("Bad operand types '" + $1.type.get_serial_type() + "' and '" + $3.type.get_serial_type() + "' on binary operator '*'")
 			}
 
 			$$ = utils.binary({
@@ -2605,8 +2598,8 @@ multiplicative_expr :
 	|
 		multiplicative_expr 'op_div' unary_expr 
 		{
-			if (utils.numeric_type_array.indexOf(utils.serialize_type($1.type)) == -1 || utils.numeric_type_array.indexOf(utils.serialize_type($3.type)) == -1) {
-				throw Error("Bad operand types '" + utils.serialize_type($1.type) + "' and '" + utils.serialize_type($3.type) + "' on binary operator '/'")
+			if (utils.numeric_type_array.indexOf($1.type.get_serial_type()) == -1 || utils.numeric_type_array.indexOf($3.type.get_serial_type()) == -1) {
+				throw Error("Bad operand types '" + $1.type.get_serial_type() + "' and '" + $3.type.get_serial_type() + "' on binary operator '/'")
 			}
 
 			$$ = utils.binary({
@@ -2618,8 +2611,8 @@ multiplicative_expr :
 	|
 		multiplicative_expr 'op_mod' unary_expr 
 		{
-			if (utils.numeric_type_array.indexOf(utils.serialize_type($1.type)) == -1 || utils.numeric_type_array.indexOf(utils.serialize_type($3.type)) == -1 || utils.serialize_type($3.type) == "float") {
-				throw Error("Bad operand types '" + utils.serialize_type($3.type) + "' and '" + utils.serialize_type($3.type) + "' on binary operator '%'")
+			if (utils.numeric_type_array.indexOf($1.type.get_serial_type()) == -1 || utils.numeric_type_array.indexOf($3.type.get_serial_type()) == -1 || $3.type.get_serial_type() == "float") {
+				throw Error("Bad operand types '" + $3.type.get_serial_type() + "' and '" + $3.type.get_serial_type() + "' on binary operator '%'")
 			}
 
 			$$ = utils.binary({
@@ -2636,8 +2629,8 @@ predec_expr :
 		{
 			$$ = $2
 
-			if (utils.numeric_type_array.indexOf(utils.serialize_type($$.type)) == -1) {
-				throw Error("Bad operand type '" + utils.serialize_type($$.type) + "' on unary operator '++'")
+			if (utils.numeric_type_array.indexOf($$.type.get_serial_type()) == -1) {
+				throw Error("Bad operand type '" + $$.type.get_serial_type() + "' on unary operator '++'")
 			}
 
 			$$.code.push(
@@ -2652,8 +2645,8 @@ preinc_expr :
 		{
 			$$ = $2
 
-			if (utils.numeric_type_array.indexOf(utils.serialize_type($$.type)) == -1) {
-				throw Error("Bad operand type '" + utils.serialize_type($$.type) + "' on unary operator '++'")
+			if (utils.numeric_type_array.indexOf($$.type.get_serial_type()) == -1) {
+				throw Error("Bad operand type '" + $$.type.get_serial_type() + "' on unary operator '++'")
 			}
 
 			$$.code.push(
@@ -2682,8 +2675,8 @@ unary_expr :
 			else {
 				$$ = $2
 				
-				if (utils.numeric_type_array.indexOf(utils.serialize_type($$.type)) == -1) {
-					throw Error("Bad operand type '" + utils.serialize_type($$.type) + "' on unary operator '-'")
+				if (utils.numeric_type_array.indexOf($$.type.get_serial_type()) == -1) {
+					throw Error("Bad operand type '" + $$.type.get_serial_type() + "' on unary operator '-'")
 				}
 
 				$$.code.push(
@@ -2714,8 +2707,8 @@ unary_expr_npm :
 		{
 			$$ = $2
 			
-			if (utils.serialize_type($$.type) != "boolean") {
-				throw Error("Bad operand type '" + utils.serialize_type($$.type) + "' on unary operator '!'")
+			if ($$.type.get_serial_type() != "boolean") {
+				throw Error("Bad operand type '" + $$.type.get_serial_type() + "' on unary operator '!'")
 			}
 
 			$$.code.push(
@@ -2869,6 +2862,13 @@ method_invocation :
 
 			for (var index in $3) {
 				$$.code = $$.code.concat($3[index].code)
+
+				if (!($3[index].type.get_serial_type() == method.parameters[index].type.get_serial_type() || ($3[index].type.numeric() && method.parameters.type.numeric()))) {
+					throw Error("Argument must be of type " + method.parameters[index].type.get_serial_type())
+				}
+				if ($3[index].type.category == "array" && $3[index].type.get_size() != method.parameters[index].type.get_size()) {
+					throw Error("Array dimensions do not match")
+				}
 			}
 			for (var index in $3) {
 				$$.code.push(

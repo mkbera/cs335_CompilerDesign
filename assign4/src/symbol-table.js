@@ -198,7 +198,7 @@ class Class {
     }
 
     add_method(name, return_type, parameters, scope_table, main) {
-        if (name in this.variables) {
+        if (name in this.methods) {
             throw Error("The method '" + name + "' has already been defined!")
         }
 
