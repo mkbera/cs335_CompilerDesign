@@ -1,14 +1,15 @@
-1	decr	a	array	int	2
-2	arrset	a	0	69
-3	decr	b	int
-4	=	b	20
-5	arrget	b	a	0
-6	arrset	a	1	b
-7	decr	c	int
-8	arrget	c	a	0
-9	decr	d	int
-10	arrget	d	a	1
-11	print	b
-12	print	c
-13	print	d
-14	exit
+1	function	main
+2	decr	a	array	int	2
+3	arrset	a	0	69
+4	decr	b	int
+5	=	b	20
+6	arrget	b	a	0
+7	arrset	a	1	b
+8	decr	c	int
+9	arrget	c	a	0
+10	decr	d	int
+11	arrget	d	a	1
+12	print	b
+13	print	c
+14	print	d
+15	exit

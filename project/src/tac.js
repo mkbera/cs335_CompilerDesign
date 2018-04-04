@@ -35,7 +35,7 @@ function getVariables(arrays) {
 		// if (math_ops.indexOf(instr[1]) > -1 && keywords.indexOf(instr[2]) == -1 && arrays.indexOf(instr[1]) == -1) {
 		// 	variables.push(instr[2]);
 		// }
-		if (instr[1] == "decr"){ //|| instr[1] == "byte" || instr[1] == "char" || instr[1] == "float" || instr[1] == "short" || instr[1] == "param") {
+		if (instr[1] == "decr") { //|| instr[1] == "byte" || instr[1] == "char" || instr[1] == "float" || instr[1] == "short" || instr[1] == "param") {
 			variables.push(instr[2]);
 		}
 		// if (instr[1] == 'int') {
@@ -213,32 +213,11 @@ function getNextUseTable(basic_blocks, variables) {
 	return next_use_table;
 }
 
-
-function getSymbolTable() {
-	var symbol_table = new SymbolTable();
-
-	variables.forEach(function (variable) {
-		symbol_table.insert_variable(variable, "int", "global");
-	});
-
-	functions.forEach(function (func) {
-		symbol_table.insert_function(func, "int", "global", null);
-	});
-
-	for (array in arrays) {
-		symbol_table.insert_array(array, "int", "global", arrays[array]);
-	}
-
-	return symbol_table;
-}
-
-
 module.exports = {
 	getArrays: getArrays,
 	getVariables: getVariables,
 	getLabels: getLabels,
 	getBasicBlocks: getBasicBlocks,
 	getNextUseTable: getNextUseTable,
-	getFunctions: getFunctions,
-	getSymbolTable: getSymbolTable
+	getFunctions: getFunctions
 }

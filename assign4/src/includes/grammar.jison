@@ -1013,7 +1013,7 @@ method_decr :
 			}
 			else {
 				$$.code = $$.code.concat([
-					"error" + ir_sep + "Error: no return statement found for function '" + method.name + "' with return type " + method.return_type.get_serial_type(),
+					"error" + ir_sep + "function_return",
 					"exit"
 				])
 			}

@@ -32,5 +32,5 @@ class Array {
 module.exports = {
 	Variable: Variable,
 	Function: Function,
-	Array:	Array
+	Array: Array
 };
