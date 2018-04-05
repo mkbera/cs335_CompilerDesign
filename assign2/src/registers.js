@@ -4,7 +4,7 @@ global.registers_list = ["eax", "ebx", "ecx", "edx", "esi", "edi"];
 class Registers {
 	constructor() {
 		this.register_descriptor = {};
-		for (var i = 0; i < registers_list.length; i++) {
+		for (var i = 0; i < registers_list.length; i += 1) {
 			this.register_descriptor[registers_list[i]] = null;
 		}
 

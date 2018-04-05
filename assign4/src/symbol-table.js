@@ -283,6 +283,8 @@ class SymbolTable {
         this.import_methods = {}
 
         this.main_function = null
+
+        this.variable_index = 0
     }
 
     get_class(name) {
@@ -335,6 +337,7 @@ class SymbolTable {
     }
 
     add_variable(name, type) {
+        this.variable_index += 1
         return this.current_scope.add_variable(name, type)
     }
 

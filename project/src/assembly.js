@@ -16,7 +16,7 @@ class Assembly {
 
 
 	add_data(line) {
-		for (var i = 0; i < this.indent; i++) {
+		for (var i = 0; i < this.indent; i += 1) {
 			line = "\t" + line
 		}
 		this.data += "\t" + line + "\n"
@@ -24,7 +24,7 @@ class Assembly {
 
 
 	add(line) {
-		for (var i = 0; i < this.indent; i++) {
+		for (var i = 0; i < this.indent; i += 1) {
 			line = "\t" + line
 		}
 		this.code += line + "\n"
@@ -57,16 +57,16 @@ class Assembly {
 		if (fs.existsSync(path)) {
 			var components = JSON.parse(fs.readFileSync(path, "utf8"))
 
-			for (var index = 0; index < components.externs.length; index++) {
+			for (var index = 0; index < components.externs.length; index += 1) {
 				self.add_extern(components.externs[index])
 			}
 
-			for (var index = 0; index < components.data.length; index++) {
+			for (var index = 0; index < components.data.length; index += 1) {
 				self.add_data(components.data[index])
 			}
 
 			self.add("")
-			for (var index = 0; index < components.code.length; index++) {
+			for (var index = 0; index < components.code.length; index += 1) {
 				self.add(components.code[index])
 			}
 		}
@@ -81,7 +81,7 @@ class Assembly {
 
 		code += "global main" + "\n\n"
 
-		for (var index = 0; index < this.externs.length; index++) {
+		for (var index = 0; index < this.externs.length; index += 1) {
 			code += "extern " + this.externs[index] + "\n"
 		}
 		code += "\n"

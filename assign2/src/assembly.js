@@ -6,7 +6,7 @@ class Assembly {
 
 
 	add(line) {
-		for (var i = 0; i < this.indent; i++) {
+		for (var i = 0; i < this.indent; i += 1) {
 			this.assembly += "\t";
 		}
 		this.assembly += line + "\n";

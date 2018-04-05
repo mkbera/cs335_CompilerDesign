@@ -17,7 +17,7 @@ class Grammar {
 			else {
 				arr.push("$" + n_child);
 			}
-			n_child++;
+			n_child += 1;
 		});
 
 		return arr;
@@ -82,8 +82,8 @@ function main() {
 		var opt = true;
 		while (opt) {
 			opt = false;
-			for (var i = 0; i < rules[nt].length; i++) {
-				for (var j = 0; j < rules[nt][i].length; j++) {
+			for (var i = 0; i < rules[nt].length; i += 1) {
+				for (var j = 0; j < rules[nt][i].length; j += 1) {
 					if (typeof rules[nt][i][j] !== "string" && rules[nt][i][j].optional) {
 						opt = true;
 						rules[nt][i][j] = { nt: rules[nt][i][j].nt };
@@ -96,7 +96,7 @@ function main() {
 		}
 
 		grammar.add(nt + " :");
-		for (var i = 0; i < rules[nt].length - 1; i++) {
+		for (var i = 0; i < rules[nt].length - 1; i += 1) {
 			grammar.add("\t\t" + grammar.get_rule_string(nt, rules[nt][i]));
 			grammar.add("\t|");
 		}
