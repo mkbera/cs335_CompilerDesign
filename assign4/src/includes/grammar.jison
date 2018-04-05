@@ -6,7 +6,7 @@
 			for (var var_index in obj.var_declarators) {
 				variable = obj.var_declarators[var_index]
 				
-				ST.add_variable(variable.identifier, obj.type);
+				variable.identifier = ST.add_variable(variable.identifier, obj.type).display_name
 
 				if (obj.type.category == "array") {
 					
@@ -17,7 +17,7 @@
 						var length = 1
 
 						if (type.dimension == 0 || type.length != inits.length) {
-							throw Error("Array dimensions do not match");
+							throw Error("Array dimensions do not match")
 						}
 
 						while (type.dimension != 0) {
@@ -28,7 +28,7 @@
 							var inits_serial = []
 							for (var index in inits) {
 								if (type.length != inits[index].length) {
-									throw Error("Array dimensions do not match");
+									throw Error("Array dimensions do not match")
 								}
 
 								inits_serial = inits_serial.concat(inits[index])
@@ -37,7 +37,7 @@
 						}
 
 						if (inits[0].length) {
-							throw Error("Array dimensions do not match");
+							throw Error("Array dimensions do not match")
 						}
 
 						self.code.push(
@@ -55,6 +55,7 @@
 								var temp = ST.create_temporary()
 
 								self.code = self.code.concat([
+									"decr" + ir_sep + temp + ir_sep + type.type,
 									"cast" + ir_sep + temp + ir_sep + inits[index].type.type + ir_sep + type.type + ir_sep + inits[index].place,
 									"arrset" + ir_sep + variable.identifier + ir_sep + index + ir_sep + temp
 								])
@@ -67,8 +68,8 @@
 						}
 					}
 					else {
-						var length = 1;
-						var type = obj.type;
+						var length = 1
+						var type = obj.type
 
 						while (type.dimension != 0) {
 							length *= type.length
@@ -97,6 +98,7 @@
 							var temp = ST.create_temporary()
 
 							self.code = self.code.concat([
+								"decr" + ir_sep + temp + ir_sep + obj.type.type,
 								"cast" + ir_sep + temp + ir_sep + variable.init.type.type + ir_sep + obj.type.type + ir_sep + variable.init.place,
 								"=" + ir_sep + variable.identifier + ir_sep + temp
 							])
@@ -117,30 +119,6 @@
 
 			var self = { code: [], place: null, type: null, literal: false }
 
-			if (!obj.op1.literal) {
-				var temp = ST.create_temporary()
-
-				self.code = obj.op1.code.concat(obj.op2.code)
-				self.code.push(
-					obj.operator + ir_sep + temp + ir_sep + obj.op1.place + ir_sep + obj.op2.place
-				)
-
-				self.place = temp
-			}
-			else if (!obj.op2.literal) {
-				var temp = ST.create_temporary()
-			
-				self.code = obj.op2.code.concat(obj.op1.code)
-				self.code.push(
-					obj.operator + ir_sep + temp + ir_sep + obj.op2.place + ir_sep + obj.op1.place
-				)
-				self.place = temp
-			}
-			else {
-				self.place = eval(obj.op1.place + " " + obj.operator + " " + obj.op2.place)
-				self.literal = true
-			}
-
 			if (obj.op1.type.type == "float" || obj.op2.type.type == "float") {
 				self.type = new Type("float", "basic", 4, 0, 0)
 			}
@@ -160,6 +138,75 @@
 				self.type = new Type("boolean", "basic", 1, 0, 0)
 			}
 
+			if (!obj.op1.literal) {
+				var temp = ST.create_temporary()
+				self.code.push(
+					"decr" + ir_sep + temp + ir_sep + self.type.type
+				)
+
+				self.code = obj.op1.code.concat(obj.op2.code)
+
+				var t1 = obj.op1.place
+				if (obj.op1.type.type != self.type.type) {
+					t1 = ST.create_temporary()
+					self.code = self.code.concat([
+						"decr" + ir_sep + t1 + ir_sep + self.type.type,
+						"cast" + ir_sep + t1 + ir_sep + obj.op1.type.type + ir_sep + self.type.type + ir_sep + obj.op1.place
+					])
+				}
+
+				var t2 = obj.op2.place
+				if (obj.op2.type.type != self.type.type) {
+					t2 = ST.create_temporary()
+					self.code = self.code.concat([
+						"decr" + ir_sep + t2 + ir_sep + self.type.type,
+						"cast" + ir_sep + t2 + ir_sep + obj.op2.type.type + ir_sep + self.type.type + ir_sep + obj.op2.place
+					])
+				}
+
+				self.code.push(
+					obj.operator + ir_sep + temp + ir_sep + t1 + ir_sep + t2
+				)
+
+				self.place = temp
+			}
+			else if (!obj.op2.literal) {
+				var temp = ST.create_temporary()
+				self.code.push(
+					"decr" + ir_sep + temp + ir_sep + self.type.type
+				)
+
+				self.code = obj.op1.code.concat(obj.op2.code)
+
+				var t1 = obj.op1.place
+				if (obj.op1.type.type != self.type.type) {
+					t1 = ST.create_temporary()
+					self.code = self.code.concat([
+						"decr" + ir_sep + t1 + ir_sep + self.type.type,
+						"cast" + ir_sep + t1 + ir_sep + obj.op1.type.type + ir_sep + self.type.type + ir_sep + obj.op1.place
+					])
+				}
+
+				var t2 = obj.op2.place
+				if (obj.op2.type.type != self.type.type) {
+					t2 = ST.create_temporary()
+					self.code = self.code.concat([
+						"decr" + ir_sep + t2 + ir_sep + self.type.type,
+						"cast" + ir_sep + t2 + ir_sep + obj.op2.type.type + ir_sep + self.type.type + ir_sep + obj.op2.place
+					])
+				}
+
+				self.code.push(
+					obj.operator + ir_sep + temp + ir_sep + t2 + ir_sep + t1
+				)
+
+				self.place = temp
+			}
+			else {
+				self.place = eval(obj.op1.place + " " + obj.operator + " " + obj.op2.place)
+				self.literal = true
+			}
+
 			return self
 		},
 
@@ -168,10 +215,15 @@
 			var self = { code: [], place: null, type: null, literal: false }
 
 			if (!obj.op1.literal) {
+				self.code = obj.op1.code.concat(obj.op2.code)
+
 				var temp = ST.create_temporary()
+				self.code.push(
+					"decr" + ir_sep + temp + ir_sep + "int"
+				)
+
 				var label = ST.create_label()
 			
-				self.code = obj.op1.code.concat(obj.op2.code)
 				self.code = self.code.concat([
 					"=" + ir_sep + temp + ir_sep + "1",
 					"ifgoto" + ir_sep + obj.operator + ir_sep + obj.op1.place + ir_sep + obj.op2.place + ir_sep + label,
@@ -181,10 +233,15 @@
 				self.place = temp
 			}
 			else if (!obj.op2.literal) {
-				var temp = ST.create_temporary()
-				var label = ST.create_label()
-			
 				self.code = obj.op2.code.concat(obj.op1.code)
+				var temp = ST.create_temporary()
+			
+				self.code.push(
+					"decr" + ir_sep + temp + ir_sep + "int"
+				)
+
+				var label = ST.create_label()
+
 				self.code = self.code.concat([
 					"=" + ir_sep + temp + ir_sep + "1",
 					"ifgoto" + ir_sep + obj.operator + ir_sep + obj.op2.place + ir_sep + obj.op1.place + ir_sep + label,
@@ -712,7 +769,7 @@ formal_parameter_list :
 formal_parameter :
 		type var_declarator_id 
 		{
-			$$ = new Variable($2, $1)
+			$$ = { name: $2, type: $1 }
 		}
 	;
 
@@ -1003,7 +1060,7 @@ method_decr :
 
 			for (var index = method.parameters.length - 1; index >= 0; index--) {
 				$$.code.push(
-					"arg" + ir_sep + method.parameters[index].name + ir_sep + method.parameters[index].type.category + ir_sep + method.parameters[index].type.get_basic_type() + ir_sep + method.parameters[index].type.get_size()
+					"arg" + ir_sep + method.parameters[index].display_name + ir_sep + method.parameters[index].type.category + ir_sep + method.parameters[index].type.get_basic_type() + ir_sep + method.parameters[index].type.get_size()
 				)
 			}
 			$$.code = $$.code.concat($2.code)
@@ -1026,21 +1083,21 @@ method_declarator :
 		{
 			$$ = {
 				name: $identifier,
-				parameters: $5,
 				scope: null,
 				method: null
 			}
 
 			var scope = ST.scope_start(category = "function")
-			var method = ST.add_method($identifier, new Type("null", "basic", null, null, 0), $5, scope)
-
-			$$.method = method
+			var parameters = []
 
 			for (var index in $5) {
-				var variable = scope.add_variable($5[index].name, $5[index].type)
+				ST.variables_count += 1
+				var variable = scope.add_variable($5[index].name, $5[index].type, ST.variables_count, isparam = true)
 				scope.parameters[variable.name] = variable
-				variable.isparam = true
+				parameters.push(variable)
 			}
+
+			$$.method = ST.add_method($identifier, new Type("null", "basic", null, null, 0), parameters, scope)
 
 			$$.scope = scope
 		}
@@ -1049,21 +1106,21 @@ method_declarator :
 		{
 			$$ = {
 				name: $identifier,
-				parameters: $5,
 				scope: null,
 				method: null
 			}
 
 			var scope = ST.scope_start(category = "function")
-			var method = ST.add_method($identifier, $2, $5, scope)
-
-			$$.method = method
+			var parameters = []
 
 			for (var index in $5) {
-				var variable = scope.add_variable($5[index].name, $5[index].type)
+				ST.variables_count += 1
+				var variable = scope.add_variable($5[index].name, $5[index].type, ST.variables_count, isparam = true)
 				scope.parameters[variable.name] = variable
-				variable.isparam = true
+				parameters.push(variable)
 			}
+
+			$$.method = ST.add_method($identifier, $2, parameters, scope)
 
 			$$.scope = scope
 		}
@@ -1072,22 +1129,22 @@ method_declarator :
 		{
 			$$ = {
 				name: $identifier,
-				parameters: $4,
 				scope: null,
 				method: null
 			}
 
 			var scope = ST.scope_start(category = "function")
-			var method = ST.add_method($identifier, new Type("null", "basic", null, null, 0), $4, scope)
-
-			$$.method = method
+			var parameters = []
 
 			for (var index in $4) {
-				var variable = scope.add_variable($4[index].name, $4[index].type)
+				ST.variables_count += 1
+				var variable = scope.add_variable($4[index].name, $4[index].type, ST.variables_count, isparam = true)
 				scope.parameters[variable.name] = variable
-				variable.isparam = true
+				parameters.push(variable)
 			}
 
+			$$.method = ST.add_method($identifier, new Type("null", "basic", null, null, 0), parameters, scope)
+			
 			$$.scope = scope
 		}
 	|
@@ -1095,21 +1152,21 @@ method_declarator :
 		{
 			$$ = {
 				name: $identifier,
-				parameters: $4,
 				scope: null,
 				method: null
 			}
 
 			var scope = ST.scope_start(category = "function")
-			var method = ST.add_method($identifier, $1, $4, scope)
-
-			$$.method = method
+			var parameters = []
 
 			for (var index in $4) {
-				var variable = scope.add_variable($4[index].name, $4[index].type)
+				ST.variables_count += 1
+				var variable = scope.add_variable($4[index].name, $4[index].type, ST.variables_count, isparam = true)
 				scope.parameters[variable.name] = variable
-				variable.isparam = true
+				parameters.push(variable)
 			}
+
+			$$.method = ST.add_method($identifier, $1, parameters, scope)
 
 			$$.scope = scope
 		}
@@ -2241,8 +2298,6 @@ assignment :
 				throw Error("Array dimensions do not match")
 			}
 
-			ST.lookup_variable($1.place)
-
 			$$.code = $3.code.concat($1.code)
 
 			if ($2.third) {
@@ -2271,6 +2326,7 @@ assignment :
 				var temp = ST.create_temporary()
 
 				$$.code = $$.code.concat([
+					"decr" + ir_sep + temp + ir_sep + $1.type.type,
 					"arrget" + ir_sep + temp + ir_sep + $1.place + ir_sep + $1.offset,
 					$2.operator + ir_sep + temp + ir_sep + temp + ir_sep + $3.place,
 					"arrset" + ir_sep + $1.place + ir_sep + $1.offset + ir_sep + temp,
@@ -2294,7 +2350,9 @@ left_hand_side :
 		{
 			$$ = $1
 
-			$$.type = ST.lookup_variable($$.place).type
+			var variable = ST.lookup_variable($$.place)
+			$$.place = variable.display_name
+			$$.type = variable.type
 		}
 	|
 		field_access 
@@ -2741,17 +2799,22 @@ unary_expr_npm :
 cast_expr :
 		'paranthesis_start' primitive_type 'paranthesis_end' unary_expr 
 		{
-			$$ = $4
+			$$ = { 
+				code: $4.code,
+				type: new Type($2.type, "basic", $2.width, $2.length, 0),
+				place: null
+			}
 
-			if (!($4.type.category == "basic" && ($4.type.type == $2.type || ($4.type.numeric() && $2.numeric())))) {
+			if (!($4.type.category == "basic" && ($4.type.type == $2.type || ($4.type.numeric() && $$.type.numeric())))) {
 				throw Error("Cannot convert '" + $4.type.get_serial_type() + "' to '" + $2.type + "'")
 			}
 
 			temp = ST.create_temporary()
 
-			$$.code.push(
+			$$.code = $$.code.concat([
+				"decr" + ir_sep + temp + ir_sep + $2.type,
 				"cast" + ir_sep + temp + ir_sep + $4.type.type + ir_sep + $2.type + ir_sep + $4.place
-			)
+			])
 
 			$$.place = temp
 		}
@@ -2770,8 +2833,9 @@ postdec_expr :
 			var temp = ST.create_temporary()
 
 			$$.code = $$.code.concat([
+				"decr" + ir_sep + temp + ir_sep + $1.type.type,
 				"=" + ir_sep + temp + ir_sep + $1.place,
-				"+" + ir_sep + $1.place + ir_sep + $1.place + ir_sep + "1"
+				"-" + ir_sep + $1.place + ir_sep + $1.place + ir_sep + "1"
 			])
 
 			$$.place = temp
@@ -2788,6 +2852,7 @@ postdec_expr :
 			var temp = ST.create_temporary()
 
 			$$.code = $$.code.concat([
+				"decr" + ir_sep + temp + ir_sep + $1.type.type,
 				"=" + ir_sep + temp + ir_sep + $1.place,
 				"-" + ir_sep + $1.place + ir_sep + $1.place + ir_sep + "1"
 			])
@@ -2809,6 +2874,7 @@ postinc_expr :
 			var temp = ST.create_temporary()
 
 			$$.code = $$.code.concat([
+				"decr" + ir_sep + temp + ir_sep + $1.type.type,
 				"=" + ir_sep + temp + ir_sep + $1.place,
 				"+" + ir_sep + $1.place + ir_sep + $1.place + ir_sep + "1"
 			])
@@ -2827,6 +2893,7 @@ postinc_expr :
 			var temp = ST.create_temporary()
 
 			$$.code = $$.code.concat([
+				"decr" + ir_sep + temp + ir_sep + $1.type.type,
 				"=" + ir_sep + temp + ir_sep + $1.place,
 				"+" + ir_sep + $1.place + ir_sep + $1.place + ir_sep + "1"
 			])
@@ -2858,8 +2925,10 @@ postfix_expr :
 		expr_name 
 		{
 			$$ = $1
-			
-			$$.type = ST.lookup_variable($$.place).type
+
+			var variable = ST.lookup_variable($$.place)
+			$$.place = variable.display_name
+			$$.type = variable.type
 		}
 	;
 
@@ -2893,6 +2962,18 @@ method_invocation :
 
 			if (method.return_type.type != "null") {
 				temp = ST.create_temporary()
+
+
+				if (method.return_type.category == "basic") {
+					$$.code.push(
+						"decr" + ir_sep + temp + ir_sep + method.return_type.type,
+					)
+				}
+				else {
+					$$.code.push(
+						"decr" + ir_sep + temp + ir_sep + method.return_type.category + ir_sep + method.return_type.get_basic_type() + ir_sep + method.return_type.get_size(),
+					)
+				}
 
 				$$.place = temp
 				$$.code.push(
@@ -3006,7 +3087,7 @@ array_access :
 				throw Error("Array dimensions do not match")
 			}
 
-			$$.place = array.name
+			$$.place = array.display_name
 			$$.offset = temp
 			$$.type = type
 		}

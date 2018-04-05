@@ -12,6 +12,7 @@ class test {
 	}
 
 	int[2][5] test2(int[2][5] arr) {
+		int r = (float) x + 1.020 + a;
 		return arr;
 	}
 

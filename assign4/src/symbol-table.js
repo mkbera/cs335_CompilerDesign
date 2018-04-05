@@ -90,7 +90,7 @@ class ScopeTable {
         this.return_types = []
     }
 
-    add_variable(name, type) {
+    add_variable(name, type, index) {
         if (name in this.variables) {
             throw Error("The variable '" + name + "' has already been defined!")
         }
@@ -98,7 +98,7 @@ class ScopeTable {
             throw Error("The variable '" + name + "' has already been defined as the function parameter!")
         }
 
-        var variable = new Variable(name, type)
+        var variable = new Variable(name, type, index)
         this.variables[name] = variable;
 
         return variable;
@@ -141,11 +141,10 @@ class ScopeTable {
 
 
 class Variable {
-    constructor(name, type, isparam = false) {
-        this.category = "variable"
-
+    constructor(name, type, index, isparam = false) {
         this.name = name
         this.type = type
+        this.display_name = name + "_" + index
 
         this.isparam = isparam
     }
@@ -155,7 +154,6 @@ class Variable {
 class Method {
     constructor(name, return_type, parameters, scope_table, main = false) {
         this.main = main
-        this.type = "method"
 
         this.name = name
         this.parameters = parameters
@@ -208,12 +206,12 @@ class Class {
         return method
     }
 
-    add_variable(name, type) {
+    add_variable(name, type, index) {
         if (name in this.variables) {
             throw Error("The variable '" + name + "' has already been defined!")
         }
 
-        var variable = new Variable(name, type)
+        var variable = new Variable(name, type, index)
         this.variables[name] = variable;
 
         return variable
@@ -277,14 +275,12 @@ class SymbolTable {
         this.current_scope = null
 
         this.temporaries_count = 0
-
+        this.variables_count = 0
         this.labels_count = 0
 
         this.import_methods = {}
 
         this.main_function = null
-
-        this.variable_index = 0
     }
 
     get_class(name) {
@@ -337,14 +333,14 @@ class SymbolTable {
     }
 
     add_variable(name, type) {
-        this.variable_index += 1
-        return this.current_scope.add_variable(name, type)
+        this.variables_count += 1
+        return this.current_scope.add_variable(name, type, this.variables_count)
     }
 
     create_temporary() {
         this.temporaries_count += 1
 
-        var name = "t_" + this.temporaries_count
+        var name = "t" + this.temporaries_count
 
         while (this.lookup_variable(name, false)) {
             this.temporaries_count += 1
