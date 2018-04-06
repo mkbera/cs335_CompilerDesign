@@ -3,7 +3,7 @@
 3	=	b	9
 4	param	b
 5	param	a
-6	call	array_func	a
+6	call	array_func	b
 7	arrget	b	a	18
 8	print	b
 9	arrget	b	a	19
@@ -32,4 +32,4 @@
 32	arrset	a	19	6
 33	arrset	a	18	7
 34	arrget	b	a	20
-35	return	a
+35	return	5

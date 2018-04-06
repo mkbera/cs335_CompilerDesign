@@ -665,7 +665,11 @@ function codeGen(instr, next_use_table, line_nr) {
 		var x;
 		if (instr[2] != null) {
 			x = instr[2]
-			assembly.add("mov eax, [ebp - " + registers.address_descriptor[x]["offset"] + "]")
+			if (variables.indexOf(x) == -1){	// x is constant
+				assembly.add("mov eax, " + x)
+			} else {
+				assembly.add("mov eax, [ebp - " + registers.address_descriptor[x]["offset"] + "]")
+			}
 		}
 		assembly.add("mov	esp, ebp");
 		assembly.add("pop ebp");

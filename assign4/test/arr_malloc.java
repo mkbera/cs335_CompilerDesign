@@ -4,7 +4,7 @@ class arr {
 	
 	public void main() {
 		int n = 6;
-		int[6.7] a;
+		int[n] a;
 		a:[0] = 69;
 		int b = 20;
 		b = a:[0];
