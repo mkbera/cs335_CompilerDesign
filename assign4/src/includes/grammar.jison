@@ -117,7 +117,12 @@
 
 		binary: function (obj) {
 
-			var self = { code: [], place: null, type: null, literal: false }
+			var self = {
+				code: obj.op1.code.concat(obj.op2.code),
+				place: null,
+				type: null,
+				literal: false
+			}
 
 			if (obj.op1.type.type == "float" || obj.op2.type.type == "float") {
 				self.type = new Type("float", "basic", 4, 0, 0)
@@ -143,8 +148,6 @@
 				self.code.push(
 					"decr" + ir_sep + temp + ir_sep + self.type.type
 				)
-
-				self.code = obj.op1.code.concat(obj.op2.code)
 
 				var t1 = obj.op1.place
 				if (obj.op1.type.type != self.type.type) {
@@ -175,8 +178,6 @@
 				self.code.push(
 					"decr" + ir_sep + temp + ir_sep + self.type.type
 				)
-
-				self.code = obj.op1.code.concat(obj.op2.code)
 
 				var t1 = obj.op1.place
 				if (obj.op1.type.type != self.type.type) {
@@ -3049,9 +3050,10 @@ array_access :
 			var array = ST.lookup_variable($1.place)
 			var type = array.type
 
-			$$.code.push(
+			$$.code = $$.code.concat([
+				"decr" + ir_sep + temp + ir_sep + "int",
 				"=" + ir_sep + temp + ir_sep + "0"
-			)
+			])
 
 			var first = true
 
