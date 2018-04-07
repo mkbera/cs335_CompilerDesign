@@ -21,20 +21,19 @@ class Registers {
 
 	spillVariable(variable, line_nr, print = true) {
 		var self = this;
-
 		if (variables.indexOf(variable) > -1 && self.address_descriptor[variable] != null && self.address_descriptor[variable]["type"] == "reg") {
 			var reg = self.address_descriptor[variable]["name"];
 
 			if (print) {
-				print = false;
+				// print = false;
 
-				var block = basic_blocks[line_block_mapping[line_nr]];
-				block.some(function (instr) {
-					if (instr[2] == variable) {
-						print = true;
-						return true;
-					}
-				});
+				// var block = basic_blocks[line_block_mapping[line_nr]];
+				// block.some(function (instr) {
+				// 	if (instr[2] == variable) {
+				// 		print = true;
+				// 		return true;
+				// 	}
+				// }); // MANISH WAS HERE`
 
 				// if (print) assembly.add("mov dword [" + variable + "], " + reg);
 				if (print) assembly.add("mov dword [ ebp - " + self.address_descriptor[variable]["offset"] + "], " + reg);

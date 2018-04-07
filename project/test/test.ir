@@ -1,14 +1,9 @@
-1	decr	a	array	int	2
-2	arrset	a	0	69
-3	decr	b	int
-4	=	b	20
-5	arrget	b	a	0
-6	arrset	a	1	b
-7	decr	c	int
-8	arrget	c	a	0
-9	decr	d	int
-10	arrget	d	a	1
-11	print	b
-12	print	c
-13	print	d
-14	exit
+1	import	IO
+2	function	main
+3	decr	a	
+4	=	a	69
+5	decr	b	int
+6	=	b	20
+7	decr	c
+8	=	c	b
+9	exit
