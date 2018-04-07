@@ -1,84 +1,53 @@
 1	import	IO
-2	class	test
-3	decr	x_1	int
-4	=	x_1	10
-5	decr	a_2	int
-6	decr	c_3	int
+2	class	Threed_array
+3	function	main
+4	decr	a_1	array	int	1000	
+5	decr	i_2	int
+6	=	i_2	0
 7	decr	t1	int
-8	cast	t1	float	int	5.012
-9	=	c_3	t1
-10	decr	d_4	array	int	10	
-11	function	function_name
-12	arg	y_6	basic	int	1
-13	arg	x_5	basic	int	1
-14	decr	b_7	float
-15	=	x_5	a_2
-16	return	5
-17	error	function_return
-18	exit
-19	function	test2
-20	arg	arr_8	array	int	10
-21	decr	r_9	int
-22	decr	t2	float
-23	cast	t2	int	float	x_1
-24	+	t3	t2	1.020
-25	decr	t5	float
-26	cast	t5	int	float	a_2
-27	+	t4	t3	t5
-28	decr	t6	int
-29	cast	t6	float	int	t4
-30	=	r_9	t6
-31	return	arr_8
-32	error	function_return
-33	exit
-34	function	test_func
-35	arg	arr_10	array	int	10
-36	decr	a_11	int
-37	=	a_11	1
-38	decr	b_12	int
-39	=	b_12	0
-40	decr	c_13	boolean
-41	=	c_13	1
-42	param	arr_10
-43	decr	t7	array	int	10
-44	call	test2	1	t7
-45	=	d_4	t7
-46	+	t8	b_12	5
-47	=	a_11	t8
-48	neg	b_12
-49	=	a_11	b_12
-50	decr	i_14	int
-51	=	i_14	0
-52	=	i_14	5
-53	ifgoto	eq	i_14	0	69
-54	decr	j_15	int
-55	=	j_15	0
-56	=	j_15	5
-57	ifgoto	eq	j_15	0	67
-58	+	t10	b_12	1
-59	=	t9	0
-60	+	t9	t9	i_14
-61	*	t9	t9	5
-62	+	t9	t9	j_15
-63	arrset	d_4	t9	t10
-64	return	1
-65	inc	j_15
-66	jump	56
-67	inc	i_14
-68	jump	52
-69	return	a_11
-70	error	function_return
-71	exit
-72	function	main
-73	decr	a_16	int
-74	param	d_4
-75	decr	t11	int
-76	call	test_func	1	t11
-77	=	a_16	t11
-78	decr	b_17	int
-79	param	1
-80	param	2
-81	decr	t12	int
-82	call	function_name	2	t12
-83	=	b_17	t12
-84	return
+8	=	t1	1
+9	ifgoto	lt	i_2	10	11
+10	=	t1	0
+11	ifgoto	eq	t1	0	53
+12	decr	j_3	int
+13	=	j_3	0
+14	decr	t3	int
+15	=	t3	1
+16	ifgoto	lt	j_3	10	18
+17	=	t3	0
+18	ifgoto	eq	t3	0	49
+19	decr	k_4	int
+20	=	k_4	0
+21	decr	t5	int
+22	=	t5	1
+23	ifgoto	lt	k_4	10	25
+24	=	t5	0
+25	ifgoto	eq	t5	0	45
+26	decr	t8	int
+27	-	t8	i_2	j_3
+28	decr	t9	int
+29	=	t9	k_4
+30	neg	t9
+31	decr	t10	int
+32	*	t10	t8	t9
+33	decr	t7	int
+34	=	t7	0
+35	+	t7	t7	i_2
+36	*	t7	t7	10
+37	+	t7	t7	j_3
+38	*	t7	t7	10
+39	+	t7	t7	k_4
+40	arrset	a_1	t7	t10
+41	decr	t6	int
+42	=	t6	k_4
+43	+	k_4	k_4	1
+44	jump	21
+45	decr	t4	int
+46	+	t4	j_3	1
+47	=	j_3	t4
+48	jump	14
+49	decr	t2	int
+50	+	t2	i_2	1
+51	=	i_2	t2
+52	jump	7
+53	return
