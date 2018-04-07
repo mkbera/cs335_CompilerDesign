@@ -3,7 +3,7 @@
 		"_int db \"%i\", 0x0a, 0x00"
 	],
 	"code": [
-		"syscall_print_int:",
+		"func_syscall_print_int:",
 		"\tpush ebp",
 		"\tmov ebp, esp",
 		"\tmov eax, [ebp + 8]",

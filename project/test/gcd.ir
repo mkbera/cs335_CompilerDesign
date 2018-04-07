@@ -1,12 +1,24 @@
-1	scan	a
-2	scan	b
-3	call	gcd
-4	print	b
-5	exit
-6	function	gcd
-7	%	r	a	b
-8	if	eq	r	0	12
-9	=	a	b
-10	=	b	r
-11	call	gcd
-12	return
+1	import	IO
+2	function	main
+3	decr	a
+4	decr	b
+5	=	a	560
+6	=	b	1000
+7	param	b
+8	param	a
+9	call	gcd	b
+10	param	b
+11	call	syscall_print_int
+12	exit
+13	function	gcd
+14	arg	a1
+15	arg	b1
+16	decr	r
+17	%	r	a1	b1
+18	ifgoto	eq	r	0	24
+19	=	a1	b1
+20	=	b1	r
+21	param	b1
+22	param	a1
+23	call	gcd	b1
+24	return	b1

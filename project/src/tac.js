@@ -4,7 +4,7 @@ function getLabels() {
 	var labels = [];
 
 	tac.forEach(function (instr) {
-		if (instr[1] == "if" || instr[1] == "jump") {
+		if (instr[1] == "ifgoto" || instr[1] == "jump") {
 			labels.push(parseInt(instr[instr.length - 1]));
 		}
 	});
@@ -35,7 +35,7 @@ function getVariables(arrays) {
 		// if (math_ops.indexOf(instr[1]) > -1 && keywords.indexOf(instr[2]) == -1 && arrays.indexOf(instr[1]) == -1) {
 		// 	variables.push(instr[2]);
 		// }
-		if (instr[1] == "decr") { //|| instr[1] == "byte" || instr[1] == "char" || instr[1] == "float" || instr[1] == "short" || instr[1] == "param") {
+		if (instr[1] == "decr" || instr[1] == "arg") { //|| instr[1] == "byte" || instr[1] == "char" || instr[1] == "float" || instr[1] == "short" || instr[1] == "param") {
 			variables.push(instr[2]);
 		}
 		// if (instr[1] == 'int') {

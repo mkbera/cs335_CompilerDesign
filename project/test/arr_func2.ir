@@ -1,35 +1,44 @@
-1	decr	a	array	int	25
-2	decr	b	int
-3	=	b	9
-4	param	b
-5	param	a
-6	call	array_func	b
-7	arrget	b	a	18
-8	print	b
-9	arrget	b	a	19
-10	print	b
-11	arrget	b	a	20
-12	print	b
-13	arrget	b	a	21
-14	print	b
-15	arrget	b	a	22
-16	print	b
-17	arrget	b	a	23
-18	print	b
-19	arrget	b	a	24
-20	print	b
-21	exit
-22	function	array_func
-23	arg	a	array	int	25
-24	arg	b	int
-25	decr	i	int
-26	=	i	0
-27	arrset	a	21	5
-28	arrset	a	22	1
-29	arrset	a	23	2
-30	arrset	a	24	3
-31	arrset	a	20	4
-32	arrset	a	19	6
-33	arrset	a	18	7
-34	arrget	b	a	20
-35	return	5
+1	import	IO
+2	function	main
+3	decr	a	array	int	25
+4	decr	b	int
+5	=	b	9
+6	param	b
+7	param	a
+8	call	array_func	b
+9	arrget	b	a	18
+10	param	b
+11	call	syscall_print_int
+12	arrget	b	a	19
+13	param	b
+14	call	syscall_print_int
+15	arrget	b	a	20
+16	param	b
+17	call	syscall_print_int
+18	arrget	b	a	21
+19	param	b
+20	call	syscall_print_int
+21	arrget	b	a	22
+22	param	b
+23	call	syscall_print_int
+24	arrget	b	a	23
+25	param	b
+26	call	syscall_print_int
+27	arrget	b	a	24
+28	param	b
+29	call	syscall_print_int
+30	exit
+31	function	array_func
+32	arg	a	array	int	25
+33	arg	b	int
+34	decr	i	int
+35	=	i	0
+36	arrset	a	21	5
+37	arrset	a	22	1
+38	arrset	a	23	2
+39	arrset	a	24	3
+40	arrset	a	20	4
+41	arrset	a	19	6
+42	arrset	a	18	7
+43	arrget	b	a	20
+44	return	5
