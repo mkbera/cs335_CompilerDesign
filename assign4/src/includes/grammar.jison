@@ -2494,7 +2494,7 @@ equality_expr :
 	|
 		equality_expr 'op_equalCompare' relational_expr 
 		{
-			if (utils.numeric_type_array.indexOf($1.type.get_serial_type()) == -1 || utils.numeric_type_array.indexOf($3.type.get_serial_type()) == -1) {
+			if (!$1.type.numeric() || !$3.type.numeric()) {
 				throw Error("Incomparable operand types '" + $1.type.get_serial_type() + "' and '" + $3.type.get_serial_type() + "' on binary operator '<='")
 			}
 
@@ -2507,7 +2507,7 @@ equality_expr :
 	|
 		equality_expr 'op_notequalCompare' relational_expr 
 		{
-			if (utils.numeric_type_array.indexOf($1.type.get_serial_type()) == -1 || utils.numeric_type_array.indexOf($3.type.get_serial_type()) == -1) {
+			if (!$1.type.numeric() || !$3.type.numeric()) {
 				throw Error("Incomparable operand types '" + $1.type.get_serial_type() + "' and '" + $3.type.get_serial_type() + "' on operator '!='")
 			}
 
@@ -2528,7 +2528,7 @@ relational_expr :
 	|
 		relational_expr 'op_greater' additive_expr 
 		{
-			if (utils.numeric_type_array.indexOf($1.type.get_serial_type()) == -1 || utils.numeric_type_array.indexOf($3.type.get_serial_type()) == -1) {
+			if (!$1.type.numeric() || !$3.type.numeric()) {
 				throw Error("Incomparable operand types '" + $1.type.get_serial_type() + "' and '" + $3.type.get_serial_type() + "' on operator '>'")
 			}
 
@@ -2541,7 +2541,7 @@ relational_expr :
 	|
 		relational_expr 'op_greaterEqual' additive_expr 
 		{
-			if (utils.numeric_type_array.indexOf($1.type.get_serial_type()) == -1 || utils.numeric_type_array.indexOf($3.type.get_serial_type()) == -1) {
+			if (!$1.type.numeric() || !$3.type.numeric()) {
 				throw Error("Incomparable operand types '" + $1.type.get_serial_type() + "' and '" + $3.type.get_serial_type() + "' on operator '>='")
 			}
 
@@ -2554,7 +2554,7 @@ relational_expr :
 	|
 		relational_expr 'op_less' additive_expr 
 		{
-			if (utils.numeric_type_array.indexOf($1.type.get_serial_type()) == -1 || utils.numeric_type_array.indexOf($3.type.get_serial_type()) == -1) {
+			if (!$1.type.numeric() || !$3.type.numeric()) {
 				throw Error("Incomparable operand types '" + $1.type.get_serial_type() + "' and '" + $3.type.get_serial_type() + "' on operator '<'")
 			}
 
@@ -2567,7 +2567,7 @@ relational_expr :
 	|
 		relational_expr 'op_lessEqual' additive_expr 
 		{
-			if (utils.numeric_type_array.indexOf($1.type.get_serial_type()) == -1 || utils.numeric_type_array.indexOf($3.type.get_serial_type()) == -1) {
+			if (!$1.type.numeric() || !$3.type.numeric()) {
 				throw Error("Incomparable operand types '" + $1.type.get_serial_type() + "' and '" + $3.type.get_serial_type() + "' on operator '<='")
 			}
 
@@ -2591,7 +2591,7 @@ shift_expr :
 	|
 		shift_expr 'op_Lshift' additive_expr 
 		{
-			if (utils.numeric_type_array.indexOf($1.type.get_serial_type()) == -1 || utils.numeric_type_array.indexOf($3.type.get_serial_type()) == -1) {
+			if (!$1.type.numeric() || !$3.type.numeric()) {
 				throw Error("Bad operand types '" + $1.type.get_serial_type() + "' and '" + $3.type.get_serial_type() + "' on binary operator '<<'")
 			}
 
@@ -2604,7 +2604,7 @@ shift_expr :
 	|
 		shift_expr 'op_Rshift' additive_expr 
 		{
-			if (utils.numeric_type_array.indexOf($1.type.get_serial_type()) == -1 || utils.numeric_type_array.indexOf($3.type.get_serial_type()) == -1) {
+			if (!$1.type.numeric() || !$3.type.numeric()) {
 				throw Error("Bad operand types '" + $1.type.get_serial_type() + "' and '" + $3.type.get_serial_type() + "' on binary operator '>>'")
 			}
 
@@ -2625,7 +2625,7 @@ additive_expr :
 	|
 		additive_expr 'op_add' multiplicative_expr 
 		{
-			if (utils.numeric_type_array.indexOf($1.type.get_serial_type()) == -1 || utils.numeric_type_array.indexOf($3.type.get_serial_type()) == -1) {
+			if (!$1.type.numeric() || !$3.type.numeric()) {
 				throw Error("Bad operand types '" + $1.type.get_serial_type() + "' and '" + $3.type.get_serial_type() + "' on binary operator '+'")
 			}
 
@@ -2638,7 +2638,7 @@ additive_expr :
 	|
 		additive_expr 'op_sub' multiplicative_expr 
 		{
-			if (utils.numeric_type_array.indexOf($1.type.get_serial_type()) == -1 || utils.numeric_type_array.indexOf($3.type.get_serial_type()) == -1) {
+			if (!$1.type.numeric() || !$3.type.numeric()) {
 				throw Error("Bad operand types '" + $1.type.get_serial_type() + "' and '" + $3.type.get_serial_type() + "' on binary operator '-'")
 			}
 
@@ -2659,7 +2659,7 @@ multiplicative_expr :
 	|
 		multiplicative_expr 'op_mul' unary_expr 
 		{
-			if (utils.numeric_type_array.indexOf($1.type.get_serial_type()) == -1 || utils.numeric_type_array.indexOf($3.type.get_serial_type()) == -1) {
+			if (!$1.type.numeric() || !$3.type.numeric()) {
 				throw Error("Bad operand types '" + $1.type.get_serial_type() + "' and '" + $3.type.get_serial_type() + "' on binary operator '*'")
 			}
 
@@ -2672,7 +2672,7 @@ multiplicative_expr :
 	|
 		multiplicative_expr 'op_div' unary_expr 
 		{
-			if (utils.numeric_type_array.indexOf($1.type.get_serial_type()) == -1 || utils.numeric_type_array.indexOf($3.type.get_serial_type()) == -1) {
+			if (!$1.type.numeric() || !$3.type.numeric()) {
 				throw Error("Bad operand types '" + $1.type.get_serial_type() + "' and '" + $3.type.get_serial_type() + "' on binary operator '/'")
 			}
 
@@ -2685,8 +2685,8 @@ multiplicative_expr :
 	|
 		multiplicative_expr 'op_mod' unary_expr 
 		{
-			if (utils.numeric_type_array.indexOf($1.type.get_serial_type()) == -1 || utils.numeric_type_array.indexOf($3.type.get_serial_type()) == -1 || $3.type.get_serial_type() == "float") {
-				throw Error("Bad operand types '" + $3.type.get_serial_type() + "' and '" + $3.type.get_serial_type() + "' on binary operator '%'")
+			if (!$1.type.numeric() || !$3.type.numeric() || $3.type.get_serial_type() == "float") {
+				throw Error("Bad operand types '" + $1.type.get_serial_type() + "' and '" + $3.type.get_serial_type() + "' on binary operator '%'")
 			}
 
 			$$ = utils.binary({
@@ -2703,7 +2703,7 @@ predec_expr :
 		{
 			$$ = $2
 
-			if (utils.numeric_type_array.indexOf($$.type.get_serial_type()) == -1) {
+			if (!$$.type.numeric()) {
 				throw Error("Bad operand type '" + $$.type.get_serial_type() + "' on unary operator '++'")
 			}
 
@@ -2719,7 +2719,7 @@ preinc_expr :
 		{
 			$$ = $2
 
-			if (utils.numeric_type_array.indexOf($$.type.get_serial_type()) == -1) {
+			if (!$$.type.numeric()) {
 				throw Error("Bad operand type '" + $$.type.get_serial_type() + "' on unary operator '++'")
 			}
 
@@ -2749,13 +2749,18 @@ unary_expr :
 			else {
 				$$ = $2
 				
-				if (utils.numeric_type_array.indexOf($$.type.get_serial_type()) == -1) {
+				if (!$$.type.numeric()) {
 					throw Error("Bad operand type '" + $$.type.get_serial_type() + "' on unary operator '-'")
 				}
 
-				$$.code.push(
-					"neg" + ir_sep + $$.place
-				)
+				var temp = ST.create_temporary()
+				$$.code = $$.code.concat([
+					"decr" + ir_sep + temp + ir_sep + "int",
+					"=" + ir_sep + temp + ir_sep + $$.place,
+					"neg" + ir_sep + temp
+				])
+
+				$$.place = temp
 			}
 		}
 	|
@@ -2785,9 +2790,14 @@ unary_expr_npm :
 				throw Error("Bad operand type '" + $$.type.get_serial_type() + "' on unary operator '!'")
 			}
 
-			$$.code.push(
-				"not" + ir_sep + $$.place
-			)
+			var temp = ST.create_temporary()
+			$$.code = $$.code.concat([
+				"decr" + ir_sep + temp + ir_sep + "int",
+				"=" + ir_sep + temp + ir_sep + $$.place,
+				"not" + ir_sep + temp
+			])
+
+			$$.place = temp
 		}
 	|
 		cast_expr 
