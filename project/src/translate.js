@@ -9,7 +9,7 @@
 // })
 global.tac
 
-
+const_count = 0
 
 function codeGen(instr, next_use_table, line_nr) {
 	console.log(tac[line_nr]);
@@ -646,7 +646,7 @@ function codeGen(instr, next_use_table, line_nr) {
 		instr_local = tac[line_nr];
 		while(!(instr_local[1] == "return" || instr_local[1] == "exit") ){
 			if (instr_local[1] == "decr"){
-				console.log("bera2")
+				// console.log("bera2")
 				var x = instr_local[2]
 				if (instr_local[3] != "array") {
 					assembly.add("sub esp, 4")
@@ -968,6 +968,58 @@ function codeGen(instr, next_use_table, line_nr) {
 		assembly.add("int 0x80");
 		assembly.shiftLeft()
 	}
+
+//	--------------------------------- float starts here -----------------------------------------------
+
+	else if (op == "f=") {	//x = y
+		var x = instr[2]
+		var y = instr[3]
+		if (variables.indexOf(y) > -1 ){	// y is variable
+			var offset_y = registers.address_descriptor[y]["offset"]
+			assembly.add("fld dword [ebp -" + offset_y + "]")
+		} else {	// y is constant
+			assembly.add_data("_" + line_nr + "	" + "DD " + y)
+			assembly.add("fld dword [_" + line_nr + "]")
+	
+		}
+		var offset_x = registers.address_descriptor[x]["offset"]
+		assembly.add("fstp dword [ebp - " + offset_x + "]")
+	}
+
+	else if (float_math_ops_binary.indexOf(op) > -1){
+		var x = instr[2]
+		var y = instr[3]
+		var z = instr[4]
+				
+		if (variables.indexOf(z) != -1){	// z is variable
+			var offset_z = registers.address_descriptor[z]["offset"]
+			assembly.add("fld dword [ebp -" + offset_z + "]")			
+		} else {	//z is constant
+			assembly.add_data("_" + line_nr + "	" + "DD " + z)
+			assembly.add("fld dword [_" + line_nr + "]")
+		}
+		var offset_y = registers.address_descriptor[y]["offset"]
+		assembly.add("fld dword [ebp -" + offset_y + "]")
+		var offset_x = registers.address_descriptor[x]["offset"]
+		assembly.add(map_op[op] + " st0, st1")
+		assembly.add("fstp dword [ebp - " + offset_x + "]")
+		assembly.add("fstp st0")
+	}
+
+	else if (float_math_ops_unary.indexOf(op) > -1){
+		var x = instr[2]
+		assembly.add("fld1")
+		var offset_x = registers.address_descriptor[x]["offset"]
+		assembly.add("fld dword [ebp -" + offset_x + "]")
+		assembly.add(map_op[op] + " st0, st1")
+		assembly.add("fstp dword [ebp - " + offset_x + "]")
+		assembly.add("fstp st0")
+	}
+
+
+
+
+
 }
 
 

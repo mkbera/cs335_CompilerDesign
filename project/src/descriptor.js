@@ -4,6 +4,10 @@ global.math_ops_unary = ["not", "inc", "dec"]
 global.math_ops_involved = ["*", "/", "%"]
 global.array_ops = ["arrset", "arrget"]
 
+global.float_math_ops_binary = ["f+", "f-", "f*", "f/", "f="]
+global.float_math_ops_unary = ["finc", "fdec"]
+
+
 global.keywords = ["if", "return", "function", "call", "block", "jump", "le", "ge", "lt", "gt", "eq", "ne", "print", "scan", "array", "param", "int", "float", "char", "byte", "bool", "short"]
 
 global.map_op = {
@@ -22,8 +26,16 @@ global.map_op = {
 	"lt": "jl",
 	"le": "jle",
 	"gt": "jg",
-	"ge": "jge"
+	"ge": "jge",
+	"f+": "fadd",
+	"f-": "fsub",
+	"f*": "fmul",
+	"f/": "fdiv",
+	"finc": "fadd",
+	"fdec": "fsub",
+
 }
+
 
 module.exports = {
 	math_ops: math_ops,
