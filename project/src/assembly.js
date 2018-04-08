@@ -2,7 +2,11 @@ class Assembly {
 	constructor() {
 		this.indent = 0
 
-		this.data = "\t_return_error_msg db \"Error: function with return type not void, did not seem to return\", 0x0a\n"
+		this.data = ""
+		this.shiftRight()
+		this.add_data("\tfunction_return_error_msg db \"Error: function with return type not void, did not seem to return\", 0x0a")
+		this.add_data("\tarray_access_up_error_msg db \"Error: array index exceeds dimension size\", 0x0a")
+		this.add_data("\tarray_access_up_error_msg db \"Error: array index cannot be negative\", 0x0a")
 		this.code = ""
 		this.externs = ["malloc", "printf"]
 	}
