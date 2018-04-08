@@ -28,6 +28,7 @@
 28	param	b
 29	call	syscall_print_int
 30	exit
+
 31	function	array_func
 32	arg	a	array	int	25
 33	arg	b	int

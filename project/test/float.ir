@@ -1,11 +1,11 @@
 1	import IO
 2	function	main
-3	decr	a
-4	decr	b
-5	f=	a	1.0
-6	f=	b	2.0
-7	decr	c
-8	fdec	a
+3	decr	a	float
+4	decr	b	float
+5	=	a	1.0
+6	=	b	2.0
+7	=	a	b
+8	inc	a
 9	param	a
 10	call	syscall_print_float
 11	exit

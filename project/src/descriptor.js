@@ -36,6 +36,16 @@ global.map_op = {
 
 }
 
+global.map_op_float = {
+	"+": "fadd",
+	"-": "fsub",
+	"*": "fmul",
+	"/": "fdiv",
+	"inc": "fadd",
+	"dec": "fsub",
+
+}
+
 
 module.exports = {
 	math_ops: math_ops,
@@ -43,5 +53,6 @@ module.exports = {
 	math_ops_unary: math_ops_unary,
 	math_ops_involved: math_ops_involved,
 	keywords: keywords,
-	map_op: map_op
+	map_op: map_op,
+	map_op_float: map_op_float
 }
