@@ -2241,7 +2241,7 @@ switch_label :
 
 
 expr :
-		additive_expr 
+		cond_or_expr 
 		{
 			$$ = $1
 		}
