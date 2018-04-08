@@ -27,6 +27,8 @@ class test {
 		a = b + 5;
 		a = -b;
 
+		d:[-1][4] = 0;
+
 		for (int i = 0; i = 5; ++i) {
 			for (int j = 0; j = 5; ++j) {
 				d:[i][j] = 1 + b;
