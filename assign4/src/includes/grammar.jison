@@ -3079,6 +3079,22 @@ array_access :
 				
 				$$.code = $$.code.concat(dim.code)
 
+				var label = ST.create_label()
+			
+				$$.code = $$.code.concat([
+					"ifgoto" + ir_sep + ">" + ir_sep + dim.place + ir_sep + "0" + ir_sep + label,
+					"error" + ir_sep + "array_access_low",
+					"label" + ir_sep + label
+				])
+
+				label = ST.create_label()
+			
+				$$.code = $$.code.concat([
+					"ifgoto" + ir_sep + "<" + ir_sep + dim.place + ir_sep + type.length + ir_sep + label,
+					"error" + ir_sep + "array_access_up",
+					"label" + ir_sep + label
+				])
+
 				if (first) {
 					$$.code.push(
 						"+" + ir_sep + temp + ir_sep + temp + ir_sep + dim.place
@@ -3245,7 +3261,7 @@ literal :
 		{
 			$$ = {
 				code: [],
-				place: ($boolean_literal == "true") ? 1 : 0,
+				place: ($boolean_literal == "true") ? "1" : "0",
 				literal: true,
 				type: new Type("boolean", "basic", 1, null, 0)
 			}

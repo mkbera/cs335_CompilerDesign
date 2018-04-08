@@ -1,4 +1,2 @@
->	handle multiple return statements
->	throw error after function end (How? -> print_string error_msg; sys_exit )
->	add import IO
+>	handle errors in array_access (index exceeds the size)
 >	correct error messages
