@@ -1147,49 +1147,92 @@ function codeGen(instr, next_use_table, line_nr) {
 
 //	--------------------------------- float starts here -----------------------------------------------
 
-	else if (op == "f=") {	//x = y
-		var x = instr[2]
-		var y = instr[3]
-		if (variables.indexOf(y) > -1 ){	// y is variable
-			var offset_y = registers.address_descriptor[y]["offset"]
-			assembly.add("fld dword [ebp -" + offset_y + "]")
-		} else {	// y is constant
-			assembly.add_data("_" + line_nr + "	" + "DD " + y)
-			assembly.add("fld dword [_" + line_nr + "]")
+	// else if (op == "f=") {	//x = y
+	// 	var x = instr[2]
+	// 	var y = instr[3]
+	// 	if (variables.indexOf(y) > -1 ){	// y is variable
+	// 		var offset_y = registers.address_descriptor[y]["offset"]
+	// 		assembly.add("fld dword [ebp -" + offset_y + "]")
+	// 	} else {	// y is constant
+	// 		assembly.add_data("_" + line_nr + "	" + "DD " + y)
+	// 		assembly.add("fld dword [_" + line_nr + "]")
 	
-		}
-		var offset_x = registers.address_descriptor[x]["offset"]
-		assembly.add("fstp dword [ebp - " + offset_x + "]")
-	}
+	// 	}
+	// 	var offset_x = registers.address_descriptor[x]["offset"]
+	// 	assembly.add("fstp dword [ebp - " + offset_x + "]")
+	// }
 
-	else if (float_math_ops_binary.indexOf(op) > -1){
-		var x = instr[2]
-		var y = instr[3]
-		var z = instr[4]
+	// else if (float_math_ops_binary.indexOf(op) > -1){
+	// 	var x = instr[2]
+	// 	var y = instr[3]
+	// 	var z = instr[4]
 				
-		if (variables.indexOf(z) != -1){	// z is variable
-			var offset_z = registers.address_descriptor[z]["offset"]
-			assembly.add("fld dword [ebp -" + offset_z + "]")			
-		} else {	//z is constant
-			assembly.add_data("_" + line_nr + "	" + "DD " + z)
-			assembly.add("fld dword [_" + line_nr + "]")
-		}
-		var offset_y = registers.address_descriptor[y]["offset"]
-		assembly.add("fld dword [ebp -" + offset_y + "]")
-		var offset_x = registers.address_descriptor[x]["offset"]
-		assembly.add(map_op[op] + " st0, st1")
-		assembly.add("fstp dword [ebp - " + offset_x + "]")
-		assembly.add("fstp st0")
-	}
+	// 	if (variables.indexOf(z) != -1){	// z is variable
+	// 		var offset_z = registers.address_descriptor[z]["offset"]
+	// 		assembly.add("fld dword [ebp -" + offset_z + "]")			
+	// 	} else {	//z is constant
+	// 		assembly.add_data("_" + line_nr + "	" + "DD " + z)
+	// 		assembly.add("fld dword [_" + line_nr + "]")
+	// 	}
+	// 	var offset_y = registers.address_descriptor[y]["offset"]
+	// 	assembly.add("fld dword [ebp -" + offset_y + "]")
+	// 	var offset_x = registers.address_descriptor[x]["offset"]
+	// 	assembly.add(map_op[op] + " st0, st1")
+	// 	assembly.add("fstp dword [ebp - " + offset_x + "]")
+	// 	assembly.add("fstp st0")
+	// }
 
-	else if (float_math_ops_unary.indexOf(op) > -1){
+	// else if (float_math_ops_unary.indexOf(op) > -1){
+	// 	var x = instr[2]
+	// 	assembly.add("fld1")
+	// 	var offset_x = registers.address_descriptor[x]["offset"]
+	// 	assembly.add("fld dword [ebp -" + offset_x + "]")
+	// 	assembly.add(map_op[op] + " st0, st1")
+	// 	assembly.add("fstp dword [ebp - " + offset_x + "]")
+	// 	assembly.add("fstp st0")
+	// }
+
+	else if (op == "cast") {
+		var from  = instr[3]
+		var to  = instr[4]
 		var x = instr[2]
-		assembly.add("fld1")
+		var y = instr[5]
 		var offset_x = registers.address_descriptor[x]["offset"]
-		assembly.add("fld dword [ebp -" + offset_x + "]")
-		assembly.add(map_op[op] + " st0, st1")
-		assembly.add("fstp dword [ebp - " + offset_x + "]")
-		assembly.add("fstp st0")
+		if (from == "int" && to == "float"){ //	x = y
+			if (variables.indexOf(y) > -1) {
+				var offset_y = registers.address_descriptor[y]["offset"]
+				if (registers.address_descriptor[y]["type"] == "reg") {
+					var des_y = registers.address_descriptor[y]["name"]
+					assembly.add("mov dword [ebp - " + offset_y + "], " + des_y)
+				}
+				assembly.add("fild dword [ebp - " + offset_y + "]")
+				assembly.add("fstp dword [ebp - " + offset_x + "]")
+			}
+
+			else {	// y is constant
+				assembly.add_data("_" + line_nr + " DD " + y)
+				assembly.add("fild dword [_" + line_nr + "]")
+				assembly.add("fstp dword [ebp - " + offset_x + "]")
+			}
+		}
+
+		else if (from == "float" && to == "int") {
+			if (variables.indexOf(y) > -1){
+				var offset_y = registers.address_descriptor[y]["offset"]
+				assembly.add("fld dword [ebp - " + offset_y + "]")
+				assembly.add("fistp dword [ebp - " + offset_x + "]")
+				if (registers.address_descriptor[x]["type"] == "reg") {
+					var des_x = registers.address_descriptor[x]["name"]
+					assembly.add("mov dword " + des_x + ", [ebp - " + offset_x + "]")
+				}
+			}
+
+			else {
+				assembly.add_data("_" + line_nr + " DD " + y)
+				assembly.add("fld dword [_" + line_nr + "]")
+				assembly.add("fistp dword [ebp - " + offset_x + "]")
+			}
+		}
 	}
 
 
