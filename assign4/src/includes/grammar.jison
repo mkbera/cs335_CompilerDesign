@@ -2295,20 +2295,30 @@ assignment :
 				throw Error("Cannot convert '" + $3.type.get_serial_type() + "' to '" + $1.type.get_serial_type + "'")
 			}
 
-			if ($1.type.category == "array" && $1.type.get_size() != $3.type.get_size()) {
-				throw Error("Array dimensions do not match")
-			}
+			var place = $3.place
 
 			$$.code = $3.code.concat($1.code)
 
+			if ($1.type.category == "array" && $1.type.get_size() != $3.type.get_size()) {
+				throw Error("Array dimensions do not match")
+			}
+			else if ($1.type.get_serial_type() != $3.type.get_serial_type()) {
+				place = ST.create_temporary()
+
+				$$.code = $$.code.concat([
+					"decr" + ir_sep + place + ir_sep + $1.type.get_serial_type(),
+					"cast" + ir_sep + place + ir_sep + $3.type.get_serial_type() + ir_sep + $1.type.get_serial_type() + ir_sep + $3.place
+				])
+			}
+
 			if ($2.third) {
 				$$.code.push(
-					$2.operator + ir_sep + $1.place + ir_sep + $1.place + ir_sep + $3.place
+					$2.operator + ir_sep + $1.place + ir_sep + $1.place + ir_sep + place
 				)
 			}
 			else {
 				$$.code.push(
-					$2.operator + ir_sep + $1.place + ir_sep + $3.place
+					$2.operator + ir_sep + $1.place + ir_sep + place
 				)
 			}
 		}
@@ -2323,13 +2333,24 @@ assignment :
 
 			$$.code = $3.code.concat($1.code)
 
+			var place = $3.place
+
+			if ($1.type.get_serial_type() != $3.type.get_serial_type()) {
+				place = ST.create_temporary()
+
+				$$.code = $$.code.concat([
+					"decr" + ir_sep + place + ir_sep + $1.type.get_serial_type(),
+					"cast" + ir_sep + place + ir_sep + $3.type.get_serial_type() + ir_sep + $1.type.get_serial_type() + ir_sep + $3.place
+				])
+			}
+
 			if ($2.third) {
 				var temp = ST.create_temporary()
 
 				$$.code = $$.code.concat([
 					"decr" + ir_sep + temp + ir_sep + $1.type.type,
 					"arrget" + ir_sep + temp + ir_sep + $1.place + ir_sep + $1.offset,
-					$2.operator + ir_sep + temp + ir_sep + temp + ir_sep + $3.place,
+					$2.operator + ir_sep + temp + ir_sep + temp + ir_sep + place,
 					"arrset" + ir_sep + $1.place + ir_sep + $1.offset + ir_sep + temp,
 				])
 
@@ -2337,7 +2358,7 @@ assignment :
 			}
 			else {
 				$$.code.push(
-					"arrset" + ir_sep + $1.place + ir_sep + $1.offset + ir_sep + $3.place,
+					"arrset" + ir_sep + $1.place + ir_sep + $1.offset + ir_sep + place,
 				)
 				
 				$$.place = $3.place

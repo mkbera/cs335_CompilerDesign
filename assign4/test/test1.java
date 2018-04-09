@@ -5,9 +5,11 @@ class test {
 	int a, c = 5.012;
 	int[2][5] d;
 
+	float[2] test = {12, 4};
+
 	int function_name(int x, int y) {
 		float b;
-		x = a;
+		x = b;
 		return 5;
 	}
 
@@ -27,7 +29,7 @@ class test {
 		a = b + 5;
 		a = -b;
 
-		d:[-1][4] = 0;
+		d:[-1][4] = 0.0;
 
 		for (int i = 0; i = 5; ++i) {
 			for (int j = 0; j = 5; ++j) {

@@ -1,0 +1,127 @@
+1	import	IO
+2	class	test
+3	decr	x_1	int
+4	=	x_1	10
+5	decr	a_2	int
+6	decr	c_3	int
+7	decr	t1	int
+8	cast	t1	float	int	5.012
+9	=	c_3	t1
+10	decr	d_4	array	int	10	
+11	decr	test_5	array	float	2	
+12	decr	t2	float
+13	cast	t2	int	float	12
+14	arrset	test_5	0	t2
+15	decr	t3	float
+16	cast	t3	int	float	4
+17	arrset	test_5	1	t3
+18	function	function_name
+19	arg	y_7	basic	int	1
+20	arg	x_6	basic	int	1
+21	decr	b_8	float
+22	decr	t4	int
+23	cast	t4	float	int	b_8
+24	=	x_6	t4
+25	return	5
+26	error	function_return
+27	exit
+28	function	test2
+29	arg	arr_9	array	int	10
+30	decr	r_10	int
+31	decr	t5	float
+32	cast	t5	int	float	x_1
+33	decr	t6	float
+34	+	t6	t5	1.020
+35	decr	t7	float
+36	decr	t8	float
+37	cast	t8	int	float	a_2
+38	+	t7	t6	t8
+39	decr	t9	int
+40	cast	t9	float	int	t7
+41	=	r_10	t9
+42	return	arr_9
+43	error	function_return
+44	exit
+45	function	test_func
+46	arg	arr_11	array	int	10
+47	decr	a_12	int
+48	=	a_12	1
+49	decr	b_13	int
+50	=	b_13	0
+51	decr	c_14	boolean
+52	=	c_14	1
+53	param	arr_11
+54	decr	t10	array	int	10
+55	call	test2	1	t10
+56	=	d_4	t10
+57	decr	t11	int
+58	+	t11	b_13	5
+59	=	a_12	t11
+60	decr	t12	int
+61	=	t12	b_13
+62	neg	t12
+63	=	a_12	t12
+64	decr	t14	int
+65	=	t14	0
+66	decr	t13	int
+67	=	t13	1
+68	neg	t13
+69	ifgoto	>	t13	0	71
+70	error	array_access_low
+71	ifgoto	<	t13	2	73
+72	error	array_access_up
+73	+	t14	t14	t13
+74	ifgoto	>	4	0	76
+75	error	array_access_low
+76	ifgoto	<	4	5	78
+77	error	array_access_up
+78	*	t14	t14	5
+79	+	t14	t14	4
+80	decr	t15	int
+81	cast	t15	float	int	0.0
+82	arrset	d_4	t14	t15
+83	decr	i_15	int
+84	=	i_15	0
+85	=	i_15	5
+86	ifgoto	eq	i_15	0	112
+87	decr	j_16	int
+88	=	j_16	0
+89	=	j_16	5
+90	ifgoto	eq	j_16	0	110
+91	decr	t17	int
+92	+	t17	b_13	1
+93	decr	t16	int
+94	=	t16	0
+95	ifgoto	>	i_15	0	97
+96	error	array_access_low
+97	ifgoto	<	i_15	2	99
+98	error	array_access_up
+99	+	t16	t16	i_15
+100	ifgoto	>	j_16	0	102
+101	error	array_access_low
+102	ifgoto	<	j_16	5	104
+103	error	array_access_up
+104	*	t16	t16	5
+105	+	t16	t16	j_16
+106	arrset	d_4	t16	t17
+107	return	1
+108	inc	j_16
+109	jump	89
+110	inc	i_15
+111	jump	85
+112	return	a_12
+113	error	function_return
+114	exit
+115	function	main
+116	decr	a_17	int
+117	param	d_4
+118	decr	t18	int
+119	call	test_func	1	t18
+120	=	a_17	t18
+121	decr	b_18	int
+122	param	1
+123	param	2
+124	decr	t19	int
+125	call	function_name	2	t19
+126	=	b_18	t19
+127	return
