@@ -657,54 +657,87 @@ function codeGen(instr, next_use_table, line_nr) {
 		var cond = instr[2]
 
 		var x = instr[3];
-		var y = instr[4];
+		if (registers.address_descriptor[x]["category"] == "int"){
+			var y = instr[4];
 
-		var des_x = registers.address_descriptor[x]["name"];
-		if (des_x == null) {
-			// registers.address_descriptor[x] = { "type": "mem", "name": x };
-			registers.address_descriptor[x]["type"] = "mem";
-			registers.address_descriptor[x]["name"] = x;
-			des_x = registers.address_descriptor[x]["name"];
+			var des_x = registers.address_descriptor[x]["name"];
+			if (des_x == null) {
+				// registers.address_descriptor[x] = { "type": "mem", "name": x };
+				registers.address_descriptor[x]["type"] = "mem";
+				registers.address_descriptor[x]["name"] = x;
+				des_x = registers.address_descriptor[x]["name"];
+			}
+
+			var des_y = "";
+			if (variables.indexOf(y) != -1) {
+				des_y = registers.address_descriptor[y]["name"];
+			}
+
+			if (des_y == null || des_x == null) {
+				throw Error("Comparing Uninitialised Values");
+			}
+
+			if (registers.address_descriptor[x]["type"] == "reg") {    									// x is in a register
+				if (variables.indexOf(y) == -1) {															// y is a constant
+					des_y = y;
+				}
+				else {																						// y is a variable
+					des_y = registers.loadVariable(y, line_nr, next_use_table, safe = [x], safe_regs = [], print = true);
+				}
+			}
+			else {                             															// x is in memory
+				if (variables.indexOf(y) == -1) {         													// y is a constant
+					des_y = y;
+
+					des_x = registers.loadVariable(x, line_nr, next_use_table, safe = [], safe_regs = [], print = true);
+				}
+				else if (registers.address_descriptor[y]["type"] == "reg") {  								// y is in a register
+					des_x = registers.loadVariable(x, line_nr, next_use_table, safe = [y], safe_regs = [], print = true);
+				}
+				else {																						// y is in memory
+					des_x = registers.getReg(x, line_nr, next_use_table, safe = [], safe_regs = []);
+					// assembly.add("mov dword " + des_x + ", [" + x + "]");
+					assembly.add("mov dword " + des_x + ", [ebp - " + registers.address_descriptor[x]["offset"] + "]");
+
+					des_y = registers.loadVariable(y, line_nr, next_use_table, safe = [x], safe_regs = [], print = true);
+				}
+			}
+
+			assembly.add("cmp dword " + des_x + ", " + des_y);
+			registers.unloadRegisters(line_nr - 1);
+			assembly.add(map_op[cond] + " label_" + instr[5]);
 		}
 
-		var des_y = "";
-		if (variables.indexOf(y) != -1) {
-			des_y = registers.address_descriptor[y]["name"];
-		}
-
-		if (des_y == null || des_x == null) {
-			throw Error("Comparing Uninitialised Values");
-		}
-
-		if (registers.address_descriptor[x]["type"] == "reg") {    									// x is in a register
-			if (variables.indexOf(y) == -1) {															// y is a constant
-				des_y = y;
+		else if (registers.address_descriptor[x]["category"] == "float"){
+			var y = instr[4];
+			var offset_x = registers.address_descriptor[x]["offset"];
+			if (variables.indexOf(y) != -1){	// z is variable
+				var offset_y = registers.address_descriptor[y]["offset"]
+				assembly.add("fld dword [ebp -" + offset_y + "]")			
+			} else {	//z is constant
+				assembly.add_data("_" + line_nr + "	" + "DD " + y)
+				assembly.add("fld dword [_" + line_nr + "]")
 			}
-			else {																						// y is a variable
-				des_y = registers.loadVariable(y, line_nr, next_use_table, safe = [x], safe_regs = [], print = true);
+			var variable
+			var variable_offset
+			if (registers.address_descriptor["eax"] != null){
+				variable = registers.register_descriptor["eax"]
+				variable_offset = registers.address_descriptor[variable]["offset"]
+				assembly.add("mov dword [ebp - " + variable_offset + "], eax")
 			}
-		}
-		else {                             															// x is in memory
-			if (variables.indexOf(y) == -1) {         													// y is a constant
-				des_y = y;
-
-				des_x = registers.loadVariable(x, line_nr, next_use_table, safe = [], safe_regs = [], print = true);
-			}
-			else if (registers.address_descriptor[y]["type"] == "reg") {  								// y is in a register
-				des_x = registers.loadVariable(x, line_nr, next_use_table, safe = [y], safe_regs = [], print = true);
-			}
-			else {																						// y is in memory
-				des_x = registers.getReg(x, line_nr, next_use_table, safe = [], safe_regs = []);
-				// assembly.add("mov dword " + des_x + ", [" + x + "]");
-				assembly.add("mov dword " + des_x + ", [ebp - " + registers.address_descriptor[x]["offset"] + "]");
-
-				des_y = registers.loadVariable(y, line_nr, next_use_table, safe = [x], safe_regs = [], print = true);
+			
+			assembly.add("fld dword [ebp - " + offset_x + "]")
+			assembly.add("fcompp")
+			assembly.add("fstsw ax")
+			assembly.add("fwait")
+			assembly.add("sahf")
+			assembly.add(map_op_float[cond] + " label_" + instr[5])
+			
+			if (registers.address_descriptor["eax"] != null){
+				assembly.add("mov dword eax, [ebp - " + variable_offset + "]")
 			}
 		}
 
-		assembly.add("cmp dword " + des_x + ", " + des_y);
-		registers.unloadRegisters(line_nr - 1);
-		assembly.add(map_op[cond] + " label_" + instr[5]);
 	}
 	else if (op == "jump") {
 

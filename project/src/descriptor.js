@@ -43,7 +43,12 @@ global.map_op_float = {
 	"/": "fdiv",
 	"inc": "fadd",
 	"dec": "fsub",
-
+	"eq": "je",
+	"ne": "jne",
+	"lt": "jb",
+	"le": "jbe",
+	"gt": "ja",
+	"ge": "jae",
 }
 
 

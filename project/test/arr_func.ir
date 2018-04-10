@@ -8,7 +8,7 @@
 8	call	array_func	b
 9	param	b
 10	call	syscall_print_int
-11	exit
+11	exit 
 12	function	array_func
 13	arg	a	array	int	25
 14	arg	b

@@ -1,9 +1,65 @@
-1	=	a	2
-2	=	b	3
-3	=	c	4
-4	+	a	b	c
-5	=	b	a
-6	+	c	c	b
-7	+	c	b	a
-8	+	a	c	8
-9	exit
+1	import	IO
+2	class	Threed_array
+3	function	main
+4	decr	a_1	array	int	1000
+5	decr	i_2	int
+6	=	i_2	0
+7	decr	t1	int
+8	=	t1	1
+9	ifgoto	lt	i_2	10	11
+10	=	t1	0
+11	ifgoto	eq	t1	0	65
+12	decr	j_3	int
+13	=	j_3	0
+14	decr	t3	int
+15	=	t3	1
+16	ifgoto	lt	j_3	10	18
+17	=	t3	0
+18	ifgoto	eq	t3	0	61
+19	decr	k_4	int
+20	=	k_4	0
+21	decr	t5	int
+22	=	t5	1
+23	ifgoto	lt	k_4	10	25
+24	=	t5	0
+25	ifgoto	eq	t5	0	57
+26	decr	t8	int
+27	-	t8	i_2	j_3
+28	decr	t9	int
+29	=	t9	k_4
+30	neg	t9
+31	decr	t10	int
+32	*	t10	t8	t9
+33	decr	t7	int
+34	=	t7	0
+35	ifgoto	>	i_2	0	37
+36	error	array_access_low
+37	ifgoto	<	i_2	10	39
+38	error	array_access_up
+39	+	t7	t7	i_2
+40	ifgoto	>	j_3	0	42
+41	error	array_access_low
+42	ifgoto	<	j_3	10	44
+43	error	array_access_up
+44	*	t7	t7	10
+45	+	t7	t7	j_3
+46	ifgoto	>	k_4	0	48
+47	error	array_access_low
+48	ifgoto	<	k_4	10	50
+49	error	array_access_up
+50	*	t7	t7	10
+51	+	t7	t7	k_4
+52	arrset	a_1	t7	t10
+53	decr	t6	int
+54	=	t6	k_4
+55	+	k_4	k_4	1
+56	jump	21
+57	decr	t4	int
+58	+	t4	j_3	1
+59	=	j_3	t4
+60	jump	14
+61	decr	t2	int
+62	+	t2	i_2	1
+63	=	i_2	t2
+64	jump	7
+65	exit
