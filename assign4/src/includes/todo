@@ -1,2 +1,0 @@
->	handle errors in array_access (index exceeds the size)
->	correct error messages

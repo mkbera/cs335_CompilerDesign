@@ -2390,9 +2390,44 @@ assignment_operator :
 			$$ = { operator: "=", third: false }
 		}
 	|
+		'op_mulAssign' 
+		{
+			$$ = { operator: "*", third: true }
+		}
+	|
+		'op_divAssign' 
+		{
+			$$ = { operator: "/", third: true }
+		}
+	|
+		'op_modAssign' 
+		{
+			$$ = { operator: "%", third: true }
+		}
+	|
 		'op_addAssign' 
 		{
 			$$ = { operator: "+", third: true }
+		}
+	|
+		'op_subAssign' 
+		{
+			$$ = { operator: "-", third: true }
+		}
+	|
+		'op_andAssign' 
+		{
+			$$ = { operator: "&", third: true }
+		}
+	|
+		'op_orAssign' 
+		{
+			$$ = { operator: "|", third: true }
+		}
+	|
+		'op_xorAssign' 
+		{
+			$$ = { operator: "^", third: true }
 		}
 	;
 
@@ -3103,7 +3138,7 @@ array_access :
 				var label = ST.create_label()
 			
 				$$.code = $$.code.concat([
-					"ifgoto" + ir_sep + ">" + ir_sep + dim.place + ir_sep + "0" + ir_sep + label,
+					"ifgoto" + ir_sep + "ge" + ir_sep + dim.place + ir_sep + "0" + ir_sep + label,
 					"error" + ir_sep + "array_access_low",
 					"label" + ir_sep + label
 				])
@@ -3111,7 +3146,7 @@ array_access :
 				label = ST.create_label()
 			
 				$$.code = $$.code.concat([
-					"ifgoto" + ir_sep + "<" + ir_sep + dim.place + ir_sep + type.length + ir_sep + label,
+					"ifgoto" + ir_sep + "lt" + ir_sep + dim.place + ir_sep + type.length + ir_sep + label,
 					"error" + ir_sep + "array_access_up",
 					"label" + ir_sep + label
 				])
@@ -3173,9 +3208,10 @@ primary :
 
 			$$.place = ST.create_temporary()
 
-			$$.code.push(
+			$$.code = $$.code.concat([
+				"decr" + ir_sep + $$.place + ir_sep + $1.type.get_serial_type(),
 				"arrget" + ir_sep + $$.place + ir_sep + $1.place + ir_sep + $1.offset
-			)
+			])
 
 			$$.type = $1.type
 		}
