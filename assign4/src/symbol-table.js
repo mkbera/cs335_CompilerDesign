@@ -115,6 +115,9 @@ class ScopeTable {
             if (error) {
                 throw Error("The variable '" + name + "' was not declared in the current scope!")
             }
+            else {
+                return false
+            }
         }
     }
 
@@ -162,7 +165,7 @@ class Method {
         this.table = scope_table
 
         if (this.main) {
-            if (this.num_parameters != 0) {
+            if (this.num_parameters != 1) {
                 throw Error("The main function can not have any arguments")
             }
             if (this.return_type.type != "null") {
@@ -198,6 +201,9 @@ class Class {
     add_method(name, return_type, parameters, scope_table, main) {
         if (name in this.methods) {
             throw Error("The method '" + name + "' has already been defined!")
+        }
+        if (name in this.variables) {
+            throw Error("A variable with the name '" + name + "' has already been defined")
         }
 
         var method = new Method(name, return_type, parameters, scope_table, main)
@@ -241,6 +247,9 @@ class Class {
         else {
             if (error) {
                 throw Error("The method '" + name + "' was not declared in the current scope!")
+            }
+            else {
+                return false;
             }
         }
     }
@@ -378,13 +387,20 @@ class SymbolTable {
         return "l_" + this.labels_count
     }
 
-    lookup_variable(name, error = true) {
+    lookup_variable(name, error = true, scope = null) {
+        if (scope != null) {
+            return scope.lookup_variable(name, error)
+        }
         return this.current_scope.lookup_variable(name, error)
     }
 
-    lookup_method(name, error = true) {
+    lookup_method(name, error = true, scope = null) {
         if (name in this.import_methods) {
             return this.import_methods[name]
+        }
+
+        if (scope != null) {
+            return scope.lookup_method(name, error)
         }
 
         return this.current_scope.lookup_method(name, error)
