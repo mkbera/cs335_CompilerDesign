@@ -16,14 +16,27 @@
 
 						var length = 1
 
+						if (parseInt(type.length).toString() != type.length) {
+							throw Error("Dimension cannot be a variable for array declaration")
+						}
+						if (parseInt(type.length) <= 0) {
+							throw Error("Array size must be positive")
+						}
+
 						if (type.dimension == 0 || type.length != inits.length) {
 							throw Error("Array dimensions do not match")
 						}
 
 						while (type.dimension != 0) {
-							length *= type.length
+							length *= parseInt(type.length)
 
 							type = type.type
+
+							if (type.length != null) {
+								if (parseInt(type.length).toString() != type.length || parseInt(type.length) <= 0) {
+									throw Error("Invalid array size, must be a positive integer")
+								}
+							}
 							
 							var inits_serial = []
 							for (var index in inits) {
