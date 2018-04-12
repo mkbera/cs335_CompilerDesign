@@ -775,11 +775,14 @@ function codeGen(instr, next_use_table, line_nr) {
 		assembly.add("mov ebp, esp");
 		var flag_function = false
 
-		var i_func = 0;
-		instr_local = tac[line_nr];
-		while(!(instr_local[1] == "return" || instr_local[1] == "exit") ){
+		// var i_func = 0;
+		// instr_local = tac[line_nr];
+		var i_func = 1;
+		instr_local = tac[line_nr + 1];
+		// while(!(instr_local[1] == "return" || instr_local[1] == "exit") ){
+		while((instr_local != null) && (instr_local[1] != "function")){
 			if (instr_local[1] == "decr"){
-				// console.log("bera2")
+				console.log(instr_local[2])
 
 				var x = instr_local[2]
 				if (instr_local[3] != "array") {
@@ -908,8 +911,8 @@ function codeGen(instr, next_use_table, line_nr) {
 
 		assembly.add("call func_" + instr[2]);
 		assembly.add("add esp, " + registers.n_params + "* 4")
-		if (instr[3] != null) {
-			var variable = instr[3]
+		if (instr[4] != null) {
+			var variable = instr[4]
 			assembly.add("mov dword [ebp - " + registers.address_descriptor[variable]["offset"] + "], eax")
 		}
 		registers.n_params = 0;
