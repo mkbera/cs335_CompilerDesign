@@ -151,9 +151,6 @@ class Variable {
 
         this.isparam = isparam
         this.isfield = isfield
-
-        console.log(name)
-        console.log(isfield)
     }
 }
 

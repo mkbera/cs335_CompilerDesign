@@ -60,12 +60,12 @@
 
 						if (obj.field) {
 							self.code.push(
-								"field_decr" + ir_sep + variable.identifier + ir_sep + "array" + ir_sep + type.type + ir_sep + length + ir_sep
+								"field_decr" + ir_sep + variable.identifier + ir_sep + "array" + ir_sep + type.type + ir_sep + length
 							)
 						}
 						else {
 							self.code.push(
-								"decr" + ir_sep + variable.identifier + ir_sep + "array" + ir_sep + type.type + ir_sep + length + ir_sep
+								"decr" + ir_sep + variable.identifier + ir_sep + "array" + ir_sep + type.type + ir_sep + length
 							)
 						}
 
@@ -86,14 +86,14 @@
 
 								if (obj.field) {
 									self.consr_code = self.consr_code.concat([
-										"decr" + ir_sep + temp + ir_sep + type.type,
+										"decr" + ir_sep + temp + ir_sep + type.category + ir_sep + type.type + "1",
 										"cast" + ir_sep + temp + ir_sep + inits[index].type.type + ir_sep + type.type + ir_sep + inits[index].place,
 										"arrset" + ir_sep + variable.identifier + ir_sep + index + ir_sep + temp
 									])
 								}
 								else {
 									self.code = self.code.concat([
-										"decr" + ir_sep + temp + ir_sep + type.type,
+										"decr" + ir_sep + temp + ir_sep + type.category + ir_sep + type.type + "1",
 										"cast" + ir_sep + temp + ir_sep + inits[index].type.type + ir_sep + type.type + ir_sep + inits[index].place,
 										"arrset" + ir_sep + variable.identifier + ir_sep + index + ir_sep + temp
 									])
@@ -143,7 +143,7 @@
 					}
 					else {
 						self.code.push(
-							"decr" + ir_sep + variable.identifier + ir_sep + obj.type.type
+							"decr" + ir_sep + variable.identifier + ir_sep + obj.type.category + ir_sep + obj.type.type + ir_sep + "1"
 						)
 					}
 
@@ -164,14 +164,14 @@
 
 							if (obj.field) {
 								self.consr_code = self.consr_code.concat([
-									"decr" + ir_sep + temp + ir_sep + obj.type.type,
+									"decr" + ir_sep + temp + ir_sep + obj.type.category + ir_sep + obj.type.type + ir_sep + "1",
 									"cast" + ir_sep + temp + ir_sep + variable.init.type.type + ir_sep + obj.type.type + ir_sep + variable.init.place,
 									"=" + ir_sep + variable.identifier + ir_sep + temp
 								])
 							}
 							else {
 								self.code = self.code.concat([
-									"decr" + ir_sep + temp + ir_sep + obj.type.type,
+									"decr" + ir_sep + temp + ir_sep + obj.type.category + ir_sep + obj.type.type + ir_sep + "1",
 									"cast" + ir_sep + temp + ir_sep + variable.init.type.type + ir_sep + obj.type.type + ir_sep + variable.init.place,
 									"=" + ir_sep + variable.identifier + ir_sep + temp
 								])
@@ -227,14 +227,14 @@
 			if (!obj.op1.literal) {
 				var temp = ST.create_temporary()
 				self.code.push(
-					"decr" + ir_sep + temp + ir_sep + self.type.type
+					"decr" + ir_sep + temp + ir_sep + self.type.category + ir_sep + self.type.type + ir_sep + "1"
 				)
 
 				var t1 = obj.op1.place
 				if (obj.op1.type.type != self.type.type) {
 					t1 = ST.create_temporary()
 					self.code = self.code.concat([
-						"decr" + ir_sep + t1 + ir_sep + self.type.type,
+						"decr" + ir_sep + t1 + ir_sep + self.type.category + ir_sep + self.type.type + ir_sep + "1",
 						"cast" + ir_sep + t1 + ir_sep + obj.op1.type.type + ir_sep + self.type.type + ir_sep + obj.op1.place
 					])
 				}
@@ -243,7 +243,7 @@
 				if (obj.op2.type.type != self.type.type) {
 					t2 = ST.create_temporary()
 					self.code = self.code.concat([
-						"decr" + ir_sep + t2 + ir_sep + self.type.type,
+						"decr" + ir_sep + t2 + ir_sep + self.type.category + ir_sep + self.type.type + ir_sep + "1",
 						"cast" + ir_sep + t2 + ir_sep + obj.op2.type.type + ir_sep + self.type.type + ir_sep + obj.op2.place
 					])
 				}
@@ -257,14 +257,14 @@
 			else if (!obj.op2.literal) {
 				var temp = ST.create_temporary()
 				self.code.push(
-					"decr" + ir_sep + temp + ir_sep + self.type.type
+					"decr" + ir_sep + temp + ir_sep + self.type.category + ir_sep + self.type.type + ir_sep + "1"
 				)
 
 				var t1 = obj.op1.place
 				if (obj.op1.type.type != self.type.type) {
 					t1 = ST.create_temporary()
 					self.code = self.code.concat([
-						"decr" + ir_sep + t1 + ir_sep + self.type.type,
+						"decr" + ir_sep + t1 + ir_sep + self.type.category + ir_sep + self.type.type + ir_sep + "1",
 						"cast" + ir_sep + t1 + ir_sep + obj.op1.type.type + ir_sep + self.type.type + ir_sep + obj.op1.place
 					])
 				}
@@ -273,7 +273,7 @@
 				if (obj.op2.type.type != self.type.type) {
 					t2 = ST.create_temporary()
 					self.code = self.code.concat([
-						"decr" + ir_sep + t2 + ir_sep + self.type.type,
+						"decr" + ir_sep + t2 + ir_sep + self.type.category + ir_sep + self.type.type + ir_sep + "1",
 						"cast" + ir_sep + t2 + ir_sep + obj.op2.type.type + ir_sep + self.type.type + ir_sep + obj.op2.place
 					])
 				}
@@ -301,7 +301,7 @@
 
 				var temp = ST.create_temporary()
 				self.code.push(
-					"decr" + ir_sep + temp + ir_sep + "int"
+					"decr" + ir_sep + temp + ir_sep + "basic" + ir_sep + "int" + ir_sep + "1"
 				)
 
 				var label = ST.create_label()
@@ -319,7 +319,7 @@
 				var temp = ST.create_temporary()
 			
 				self.code.push(
-					"decr" + ir_sep + temp + ir_sep + "int"
+					"decr" + ir_sep + temp + ir_sep + "basic" + ir_sep + "int" + ir_sep + "1"
 				)
 
 				var label = ST.create_label()
@@ -933,24 +933,16 @@ consr_body :
 
 explicit_consr_invocation :
 		'this' 'paranthesis_start' argument_list 'paranthesis_end' 
-		{
-			$$ = { code: [], place: null }
-		}
+		{ $$ = { code: [], place: null } }
 	|
 		'super' 'paranthesis_start' argument_list 'paranthesis_end' 
-		{
-			$$ = { code: [], place: null }
-		}
+		{ $$ = { code: [], place: null } }
 	|
 		'this' 'paranthesis_start' 'paranthesis_end' 
-		{
-			$$ = { code: [], place: null }
-		}
+		{ $$ = { code: [], place: null } }
 	|
 		'super' 'paranthesis_start' 'paranthesis_end' 
-		{
-			$$ = { code: [], place: null }
-		}
+		{ $$ = { code: [], place: null } }
 	;
 
 
@@ -2491,7 +2483,7 @@ assignment :
 				place = ST.create_temporary()
 
 				$$.code = $$.code.concat([
-					"decr" + ir_sep + place + ir_sep + $1.type.get_serial_type(),
+					"decr" + ir_sep + place + ir_sep + $1.type.category + ir_sep + $1.type.get_basic_type() + ir_sep + $1.type.get_size(),
 					"cast" + ir_sep + place + ir_sep + $3.type.get_serial_type() + ir_sep + $1.type.get_serial_type() + ir_sep + $3.place
 				])
 			}
@@ -2524,7 +2516,7 @@ assignment :
 				place = ST.create_temporary()
 
 				$$.code = $$.code.concat([
-					"decr" + ir_sep + place + ir_sep + $1.type.get_serial_type(),
+					"decr" + ir_sep + place + ir_sep + $1.type.category + ir_sep + $1.type.get_basic_type() + ir_sep + $1.type.get_size(),
 					"cast" + ir_sep + place + ir_sep + $3.type.get_serial_type() + ir_sep + $1.type.get_serial_type() + ir_sep + $3.place
 				])
 			}
@@ -2533,7 +2525,7 @@ assignment :
 				var temp = ST.create_temporary()
 
 				$$.code = $$.code.concat([
-					"decr" + ir_sep + temp + ir_sep + $1.type.type,
+					"decr" + ir_sep + temp + ir_sep + $1.type.category + ir_sep + $1.type.get_basic_type() + ir_sep + $1.type.get_size(),
 					"arrget" + ir_sep + temp + ir_sep + $1.place + ir_sep + $1.offset,
 					$2.operator + ir_sep + temp + ir_sep + temp + ir_sep + place,
 					"arrset" + ir_sep + $1.place + ir_sep + $1.offset + ir_sep + temp,
@@ -2996,7 +2988,7 @@ unary_expr :
 
 				var temp = ST.create_temporary()
 				$$.code = $$.code.concat([
-					"decr" + ir_sep + temp + ir_sep + "int",
+					"decr" + ir_sep + temp + ir_sep + $2.type.category + ir_sep + $2.type.get_basic_type() + ir_sep + $2.type.get_size(),
 					"=" + ir_sep + temp + ir_sep + $$.place,
 					"neg" + ir_sep + temp
 				])
@@ -3033,7 +3025,7 @@ unary_expr_npm :
 
 			var temp = ST.create_temporary()
 			$$.code = $$.code.concat([
-				"decr" + ir_sep + temp + ir_sep + "int",
+				"decr" + ir_sep + temp + ir_sep + $2.type.category + ir_sep + $2.type.get_basic_type() + ir_sep + $2.type.get_size(),
 				"=" + ir_sep + temp + ir_sep + $$.place,
 				"not" + ir_sep + temp
 			])
@@ -3064,7 +3056,7 @@ cast_expr :
 			temp = ST.create_temporary()
 
 			$$.code = $$.code.concat([
-				"decr" + ir_sep + temp + ir_sep + $2.type,
+				"decr" + ir_sep + temp + ir_sep + "basic" + ir_sep + $2.type + ir_sep + "1",
 				"cast" + ir_sep + temp + ir_sep + $4.type.type + ir_sep + $2.type + ir_sep + $4.place
 			])
 
@@ -3085,7 +3077,7 @@ postdec_expr :
 			var temp = ST.create_temporary()
 
 			$$.code = $$.code.concat([
-				"decr" + ir_sep + temp + ir_sep + $1.type.type,
+				"decr" + ir_sep + temp + ir_sep + $1.type.category + ir_sep + $1.type.get_basic_type() + ir_sep + $1.type.get_size(),
 				"=" + ir_sep + temp + ir_sep + $1.place,
 				"-" + ir_sep + $1.place + ir_sep + $1.place + ir_sep + "1"
 			])
@@ -3104,7 +3096,7 @@ postdec_expr :
 			var temp = ST.create_temporary()
 
 			$$.code = $$.code.concat([
-				"decr" + ir_sep + temp + ir_sep + $1.type.type,
+				"decr" + ir_sep + temp + ir_sep + $1.type.category + ir_sep + $1.type.get_basic_type() + ir_sep + $1.type.get_size(),
 				"=" + ir_sep + temp + ir_sep + $1.place,
 				"-" + ir_sep + $1.place + ir_sep + $1.place + ir_sep + "1"
 			])
@@ -3126,7 +3118,7 @@ postinc_expr :
 			var temp = ST.create_temporary()
 
 			$$.code = $$.code.concat([
-				"decr" + ir_sep + temp + ir_sep + $1.type.type,
+				"decr" + ir_sep + temp + ir_sep + $1.type.category + ir_sep + $1.type.get_basic_type() + ir_sep + $1.type.get_size(),
 				"=" + ir_sep + temp + ir_sep + $1.place,
 				"+" + ir_sep + $1.place + ir_sep + $1.place + ir_sep + "1"
 			])
@@ -3145,7 +3137,7 @@ postinc_expr :
 			var temp = ST.create_temporary()
 
 			$$.code = $$.code.concat([
-				"decr" + ir_sep + temp + ir_sep + $1.type.type,
+				"decr" + ir_sep + temp + ir_sep + $1.type.category + ir_sep + $1.type.get_basic_type() + ir_sep + $1.type.get_size(),
 				"=" + ir_sep + temp + ir_sep + $1.place,
 				"+" + ir_sep + $1.place + ir_sep + $1.place + ir_sep + "1"
 			])
@@ -3307,7 +3299,7 @@ array_access :
 			var type = array.type
 
 			$$.code = $$.code.concat([
-				"decr" + ir_sep + temp + ir_sep + "int",
+				"decr" + ir_sep + temp + ir_sep + "basic" + ir_sep + "int" + ir_sep + "1",
 				"=" + ir_sep + temp + ir_sep + "0"
 			])
 
@@ -3396,7 +3388,7 @@ primary :
 			$$.place = ST.create_temporary()
 
 			$$.code = $$.code.concat([
-				"decr" + ir_sep + $$.place + ir_sep + $1.type.get_serial_type(),
+				"decr" + ir_sep + $$.place + ir_sep + $1.type.category + ir_sep + $1.type.get_basic_type() + ir_sep + $1.type.get_size(),
 				"arrget" + ir_sep + $$.place + ir_sep + $1.place + ir_sep + $1.offset
 			])
 
