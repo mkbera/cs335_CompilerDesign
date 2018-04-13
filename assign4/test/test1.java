@@ -7,6 +7,11 @@ class test {
 
 	float[2][1] test = {{12}, {4}};
 
+	test(int a) {
+		// return;
+		c = 5;
+	}
+
 	int tt() {
 		return 10;
 	}
@@ -17,38 +22,39 @@ class test {
 		return 5;
 	}
 
-	int[2][5] test2(int[2][5] arr) {
-		int r = (float) x + 1.020 + a;
-		return arr;
-	}
+	// int[2][5] test2(int[2][5] arr) {
+	// 	int r = (float) x + 1.020 + a;
+	// 	return arr;
+	// }
 
-	public int test_func(int[2][5] arr) {
-		int a = 1;
-		int b = 0;
+	// public int test_func(int[2][5] arr) {
+	// 	int a = 1;
+	// 	int b = 0;
 
-		boolean c = true;
+	// 	boolean c = true;
 
-		d = self.test2(arr);
+	// 	d = self.test2(arr);
 
-		a = b + 5;
-		a = -b;
+	// 	a = b + 5;
+	// 	a = -b;
 
-		d:[-1][4] = 0.0;
+	// 	d:[-1][4] = 0.0;
 
-		for (int i = 0; i = 5; ++i) {
-			for (int j = 0; j = 5; ++j) {
-				d:[i][j] = 1 + b;
-				return 1;
-			}
-		}
+	// 	for (int i = 0; i = 5; ++i) {
+	// 		for (int j = 0; j = 5; ++j) {
+	// 			d:[i][j] = 1 + b;
+	// 			return 1;
+	// 		}
+	// 	}
 
-		d:[1][4] = self.tt();
+	// 	d:[1][4] = self.tt();
 
-		return a;
-	}
+	// 	return a;
+	// }
 
 	public void main() {
 		int a = 2.0;
+		test t = new test(a);
 		float b = 3;
 		b = a;
 	}
