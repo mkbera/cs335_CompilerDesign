@@ -1,0 +1,15 @@
+1	import	IO
+2	function	main
+3	decr	a	array	float	2
+4	arrset	a	0	69
+5	decr	b	float
+6	z	b	20
+7	arrget	b	a	0
+8	arrset	a	1	b
+9	decr	c	float
+10	arrget	c	a	0
+11	decr	d	float
+12	arrget	d	a	1
+13	param	b
+14	call	syscall_print_int
+15	exit

@@ -1,0 +1,11 @@
+1	import	IO
+2	function	main
+3	decr	a	float
+4	decr	b	int
+5	=	a	1.4
+6	=	b	2
+7	cast	a	int	float	29
+8	decr	c
+9	param	a
+10	call	syscall_print_float
+11	exit
