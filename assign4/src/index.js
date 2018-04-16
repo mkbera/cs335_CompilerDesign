@@ -26,7 +26,7 @@ console.log("")
 code = parser.parse(input)
 
 console.log("")
-ST.print()
+// ST.print()
 
 output = ""
 

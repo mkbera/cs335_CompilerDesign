@@ -90,7 +90,7 @@ class ScopeTable {
         this.return_types = []
     }
 
-    add_variable(name, type, index) {
+    add_variable(name, type, index, isparam = false, isfield = false) {
         if (name in this.variables) {
             throw Error("The variable '" + name + "' has already been defined!")
         }
@@ -98,7 +98,7 @@ class ScopeTable {
             throw Error("The variable '" + name + "' has already been defined as the function parameter!")
         }
 
-        var variable = new Variable(name, type, index)
+        var variable = new Variable(name, type, index, isparam, isfield)
         this.variables[name] = variable;
 
         return variable;
@@ -114,6 +114,9 @@ class ScopeTable {
         else {
             if (error) {
                 throw Error("The variable '" + name + "' was not declared in the current scope!")
+            }
+            else {
+                return false
             }
         }
     }
@@ -141,12 +144,13 @@ class ScopeTable {
 
 
 class Variable {
-    constructor(name, type, index, isparam = false) {
+    constructor(name, type, index, isparam = false, isfield = false) {
         this.name = name
         this.type = type
         this.display_name = name + "_" + index
 
         this.isparam = isparam
+        this.isfield = isfield
     }
 }
 
@@ -193,25 +197,33 @@ class Class {
         this.variables = {}
 
         this.parent = parent
+
+        this.constructor = null
     }
 
     add_method(name, return_type, parameters, scope_table, main) {
         if (name in this.methods) {
             throw Error("The method '" + name + "' has already been defined!")
         }
+        if (name != this.name && name in this.variables) {
+            throw Error("A variable with the name '" + name + "' has already been defined")
+        }
 
         var method = new Method(name, return_type, parameters, scope_table, main)
-        this.methods[name] = method;
+
+        if (!main && name != this.name) {
+            this.methods[name] = method;
+        }
 
         return method
     }
 
-    add_variable(name, type, index) {
+    add_variable(name, type, index, isparam = false, isfield = false) {
         if (name in this.variables) {
             throw Error("The variable '" + name + "' has already been defined!")
         }
 
-        var variable = new Variable(name, type, index)
+        var variable = new Variable(name, type, index, isparam, isfield)
         this.variables[name] = variable;
 
         return variable
@@ -241,6 +253,9 @@ class Class {
         else {
             if (error) {
                 throw Error("The method '" + name + "' was not declared in the current scope!")
+            }
+            else {
+                return false;
             }
         }
     }
@@ -281,14 +296,6 @@ class SymbolTable {
         this.import_methods = {}
 
         this.main_function = null
-    }
-
-    get_class(name) {
-        if (!(name in this.classes)) {
-            throw Error("The class '" + name + "' has not been declared in the current scope!")
-        }
-
-        return this.classes[name]
     }
 
     add_class(name, parent_name = "") {
@@ -332,9 +339,9 @@ class SymbolTable {
         return this.current_class.add_method(name, return_type, parameters, scope_table, false)
     }
 
-    add_variable(name, type) {
+    add_variable(name, type, isparam = false, isfield = false) {
         this.variables_count += 1
-        return this.current_scope.add_variable(name, type, this.variables_count)
+        return this.current_scope.add_variable(name, type, this.variables_count, isparam, isfield)
     }
 
     create_temporary() {
@@ -378,13 +385,27 @@ class SymbolTable {
         return "l_" + this.labels_count
     }
 
-    lookup_variable(name, error = true) {
+    lookup_class(name, error = true) {
+        if (name in this.classes) {
+            return this.classes[name]
+        }
+        throw Error("Class '" + name + "' has not been declared")
+    }
+
+    lookup_variable(name, error = true, scope = null) {
+        if (scope != null) {
+            return scope.lookup_variable(name, error)
+        }
         return this.current_scope.lookup_variable(name, error)
     }
 
-    lookup_method(name, error = true) {
+    lookup_method(name, error = true, scope = null) {
         if (name in this.import_methods) {
             return this.import_methods[name]
+        }
+
+        if (scope != null) {
+            return scope.lookup_method(name, error)
         }
 
         return this.current_scope.lookup_method(name, error)

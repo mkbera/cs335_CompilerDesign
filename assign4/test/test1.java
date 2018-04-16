@@ -7,6 +7,15 @@ class test {
 
 	float[2][1] test = {{12}, {4}};
 
+	test(int a) {
+		// return;
+		c = 5;
+	}
+
+	int tt() {
+		return 10;
+	}
+
 	int function_name(int x, int y) {
 		float b;
 		x = b;
@@ -24,7 +33,7 @@ class test {
 
 		boolean c = true;
 
-		d = test2(arr);
+		d = self.test2(arr);
 
 		a = b + 5;
 		a = -b;
@@ -38,12 +47,15 @@ class test {
 			}
 		}
 
+		d:[1][4] = self.tt();
+
 		return a;
 	}
 
 	public void main() {
 		int a = 2.0;
-		// float b = 3;
-		// b = a;
+		test t = new test(a);
+		float b = 3;
+		b = a;
 	}
 }
