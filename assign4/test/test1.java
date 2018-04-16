@@ -6,22 +6,7 @@ class test {
 	int[2][5] d;
 
 	float[2][1] test = {{12}, {4}};
-
-	test(int a) {
-		// return;
-		c = 5;
-	}
-
-	int tt() {
-		return 10;
-	}
-
-	int function_name(int x, int y) {
-		float b;
-		x = b;
-		return 5;
-	}
-
+	
 	int[2][5] test2(int[2][5] arr) {
 		int r = (float) x + 1.020 + a;
 		return arr;
@@ -47,14 +32,12 @@ class test {
 			}
 		}
 
-		d:[1][4] = self.tt();
-
 		return a;
 	}
 
 	public void main() {
 		int a = 2.0;
-		test t = new test(a);
+		test t = new test();
 		float b = 3;
 		b = a;
 	}

@@ -13,6 +13,16 @@
 				
 				variable.identifier = ST.add_variable(variable.identifier, obj.type, isparam = false, isfield = obj.field).display_name
 
+				if (obj.field) {
+					var t = ST.create_temporary()
+
+					self.consr_code = self.consr_code.concat([
+						"decr" + ir_sep + t + ir_sep + obj.type.category + ir_sep + obj.type.get_basic_type() + ir_sep + obj.type.get_size(),
+						"fieldget" + ir_sep + t + ir_sep + "self" + ir_sep + variable.identifier
+					])
+					variable.identifier = t
+				}
+
 				if (obj.type.category == "array") {
 					
 					if (variable.init != null) {
@@ -683,38 +693,74 @@ class_decr :
 class_header :
 		'public' 'class' 'identifier' extend_decr
 		{
-			ST.add_class($identifier, $4)
 			$$ = {
-				code: ["class" + ir_sep + $identifier + ir_sep + "extends" + ir_sep + $4],
+				code: ["class" + ir_sep + $identifier],
 				place: null
 			}
+			
+			var class_instance = ST.add_class($identifier, "")
+
+			var parameters = []
+
+			ST.variables_count += 1
+			class_type = new Type(ST.current_class.name, "object", null, null, 0)
+			var parameters = [new Variable("self", class_type, ST.variables_count, isparam = true)]
+
+			class_instance.constructor = new Method($identifier, new Type("null", "basic", null, null, 0), parameters, null)
 		}
 	|
 		'class' 'identifier' extend_decr 
 		{
-			ST.add_class($identifier, $3)
 			$$ = {
-				code: ["class" + ir_sep + $identifier + ir_sep + "extends" + ir_sep + $3],
+				code: ["class" + ir_sep + $identifier],
 				place: null
 			}
+			
+			var class_instance = ST.add_class($identifier, "")
+
+			var parameters = []
+
+			ST.variables_count += 1
+			class_type = new Type(ST.current_class.name, "object", null, null, 0)
+			var parameters = [new Variable("self", class_type, ST.variables_count, isparam = true)]
+
+			class_instance.constructor = new Method($identifier, new Type("null", "basic", null, null, 0), parameters, null)
 		}
 	|
 		'public' 'class' 'identifier' 
 		{
-			ST.add_class($identifier, "")
 			$$ = {
 				code: ["class" + ir_sep + $identifier],
 				place: null
 			}
+			
+			var class_instance = ST.add_class($identifier, "")
+
+			var parameters = []
+
+			ST.variables_count += 1
+			class_type = new Type(ST.current_class.name, "object", null, null, 0)
+			var parameters = [new Variable("self", class_type, ST.variables_count, isparam = true)]
+
+			class_instance.constructor = new Method($identifier, new Type("null", "basic", null, null, 0), parameters, null)
 		}
 	|
 		'class' 'identifier' 
 		{
-			ST.add_class($identifier, "")
 			$$ = {
 				code: ["class" + ir_sep + $identifier],
 				place: null
 			}
+			
+			var class_instance = ST.add_class($identifier, "")
+
+			var parameters = []
+
+			ST.variables_count += 1
+			class_type = new Type(ST.current_class.name, "object", null, null, 0)
+			var parameters = [new Variable("self", class_type, ST.variables_count, isparam = true)]
+
+			class_instance.constructor = new Method($identifier, new Type("null", "basic", null, null, 0), parameters, null)
 		}
 	;
 
@@ -732,19 +778,16 @@ class_body :
 		{
 			$$ = $2
 
-			if ($$.consr == []) {
+			if ($$.consr.length == 0) {
 				var curr_class = ST.current_class
-
-				ST.variables_count += 1
-				var class_type = new Type(ST.current_class.name, "object", null, null, 0)
-				var self = Variable("self", class_type, ST.variables_count, isparam = true)
-
-				curr_class.constructor = ST.add_method(curr_class.name, class_type, [self], null)
+				var self = curr_class.constructor.parameters[0]
 
 				$$.consr = $$.consr.concat([
 					"function" + ir_sep + curr_class.name + "_" + curr_class.name,
 					"arg" + ir_sep + self.display_name + ir_sep + self.type.category + ir_sep + self.type.get_basic_type() + ir_sep + self.type.get_size()
 				])
+
+				$$.consr_body = "return"
 			}
 
 			$$.code = $$.code.concat($$.consr)
@@ -798,8 +841,8 @@ class_body_decr :
 					"arg" + ir_sep + method.parameters[index].display_name + ir_sep + method.parameters[index].type.category + ir_sep + method.parameters[index].type.get_basic_type() + ir_sep + method.parameters[index].type.get_size()
 				)
 			}
-			$$.consr_body = $$.consr_body.concat($2.code)
 
+			$$.consr_body = $$.consr_body.concat($2.code)
 			$$.consr_body.push("return")
 		}
 	;
@@ -823,7 +866,6 @@ consr_declarator :
 		'identifier' 'paranthesis_start' formal_parameter_list 'paranthesis_end' 
 		{
 			$$ = {
-				name: $identifier,
 				scope: null,
 				method: null
 			}
@@ -851,7 +893,7 @@ consr_declarator :
 				parameters.push(variable)
 			}
 
-			$$.method = ST.add_method($identifier, new Type("null", "basic", null, null, 0), parameters, scope)
+			$$.method = new Method($identifier, new Type("null", "basic", null, null, 0), parameters, scope)
 
 			ST.current_class.constructor = $$.method
 
@@ -861,7 +903,6 @@ consr_declarator :
 		'public' 'identifier' 'paranthesis_start' formal_parameter_list 'paranthesis_end' 
 		{
 			$$ = {
-				name: $identifier,
 				scope: null,
 				method: null
 			}
@@ -889,7 +930,7 @@ consr_declarator :
 				parameters.push(variable)
 			}
 
-			$$.method = ST.add_method($identifier, new Type("null", "basic", null, null, 0), parameters, scope)
+			$$.method = new Method($identifier, new Type("null", "basic", null, null, 0), parameters, scope)
 
 			ST.current_class.constructor = $$.method
 
@@ -3579,7 +3620,7 @@ expr_name :
 				
 				$$.code = $$.code.concat([
 					"decr" + ir_sep + place + ir_sep + "object" + ir_sep + ST.current_class.name + ir_sep + "1",
-					"fieldget" + ir_sep + place + ir_sep + ST.current_class.name + ir_sep + variable.display_name
+					"fieldget" + ir_sep + place + ir_sep + "self" + ir_sep + variable.display_name
 				])
 			}
 

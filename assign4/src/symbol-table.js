@@ -147,7 +147,10 @@ class Variable {
     constructor(name, type, index, isparam = false, isfield = false) {
         this.name = name
         this.type = type
-        this.display_name = name + "_" + index
+
+        if (name != "self" || !isfield) {
+            this.display_name = name + "_" + index
+        }
 
         this.isparam = isparam
         this.isfield = isfield
@@ -419,28 +422,28 @@ class SymbolTable {
                 ST.import_methods["print_string"] = new Method(
                     "print_string",
                     new Type("null", "basic", null, null, 0),
-                    [new Variable("print_string_param", new Type("string", "basic", null, null, 0), true)],
+                    [new Variable("print_string_param", new Type("string", "basic", null, null, 0), 0, true)],
                     null,
                     false
                 )
                 ST.import_methods["print_float"] = new Method(
                     "print_float",
                     new Type("null", "basic", null, null, 0),
-                    [new Variable("print_float_param", new Type("float", "basic", 4, null, 0), true)],
+                    [new Variable("print_float_param", new Type("float", "basic", 4, null, 0), 0, true)],
                     null,
                     false
                 )
                 ST.import_methods["print_char"] = new Method(
                     "print_char",
                     new Type("null", "basic", null, null, 0),
-                    [new Variable("print_char_param", new Type("char", "basic", 1, null, 0), true)],
+                    [new Variable("print_char_param", new Type("char", "basic", 1, null, 0), 0, true)],
                     null,
                     false
                 )
                 ST.import_methods["print_int"] = new Method(
                     "print_int",
                     new Type("null", "basic", null, null, 0),
-                    [new Variable("print_int_param", new Type("int", "basic", 4, null, 0), true)],
+                    [new Variable("print_int_param", new Type("int", "basic", 4, null, 0), 0, true)],
                     null,
                     false
                 )
