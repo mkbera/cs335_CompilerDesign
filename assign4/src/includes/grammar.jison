@@ -70,7 +70,7 @@
 
 						if (obj.field) {
 							self.code.push(
-								"field_decr" + ir_sep + variable.identifier + ir_sep + "array" + ir_sep + type.type + ir_sep + length
+								"field_decr" + ir_sep + ST.current_class.name + ir_sep + variable.identifier + ir_sep + "array" + ir_sep + type.type + ir_sep + length
 							)
 						}
 						else {
@@ -135,7 +135,7 @@
 
 						if (obj.field) {
 							self.code.push(
-								"field_decr" + ir_sep + variable.identifier + ir_sep + "array" + ir_sep + type.get_basic_type() + ir_sep + length + ir_sep
+								"field_decr" + ir_sep + ST.current_class.name + ir_sep + variable.identifier + ir_sep + "array" + ir_sep + type.get_basic_type() + ir_sep + length + ir_sep
 							)
 						}
 						else {
@@ -148,7 +148,7 @@
 				else {
 					if (obj.field) {
 						self.code.push(
-							"field_decr" + ir_sep + variable.identifier + ir_sep + obj.type.type
+							"field_decr" + ir_sep + ST.current_class.name + ir_sep + variable.identifier + ir_sep + obj.type.type
 						)
 					}
 					else {
@@ -874,7 +874,7 @@ consr_declarator :
 				throw Error("Function must have a return type")
 			}
 			
-			if (ST.current_class.constructor != null) {
+			if (ST.current_class.constructor_init) {
 				throw Error("The class constructor has already been defined")
 			}
 
@@ -896,6 +896,7 @@ consr_declarator :
 			$$.method = new Method($identifier, new Type("null", "basic", null, null, 0), parameters, scope)
 
 			ST.current_class.constructor = $$.method
+			ST.current_class.constructor_init = true
 
 			$$.scope = scope
 		}
@@ -2529,15 +2530,30 @@ assignment :
 				])
 			}
 
-			if ($2.third) {
-				$$.code.push(
-					$2.operator + ir_sep + $1.place + ir_sep + $1.place + ir_sep + place
-				)
+			if ($1.field) {
+				if ($2.third) {
+					$$.code = $$.code.concat([
+						$2.operator + ir_sep + $1.place + ir_sep + $1.place + ir_sep + place,
+						"fieldset" + ir_sep + $1.field_class + ir_sep + $1.field_field + ir_sep + place
+					])
+				}
+				else {
+					$$.code.push(
+						"fieldset" + ir_sep + $1.field_class + ir_sep + $1.field_field + ir_sep + place
+					)
+				}
 			}
 			else {
-				$$.code.push(
-					$2.operator + ir_sep + $1.place + ir_sep + place
-				)
+				if ($2.third) {
+					$$.code.push(
+						$2.operator + ir_sep + $1.place + ir_sep + $1.place + ir_sep + place
+					)
+				}
+				else {
+					$$.code.push(
+						$2.operator + ir_sep + $1.place + ir_sep + place
+					)
+				}
 			}
 		}
 	|
@@ -2592,6 +2608,18 @@ left_hand_side :
 
 			if ($1.category == "method") {
 				throw Error("A function cannot be used in assignment")
+			}
+
+			$$.field = false
+			if ($$.code.length != 0) {
+				var line = $$.code[$$.code.length - 1].split("\t")
+				if (line[0] == "fieldget") {
+					$$.field = true
+					$$.code.pop()
+
+					$$.field_class = line[2]
+					$$.field_field = line[3]
+				}
 			}
 		}
 	|
@@ -3602,29 +3630,46 @@ dim_expr :
 expr_name :
 		'identifier' 
 		{
-			var variable = ST.lookup_variable($identifier)
-
-			var place = variable.display_name
+			var variable = ST.lookup_variable($identifier, false)
+			var method = ST.lookup_method($identifier, false)
 
 			$$ = {
 				code: [],
-				place: place,
+				place: null,
 				method: null,
-				variable: variable,
-				type: variable.type,
-				category: "variable"
+				variable: null,
+				type: null,
+				category: null
 			}
 
-			if (variable.isfield) {
-				place = ST.create_temporary()
-				
-				$$.code = $$.code.concat([
-					"decr" + ir_sep + place + ir_sep + "object" + ir_sep + ST.current_class.name + ir_sep + "1",
-					"fieldget" + ir_sep + place + ir_sep + "self" + ir_sep + variable.display_name
-				])
+			if (variable) {
+				var type = variable.type
+				var place = variable.display_name
+
+				if (variable.isfield) {
+					place = ST.create_temporary()
+					
+					$$.code = $$.code.concat([
+						"decr" + ir_sep + place + ir_sep + type.category + ir_sep + type.get_basic_type() + ir_sep + type.get_size(),
+						"fieldget" + ir_sep + place + ir_sep + "self" + ir_sep + variable.display_name
+					])
+				}
+
+				$$.type = type
+				$$.place = place
+				$$.variable = variable
+				$$.category = "variable"
+			}
+			else if (method) {
+				$$.place = ST.lookup_variable("self")
+				$$.method = method
+				$$.category = "method"
+			}
+			else {
+				throw Error("No variable or method '" + $identifier + "' found")
 			}
 
-			$$.place = place
+			
 		}
 	|
 		expr_name 'field_invoker' 'identifier' 
@@ -3649,6 +3694,7 @@ expr_name :
 			var method = ST.lookup_method($identifier, false, ST.classes[$1.type.type])
 
 			if (variable) {
+				var type = variable.type
 				var temp = ST.create_temporary()
 
 				$$.code = $$.code.concat([

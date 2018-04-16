@@ -148,8 +148,11 @@ class Variable {
         this.name = name
         this.type = type
 
-        if (name != "self" || !isfield) {
+        if (name != "self" || !isparam) {
             this.display_name = name + "_" + index
+        }
+        else {
+            this.display_name = "self";
         }
 
         this.isparam = isparam
@@ -202,6 +205,7 @@ class Class {
         this.parent = parent
 
         this.constructor = null
+        this.constructor_init = false
     }
 
     add_method(name, return_type, parameters, scope_table, main) {

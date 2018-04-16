@@ -6,6 +6,11 @@ class test {
 	int[2][5] d;
 
 	float[2][1] test = {{12}, {4}};
+
+	test() {
+		a = 5;
+		test:[1][0] = 1.0;
+	}
 	
 	int[2][5] test2(int[2][5] arr) {
 		int r = (float) x + 1.020 + a;
@@ -18,10 +23,12 @@ class test {
 
 		boolean c = true;
 
-		d = self.test2(arr);
+		d = test2(arr);
 
 		a = b + 5;
 		a = -b;
+
+		a += 1;
 
 		d:[-1][4] = 0.0;
 
@@ -38,7 +45,7 @@ class test {
 	public void main() {
 		int a = 2.0;
 		test t = new test();
-		float b = 3;
+		float b = t.c;
 		b = a;
 	}
 }
