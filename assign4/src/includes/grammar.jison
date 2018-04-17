@@ -573,7 +573,7 @@ program :
 				filtered_code[index] = line.join("\t").replace(/boolean|short|long/g, "int")
 			}
 
-			if (ST.main == null) {
+			if (ST.main_method == null) {
 				filtered_code = filtered_code.concat([
 					"function" + ir_sep + "main",
 					"return"
@@ -623,7 +623,7 @@ program :
 				filtered_code[index] = line.join("\t").replace(/boolean|short|long/g, "int")
 			}
 
-			if (ST.main == null) {
+			if (ST.main_method == null) {
 				filtered_code = filtered_code.concat([
 					"function" + ir_sep + "main",
 					"return"

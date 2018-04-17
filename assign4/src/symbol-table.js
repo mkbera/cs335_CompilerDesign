@@ -321,7 +321,7 @@ class SymbolTable {
 
         this.import_methods = {}
 
-        this.main_function = null
+        this.main_method = null
     }
 
     add_class(name, parent_name = "") {
@@ -349,13 +349,13 @@ class SymbolTable {
 
     add_method(name, return_type, parameters, scope_table) {
         if (name == "main") {
-            if (this.main_function != null) {
+            if (this.main_method != null) {
                 throw Error("The method '" + name + "' can be defined only once")
             }
 
-            this.main_function = this.current_class.add_method(name, return_type, parameters, scope_table, true)
+            this.main_method = this.current_class.add_method(name, return_type, parameters, scope_table, true)
 
-            return this.main_function
+            return this.main_method
         }
 
         if (name in this.import_methods) {
