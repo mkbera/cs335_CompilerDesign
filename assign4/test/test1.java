@@ -53,6 +53,8 @@ class test extends dummy {
 		test self = new test();
 		self.dummy();
 		float b = self.dummy().dummy().test2(5);
+		IO rr;
+		rr.print_int(a);
 		b = a;
 	}
 }
