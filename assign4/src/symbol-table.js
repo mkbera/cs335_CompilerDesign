@@ -443,9 +443,17 @@ class SymbolTable {
         console.log("Importing " + library)
         switch (library) {
             case "IO": {
-                this.add_class("IO", "")
+                var class_instance = this.add_class("IO", "")
 
                 var self_object = new Variable("this", new Type("IO", "object", null, null, 1))
+
+                class_instance.constructor_init = true
+                class_instance.constructor = new Method(
+                    "IO",
+                    new Type("null", "basic", null, null, 0),
+                    [self_object],
+                    null
+                )
 
                 this.add_method(
                     "print_string",
