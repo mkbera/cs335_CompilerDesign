@@ -7,7 +7,10 @@
     "_int_in db \"%i\", 0"
 	],
 	"code": [
-		"func_syscall_print_int:",
+		"func_IO_IO:",
+		"\tret",
+
+		"func_IO_print_int:",
 		"\tpush ebp",
 		"\tmov ebp, esp",
 		"\tmov eax, [ebp + 8]",
@@ -18,7 +21,7 @@
 		"\tpop ebp",
 		"\tret",
 
-		"func_syscall_print_float:",
+		"func_IO_print_float:",
 		"\tpush ebp",
 		"\tmov ebp, esp",
 		"\tfld dword [ebp + 8]",
@@ -30,7 +33,7 @@
 		"\tpop ebp",
 		"\tret",
     
-		"syscall_scan_int:",
+		"func_IO_scan_int:",
 		"\tpush ebp",
 		"\tmov ebp, esp",
 	    "\tsub esp, 4",
@@ -42,7 +45,7 @@
 		"\tpop ebp",
 		"\tret",
     
-		"func_syscall_scan_float:",
+		"func_IO_scan_float:",
 		"\tpush ebp",
 		"\tmov ebp, esp",
 		"\tpush __dummy_float",

@@ -7,7 +7,7 @@ class Threed_array {
 			for (int j=0; j<10; j = j + 1){
 				for (int k=0; k<10; k++){
 					a:[i][j][k] = (i - j)*-k;
-					print(a:[i][j][k]);
+					// print(a:[i][j][k]);
 				}
 			}
 		}

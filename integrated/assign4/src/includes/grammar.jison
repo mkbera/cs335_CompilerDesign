@@ -573,7 +573,7 @@ program :
 				filtered_code[index] = line.join("\t").replace(/boolean|short|long/g, "int")
 			}
 
-			if (ST.main == null) {
+			if (ST.main_method == null) {
 				filtered_code = filtered_code.concat([
 					"function" + ir_sep + "main",
 					"return"
@@ -623,7 +623,7 @@ program :
 				filtered_code[index] = line.join("\t").replace(/boolean|short|long/g, "int")
 			}
 
-			if (ST.main == null) {
+			if (ST.main_method == null) {
 				filtered_code = filtered_code.concat([
 					"function" + ir_sep + "main",
 					"return"
@@ -3290,6 +3290,19 @@ method_invocation :
 					throw Error("Array dimensions do not match")
 				}
 			}
+
+			var temp
+
+			if (method.return_type.type != "null") {
+				temp = ST.create_temporary()
+
+				$$.code.push(
+					"decr" + ir_sep + temp + ir_sep + method.return_type.category + ir_sep + method.return_type.get_basic_type() + ir_sep + method.return_type.get_size()
+				)
+
+				$$.place = temp
+			}
+
 			for (var index in $3) {
 				$$.code.push(
 					"param" + ir_sep + $3[index].place
@@ -3297,14 +3310,9 @@ method_invocation :
 			}
 
 			if (method.return_type.type != "null") {
-				temp = ST.create_temporary()
-
-				$$.code = $$.code.concat([
-					"decr" + ir_sep + temp + ir_sep + method.return_type.category + ir_sep + method.return_type.get_basic_type() + ir_sep + method.return_type.get_size(),
+				$$.code.push(
 					"call" + ir_sep + $1.place.type.type + "_" + method.name + ir_sep + method.num_parameters + ir_sep + temp
-				])
-
-				$$.place = temp
+				)
 			}
 			else {
 				$$.code.push(
@@ -3329,19 +3337,26 @@ method_invocation :
 				throw Error("The method " + method.name + " requires " + (method.num_parameters - 1) + ", provided 0")
 			}
 
+			var temp
+
+			if (method.return_type.type != "null") {
+				temp = ST.create_temporary()
+
+				$$.code.push(
+					"decr" + ir_sep + temp + ir_sep + method.return_type.category + ir_sep + method.return_type.get_basic_type() + ir_sep + method.return_type.get_size()
+				)
+
+				$$.place = temp
+			}
+
 			$$.code.push(
 				"param" + ir_sep + $1.place.place
 			)
 
 			if (method.return_type.type != "null") {
-				temp = ST.create_temporary()
-
-				$$.code = $$.code.concat([
-					"decr" + ir_sep + temp + ir_sep + method.return_type.category + ir_sep + method.return_type.get_basic_type() + ir_sep + method.return_type.get_size(),
+				$$.code.push(
 					"call" + ir_sep + $1.place.type.type + "_" + method.name + ir_sep + method.num_parameters + ir_sep + temp
-				])
-
-				$$.place = temp
+				)
 			}
 			else {
 				$$.code.push(
@@ -3384,6 +3399,19 @@ method_invocation :
 					throw Error("Array dimensions do not match")
 				}
 			}
+
+			var temp
+
+			if (method.return_type.type != "null") {
+				temp = ST.create_temporary()
+
+				$$.code.push(
+					"decr" + ir_sep + temp + ir_sep + method.return_type.category + ir_sep + method.return_type.get_basic_type() + ir_sep + method.return_type.get_size()
+				)
+
+				$$.place = temp
+			}
+
 			for (var index in $5) {
 				$$.code.push(
 					"param" + ir_sep + $5[index].place
@@ -3391,14 +3419,9 @@ method_invocation :
 			}
 
 			if (method.return_type.type != "null") {
-				temp = ST.create_temporary()
-
-				$$.code = $$.code.concat([
-					"decr" + ir_sep + temp + ir_sep + method.return_type.category + ir_sep + method.return_type.get_basic_type() + ir_sep + method.return_type.get_size(),
+				$$.code.push(
 					"call" + ir_sep + $1.type.type + "_" + method.name + ir_sep + method.num_parameters + ir_sep + temp
-				])
-
-				$$.place = temp
+				)
 			}
 			else {
 				$$.code.push(
@@ -3424,20 +3447,27 @@ method_invocation :
 			if (method.num_parameters > 1) {
 				throw Error("The method " + method.name + " requires " + (method.num_parameters - 1) + ", provided 0")
 			}
+			
+			var temp;
+			
+			if (method.return_type.type != "null") {
+				temp = ST.create_temporary()
+
+				$$.code.push(
+					"decr" + ir_sep + temp + ir_sep + method.return_type.category + ir_sep + method.return_type.get_basic_type() + ir_sep + method.return_type.get_size()
+				)
+
+				$$.place = temp
+			}
 
 			$$.code.push(
 				"param" + ir_sep + $1.place
 			)
 
 			if (method.return_type.type != "null") {
-				temp = ST.create_temporary()
-
-				$$.code = $$.code.concat([
-					"decr" + ir_sep + temp + ir_sep + method.return_type.category + ir_sep + method.return_type.get_basic_type() + ir_sep + method.return_type.get_size(),
+				$$.code.push(
 					"call" + ir_sep + $1.type.type + "_" + method.name + ir_sep + method.num_parameters + ir_sep + temp
-				])
-
-				$$.place = temp
+				)
 			}
 			else {
 				$$.code.push(
@@ -3503,21 +3533,30 @@ array_access :
 				
 				$$.code = $$.code.concat(dim.code)
 
-				var label = ST.create_label()
-			
-				$$.code = $$.code.concat([
-					"ifgoto" + ir_sep + "ge" + ir_sep + dim.place + ir_sep + "0" + ir_sep + label,
-					"error" + ir_sep + "array_access_low",
-					"label" + ir_sep + label
-				])
+				if (!isNaN(dim.place)) {
+					var dim_val = parseInt(dim.place)
 
-				label = ST.create_label()
-			
-				$$.code = $$.code.concat([
-					"ifgoto" + ir_sep + "lt" + ir_sep + dim.place + ir_sep + type.length + ir_sep + label,
-					"error" + ir_sep + "array_access_up",
-					"label" + ir_sep + label
-				])
+					if (dim_val >= type.length) {
+						throw Error("Array index exceeds dimension size")
+					}
+				}
+				else {
+					var label = ST.create_label()
+				
+					$$.code = $$.code.concat([
+						"ifgoto" + ir_sep + "ge" + ir_sep + dim.place + ir_sep + "0" + ir_sep + label,
+						"error" + ir_sep + "array_access_low",
+						"label" + ir_sep + label
+					])
+
+					label = ST.create_label()
+				
+					$$.code = $$.code.concat([
+						"ifgoto" + ir_sep + "lt" + ir_sep + dim.place + ir_sep + type.length + ir_sep + label,
+						"error" + ir_sep + "array_access_up",
+						"label" + ir_sep + label
+					])
+				}
 
 				if (first) {
 					$$.code.push(
