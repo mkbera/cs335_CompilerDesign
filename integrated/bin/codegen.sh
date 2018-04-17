@@ -8,5 +8,5 @@ gcc -m32 t.o -o t
 ./t
 rm t.o
 rm t
-rm test.ir
-rm test.asm
+# rm test.ir
+# rm test.asm

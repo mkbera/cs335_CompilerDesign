@@ -16,7 +16,7 @@ class rec {
 		rec first_object = new rec();
 		a = first_object.array_func(a, b);
 		IO ip = new IO();
-		ip.print(b);
+		ip.print_int(b);
 		// int c = gcd(a, b);
 	}
 }
