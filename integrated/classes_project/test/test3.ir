@@ -1,0 +1,37 @@
+1	import	IO
+2	class	rec
+3	function	gcd
+4	arg	b_2	int	1
+5	arg	a_1	int	1
+6	decr	t1	int
+7	=	t1	1
+8	ifgoto	eq	b_2	0	10
+9	=	t1	0
+10	ifgoto	eq	t1	1	12
+11	jump	13
+12	return	a_1
+13	decr	x_3	int
+14	decr	t2	int
+15	%	t2	a_1	b_2
+16	=	x_3	t2
+17	param	b_2
+18	param	x_3
+19	decr	t3	int
+20	call	gcd	2	t3
+21	return	t3
+22	error	function_return
+23	exit
+24	function	main
+25	decr	a_4	int
+26	=	a_4	90
+27	decr	b_5	int
+28	=	b_5	54
+29	decr	c_6	int
+30	param	a_4
+31	param	b_5
+32	decr	t4	int
+33	call	gcd	2	t4
+34	=	c_6	t4
+35	param	c_6
+36	call	syscall_print_int	1
+37	exit
