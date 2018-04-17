@@ -148,7 +148,7 @@
 				else {
 					if (obj.field) {
 						self.code.push(
-							"field_decr" + ir_sep + ST.current_class.name + ir_sep + variable.identifier + ir_sep + obj.type.type
+							"field_decr" + ir_sep + ST.current_class.name + ir_sep + variable.identifier + ir_sep + obj.type.category + ir_sep + obj.type.get_basic_type() + obj.type.get_size()
 						)
 					}
 					else {
