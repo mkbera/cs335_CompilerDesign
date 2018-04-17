@@ -15,6 +15,7 @@ class Registers {
 		this.counter = 0; // global offset counter from ebp downwards so that to set offset for local variables
 		this.n_params = 0; // number of params to be passed to the function to be called
 		this.arg_counter = 0; // global counter for number of args
+		this.field_num = 0
 	}
 
 	// counter
