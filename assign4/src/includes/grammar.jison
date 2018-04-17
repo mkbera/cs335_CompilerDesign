@@ -13,6 +13,16 @@
 				
 				variable.identifier = ST.add_variable(variable.identifier, obj.type, isparam = false, isfield = obj.field).display_name
 
+				if (obj.field) {
+					var t = ST.create_temporary()
+
+					self.consr_code = self.consr_code.concat([
+						"decr" + ir_sep + t + ir_sep + obj.type.category + ir_sep + obj.type.get_basic_type() + ir_sep + obj.type.get_size(),
+						"fieldget" + ir_sep + t + ir_sep + "this" + ir_sep + variable.identifier
+					])
+					variable.identifier = t
+				}
+
 				if (obj.type.category == "array") {
 					
 					if (variable.init != null) {
@@ -60,7 +70,7 @@
 
 						if (obj.field) {
 							self.code.push(
-								"field_decr" + ir_sep + variable.identifier + ir_sep + "array" + ir_sep + type.type + ir_sep + length
+								"field_decr" + ir_sep + ST.current_class.name + ir_sep + variable.identifier + ir_sep + "array" + ir_sep + type.type + ir_sep + length
 							)
 						}
 						else {
@@ -125,7 +135,7 @@
 
 						if (obj.field) {
 							self.code.push(
-								"field_decr" + ir_sep + variable.identifier + ir_sep + "array" + ir_sep + type.get_basic_type() + ir_sep + length + ir_sep
+								"field_decr" + ir_sep + ST.current_class.name + ir_sep + variable.identifier + ir_sep + "array" + ir_sep + type.get_basic_type() + ir_sep + length + ir_sep
 							)
 						}
 						else {
@@ -138,7 +148,7 @@
 				else {
 					if (obj.field) {
 						self.code.push(
-							"field_decr" + ir_sep + variable.identifier + ir_sep + obj.type.type
+							"field_decr" + ir_sep + ST.current_class.name + ir_sep + variable.identifier + ir_sep + obj.type.type
 						)
 					}
 					else {
@@ -419,14 +429,6 @@
 
 "short" 							return 'short';
 
-"static"							return 'static';
-
-"super" 							return 'super';
-
-"switch"							return 'switch';
-
-"this"								return 'this';
-
 "void"								return 'void';
 
 "while" 							return 'while';
@@ -568,7 +570,14 @@ program :
 					line[4] = labels[line[4]]
 				}
 
-				filtered_code[index] = line.join("\t")
+				filtered_code[index] = line.join("\t").replace(/boolean|short|long/g, "int")
+			}
+
+			if (ST.main == null) {
+				filtered_code = filtered_code.concat([
+					"function" + ir_sep + "main",
+					"return"
+				])
 			}
 
 			return filtered_code
@@ -576,7 +585,10 @@ program :
 	|
 		import_decrs 'EOF' 
 		{
-			return $1.code
+			return $1.code.concat([
+				"function" + ir_sep + "main",
+				"return"
+			])
 		}
 	|
 		type_decrs 'EOF' 
@@ -608,7 +620,14 @@ program :
 					line[4] = labels[line[4]]
 				}
 
-				filtered_code[index] = line.join("\t")
+				filtered_code[index] = line.join("\t").replace(/boolean|short|long/g, "int")
+			}
+
+			if (ST.main == null) {
+				filtered_code = filtered_code.concat([
+					"function" + ir_sep + "main",
+					"return"
+				])
 			}
 
 			return filtered_code
@@ -616,7 +635,10 @@ program :
 	|
 		'EOF' 
 		{
-			return []
+			return [
+				"function" + ir_sep + "main",
+				"return"
+			]
 		}
 	;
 
@@ -683,38 +705,84 @@ class_decr :
 class_header :
 		'public' 'class' 'identifier' extend_decr
 		{
-			ST.add_class($identifier, $4)
 			$$ = {
-				code: ["class" + ir_sep + $identifier + ir_sep + "extends" + ir_sep + $4],
+				code: ["class" + ir_sep + $identifier],
 				place: null
 			}
+			
+			var class_instance = ST.add_class($identifier, $4)
+			var super_field = class_instance.variables["super"]
+			
+			$$.code.push(
+				"field_decr" + ir_sep + class_instance.name + ir_sep + super_field.display_name + ir_sep + "object" + ir_sep + super_field.type.type + ir_sep + "1"
+			)
+
+			var parameters = []
+
+			ST.variables_count += 1
+			class_type = new Type(ST.current_class.name, "object", null, null, 0)
+			var parameters = [new Variable("this", class_type, ST.variables_count, isparam = true)]
+
+			class_instance.constructor = new Method($identifier, new Type("null", "basic", null, null, 0), parameters, null)
 		}
 	|
 		'class' 'identifier' extend_decr 
 		{
-			ST.add_class($identifier, $3)
 			$$ = {
-				code: ["class" + ir_sep + $identifier + ir_sep + "extends" + ir_sep + $3],
+				code: ["class" + ir_sep + $identifier],
 				place: null
 			}
+			
+			var class_instance = ST.add_class($identifier, $3)
+			var super_field = class_instance.variables["super"]
+			
+			$$.code.push(
+				"field_decr" + ir_sep + class_instance.name + ir_sep + super_field.display_name + ir_sep + "object" + ir_sep + super_field.type.type + ir_sep + "1"
+			)
+
+			var parameters = []
+
+			ST.variables_count += 1
+			class_type = new Type(ST.current_class.name, "object", null, null, 0)
+			var parameters = [new Variable("this", class_type, ST.variables_count, isparam = true)]
+
+			class_instance.constructor = new Method($identifier, new Type("null", "basic", null, null, 0), parameters, null)
 		}
 	|
 		'public' 'class' 'identifier' 
 		{
-			ST.add_class($identifier, "")
 			$$ = {
 				code: ["class" + ir_sep + $identifier],
 				place: null
 			}
+			
+			var class_instance = ST.add_class($identifier, "")
+
+			var parameters = []
+
+			ST.variables_count += 1
+			class_type = new Type(ST.current_class.name, "object", null, null, 0)
+			var parameters = [new Variable("this", class_type, ST.variables_count, isparam = true)]
+
+			class_instance.constructor = new Method($identifier, new Type("null", "basic", null, null, 0), parameters, null)
 		}
 	|
 		'class' 'identifier' 
 		{
-			ST.add_class($identifier, "")
 			$$ = {
 				code: ["class" + ir_sep + $identifier],
 				place: null
 			}
+			
+			var class_instance = ST.add_class($identifier, "")
+
+			var parameters = []
+
+			ST.variables_count += 1
+			class_type = new Type(ST.current_class.name, "object", null, null, 0)
+			var parameters = [new Variable("this", class_type, ST.variables_count, isparam = true)]
+
+			class_instance.constructor = new Method($identifier, new Type("null", "basic", null, null, 0), parameters, null)
 		}
 	;
 
@@ -732,19 +800,16 @@ class_body :
 		{
 			$$ = $2
 
-			if ($$.consr == []) {
+			if ($$.consr.length == 0) {
 				var curr_class = ST.current_class
-
-				ST.variables_count += 1
-				var class_type = new Type(ST.current_class.name, "object", null, null, 0)
-				var self = Variable("self", class_type, ST.variables_count, isparam = true)
-
-				curr_class.constructor = ST.add_method(curr_class.name, class_type, [self], null)
+				var self = curr_class.constructor.parameters[0]
 
 				$$.consr = $$.consr.concat([
 					"function" + ir_sep + curr_class.name + "_" + curr_class.name,
 					"arg" + ir_sep + self.display_name + ir_sep + self.type.category + ir_sep + self.type.get_basic_type() + ir_sep + self.type.get_size()
 				])
+
+				$$.consr_body = "return"
 			}
 
 			$$.code = $$.code.concat($$.consr)
@@ -798,8 +863,8 @@ class_body_decr :
 					"arg" + ir_sep + method.parameters[index].display_name + ir_sep + method.parameters[index].type.category + ir_sep + method.parameters[index].type.get_basic_type() + ir_sep + method.parameters[index].type.get_size()
 				)
 			}
-			$$.consr_body = $$.consr_body.concat($2.code)
 
+			$$.consr_body = $$.consr_body.concat($2.code)
 			$$.consr_body.push("return")
 		}
 	;
@@ -823,7 +888,6 @@ consr_declarator :
 		'identifier' 'paranthesis_start' formal_parameter_list 'paranthesis_end' 
 		{
 			$$ = {
-				name: $identifier,
 				scope: null,
 				method: null
 			}
@@ -832,7 +896,7 @@ consr_declarator :
 				throw Error("Function must have a return type")
 			}
 			
-			if (ST.current_class.constructor != null) {
+			if (ST.current_class.constructor_init) {
 				throw Error("The class constructor has already been defined")
 			}
 
@@ -841,8 +905,8 @@ consr_declarator :
 
 			ST.variables_count += 1
 			class_type = new Type(ST.current_class.name, "object", null, null, 0)
-			scope.parameters["self"] = scope.add_variable("self", class_type, ST.variables_count, isparam = true)
-			parameters.push(scope.parameters["self"])
+			scope.parameters["this"] = scope.add_variable("this", class_type, ST.variables_count, isparam = true)
+			parameters.push(scope.parameters["this"])
 
 			for (var index in $3) {
 				ST.variables_count += 1
@@ -851,9 +915,10 @@ consr_declarator :
 				parameters.push(variable)
 			}
 
-			$$.method = ST.add_method($identifier, new Type("null", "basic", null, null, 0), parameters, scope)
+			$$.method = new Method($identifier, new Type("null", "basic", null, null, 0), parameters, scope)
 
 			ST.current_class.constructor = $$.method
+			ST.current_class.constructor_init = true
 
 			$$.scope = scope
 		}
@@ -861,7 +926,6 @@ consr_declarator :
 		'public' 'identifier' 'paranthesis_start' formal_parameter_list 'paranthesis_end' 
 		{
 			$$ = {
-				name: $identifier,
 				scope: null,
 				method: null
 			}
@@ -879,8 +943,8 @@ consr_declarator :
 
 			ST.variables_count += 1
 			class_type = new Type(ST.current_class.name, "object", null, null, 0)
-			scope.parameters["self"] = scope.add_variable("self", class_type, ST.variables_count, isparam = true)
-			parameters.push(scope.parameters["self"])
+			scope.parameters["this"] = scope.add_variable("this", class_type, ST.variables_count, isparam = true)
+			parameters.push(scope.parameters["this"])
 
 			for (var index in $4) {
 				ST.variables_count += 1
@@ -889,7 +953,7 @@ consr_declarator :
 				parameters.push(variable)
 			}
 
-			$$.method = ST.add_method($identifier, new Type("null", "basic", null, null, 0), parameters, scope)
+			$$.method = new Method($identifier, new Type("null", "basic", null, null, 0), parameters, scope)
 
 			ST.current_class.constructor = $$.method
 
@@ -928,21 +992,6 @@ consr_body :
 		{
 			$$ = { code: [], place: null }
 		}
-	;
-
-
-explicit_consr_invocation :
-		'this' 'paranthesis_start' argument_list 'paranthesis_end' 
-		{ $$ = { code: [], place: null } }
-	|
-		'super' 'paranthesis_start' argument_list 'paranthesis_end' 
-		{ $$ = { code: [], place: null } }
-	|
-		'this' 'paranthesis_start' 'paranthesis_end' 
-		{ $$ = { code: [], place: null } }
-	|
-		'super' 'paranthesis_start' 'paranthesis_end' 
-		{ $$ = { code: [], place: null } }
 	;
 
 
@@ -1180,9 +1229,9 @@ floating_type :
 		'double' 
 		{
 			$$ = {
-				type: "boolean",
+				type: "float",
 				category: "basic",
-				width: 8,
+				width: 4,
 				length: null,
 				dimension: 0
 			}
@@ -1195,13 +1244,7 @@ reference_type :
 		{
 			ST.lookup_class($identifier)
 
-			$$ = {
-				type: $identifier,
-				category: "object",
-				width: null,
-				length: null,
-				dimension: 0
-			}
+			$$ = new Type($identifier, "object", null, null, 0)
 		}
 	|
 		'identifier' dim_exprs 
@@ -1262,9 +1305,16 @@ method_decr :
 
 			$$ = { code: [], place: null }
 
-			$$.code.push(
-				"function" + ir_sep + ST.current_class.name + "_" + method.name
-			)
+			if (method.name == "main") {
+				$$.code.push(
+					"function" + ir_sep + method.name
+				)
+			}
+			else {
+				$$.code.push(
+					"function" + ir_sep + ST.current_class.name + "_" + method.name
+				)
+			}
 
 			for (var index = method.parameters.length - 1; index >= 0; index--) {
 				$$.code.push(
@@ -1301,8 +1351,8 @@ method_declarator :
 			if ($identifier != "main") {
 				ST.variables_count += 1
 				class_type = new Type(ST.current_class.name, "object", null, null, 0)
-				scope.parameters["self"] = scope.add_variable("self", class_type, ST.variables_count, isparam = true)
-				parameters.push(scope.parameters["self"])
+				scope.parameters["this"] = scope.add_variable("this", class_type, ST.variables_count, isparam = true)
+				parameters.push(scope.parameters["this"])
 			}
 
 			for (var index in $5) {
@@ -1331,8 +1381,8 @@ method_declarator :
 			if ($identifier != "main") {
 				ST.variables_count += 1
 				class_type = new Type(ST.current_class.name, "object", null, null, 0)
-				scope.parameters["self"] = scope.add_variable("self", class_type, ST.variables_count, isparam = true)
-				parameters.push(scope.parameters["self"])
+				scope.parameters["this"] = scope.add_variable("this", class_type, ST.variables_count, isparam = true)
+				parameters.push(scope.parameters["this"])
 			}
 
 			for (var index in $5) {
@@ -1361,8 +1411,8 @@ method_declarator :
 			if ($identifier != "main") {
 				ST.variables_count += 1
 				class_type = new Type(ST.current_class.name, "object", null, null, 0)
-				scope.parameters["self"] = scope.add_variable("self", class_type, ST.variables_count, isparam = true)
-				parameters.push(scope.parameters["self"])
+				scope.parameters["this"] = scope.add_variable("this", class_type, ST.variables_count, isparam = true)
+				parameters.push(scope.parameters["this"])
 			}
 
 			for (var index in $4) {
@@ -1391,8 +1441,8 @@ method_declarator :
 			if ($identifier != "main") {
 				ST.variables_count += 1
 				class_type = new Type(ST.current_class.name, "object", null, null, 0)
-				scope.parameters["self"] = scope.add_variable("self", class_type, ST.variables_count, isparam = true)
-				parameters.push(scope.parameters["self"])
+				scope.parameters["this"] = scope.add_variable("this", class_type, ST.variables_count, isparam = true)
+				parameters.push(scope.parameters["this"])
 			}
 
 			for (var index in $4) {
@@ -2418,7 +2468,7 @@ for_inner_scope_start :
 
 
 expr :
-		additive_expr 
+		cond_or_expr 
 		{
 			$$ = $1
 		}
@@ -2469,7 +2519,7 @@ assignment :
 			$$ = { code: [], place: $1.place, type: $1.type }
 
 			if (!($1.type.get_serial_type() == $3.type.get_serial_type() || ($1.type.numeric() && $3.type.numeric()))) {
-				throw Error("Cannot convert '" + $3.type.get_serial_type() + "' to '" + $1.type.get_serial_type + "'")
+				throw Error("Cannot convert '" + $3.type.get_serial_type() + "' to '" + $1.type.get_serial_type() + "'")
 			}
 
 			var place = $3.place
@@ -2488,15 +2538,30 @@ assignment :
 				])
 			}
 
-			if ($2.third) {
-				$$.code.push(
-					$2.operator + ir_sep + $1.place + ir_sep + $1.place + ir_sep + place
-				)
+			if ($1.field) {
+				if ($2.third) {
+					$$.code = $$.code.concat([
+						$2.operator + ir_sep + $1.place + ir_sep + $1.place + ir_sep + place,
+						"fieldset" + ir_sep + $1.field_class + ir_sep + $1.field_field + ir_sep + place
+					])
+				}
+				else {
+					$$.code.push(
+						"fieldset" + ir_sep + $1.field_class + ir_sep + $1.field_field + ir_sep + place
+					)
+				}
 			}
 			else {
-				$$.code.push(
-					$2.operator + ir_sep + $1.place + ir_sep + place
-				)
+				if ($2.third) {
+					$$.code.push(
+						$2.operator + ir_sep + $1.place + ir_sep + $1.place + ir_sep + place
+					)
+				}
+				else {
+					$$.code.push(
+						$2.operator + ir_sep + $1.place + ir_sep + place
+					)
+				}
 			}
 		}
 	|
@@ -2551,6 +2616,18 @@ left_hand_side :
 
 			if ($1.category == "method") {
 				throw Error("A function cannot be used in assignment")
+			}
+
+			$$.field = false
+			if ($$.code.length != 0) {
+				var line = $$.code[$$.code.length - 1].split("\t")
+				if (line[0] == "fieldget") {
+					$$.field = true
+					$$.code.pop()
+
+					$$.field_class = line[2]
+					$$.field_field = line[3]
+				}
 			}
 		}
 	|
@@ -2812,7 +2889,16 @@ relational_expr :
 		}
 	|
 		relational_expr 'instanceof' additive_expr 
-		{ $$ = { nt: 'relational_expr', children: [$1,{ t: 'instanceof', l: $instanceof },$3] } }
+		{
+			$$ = { code: [], literal: true, place: null, type: new Type("boolean", "basic", 1, null, 0) }
+
+			if ($1.type.get_serial_type() == $2.type.get_serial_type()) {
+				$$.place = 1
+			}
+			else {
+				$$.place = 0
+			}
+		}
 	;
 
 
@@ -3187,7 +3273,7 @@ method_invocation :
 			$3.unshift({
 				type: $1.place.type,
 				place: $1.place.place,
-				code: []
+				code: $1.code
 			})
 
 			if ($3.length != method.num_parameters) {
@@ -3231,7 +3317,7 @@ method_invocation :
 	|
 		expr_name 'paranthesis_start' 'paranthesis_end' 
 		{
-			$$ = { code: [], place: null, type: null }
+			$$ = { code: $1.code, place: null, type: null }
 
 			if ($1.category != "method") {
 				throw Error("Type '" + $1.type.get_serial_type() + "' is not callable")
@@ -3240,9 +3326,8 @@ method_invocation :
 			var method = $1.method
 
 			if (method.num_parameters > 1) {
-				throw Error("The method " + method.name + " requires " + method.num_parameters + ", provided 0")
+				throw Error("The method " + method.name + " requires " + (method.num_parameters - 1) + ", provided 0")
 			}
-
 
 			$$.code.push(
 				"param" + ir_sep + $1.place.place
@@ -3255,6 +3340,8 @@ method_invocation :
 					"decr" + ir_sep + temp + ir_sep + method.return_type.category + ir_sep + method.return_type.get_basic_type() + ir_sep + method.return_type.get_size(),
 					"call" + ir_sep + $1.place.type.type + "_" + method.name + ir_sep + method.num_parameters + ir_sep + temp
 				])
+
+				$$.place = temp
 			}
 			else {
 				$$.code.push(
@@ -3266,25 +3353,124 @@ method_invocation :
 		}
 	|
 		primary 'field_invoker' 'identifier' 'paranthesis_start' argument_list 'paranthesis_end' 
-		{ $$ = { nt: 'method_invocation', children: [$1,{ t: 'field_invoker', l: $field_invoker },{ t: 'identifier', l: $identifier },{ t: 'paranthesis_start', l: $paranthesis_start },$5,{ t: 'paranthesis_end', l: $paranthesis_end }] } }
-	|
-		'super' 'field_invoker' 'identifier' 'paranthesis_start' argument_list 'paranthesis_end' 
-		{ $$ = { nt: 'method_invocation', children: [{ t: 'super', l: $super },{ t: 'field_invoker', l: $field_invoker },{ t: 'identifier', l: $identifier },{ t: 'paranthesis_start', l: $paranthesis_start },$5,{ t: 'paranthesis_end', l: $paranthesis_end }] } }
+		{
+			$$ = { code: [], type: null, place: null }
+
+			if ($1.type.category != "object") {
+				throw Error("Type '" + $1.type.get_serial_type() + "' does not have the property " + $identifier)
+			}
+
+			var method = ST.lookup_method($identifier, true, ST.classes[$1.type.type])
+			var temp = ST.create_temporary()
+			var type = method.return_type
+
+			$5.unshift({
+				type: $1.type,
+				place: $1.place,
+				code: $1.code
+			})
+
+			if ($5.length != method.num_parameters) {
+				throw Error("The method " + method.name + " requires " + (method.num_parameters - 1) + " parameters, provided " + ($5.length - 1))
+			}
+
+			for (var index in $5) {
+				$$.code = $$.code.concat($5[index].code)
+
+				if (!($5[index].type.get_serial_type() == method.parameters[index].type.get_serial_type() || ($5[index].type.numeric() && method.parameters.type.numeric()))) {
+					throw Error("Argument must be of type " + method.parameters[index].type.get_serial_type())
+				}
+				if ($5[index].type.category == "array" && $5[index].type.get_size() != method.parameters[index].type.get_size()) {
+					throw Error("Array dimensions do not match")
+				}
+			}
+			for (var index in $5) {
+				$$.code.push(
+					"param" + ir_sep + $5[index].place
+				)
+			}
+
+			if (method.return_type.type != "null") {
+				temp = ST.create_temporary()
+
+				$$.code = $$.code.concat([
+					"decr" + ir_sep + temp + ir_sep + method.return_type.category + ir_sep + method.return_type.get_basic_type() + ir_sep + method.return_type.get_size(),
+					"call" + ir_sep + $1.type.type + "_" + method.name + ir_sep + method.num_parameters + ir_sep + temp
+				])
+
+				$$.place = temp
+			}
+			else {
+				$$.code.push(
+					"call" + ir_sep + $1.type.type + "_" + method.name + ir_sep + method.num_parameters
+				)
+			}
+
+			$$.type = method.return_type
+		}
 	|
 		primary 'field_invoker' 'identifier' 'paranthesis_start' 'paranthesis_end' 
-		{ $$ = { nt: 'method_invocation', children: [$1,{ t: 'field_invoker', l: $field_invoker },{ t: 'identifier', l: $identifier },{ t: 'paranthesis_start', l: $paranthesis_start },{ t: 'paranthesis_end', l: $paranthesis_end }] } }
-	|
-		'super' 'field_invoker' 'identifier' 'paranthesis_start' 'paranthesis_end' 
-		{ $$ = { nt: 'method_invocation', children: [{ t: 'super', l: $super },{ t: 'field_invoker', l: $field_invoker },{ t: 'identifier', l: $identifier },{ t: 'paranthesis_start', l: $paranthesis_start },{ t: 'paranthesis_end', l: $paranthesis_end }] } }
+		{
+			$$ = { code: [], type: null, place: null }
+
+			if ($1.type.category != "object") {
+				throw Error("Type '" + $1.type.get_serial_type() + "' does not have the property " + $identifier)
+			}
+
+			var method = ST.lookup_method($identifier, true, ST.classes[$1.type.type])
+			var temp = ST.create_temporary()
+			var type = method.return_type
+
+			if (method.num_parameters > 1) {
+				throw Error("The method " + method.name + " requires " + (method.num_parameters - 1) + ", provided 0")
+			}
+
+			$$.code.push(
+				"param" + ir_sep + $1.place
+			)
+
+			if (method.return_type.type != "null") {
+				temp = ST.create_temporary()
+
+				$$.code = $$.code.concat([
+					"decr" + ir_sep + temp + ir_sep + method.return_type.category + ir_sep + method.return_type.get_basic_type() + ir_sep + method.return_type.get_size(),
+					"call" + ir_sep + $1.type.type + "_" + method.name + ir_sep + method.num_parameters + ir_sep + temp
+				])
+
+				$$.place = temp
+			}
+			else {
+				$$.code.push(
+					"call" + ir_sep + $1.type.type + "_" + method.name + ir_sep + method.num_parameters
+				)
+			}
+
+			$$.type = method.return_type
+		}
 	;
 
 
 field_access :
 		primary 'field_invoker' 'identifier' 
-		{ $$ = { nt: 'field_access', children: [$1,{ t: 'field_invoker', l: $field_invoker },{ t: 'identifier', l: $identifier }] } }
-	|
-		'super' 'field_invoker' 'identifier' 
-		{ $$ = { nt: 'field_access', children: [{ t: 'super', l: $super },{ t: 'field_invoker', l: $field_invoker },{ t: 'identifier', l: $identifier }] } }
+		{
+			$$ = { code: $1.code, type: null, place: null }
+
+			if ($1.type.category != "object") {
+				throw Error("Type '" + $1.type.get_serial_type() + "' does not have the property " + $identifier)
+			}
+
+			var variable = ST.lookup_variable($identifier, true, ST.classes[$1.type.type])
+			var temp = ST.create_temporary()
+			var type = variable.type
+
+			$$.code = $$.code.concat([
+				"decr" + ir_sep + temp + ir_sep + type.category + ir_sep + type.get_basic_type() + ir_sep + type.get_size(),
+				"fieldget" + ir_sep + temp + ir_sep + $1.type.type + ir_sep + $identifier
+			])
+
+			$$.type = type
+			$$.place = temp
+		}
 	;
 
 
@@ -3561,29 +3747,53 @@ dim_expr :
 expr_name :
 		'identifier' 
 		{
-			var variable = ST.lookup_variable($identifier)
-
-			var place = variable.display_name
+			var variable = ST.lookup_variable($identifier, false)
+			var method = ST.lookup_method($identifier, false)
 
 			$$ = {
 				code: [],
-				place: place,
+				place: null,
 				method: null,
-				variable: variable,
-				type: variable.type,
-				category: "variable"
+				variable: null,
+				type: null,
+				category: null
 			}
 
-			if (variable.isfield) {
-				place = ST.create_temporary()
-				
-				$$.code = $$.code.concat([
-					"decr" + ir_sep + place + ir_sep + "object" + ir_sep + ST.current_class.name + ir_sep + "1",
-					"fieldget" + ir_sep + place + ir_sep + ST.current_class.name + ir_sep + variable.display_name
-				])
+			if (variable) {
+				var type = variable.type
+				var place = variable.display_name
+
+				if (variable.isfield) {
+					place = ST.create_temporary()
+					
+					$$.code = $$.code.concat([
+						"decr" + ir_sep + place + ir_sep + type.category + ir_sep + type.get_basic_type() + ir_sep + type.get_size(),
+						"fieldget" + ir_sep + place + ir_sep + "this" + ir_sep + variable.display_name
+					])
+				}
+
+				$$.type = type
+				$$.place = place
+				$$.variable = variable
+				$$.category = "variable"
+			}
+			else if (method) {
+				var self = ST.lookup_variable("this")
+
+				$$.place = {
+					place: self.display_name,
+					type: self.type
+				}
+
+				$$.method = method
+				$$.category = "method"
+				$$.type = new Type("method", "method", null, null, null)
+			}
+			else {
+				throw Error("No variable or method '" + $identifier + "' found")
 			}
 
-			$$.place = place
+			
 		}
 	|
 		expr_name 'field_invoker' 'identifier' 
@@ -3608,6 +3818,7 @@ expr_name :
 			var method = ST.lookup_method($identifier, false, ST.classes[$1.type.type])
 
 			if (variable) {
+				var type = variable.type
 				var temp = ST.create_temporary()
 
 				$$.code = $$.code.concat([
@@ -3624,6 +3835,7 @@ expr_name :
 				$$.place = $1
 				$$.method = method
 				$$.category = "method"
+				$$.type = new Type("method", "method", null, null, null)
 			}
 			else {
 				throw Error("Type '" + $1.type.type + "' does not have the property '" + $identifier + "'")

@@ -99,9 +99,9 @@ class ScopeTable {
         }
 
         var variable = new Variable(name, type, index, isparam, isfield)
-        this.variables[name] = variable;
+        this.variables[name] = variable
 
-        return variable;
+        return variable
     }
 
     lookup_variable(name, error) {
@@ -109,7 +109,17 @@ class ScopeTable {
             return this.variables[name]
         }
         else if (this.parent != null) {
-            return this.parent.lookup_variable(name, error)
+            if (!(Object.keys(this.parameters).length == 0 && this.parent instanceof Class)) {
+                return this.parent.lookup_variable(name, error)
+            }
+            else {
+                if (error) {
+                    throw Error("The variable '" + name + "' was not declared in the current scope!")
+                }
+                else {
+                    return false
+                }
+            }
         }
         else {
             if (error) {
@@ -122,7 +132,17 @@ class ScopeTable {
     }
 
     lookup_method(name, error) {
-        return this.class.lookup_method(name, error)
+        if (Object.keys(this.parameters).length != 0) {
+            return this.class.lookup_method(name, error)
+        }
+        else {
+            if (error) {
+                throw Error("The method '" + name + "' was not declared in the current scope!")
+            }
+            else {
+                return false;
+            }
+        }
     }
 
     print(indent) {
@@ -136,7 +156,7 @@ class ScopeTable {
 
         for (var child in this.children) {
             console.log("\n" + spaces + "{")
-            this.children[child].print(indent + 4);
+            this.children[child].print(indent + 4)
             console.log(spaces + "}")
         }
     }
@@ -147,7 +167,13 @@ class Variable {
     constructor(name, type, index, isparam = false, isfield = false) {
         this.name = name
         this.type = type
-        this.display_name = name + "_" + index
+
+        if (name != "this" || !isparam) {
+            this.display_name = name + "_" + index
+        }
+        else {
+            this.display_name = "this"
+        }
 
         this.isparam = isparam
         this.isfield = isfield
@@ -199,6 +225,12 @@ class Class {
         this.parent = parent
 
         this.constructor = null
+        this.constructor_init = false
+
+        if (parent instanceof Class) {
+            ST.variables_count += 1
+            this.add_variable("super", new Type(parent.name, "object", null, null, 1), ST.variables_count, false, true)
+        }
     }
 
     add_method(name, return_type, parameters, scope_table, main) {
@@ -212,7 +244,7 @@ class Class {
         var method = new Method(name, return_type, parameters, scope_table, main)
 
         if (!main && name != this.name) {
-            this.methods[name] = method;
+            this.methods[name] = method
         }
 
         return method
@@ -224,7 +256,7 @@ class Class {
         }
 
         var variable = new Variable(name, type, index, isparam, isfield)
-        this.variables[name] = variable;
+        this.variables[name] = variable
 
         return variable
     }
@@ -232,9 +264,6 @@ class Class {
     lookup_variable(name, error) {
         if (name in this.variables) {
             return this.variables[name]
-        }
-        else if (this.parent instanceof Class) {
-            return this.parent.lookup_variable(name, error)
         }
         else {
             if (error) {
@@ -247,15 +276,12 @@ class Class {
         if (name in this.methods) {
             return this.methods[name]
         }
-        else if (this.parent instanceof Class) {
-            return this.parent.lookup_method(name, error)
-        }
         else {
             if (error) {
                 throw Error("The method '" + name + "' was not declared in the current scope!")
             }
             else {
-                return false;
+                return false
             }
         }
     }
@@ -309,7 +335,7 @@ class SymbolTable {
                 throw Error("The class '" + parent_name + "' has not been declared in the current scope!")
             }
 
-            parent = this.classes[parent_name];
+            parent = this.classes[parent_name]
         }
 
         var class_instance = new Class(name, parent)
@@ -419,28 +445,28 @@ class SymbolTable {
                 ST.import_methods["print_string"] = new Method(
                     "print_string",
                     new Type("null", "basic", null, null, 0),
-                    [new Variable("print_string_param", new Type("string", "basic", null, null, 0), true)],
+                    [new Variable("print_string_param", new Type("string", "basic", null, null, 0), 0, true)],
                     null,
                     false
                 )
                 ST.import_methods["print_float"] = new Method(
                     "print_float",
                     new Type("null", "basic", null, null, 0),
-                    [new Variable("print_float_param", new Type("float", "basic", 4, null, 0), true)],
+                    [new Variable("print_float_param", new Type("float", "basic", 4, null, 0), 0, true)],
                     null,
                     false
                 )
                 ST.import_methods["print_char"] = new Method(
                     "print_char",
                     new Type("null", "basic", null, null, 0),
-                    [new Variable("print_char_param", new Type("char", "basic", 1, null, 0), true)],
+                    [new Variable("print_char_param", new Type("char", "basic", 1, null, 0), 0, true)],
                     null,
                     false
                 )
                 ST.import_methods["print_int"] = new Method(
                     "print_int",
                     new Type("null", "basic", null, null, 0),
-                    [new Variable("print_int_param", new Type("int", "basic", 4, null, 0), true)],
+                    [new Variable("print_int_param", new Type("int", "basic", 4, null, 0), 0, true)],
                     null,
                     false
                 )

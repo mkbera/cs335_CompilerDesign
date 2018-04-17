@@ -22,7 +22,7 @@ global.functions
 global.basic_blocks
 global.line_block_mapping
 global.symbol_table
-global.symtab
+global.symtab // Make local to translate.js
 
 global.next_use_table
 
@@ -45,15 +45,15 @@ function main() {
         tac[index] = line.trim().split("\t")
     })
 
-	// console.log(TAC.get_classDict())
-	// exit()
+    // console.log(TAC.get_classDict())
+    // exit()
 
 
     arrays = TAC.getArrays()
     variables = TAC.getVariables(Object.keys(arrays))
     basic_blocks = TAC.getBasicBlocks()
     functions = TAC.getFunctions()
-	symtab = Tac.get_classDict()
+    symtab = Tac.get_classDict()
 
     line_block_mapping = {}
     var block_nr = 0
