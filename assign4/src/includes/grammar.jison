@@ -581,12 +581,22 @@ program :
 				filtered_code[index] = line.join("\t")
 			}
 
+			if (ST.main == null) {
+				filtered_code = filtered_code.concat([
+					"function" + ir_sep + "main",
+					"return"
+				])
+			}
+
 			return filtered_code
 		}
 	|
 		import_decrs 'EOF' 
 		{
-			return $1.code
+			return $1.code.concat([
+				"function" + ir_sep + "main",
+				"return"
+			])
 		}
 	|
 		type_decrs 'EOF' 
@@ -621,12 +631,22 @@ program :
 				filtered_code[index] = line.join("\t")
 			}
 
+			if (ST.main == null) {
+				filtered_code = filtered_code.concat([
+					"function" + ir_sep + "main",
+					"return"
+				])
+			}
+
 			return filtered_code
 		}
 	|
 		'EOF' 
 		{
-			return []
+			return [
+				"function" + ir_sep + "main",
+				"return"
+			]
 		}
 	;
 
@@ -1237,13 +1257,7 @@ reference_type :
 		{
 			ST.lookup_class($identifier)
 
-			$$ = {
-				type: $identifier,
-				category: "object",
-				width: null,
-				length: null,
-				dimension: 0
-			}
+			$$ = new Type($identifier, "object", null, null, 0)
 		}
 	|
 		'identifier' dim_exprs 
@@ -1304,9 +1318,16 @@ method_decr :
 
 			$$ = { code: [], place: null }
 
-			$$.code.push(
-				"function" + ir_sep + ST.current_class.name + "_" + method.name
-			)
+			if (method.name == "main") {
+				$$.code.push(
+					"function" + ir_sep + method.name
+				)
+			}
+			else {
+				$$.code.push(
+					"function" + ir_sep + ST.current_class.name + "_" + method.name
+				)
+			}
 
 			for (var index = method.parameters.length - 1; index >= 0; index--) {
 				$$.code.push(
@@ -2511,7 +2532,7 @@ assignment :
 			$$ = { code: [], place: $1.place, type: $1.type }
 
 			if (!($1.type.get_serial_type() == $3.type.get_serial_type() || ($1.type.numeric() && $3.type.numeric()))) {
-				throw Error("Cannot convert '" + $3.type.get_serial_type() + "' to '" + $1.type.get_serial_type + "'")
+				throw Error("Cannot convert '" + $3.type.get_serial_type() + "' to '" + $1.type.get_serial_type() + "'")
 			}
 
 			var place = $3.place
@@ -2881,7 +2902,16 @@ relational_expr :
 		}
 	|
 		relational_expr 'instanceof' additive_expr 
-		{ $$ = { nt: 'relational_expr', children: [$1,{ t: 'instanceof', l: $instanceof },$3] } }
+		{
+			$$ = { code: [], literal: true, place: null, type: new Type("boolean", "basic", 1, null, 0) }
+
+			if ($1.type.get_serial_type() == $2.type.get_serial_type()) {
+				$$.place = 1
+			}
+			else {
+				$$.place = 0
+			}
+		}
 	;
 
 
@@ -3256,7 +3286,7 @@ method_invocation :
 			$3.unshift({
 				type: $1.place.type,
 				place: $1.place.place,
-				code: []
+				code: $1.code
 			})
 
 			if ($3.length != method.num_parameters) {
@@ -3300,7 +3330,7 @@ method_invocation :
 	|
 		expr_name 'paranthesis_start' 'paranthesis_end' 
 		{
-			$$ = { code: [], place: null, type: null }
+			$$ = { code: $1.code, place: null, type: null }
 
 			if ($1.category != "method") {
 				throw Error("Type '" + $1.type.get_serial_type() + "' is not callable")
@@ -3309,9 +3339,8 @@ method_invocation :
 			var method = $1.method
 
 			if (method.num_parameters > 1) {
-				throw Error("The method " + method.name + " requires " + method.num_parameters + ", provided 0")
+				throw Error("The method " + method.name + " requires " + (method.num_parameters - 1) + ", provided 0")
 			}
-
 
 			$$.code.push(
 				"param" + ir_sep + $1.place.place
@@ -3324,6 +3353,8 @@ method_invocation :
 					"decr" + ir_sep + temp + ir_sep + method.return_type.category + ir_sep + method.return_type.get_basic_type() + ir_sep + method.return_type.get_size(),
 					"call" + ir_sep + $1.place.type.type + "_" + method.name + ir_sep + method.num_parameters + ir_sep + temp
 				])
+
+				$$.place = temp
 			}
 			else {
 				$$.code.push(
@@ -3335,13 +3366,103 @@ method_invocation :
 		}
 	|
 		primary 'field_invoker' 'identifier' 'paranthesis_start' argument_list 'paranthesis_end' 
-		{ $$ = { nt: 'method_invocation', children: [$1,{ t: 'field_invoker', l: $field_invoker },{ t: 'identifier', l: $identifier },{ t: 'paranthesis_start', l: $paranthesis_start },$5,{ t: 'paranthesis_end', l: $paranthesis_end }] } }
+		{
+			$$ = { code: [], type: null, place: null }
+
+			if ($1.type.category != "object") {
+				throw Error("Type '" + $1.type.get_serial_type() + "' does not have the property " + $identifier)
+			}
+
+			var method = ST.lookup_method($identifier, true, ST.classes[$1.type.type])
+			var temp = ST.create_temporary()
+			var type = method.return_type
+
+			$5.unshift({
+				type: $1.type,
+				place: $1.place,
+				code: $1.code
+			})
+
+			if ($5.length != method.num_parameters) {
+				throw Error("The method " + method.name + " requires " + (method.num_parameters - 1) + " parameters, provided " + ($5.length - 1))
+			}
+
+			for (var index in $5) {
+				$$.code = $$.code.concat($5[index].code)
+
+				if (!($5[index].type.get_serial_type() == method.parameters[index].type.get_serial_type() || ($5[index].type.numeric() && method.parameters.type.numeric()))) {
+					throw Error("Argument must be of type " + method.parameters[index].type.get_serial_type())
+				}
+				if ($5[index].type.category == "array" && $5[index].type.get_size() != method.parameters[index].type.get_size()) {
+					throw Error("Array dimensions do not match")
+				}
+			}
+			for (var index in $5) {
+				$$.code.push(
+					"param" + ir_sep + $5[index].place
+				)
+			}
+
+			if (method.return_type.type != "null") {
+				temp = ST.create_temporary()
+
+				$$.code = $$.code.concat([
+					"decr" + ir_sep + temp + ir_sep + method.return_type.category + ir_sep + method.return_type.get_basic_type() + ir_sep + method.return_type.get_size(),
+					"call" + ir_sep + $1.type.type + "_" + method.name + ir_sep + method.num_parameters + ir_sep + temp
+				])
+
+				$$.place = temp
+			}
+			else {
+				$$.code.push(
+					"call" + ir_sep + $1.type.type + "_" + method.name + ir_sep + method.num_parameters
+				)
+			}
+
+			$$.type = method.return_type
+		}
 	|
 		'super' 'field_invoker' 'identifier' 'paranthesis_start' argument_list 'paranthesis_end' 
 		{ $$ = { nt: 'method_invocation', children: [{ t: 'super', l: $super },{ t: 'field_invoker', l: $field_invoker },{ t: 'identifier', l: $identifier },{ t: 'paranthesis_start', l: $paranthesis_start },$5,{ t: 'paranthesis_end', l: $paranthesis_end }] } }
 	|
 		primary 'field_invoker' 'identifier' 'paranthesis_start' 'paranthesis_end' 
-		{ $$ = { nt: 'method_invocation', children: [$1,{ t: 'field_invoker', l: $field_invoker },{ t: 'identifier', l: $identifier },{ t: 'paranthesis_start', l: $paranthesis_start },{ t: 'paranthesis_end', l: $paranthesis_end }] } }
+		{
+			$$ = { code: [], type: null, place: null }
+
+			if ($1.type.category != "object") {
+				throw Error("Type '" + $1.type.get_serial_type() + "' does not have the property " + $identifier)
+			}
+
+			var method = ST.lookup_method($identifier, true, ST.classes[$1.type.type])
+			var temp = ST.create_temporary()
+			var type = method.return_type
+
+			if (method.num_parameters > 1) {
+				throw Error("The method " + method.name + " requires " + (method.num_parameters - 1) + ", provided 0")
+			}
+
+			$$.code.push(
+				"param" + ir_sep + $1.place
+			)
+
+			if (method.return_type.type != "null") {
+				temp = ST.create_temporary()
+
+				$$.code = $$.code.concat([
+					"decr" + ir_sep + temp + ir_sep + method.return_type.category + ir_sep + method.return_type.get_basic_type() + ir_sep + method.return_type.get_size(),
+					"call" + ir_sep + $1.type.type + "_" + method.name + ir_sep + method.num_parameters + ir_sep + temp
+				])
+
+				$$.place = temp
+			}
+			else {
+				$$.code.push(
+					"call" + ir_sep + $1.type.type + "_" + method.name + ir_sep + method.num_parameters
+				)
+			}
+
+			$$.type = method.return_type
+		}
 	|
 		'super' 'field_invoker' 'identifier' 'paranthesis_start' 'paranthesis_end' 
 		{ $$ = { nt: 'method_invocation', children: [{ t: 'super', l: $super },{ t: 'field_invoker', l: $field_invoker },{ t: 'identifier', l: $identifier },{ t: 'paranthesis_start', l: $paranthesis_start },{ t: 'paranthesis_end', l: $paranthesis_end }] } }
@@ -3350,7 +3471,25 @@ method_invocation :
 
 field_access :
 		primary 'field_invoker' 'identifier' 
-		{ $$ = { nt: 'field_access', children: [$1,{ t: 'field_invoker', l: $field_invoker },{ t: 'identifier', l: $identifier }] } }
+		{
+			$$ = { code: $1.code, type: null, place: null }
+
+			if ($1.type.category != "object") {
+				throw Error("Type '" + $1.type.get_serial_type() + "' does not have the property " + $identifier)
+			}
+
+			var variable = ST.lookup_variable($identifier, true, ST.classes[$1.type.type])
+			var temp = ST.create_temporary()
+			var type = variable.type
+
+			$$.code = $$.code.concat([
+				"decr" + ir_sep + temp + ir_sep + type.category + ir_sep + type.get_basic_type() + ir_sep + type.get_size(),
+				"fieldget" + ir_sep + temp + ir_sep + $1.type.type + ir_sep + $identifier
+			])
+
+			$$.type = type
+			$$.place = temp
+		}
 	|
 		'super' 'field_invoker' 'identifier' 
 		{ $$ = { nt: 'field_access', children: [{ t: 'super', l: $super },{ t: 'field_invoker', l: $field_invoker },{ t: 'identifier', l: $identifier }] } }
@@ -3661,9 +3800,16 @@ expr_name :
 				$$.category = "variable"
 			}
 			else if (method) {
-				$$.place = ST.lookup_variable("self")
+				var self = ST.lookup_variable("self")
+
+				$$.place = {
+					place: self.display_name,
+					type: self.type
+				}
+
 				$$.method = method
 				$$.category = "method"
+				$$.type = new Type("method", "method", null, null, null)
 			}
 			else {
 				throw Error("No variable or method '" + $identifier + "' found")
@@ -3711,6 +3857,7 @@ expr_name :
 				$$.place = $1
 				$$.method = method
 				$$.category = "method"
+				$$.type = new Type("method", "method", null, null, null)
 			}
 			else {
 				throw Error("Type '" + $1.type.type + "' does not have the property '" + $identifier + "'")

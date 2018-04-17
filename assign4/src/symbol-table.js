@@ -99,9 +99,9 @@ class ScopeTable {
         }
 
         var variable = new Variable(name, type, index, isparam, isfield)
-        this.variables[name] = variable;
+        this.variables[name] = variable
 
-        return variable;
+        return variable
     }
 
     lookup_variable(name, error) {
@@ -109,7 +109,17 @@ class ScopeTable {
             return this.variables[name]
         }
         else if (this.parent != null) {
-            return this.parent.lookup_variable(name, error)
+            if (!(Object.keys(this.parameters).length == 0 && this.parent instanceof Class)) {
+                return this.parent.lookup_variable(name, error)
+            }
+            else {
+                if (error) {
+                    throw Error("The variable '" + name + "' was not declared in the current scope!")
+                }
+                else {
+                    return false
+                }
+            }
         }
         else {
             if (error) {
@@ -122,7 +132,17 @@ class ScopeTable {
     }
 
     lookup_method(name, error) {
-        return this.class.lookup_method(name, error)
+        if (Object.keys(this.parameters).length != 0) {
+            return this.class.lookup_method(name, error)
+        }
+        else {
+            if (error) {
+                throw Error("The method '" + name + "' was not declared in the current scope!")
+            }
+            else {
+                return false;
+            }
+        }
     }
 
     print(indent) {
@@ -136,7 +156,7 @@ class ScopeTable {
 
         for (var child in this.children) {
             console.log("\n" + spaces + "{")
-            this.children[child].print(indent + 4);
+            this.children[child].print(indent + 4)
             console.log(spaces + "}")
         }
     }
@@ -152,7 +172,7 @@ class Variable {
             this.display_name = name + "_" + index
         }
         else {
-            this.display_name = "self";
+            this.display_name = "self"
         }
 
         this.isparam = isparam
@@ -219,7 +239,7 @@ class Class {
         var method = new Method(name, return_type, parameters, scope_table, main)
 
         if (!main && name != this.name) {
-            this.methods[name] = method;
+            this.methods[name] = method
         }
 
         return method
@@ -231,7 +251,7 @@ class Class {
         }
 
         var variable = new Variable(name, type, index, isparam, isfield)
-        this.variables[name] = variable;
+        this.variables[name] = variable
 
         return variable
     }
@@ -262,7 +282,7 @@ class Class {
                 throw Error("The method '" + name + "' was not declared in the current scope!")
             }
             else {
-                return false;
+                return false
             }
         }
     }
@@ -316,7 +336,7 @@ class SymbolTable {
                 throw Error("The class '" + parent_name + "' has not been declared in the current scope!")
             }
 
-            parent = this.classes[parent_name];
+            parent = this.classes[parent_name]
         }
 
         var class_instance = new Class(name, parent)
