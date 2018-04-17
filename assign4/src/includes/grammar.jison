@@ -18,7 +18,7 @@
 
 					self.consr_code = self.consr_code.concat([
 						"decr" + ir_sep + t + ir_sep + obj.type.category + ir_sep + obj.type.get_basic_type() + ir_sep + obj.type.get_size(),
-						"fieldget" + ir_sep + t + ir_sep + "self" + ir_sep + variable.identifier
+						"fieldget" + ir_sep + t + ir_sep + "this" + ir_sep + variable.identifier
 					])
 					variable.identifier = t
 				}
@@ -429,14 +429,6 @@
 
 "short" 							return 'short';
 
-"static"							return 'static';
-
-"super" 							return 'super';
-
-"switch"							return 'switch';
-
-"this"								return 'this';
-
 "void"								return 'void';
 
 "while" 							return 'while';
@@ -578,7 +570,7 @@ program :
 					line[4] = labels[line[4]]
 				}
 
-				filtered_code[index] = line.join("\t")
+				filtered_code[index] = line.join("\t").replace(/boolean|short|long/g, "int")
 			}
 
 			if (ST.main == null) {
@@ -628,7 +620,7 @@ program :
 					line[4] = labels[line[4]]
 				}
 
-				filtered_code[index] = line.join("\t")
+				filtered_code[index] = line.join("\t").replace(/boolean|short|long/g, "int")
 			}
 
 			if (ST.main == null) {
@@ -718,13 +710,18 @@ class_header :
 				place: null
 			}
 			
-			var class_instance = ST.add_class($identifier, "")
+			var class_instance = ST.add_class($identifier, $4)
+			var super_field = class_instance.variables["super"]
+			
+			$$.code.push(
+				"field_decr" + ir_sep + class_instance.name + ir_sep + super_field.display_name + ir_sep + "object" + ir_sep + super_field.type.type + ir_sep + "1"
+			)
 
 			var parameters = []
 
 			ST.variables_count += 1
 			class_type = new Type(ST.current_class.name, "object", null, null, 0)
-			var parameters = [new Variable("self", class_type, ST.variables_count, isparam = true)]
+			var parameters = [new Variable("this", class_type, ST.variables_count, isparam = true)]
 
 			class_instance.constructor = new Method($identifier, new Type("null", "basic", null, null, 0), parameters, null)
 		}
@@ -736,13 +733,18 @@ class_header :
 				place: null
 			}
 			
-			var class_instance = ST.add_class($identifier, "")
+			var class_instance = ST.add_class($identifier, $3)
+			var super_field = class_instance.variables["super"]
+			
+			$$.code.push(
+				"field_decr" + ir_sep + class_instance.name + ir_sep + super_field.display_name + ir_sep + "object" + ir_sep + super_field.type.type + ir_sep + "1"
+			)
 
 			var parameters = []
 
 			ST.variables_count += 1
 			class_type = new Type(ST.current_class.name, "object", null, null, 0)
-			var parameters = [new Variable("self", class_type, ST.variables_count, isparam = true)]
+			var parameters = [new Variable("this", class_type, ST.variables_count, isparam = true)]
 
 			class_instance.constructor = new Method($identifier, new Type("null", "basic", null, null, 0), parameters, null)
 		}
@@ -760,7 +762,7 @@ class_header :
 
 			ST.variables_count += 1
 			class_type = new Type(ST.current_class.name, "object", null, null, 0)
-			var parameters = [new Variable("self", class_type, ST.variables_count, isparam = true)]
+			var parameters = [new Variable("this", class_type, ST.variables_count, isparam = true)]
 
 			class_instance.constructor = new Method($identifier, new Type("null", "basic", null, null, 0), parameters, null)
 		}
@@ -778,7 +780,7 @@ class_header :
 
 			ST.variables_count += 1
 			class_type = new Type(ST.current_class.name, "object", null, null, 0)
-			var parameters = [new Variable("self", class_type, ST.variables_count, isparam = true)]
+			var parameters = [new Variable("this", class_type, ST.variables_count, isparam = true)]
 
 			class_instance.constructor = new Method($identifier, new Type("null", "basic", null, null, 0), parameters, null)
 		}
@@ -903,8 +905,8 @@ consr_declarator :
 
 			ST.variables_count += 1
 			class_type = new Type(ST.current_class.name, "object", null, null, 0)
-			scope.parameters["self"] = scope.add_variable("self", class_type, ST.variables_count, isparam = true)
-			parameters.push(scope.parameters["self"])
+			scope.parameters["this"] = scope.add_variable("this", class_type, ST.variables_count, isparam = true)
+			parameters.push(scope.parameters["this"])
 
 			for (var index in $3) {
 				ST.variables_count += 1
@@ -941,8 +943,8 @@ consr_declarator :
 
 			ST.variables_count += 1
 			class_type = new Type(ST.current_class.name, "object", null, null, 0)
-			scope.parameters["self"] = scope.add_variable("self", class_type, ST.variables_count, isparam = true)
-			parameters.push(scope.parameters["self"])
+			scope.parameters["this"] = scope.add_variable("this", class_type, ST.variables_count, isparam = true)
+			parameters.push(scope.parameters["this"])
 
 			for (var index in $4) {
 				ST.variables_count += 1
@@ -990,21 +992,6 @@ consr_body :
 		{
 			$$ = { code: [], place: null }
 		}
-	;
-
-
-explicit_consr_invocation :
-		'this' 'paranthesis_start' argument_list 'paranthesis_end' 
-		{ $$ = { code: [], place: null } }
-	|
-		'super' 'paranthesis_start' argument_list 'paranthesis_end' 
-		{ $$ = { code: [], place: null } }
-	|
-		'this' 'paranthesis_start' 'paranthesis_end' 
-		{ $$ = { code: [], place: null } }
-	|
-		'super' 'paranthesis_start' 'paranthesis_end' 
-		{ $$ = { code: [], place: null } }
 	;
 
 
@@ -1242,9 +1229,9 @@ floating_type :
 		'double' 
 		{
 			$$ = {
-				type: "boolean",
+				type: "float",
 				category: "basic",
-				width: 8,
+				width: 4,
 				length: null,
 				dimension: 0
 			}
@@ -1364,8 +1351,8 @@ method_declarator :
 			if ($identifier != "main") {
 				ST.variables_count += 1
 				class_type = new Type(ST.current_class.name, "object", null, null, 0)
-				scope.parameters["self"] = scope.add_variable("self", class_type, ST.variables_count, isparam = true)
-				parameters.push(scope.parameters["self"])
+				scope.parameters["this"] = scope.add_variable("this", class_type, ST.variables_count, isparam = true)
+				parameters.push(scope.parameters["this"])
 			}
 
 			for (var index in $5) {
@@ -1394,8 +1381,8 @@ method_declarator :
 			if ($identifier != "main") {
 				ST.variables_count += 1
 				class_type = new Type(ST.current_class.name, "object", null, null, 0)
-				scope.parameters["self"] = scope.add_variable("self", class_type, ST.variables_count, isparam = true)
-				parameters.push(scope.parameters["self"])
+				scope.parameters["this"] = scope.add_variable("this", class_type, ST.variables_count, isparam = true)
+				parameters.push(scope.parameters["this"])
 			}
 
 			for (var index in $5) {
@@ -1424,8 +1411,8 @@ method_declarator :
 			if ($identifier != "main") {
 				ST.variables_count += 1
 				class_type = new Type(ST.current_class.name, "object", null, null, 0)
-				scope.parameters["self"] = scope.add_variable("self", class_type, ST.variables_count, isparam = true)
-				parameters.push(scope.parameters["self"])
+				scope.parameters["this"] = scope.add_variable("this", class_type, ST.variables_count, isparam = true)
+				parameters.push(scope.parameters["this"])
 			}
 
 			for (var index in $4) {
@@ -1454,8 +1441,8 @@ method_declarator :
 			if ($identifier != "main") {
 				ST.variables_count += 1
 				class_type = new Type(ST.current_class.name, "object", null, null, 0)
-				scope.parameters["self"] = scope.add_variable("self", class_type, ST.variables_count, isparam = true)
-				parameters.push(scope.parameters["self"])
+				scope.parameters["this"] = scope.add_variable("this", class_type, ST.variables_count, isparam = true)
+				parameters.push(scope.parameters["this"])
 			}
 
 			for (var index in $4) {
@@ -2481,7 +2468,7 @@ for_inner_scope_start :
 
 
 expr :
-		additive_expr 
+		cond_or_expr 
 		{
 			$$ = $1
 		}
@@ -3422,9 +3409,6 @@ method_invocation :
 			$$.type = method.return_type
 		}
 	|
-		'super' 'field_invoker' 'identifier' 'paranthesis_start' argument_list 'paranthesis_end' 
-		{ $$ = { nt: 'method_invocation', children: [{ t: 'super', l: $super },{ t: 'field_invoker', l: $field_invoker },{ t: 'identifier', l: $identifier },{ t: 'paranthesis_start', l: $paranthesis_start },$5,{ t: 'paranthesis_end', l: $paranthesis_end }] } }
-	|
 		primary 'field_invoker' 'identifier' 'paranthesis_start' 'paranthesis_end' 
 		{
 			$$ = { code: [], type: null, place: null }
@@ -3463,9 +3447,6 @@ method_invocation :
 
 			$$.type = method.return_type
 		}
-	|
-		'super' 'field_invoker' 'identifier' 'paranthesis_start' 'paranthesis_end' 
-		{ $$ = { nt: 'method_invocation', children: [{ t: 'super', l: $super },{ t: 'field_invoker', l: $field_invoker },{ t: 'identifier', l: $identifier },{ t: 'paranthesis_start', l: $paranthesis_start },{ t: 'paranthesis_end', l: $paranthesis_end }] } }
 	;
 
 
@@ -3490,9 +3471,6 @@ field_access :
 			$$.type = type
 			$$.place = temp
 		}
-	|
-		'super' 'field_invoker' 'identifier' 
-		{ $$ = { nt: 'field_access', children: [{ t: 'super', l: $super },{ t: 'field_invoker', l: $field_invoker },{ t: 'identifier', l: $identifier }] } }
 	;
 
 
@@ -3790,7 +3768,7 @@ expr_name :
 					
 					$$.code = $$.code.concat([
 						"decr" + ir_sep + place + ir_sep + type.category + ir_sep + type.get_basic_type() + ir_sep + type.get_size(),
-						"fieldget" + ir_sep + place + ir_sep + "self" + ir_sep + variable.display_name
+						"fieldget" + ir_sep + place + ir_sep + "this" + ir_sep + variable.display_name
 					])
 				}
 
@@ -3800,7 +3778,7 @@ expr_name :
 				$$.category = "variable"
 			}
 			else if (method) {
-				var self = ST.lookup_variable("self")
+				var self = ST.lookup_variable("this")
 
 				$$.place = {
 					place: self.display_name,

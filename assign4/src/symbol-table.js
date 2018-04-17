@@ -168,11 +168,11 @@ class Variable {
         this.name = name
         this.type = type
 
-        if (name != "self" || !isparam) {
+        if (name != "this" || !isparam) {
             this.display_name = name + "_" + index
         }
         else {
-            this.display_name = "self"
+            this.display_name = "this"
         }
 
         this.isparam = isparam
@@ -226,6 +226,11 @@ class Class {
 
         this.constructor = null
         this.constructor_init = false
+
+        if (parent instanceof Class) {
+            ST.variables_count += 1
+            this.add_variable("super", new Type(parent.name, "object", null, null, 1), ST.variables_count, false, true)
+        }
     }
 
     add_method(name, return_type, parameters, scope_table, main) {
@@ -260,9 +265,6 @@ class Class {
         if (name in this.variables) {
             return this.variables[name]
         }
-        else if (this.parent instanceof Class) {
-            return this.parent.lookup_variable(name, error)
-        }
         else {
             if (error) {
                 throw Error("The variable '" + name + "' was not declared in the current scope!")
@@ -273,9 +275,6 @@ class Class {
     lookup_method(name, error) {
         if (name in this.methods) {
             return this.methods[name]
-        }
-        else if (this.parent instanceof Class) {
-            return this.parent.lookup_method(name, error)
         }
         else {
             if (error) {

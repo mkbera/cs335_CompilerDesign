@@ -1,6 +1,10 @@
 import IO;
 
-class test {
+class dummy {
+	int test_var = 5;
+}
+
+class test extends dummy {
 	public int x = 10;
 	int a, c = 5.012;
 	int[2][5] d;
@@ -17,8 +21,9 @@ class test {
 	}
 
 	public int test_func(int[2][5] arr) {
-		int a = 1;
+		short a = 1;
 		int b = 0;
+		boolean c = true;
 
 		a = b + 5;
 		a = -b;
@@ -29,8 +34,8 @@ class test {
 
 		d:[-1][4] = 0.0;
 
-		for (int i = 0; i = 5; ++i) {
-			for (int j = 0; j = 5; ++j) {
+		for (int i = 0; i < 5; ++i) {
+			for (int j = 0; j < 5; ++j) {
 				d:[i][j] = 1 + b;
 				return 1;
 			}
@@ -40,7 +45,7 @@ class test {
 	}
 
 	test dummy() {
-		return self;
+		return this;
 	}
 
 	public void main() {
