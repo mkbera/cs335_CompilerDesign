@@ -831,14 +831,16 @@ function codeGen(instr, next_use_table, line_nr) {
 
 // ------------------------------------- objects ------------------------------------------
 				else if (instr_local[3] == "object"){
-					var obj_name = instr[2]
-					var class_name = instr[4]
+					var obj_name = instr_local[2]
+					var class_name = instr_local[4]
+					// console.log(class_name)
 					// var size = Object.keys(symtab[class_name]).length * 4 + 4
 					assembly.add("sub esp, " + 4)
 					registers.counter = registers.counter + 4
 					registers.address_descriptor[obj_name] ={"type":"mem", "name": obj_name, "offset": registers.counter, "category" : class_name}
+					// console.log(obj_name)
+					// console.log(registers.address_descriptor[obj_name])
 				}
-
 			}
 			i_func = i_func + 1;
 			instr_local = tac[line_nr + i_func];
@@ -886,13 +888,14 @@ function codeGen(instr, next_use_table, line_nr) {
 		var size = Object.keys(symtab[class_name]).length * 4
 		assembly.add("push " + size)
 		assembly.add("call malloc")
-
+		console.log(var_obj)
+		console.log(registers.address_descriptor[var_obj])
 		var offset_obj = registers.address_descriptor[var_obj]["offset"]
 
 		assembly.add("add esp, " + 4)
 		assembly.add("mov [ebp -" + offset_obj +"], eax")
 
-		symtab[class_name].forEach(function (field) {
+		Object.keys(symtab[class_name]).forEach(function (field) {
 			if (field["category"] == "arr_int" || field["category"] == "arr_float") {
 				var size = field["length"] * 4
 				assembly.add("push " + size)
@@ -1144,6 +1147,10 @@ function codeGen(instr, next_use_table, line_nr) {
 
 	}
 	// else if (op == "=arr") {	// z = a[10]
+	else if (op == "import") {
+		symtab["IO"] = {}
+	}
+
 	else if (op == "arrget") {	// z = a[10]
 		var z = instr[2];
 		if (registers.address_descriptor[z]["category"] == "int"){
