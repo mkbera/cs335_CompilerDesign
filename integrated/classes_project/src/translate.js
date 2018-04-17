@@ -1037,18 +1037,20 @@ function codeGen(instr, next_use_table, line_nr) {
 		// assembly.add("sub esp, 4")
 		// registers.counter = registers.counter + 4
 		// registers.address_descriptor[x] = {"type": "mem", "name": x, "offset":registers.counter}
-		if (instr[3] == "int"){
-			registers.address_descriptor[x] = { "type": "mem", "name": x, "offset": registers.args_counter, "category": "int" };
-		}
-		else if (instr[3] == "float"){
-			registers.address_descriptor[x] = { "type": "mem", "name": x, "offset": registers.args_counter, "category": "float" };
-		}
-		else if (instr[3] == "array"){
+		if (instr[3] == "basic"){
 			if (instr[4] == "int"){
 				registers.address_descriptor[x] = { "type": "mem", "name": x, "offset": registers.args_counter, "category": "int" };
 			}
 			else if (instr[4] == "float"){
 				registers.address_descriptor[x] = { "type": "mem", "name": x, "offset": registers.args_counter, "category": "float" };
+			}
+		}
+		else if (instr[3] == "array"){
+			if (instr[4] == "int"){
+				registers.address_descriptor[x] = { "type": "mem", "name": x, "offset": registers.args_counter, "category": "arr_int" };
+			}
+			else if (instr[4] == "float"){
+				registers.address_descriptor[x] = { "type": "mem", "name": x, "offset": registers.args_counter, "category": "arr_float" };
 			}
 		}
 		else if (instr[3] == "object") {

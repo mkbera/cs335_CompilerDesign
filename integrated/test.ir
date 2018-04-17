@@ -1,70 +1,94 @@
 1	import	IO
-2	class	Threed_array
-3	function	main
-4	decr	a_2	array	int	1000	
-5	decr	i_3	basic	int	1
-6	=	i_3	0
-7	decr	t1	basic	int	1
-8	=	t1	1
-9	ifgoto	lt	i_3	10	11
-10	=	t1	0
-11	ifgoto	eq	t1	0	65
-12	decr	j_4	basic	int	1
-13	=	j_4	0
-14	decr	t3	basic	int	1
-15	=	t3	1
-16	ifgoto	lt	j_4	10	18
-17	=	t3	0
-18	ifgoto	eq	t3	0	61
-19	decr	k_5	basic	int	1
-20	=	k_5	0
-21	decr	t5	basic	int	1
-22	=	t5	1
-23	ifgoto	lt	k_5	10	25
-24	=	t5	0
-25	ifgoto	eq	t5	0	57
-26	decr	t8	basic	int	1
-27	-	t8	i_3	j_4
-28	decr	t9	basic	int	1
-29	=	t9	k_5
-30	neg	t9
-31	decr	t10	basic	int	1
-32	*	t10	t8	t9
-33	decr	t7	basic	int	1
-34	=	t7	0
-35	ifgoto	ge	i_3	0	37
-36	error	array_access_low
-37	ifgoto	lt	i_3	10	39
-38	error	array_access_up
-39	+	t7	t7	i_3
-40	ifgoto	ge	j_4	0	42
-41	error	array_access_low
-42	ifgoto	lt	j_4	10	44
-43	error	array_access_up
-44	*	t7	t7	10
-45	+	t7	t7	j_4
-46	ifgoto	ge	k_5	0	48
-47	error	array_access_low
-48	ifgoto	lt	k_5	10	50
-49	error	array_access_up
-50	*	t7	t7	10
-51	+	t7	t7	k_5
-52	arrset	a_2	t7	t10
-53	decr	t6	basic	int	1
-54	=	t6	k_5
-55	+	k_5	k_5	1
-56	jump	21
-57	decr	t4	basic	int	1
-58	+	t4	j_4	1
-59	=	j_4	t4
-60	jump	14
-61	decr	t2	basic	int	1
-62	+	t2	i_3	1
-63	=	i_3	t2
-64	jump	7
-65	return
-66	function	Threed_array_Threed_array
-67	arg	this	object	Threed_array	1
-68	return
-69	function	main
-70	return
+2	class	rec
+3	function	rec_array_func
+4	arg	b_4	basic	int	1
+5	arg	a_3	array	int	25
+6	arg	this	object	rec	1
+7	decr	i_5	basic	int	1
+8	=	i_5	0
+9	decr	t1	basic	int	1
+10	=	t1	1
+11	ifgoto	lt	i_5	5	13
+12	=	t1	0
+13	ifgoto	eq	t1	0	47
+14	decr	j_6	basic	int	1
+15	=	j_6	0
+16	decr	t3	basic	int	1
+17	=	t3	1
+18	ifgoto	lt	j_6	5	20
+19	=	t3	0
+20	ifgoto	eq	t3	0	43
+21	decr	t6	basic	int	1
+22	+	t6	b_4	i_5
+23	decr	t7	basic	int	1
+24	+	t7	t6	j_6
+25	decr	t5	basic	int	1
+26	=	t5	0
+27	ifgoto	ge	i_5	0	29
+28	error	array_access_low
+29	ifgoto	lt	i_5	5	31
+30	error	array_access_up
+31	+	t5	t5	i_5
+32	ifgoto	ge	j_6	0	34
+33	error	array_access_low
+34	ifgoto	lt	j_6	5	36
+35	error	array_access_up
+36	*	t5	t5	5
+37	+	t5	t5	j_6
+38	arrset	a_3	t5	t7
+39	decr	t4	basic	int	1
+40	=	t4	j_6
+41	+	j_6	j_6	1
+42	jump	16
+43	decr	t2	basic	int	1
+44	=	t2	i_5
+45	+	i_5	i_5	1
+46	jump	9
+47	return	a_3
+48	error	function_return
+49	exit
+50	function	main
+51	decr	a_7	array	int	25	
+52	decr	b_8	basic	int	1
+53	=	b_8	9
+54	decr	first_object_9	object	rec	1
+55	decr	t8	object	rec	1
+56	new	t8	rec
+57	param	t8
+58	call	rec_rec	1
+59	=	first_object_9	t8
+60	decr	t9	array	int	25
+61	param	first_object_9
+62	param	a_7
+63	param	b_8
+64	call	rec_array_func	3	t9
+65	=	a_7	t9
+66	decr	t10	basic	int	1
+67	=	t10	0
+68	ifgoto	ge	1	0	70
+69	error	array_access_low
+70	ifgoto	lt	1	5	72
+71	error	array_access_up
+72	+	t10	t10	1
+73	ifgoto	ge	2	0	75
+74	error	array_access_low
+75	ifgoto	lt	2	5	77
+76	error	array_access_up
+77	*	t10	t10	5
+78	+	t10	t10	2
+79	decr	t11	basic	int	1
+80	arrget	t11	a_7	t10
+81	=	b_8	t11
+82	decr	ip_10	object	IO	1
+83	decr	t12	object	IO	1
+84	new	t12	IO
+85	param	t12
+86	call	IO_IO	1
+87	=	ip_10	t12
+88	param	ip_10
+89	param	b_8
+90	call	IO_print_int	2
+91	return
+92	function	rec_rec
+93	arg	this	object	rec	1
+94	return

@@ -321,7 +321,7 @@ class SymbolTable {
 
         this.import_methods = {}
 
-        this.main_function = null
+        this.main_method = null
     }
 
     add_class(name, parent_name = "") {
@@ -349,13 +349,13 @@ class SymbolTable {
 
     add_method(name, return_type, parameters, scope_table) {
         if (name == "main") {
-            if (this.main_function != null) {
+            if (this.main_method != null) {
                 throw Error("The method '" + name + "' can be defined only once")
             }
 
-            this.main_function = this.current_class.add_method(name, return_type, parameters, scope_table, true)
+            this.main_method = this.current_class.add_method(name, return_type, parameters, scope_table, true)
 
-            return this.main_function
+            return this.main_method
         }
 
         if (name in this.import_methods) {
@@ -427,7 +427,9 @@ class SymbolTable {
 
     lookup_method(name, error = true, scope = null) {
         if (name in this.import_methods) {
-            return this.import_methods[name]
+            var method = this.import_methods[name]
+            method.import = true
+            return method
         }
 
         if (scope != null) {
@@ -441,63 +443,66 @@ class SymbolTable {
         console.log("Importing " + library)
         switch (library) {
             case "IO": {
-                ST.import_methods = {}
-                ST.import_methods["print_string"] = new Method(
-                    "print_string",
+                var class_instance = this.add_class("IO", "")
+
+                var self_object = new Variable("this", new Type("IO", "object", null, null, 1))
+
+                class_instance.constructor_init = true
+                class_instance.constructor = new Method(
+                    "IO",
                     new Type("null", "basic", null, null, 0),
-                    [new Variable("print_string_param", new Type("string", "basic", null, null, 0), 0, true)],
-                    null,
-                    false
-                )
-                ST.import_methods["print_float"] = new Method(
-                    "print_float",
-                    new Type("null", "basic", null, null, 0),
-                    [new Variable("print_float_param", new Type("float", "basic", 4, null, 0), 0, true)],
-                    null,
-                    false
-                )
-                ST.import_methods["print_char"] = new Method(
-                    "print_char",
-                    new Type("null", "basic", null, null, 0),
-                    [new Variable("print_char_param", new Type("char", "basic", 1, null, 0), 0, true)],
-                    null,
-                    false
-                )
-                ST.import_methods["print_int"] = new Method(
-                    "print_int",
-                    new Type("null", "basic", null, null, 0),
-                    [new Variable("print_int_param", new Type("int", "basic", 4, null, 0), 0, true)],
-                    null,
-                    false
+                    [self_object],
+                    null
                 )
 
-                ST.import_methods["scan_string"] = new Method(
+                this.add_method(
+                    "print_string",
+                    new Type("null", "basic", null, null, 0),
+                    [self_object, new Variable("print_string_param", new Type("string", "basic", null, null, 0), 0, true)],
+                    null
+                )
+                this.add_method(
+                    "print_float",
+                    new Type("null", "basic", null, null, 0),
+                    [self_object, new Variable("print_float_param", new Type("float", "basic", 4, null, 0), 0, true)],
+                    null
+                )
+                this.add_method(
+                    "print_char",
+                    new Type("null", "basic", null, null, 0),
+                    [self_object, new Variable("print_char_param", new Type("char", "basic", 1, null, 0), 0, true)],
+                    null
+                )
+                this.add_method(
+                    "print_int",
+                    new Type("null", "basic", null, null, 0),
+                    [self_object, new Variable("print_int_param", new Type("int", "basic", 4, null, 0), 0, true)],
+                    null
+                )
+
+                this.add_method(
                     "scan_string",
                     new Type("string", "basic", null, null, 0),
-                    [],
-                    null,
-                    false
+                    [self_object],
+                    null
                 )
-                ST.import_methods["scan_float"] = new Method(
+                this.add_method(
                     "scan_float",
                     new Type("float", "basic", 4, null, 0),
-                    [],
-                    null,
-                    false
+                    [self_object],
+                    null
                 )
-                ST.import_methods["scan_char"] = new Method(
+                this.add_method(
                     "scan_char",
                     new Type("char", "basic", 1, null, 0),
-                    [],
-                    null,
-                    false
+                    [self_object],
+                    null
                 )
-                ST.import_methods["scan_int"] = new Method(
+                this.add_method(
                     "scan_int",
                     new Type("int", "basic", 4, null, 0),
-                    [],
-                    null,
-                    false
+                    [self_object],
+                    null
                 )
 
                 break
