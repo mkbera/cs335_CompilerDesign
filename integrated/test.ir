@@ -65,30 +65,22 @@
 65	=	a_7	t9
 66	decr	t10	basic	int	1
 67	=	t10	0
-68	ifgoto	ge	1	0	70
-69	error	array_access_low
-70	ifgoto	lt	1	5	72
-71	error	array_access_up
-72	+	t10	t10	1
-73	ifgoto	ge	2	0	75
-74	error	array_access_low
-75	ifgoto	lt	2	5	77
-76	error	array_access_up
-77	*	t10	t10	5
-78	+	t10	t10	2
-79	decr	t11	basic	int	1
-80	arrget	t11	a_7	t10
-81	=	b_8	t11
-82	decr	ip_10	object	IO	1
-83	decr	t12	object	IO	1
-84	new	t12	IO
-85	param	t12
-86	call	IO_IO	1
-87	=	ip_10	t12
-88	param	ip_10
-89	param	b_8
-90	call	IO_print_int	2
-91	return
-92	function	rec_rec
-93	arg	this	object	rec	1
-94	return
+68	+	t10	t10	1
+69	*	t10	t10	5
+70	+	t10	t10	2
+71	decr	t11	basic	int	1
+72	arrget	t11	a_7	t10
+73	=	b_8	t11
+74	decr	ip_10	object	IO	1
+75	decr	t12	object	IO	1
+76	new	t12	IO
+77	param	t12
+78	call	IO_IO	1
+79	=	ip_10	t12
+80	param	ip_10
+81	param	b_8
+82	call	IO_print_int	2
+83	return
+84	function	rec_rec
+85	arg	this	object	rec	1
+86	return

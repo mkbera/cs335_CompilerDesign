@@ -3533,21 +3533,30 @@ array_access :
 				
 				$$.code = $$.code.concat(dim.code)
 
-				var label = ST.create_label()
-			
-				$$.code = $$.code.concat([
-					"ifgoto" + ir_sep + "ge" + ir_sep + dim.place + ir_sep + "0" + ir_sep + label,
-					"error" + ir_sep + "array_access_low",
-					"label" + ir_sep + label
-				])
+				if (!isNaN(dim.place)) {
+					var dim_val = parseInt(dim.place)
 
-				label = ST.create_label()
-			
-				$$.code = $$.code.concat([
-					"ifgoto" + ir_sep + "lt" + ir_sep + dim.place + ir_sep + type.length + ir_sep + label,
-					"error" + ir_sep + "array_access_up",
-					"label" + ir_sep + label
-				])
+					if (dim_val >= type.length) {
+						throw Error("Array index exceeds dimension size")
+					}
+				}
+				else {
+					var label = ST.create_label()
+				
+					$$.code = $$.code.concat([
+						"ifgoto" + ir_sep + "ge" + ir_sep + dim.place + ir_sep + "0" + ir_sep + label,
+						"error" + ir_sep + "array_access_low",
+						"label" + ir_sep + label
+					])
+
+					label = ST.create_label()
+				
+					$$.code = $$.code.concat([
+						"ifgoto" + ir_sep + "lt" + ir_sep + dim.place + ir_sep + type.length + ir_sep + label,
+						"error" + ir_sep + "array_access_up",
+						"label" + ir_sep + label
+					])
+				}
 
 				if (first) {
 					$$.code.push(
