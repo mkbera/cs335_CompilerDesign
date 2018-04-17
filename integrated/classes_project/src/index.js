@@ -8,8 +8,6 @@ global.Registers = require("./registers").Registers
 global.Variable = require("./components").Variable
 global.Function = require("./components").Function
 
-// global.SymbolTable = require("./symbol-table").SymbolTable
-
 global.Assembly = require("./assembly").Assembly
 
 global.codeGen = require("./translate").codeGen
@@ -44,9 +42,6 @@ function main() {
     tac.forEach(function (line, index) {
         tac[index] = line.trim().split("\t")
     })
-
-    // console.log(TAC.get_classDict())
-    // exit()
 
 
     arrays = TAC.getArrays()

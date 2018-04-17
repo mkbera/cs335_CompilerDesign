@@ -1,18 +1,8 @@
-// var fs = require("fs")
-
-// filename = process.argv[2]
-// // console.log("Reading from file:  " + filename)
-
-// tac = fs.readFileSync(filename, "utf8").split("\n")
-// tac.forEach(function (line, index) {
-// 	tac[index] = line.trim().split("\t")
-// })
 global.tac
 
 const_count = 0
 
 function codeGen(instr, next_use_table, line_nr) {
-	console.log(tac[line_nr]);
 	if (assembly.labels.indexOf(line_nr + 1) > -1) {
 		if (line_nr > 0) {
 			registers.unloadRegisters(line_nr - 1);
@@ -24,7 +14,6 @@ function codeGen(instr, next_use_table, line_nr) {
 		assembly.shiftRight();
 	}
 	var op = instr[1];
-	// console.log(tac)
 	//-------------------------------------------- new changes ------------------------------------------------
 	// if (op == "decr") {
 	// 	// print("TODO");
@@ -34,7 +23,8 @@ function codeGen(instr, next_use_table, line_nr) {
 	// 		registers.counter = registers.counter + 4
 	// 		registers.address_descriptor[x] = { "type": "mem", "name": x, "offset": registers.counter }
 
-	// 	} else {
+	// 	}
+	// else {
 	// 		// size = instr[5] * 4
 	// 		// assembly.add("sub esp, " +  size)
 	// 		// registers.counter = registers.counter + size
@@ -87,17 +77,13 @@ function codeGen(instr, next_use_table, line_nr) {
 		assembly.shiftLeft()
 	}
 
-	// else if(op == "float"){
-
-	// }
-
 
 
 	//-------------------------------------------- changes finished ------------------------------------------------
 
 	else if (op == "=") {
 		var x = instr[2];
-		if (registers.address_descriptor[x]["category"] == "int"){
+		if (registers.address_descriptor[x]["category"] == "int") {
 			var y = instr[3];
 
 			var des_x = registers.address_descriptor[x]["name"];
@@ -189,15 +175,17 @@ function codeGen(instr, next_use_table, line_nr) {
 					assembly.add("mov dword " + des_x + ", " + des_y);
 				}
 			}
-		} else if (registers.address_descriptor[x]["category"] == "float"){
+		}
+		else if (registers.address_descriptor[x]["category"] == "float") {
 			var y = instr[3]
-			if (variables.indexOf(y) > -1 ){	// y is variable
+			if (variables.indexOf(y) > -1) {	// y is variable
 				var offset_y = registers.address_descriptor[y]["offset"]
 				assembly.add("fld dword [ebp -" + offset_y + "]")
-			} else {	// y is constant
+			}
+			else {	// y is constant
 				assembly.add_data("_" + line_nr + "	" + "DD " + y)
 				assembly.add("fld dword [_" + line_nr + "]")
-		
+
 			}
 			var offset_x = registers.address_descriptor[x]["offset"]
 			assembly.add("fstp dword [ebp - " + offset_x + "]")
@@ -205,7 +193,7 @@ function codeGen(instr, next_use_table, line_nr) {
 	}
 	else if (math_ops_binary.indexOf(op) > -1) {
 		var x = instr[2];
-		if (registers.address_descriptor[x]["category"] == "int"){
+		if (registers.address_descriptor[x]["category"] == "int") {
 			var y = instr[3];
 
 			var des_x = registers.address_descriptor[x]["name"];
@@ -298,14 +286,16 @@ function codeGen(instr, next_use_table, line_nr) {
 				assembly.add("mov dword " + reg + ", " + des_y);
 				assembly.add(map_op[op] + " dword " + reg + ", " + des_z);
 			}
-		} else if (registers.address_descriptor[x]["category"] == "float") {
+		}
+		else if (registers.address_descriptor[x]["category"] == "float") {
 			var y = instr[3]
 			var z = instr[4]
-					
-			if (variables.indexOf(z) != -1){	// z is variable
+
+			if (variables.indexOf(z) != -1) {	// z is variable
 				var offset_z = registers.address_descriptor[z]["offset"]
-				assembly.add("fld dword [ebp -" + offset_z + "]")			
-			} else {	//z is constant
+				assembly.add("fld dword [ebp -" + offset_z + "]")
+			}
+			else {	//z is constant
 				assembly.add_data("_" + line_nr + "	" + "DD " + z)
 				assembly.add("fld dword [_" + line_nr + "]")
 			}
@@ -319,7 +309,7 @@ function codeGen(instr, next_use_table, line_nr) {
 	}
 	else if (math_ops_unary.indexOf(op) > -1) {
 		var x = instr[2];
-		if (registers.address_descriptor[x]["category"] == "int"){
+		if (registers.address_descriptor[x]["category"] == "int") {
 			var des_x = registers.address_descriptor[x]["name"];
 			if (des_x == null) {
 				throw Error("Line " + (line_nr + 1) + ": Operation on Unitialize Variable");
@@ -328,7 +318,8 @@ function codeGen(instr, next_use_table, line_nr) {
 			des_x = registers.loadVariable(x, line_nr, next_use_table, safe = [], safe_regs = [], print = true);
 
 			assembly.add(map_op[op] + " dword " + des_x);
-		} else if (registers.address_descriptor[x]["category"] == "float"){
+		}
+		else if (registers.address_descriptor[x]["category"] == "float") {
 			assembly.add("fld1")
 			var offset_x = registers.address_descriptor[x]["offset"]
 			assembly.add("fld dword [ebp -" + offset_x + "]")
@@ -339,7 +330,7 @@ function codeGen(instr, next_use_table, line_nr) {
 	}
 	else if (op == "*") {
 		var x = instr[2];
-		if (registers.address_descriptor[x]["category"] == "int"){
+		if (registers.address_descriptor[x]["category"] == "int") {
 			var y = instr[3];
 
 			var des_x = registers.address_descriptor[x]["name"];
@@ -455,14 +446,16 @@ function codeGen(instr, next_use_table, line_nr) {
 					}
 				}
 			}
-		} else if (registers.address_descriptor[x]["category"] == "float") {
+		}
+		else if (registers.address_descriptor[x]["category"] == "float") {
 			var y = instr[3]
 			var z = instr[4]
-					
-			if (variables.indexOf(z) != -1){	// z is variable
+
+			if (variables.indexOf(z) != -1) {	// z is variable
 				var offset_z = registers.address_descriptor[z]["offset"]
-				assembly.add("fld dword [ebp -" + offset_z + "]")			
-			} else {	//z is constant
+				assembly.add("fld dword [ebp -" + offset_z + "]")
+			}
+			else {	//z is constant
 				assembly.add_data("_" + line_nr + "	" + "DD " + z)
 				assembly.add("fld dword [_" + line_nr + "]")
 			}
@@ -478,12 +471,14 @@ function codeGen(instr, next_use_table, line_nr) {
 		var x = instr[2];
 		if (registers.address_descriptor[x]["category"] == "int") {
 			des_x = registers.loadVariable(x, line_nr, next_use_table, safe = [], safe_regs = [], print = true);
-			if (op == "/"){
+			if (op == "/") {
 				assembly.add("mov dword " + des_x + ", 1");
-			} else if (op == "%"){
+			}
+			else if (op == "%") {
 				assembly.add("mov dword " + des_x + ", 0");
 			}
-		} else if (registers.address_descriptor[x]["category"] == "float") {
+		}
+		else if (registers.address_descriptor[x]["category"] == "float") {
 			assembly.add("fld1")
 			var offset_x = registers.address_descriptor[x]["offset"]
 			assembly.add("fstp dword [ebp - " + offset_x + "]")
@@ -639,14 +634,16 @@ function codeGen(instr, next_use_table, line_nr) {
 				registers.address_descriptor[x]["type"] = "reg";
 				registers.address_descriptor[x]["name"] = "edx";
 			}
-		} else if (registers.address_descriptor[x]["category"] == "float") {
+		}
+		else if (registers.address_descriptor[x]["category"] == "float") {
 			var y = instr[3]
 			var z = instr[4]
-					
-			if (variables.indexOf(z) != -1){	// z is variable
+
+			if (variables.indexOf(z) != -1) {	// z is variable
 				var offset_z = registers.address_descriptor[z]["offset"]
-				assembly.add("fld dword [ebp -" + offset_z + "]")			
-			} else {	//z is constant
+				assembly.add("fld dword [ebp -" + offset_z + "]")
+			}
+			else {	//z is constant
 				assembly.add_data("_" + line_nr + "	" + "DD " + z)
 				assembly.add("fld dword [_" + line_nr + "]")
 			}
@@ -662,7 +659,7 @@ function codeGen(instr, next_use_table, line_nr) {
 		var cond = instr[2]
 
 		var x = instr[3];
-		if (registers.address_descriptor[x]["category"] == "int"){
+		if (registers.address_descriptor[x]["category"] == "int") {
 			var y = instr[4];
 
 			var des_x = registers.address_descriptor[x]["name"];
@@ -713,32 +710,33 @@ function codeGen(instr, next_use_table, line_nr) {
 			assembly.add(map_op[cond] + " label_" + instr[5]);
 		}
 
-		else if (registers.address_descriptor[x]["category"] == "float"){
+		else if (registers.address_descriptor[x]["category"] == "float") {
 			var y = instr[4];
 			var offset_x = registers.address_descriptor[x]["offset"];
-			if (variables.indexOf(y) != -1){	// z is variable
+			if (variables.indexOf(y) != -1) {	// z is variable
 				var offset_y = registers.address_descriptor[y]["offset"]
-				assembly.add("fld dword [ebp -" + offset_y + "]")			
-			} else {	//z is constant
+				assembly.add("fld dword [ebp -" + offset_y + "]")
+			}
+			else {	//z is constant
 				assembly.add_data("_" + line_nr + "	" + "DD " + y)
 				assembly.add("fld dword [_" + line_nr + "]")
 			}
 			var variable
 			var variable_offset
-			if (registers.address_descriptor["eax"] != null){
+			if (registers.address_descriptor["eax"] != null) {
 				variable = registers.register_descriptor["eax"]
 				variable_offset = registers.address_descriptor[variable]["offset"]
 				assembly.add("mov dword [ebp - " + variable_offset + "], eax")
 			}
-			
+
 			assembly.add("fld dword [ebp - " + offset_x + "]")
 			assembly.add("fcompp")
 			assembly.add("fstsw ax")
 			assembly.add("fwait")
 			assembly.add("sahf")
 			assembly.add(map_op_float[cond] + " label_" + instr[5])
-			
-			if (registers.address_descriptor["eax"] != null){
+
+			if (registers.address_descriptor["eax"] != null) {
 				assembly.add("mov dword eax, [ebp - " + variable_offset + "]")
 			}
 		}
@@ -755,7 +753,8 @@ function codeGen(instr, next_use_table, line_nr) {
 		if (registers.address_descriptor[x]["type"] != "reg") {
 			des_x = registers.getReg(x, line_nr, next_use_table, safe = [], safe_regs = []);
 			assembly.add("mov dword " + des_x + ", [ebp - " + registers.address_descriptor[x]["offset"] + "]");
-		} else {
+		}
+		else {
 			des_x = registers.address_descriptor[x]["name"]
 		}
 		assembly.add("push " + des_x)
@@ -785,20 +784,20 @@ function codeGen(instr, next_use_table, line_nr) {
 		var i_func = 1;
 		instr_local = tac[line_nr + 1];
 		// while(!(instr_local[1] == "return" || instr_local[1] == "exit") ){
-		while((instr_local != null) && (instr_local[1] != "function")){
-			if (instr_local[1] == "decr"){
-				console.log(instr_local[2])
-
+		while ((instr_local != null) && (instr_local[1] != "function")) {
+			if (instr_local[1] == "decr") {
 				var x = instr_local[2]
 				if (instr_local[3] == "basic") {
 					assembly.add("sub esp, 4")
 					registers.counter = registers.counter + 4
-					if (instr_local[4] == "int"){
+					if (instr_local[4] == "int") {
 						registers.address_descriptor[x] = { "type": "mem", "name": x, "offset": registers.counter, "category": "int" }
-					} else if (instr_local[4] == "float"){
-						registers.address_descriptor[x] = { "type": "mem", "name": x, "offset": registers.counter, "category": "float" }	
 					}
-				} else if (instr_local[3] == "array") {
+					else if (instr_local[4] == "float") {
+						registers.address_descriptor[x] = { "type": "mem", "name": x, "offset": registers.counter, "category": "float" }
+					}
+				}
+				else if (instr_local[3] == "array") {
 					size = instr_local[5] * 4
 					var variable
 					var flag = 0
@@ -821,30 +820,27 @@ function codeGen(instr, next_use_table, line_nr) {
 						registers.address_descriptor[variable]["type"] = "reg"
 						registers.address_descriptor[variable]["name"] = "eax"
 					}
-					if (instr_local[4] == "int"){
-						registers.address_descriptor[x] = { "type": "mem", "name": x, "offset": registers.counter, "category" : "arr_int" }
-					} else if (instr_local[4] == "float"){
-						registers.address_descriptor[x] = { "type": "mem", "name": x, "offset": registers.counter, "category" : "arr_float" }
+					if (instr_local[4] == "int") {
+						registers.address_descriptor[x] = { "type": "mem", "name": x, "offset": registers.counter, "category": "arr_int" }
+					}
+					else if (instr_local[4] == "float") {
+						registers.address_descriptor[x] = { "type": "mem", "name": x, "offset": registers.counter, "category": "arr_float" }
 					}
 				}
-			
 
-// ------------------------------------- objects ------------------------------------------
-				else if (instr_local[3] == "object"){
+
+				// ------------------------------------- objects ------------------------------------------
+				else if (instr_local[3] == "object") {
 					var obj_name = instr_local[2]
 					var class_name = instr_local[4]
-					// console.log(class_name)
 					// var size = Object.keys(symtab[class_name]).length * 4 + 4
 					assembly.add("sub esp, " + 4)
 					registers.counter = registers.counter + 4
-					registers.address_descriptor[obj_name] ={"type":"mem", "name": obj_name, "offset": registers.counter, "category" : class_name}
-					// console.log(obj_name)
-					// console.log(registers.address_descriptor[obj_name])
+					registers.address_descriptor[obj_name] = { "type": "mem", "name": obj_name, "offset": registers.counter, "category": class_name }
 				}
 			}
 			i_func = i_func + 1;
 			instr_local = tac[line_nr + i_func];
-			// console.log(i_func)
 		}
 	}
 
@@ -858,17 +854,25 @@ function codeGen(instr, next_use_table, line_nr) {
 		var class_name = instr[2]
 		var field_name = instr[3]
 		var category = instr[5]
-		if (instr[4] == "array"){
+		if (instr[4] == "array") {
+			symtab[class_name][field_name] = {}
+
 			if (category == "int") {
 				symtab[class_name][field_name]["category"] = "arr_int"
-			} else {
-				symtab[class_name][field_name]["category"] = "arr_float"				
 			}
+			else {
+				symtab[class_name][field_name]["category"] = "arr_float"
+			}
+
 			symtab[class_name][field_name]["length"] = instr[6]
-		} else {
-			symtab[class_name][field_name]["category"] = category
-			symtab[class_name][field_name]["length"] = null
 		}
+		else {
+			symtab[class_name][field_name] = {
+				category: category,
+				length: null
+			}
+		}
+
 		symtab[class_name][field_name]["position"] = registers.field_num
 		registers.field_num += 1
 	}
@@ -878,22 +882,20 @@ function codeGen(instr, next_use_table, line_nr) {
 		var class_name = instr[3]
 
 
-		
+
 		if (registers.register_descriptor["eax"] != null) {
 			var variable = registers.register_descriptor["eax"]
 			var offset = registers.address_descriptor[variable]["offset"]
 			assembly.add("mov [ebp - " + offset + "], eax")
 		}
-		
+
 		var size = Object.keys(symtab[class_name]).length * 4
 		assembly.add("push " + size)
 		assembly.add("call malloc")
-		console.log(var_obj)
-		console.log(registers.address_descriptor[var_obj])
 		var offset_obj = registers.address_descriptor[var_obj]["offset"]
 
 		assembly.add("add esp, " + 4)
-		assembly.add("mov [ebp -" + offset_obj +"], eax")
+		assembly.add("mov [ebp -" + offset_obj + "], eax")
 
 		Object.keys(symtab[class_name]).forEach(function (field) {
 			if (field["category"] == "arr_int" || field["category"] == "arr_float") {
@@ -915,7 +917,7 @@ function codeGen(instr, next_use_table, line_nr) {
 
 	else if (op == "fieldget") {	// z = object.field
 		var z = instr[2];
-		if (registers.address_descriptor[z]["category"] != "float"){
+		if (registers.address_descriptor[z]["category"] != "float") {
 			var object = instr[3];
 			var class_name = registers.address_descriptor[object]["category"]
 			var field = instr[4];
@@ -929,7 +931,7 @@ function codeGen(instr, next_use_table, line_nr) {
 			else if (registers.address_descriptor[z]["type"] == "reg") {	// z in reg
 				des_z = registers.address_descriptor[z]["name"];
 			}
-		
+
 			des_object = registers.address_descriptor[object]["name"];
 			if (registers.address_descriptor[object]["type"] == "mem") {
 				des_object = registers.getReg(object, line_nr, next_use_table, safe = [z], safe_regs = [], print = true);
@@ -937,7 +939,7 @@ function codeGen(instr, next_use_table, line_nr) {
 			}
 
 			field_offset = symtab[class_name][field]["position"] * 4
-			assembly.add("mov " + des_z + ", [" + des_object + "+" + field_offset + "]")		
+			assembly.add("mov " + des_z + ", [" + des_object + "+" + field_offset + "]")
 		}
 
 		else {
@@ -957,14 +959,15 @@ function codeGen(instr, next_use_table, line_nr) {
 	else if (op == "fieldset") {	//object.field = z
 		var object = instr[2]
 		var field = instr[3]
+
 		var class_name = registers.address_descriptor[object]["category"]
 		var z = instr[4];
-		var field_type = symtab[object][field]["type"]
-		if (field_type != "float"){
+		var field_type = symtab[class_name][field]["type"]
+		if (field_type != "float") {
 			var des_z = "";
 			var des_field = "";
 
-			if (variables.indexOf(z) <= -1){
+			if (variables.indexOf(z) <= -1) {
 				des_z = z
 			}
 			else if (registers.address_descriptor[z]["type"] == "mem") {	// z in mem
@@ -974,7 +977,7 @@ function codeGen(instr, next_use_table, line_nr) {
 			else if (registers.address_descriptor[z]["type"] == "reg") {	// z in reg
 				des_z = registers.address_descriptor[z]["name"];
 			}
-		
+
 			des_object = registers.address_descriptor[object]["name"];
 			if (registers.address_descriptor[object]["type"] == "mem") {
 				des_object = registers.getReg(object, line_nr, next_use_table, safe = [z], safe_regs = [], print = true);
@@ -982,7 +985,7 @@ function codeGen(instr, next_use_table, line_nr) {
 			}
 
 			field_offset = symtab[class_name][field]["position"] * 4
-			assembly.add("mov [" + des_object + "+" + field_offset + "], " + des_z)		
+			assembly.add("mov dword [" + des_object + "+" + field_offset + "], " + des_z)
 		}
 
 		else {
@@ -995,7 +998,7 @@ function codeGen(instr, next_use_table, line_nr) {
 			if (variables.indexOf(z) > -1) {
 				assembly.add("fld [ebp - " + registers.address_descriptor[z]["offset"] + "]")
 			}
-			else{
+			else {
 				assembly.add_data("_" + line_nr + " DD " + z)
 				assembly.add("fld [_" + line_nr + "]")
 			}
@@ -1005,7 +1008,7 @@ function codeGen(instr, next_use_table, line_nr) {
 			assembly.add("fstp [" + des_object + "+" + field_offset + "]")
 		}
 	}
-	
+
 	// else if (op == "constructor") {
 	// 	var constr_name = instr[2]
 
@@ -1023,7 +1026,7 @@ function codeGen(instr, next_use_table, line_nr) {
 
 	// 	assembly.add("push ebp");
 	// 	assembly.add("mov ebp, esp");
-		
+
 	// 	var class_name = constr_name.split("_")[1]
 	// 	var size = Object.keys(symtab[class_name]).length * 4
 	// 	assembly.add("push " + size)
@@ -1037,19 +1040,19 @@ function codeGen(instr, next_use_table, line_nr) {
 		// assembly.add("sub esp, 4")
 		// registers.counter = registers.counter + 4
 		// registers.address_descriptor[x] = {"type": "mem", "name": x, "offset":registers.counter}
-		if (instr[3] == "basic"){
-			if (instr[4] == "int"){
+		if (instr[3] == "basic") {
+			if (instr[4] == "int") {
 				registers.address_descriptor[x] = { "type": "mem", "name": x, "offset": registers.args_counter, "category": "int" };
 			}
-			else if (instr[4] == "float"){
+			else if (instr[4] == "float") {
 				registers.address_descriptor[x] = { "type": "mem", "name": x, "offset": registers.args_counter, "category": "float" };
 			}
 		}
-		else if (instr[3] == "array"){
-			if (instr[4] == "int"){
+		else if (instr[3] == "array") {
+			if (instr[4] == "int") {
 				registers.address_descriptor[x] = { "type": "mem", "name": x, "offset": registers.args_counter, "category": "arr_int" };
 			}
-			else if (instr[4] == "float"){
+			else if (instr[4] == "float") {
 				registers.address_descriptor[x] = { "type": "mem", "name": x, "offset": registers.args_counter, "category": "arr_float" };
 			}
 		}
@@ -1067,8 +1070,9 @@ function codeGen(instr, next_use_table, line_nr) {
 		if (instr[5] != null) {
 			var variable = instr[5]
 			if (registers.address_descriptor[variable]["category"] != "float") {
-				assembly.add("mov dword [ebp - " + registers.address_descriptor[variable]["offset"] + "], eax")	
-			} else {
+				assembly.add("mov dword [ebp - " + registers.address_descriptor[variable]["offset"] + "], eax")
+			}
+			else {
 				assembly.add("fstp [ebp - " + registers.address_descriptor[x]["offset"] + "]")
 			}
 		}
@@ -1087,13 +1091,16 @@ function codeGen(instr, next_use_table, line_nr) {
 				if (x.indexOf(".") != -1) {
 					assembly.add_data("_" + line_nr + " DD" + " " + x)
 					assembly.add("fld _" + line_nr)
-				} else {
+				}
+				else {
 					assembly.add("mov dword eax, " + x)
 				}
-			
-			} else if (registers.address_descriptor[x]["category"] != "float"){
+
+			}
+			else if (registers.address_descriptor[x]["category"] != "float") {
 				assembly.add("mov dword eax, [ebp - " + registers.address_descriptor[x]["offset"] + "]")
-			} else {
+			}
+			else {
 				assembly.add("fld [ebp - " + registers.address_descriptor[x]["offset"] + "]")
 			}
 		}
@@ -1155,7 +1162,7 @@ function codeGen(instr, next_use_table, line_nr) {
 
 	else if (op == "arrget") {	// z = a[10]
 		var z = instr[2];
-		if (registers.address_descriptor[z]["category"] == "int"){
+		if (registers.address_descriptor[z]["category"] == "int") {
 			var arr = instr[3];
 			var y = instr[4];
 			var des_z = "";
@@ -1192,13 +1199,14 @@ function codeGen(instr, next_use_table, line_nr) {
 			var des_pointer;
 			if (registers.address_descriptor[arr]["type"] == "reg") {
 				des_pointer = registers.address_descriptor[arr]["name"];
-			} else {
+			}
+			else {
 				des_pointer = registers.getReg(arr, line_nr, next_use_table, safe = [y, z], safe_regs = [], print = true);
 				assembly.add("mov dword " + des_pointer + ", [ebp - " + registers.address_descriptor[arr]["offset"] + "]")
 			}
 			assembly.add("mov dword " + des_z + ", [" + des_pointer + " + " + des_y + " * 4]");
-		} 
-		
+		}
+
 		else if (registers.address_descriptor[z]["category"] == "float") {	//z = arr[y]
 			var arr = instr[3];
 			var y = instr[4];
@@ -1218,7 +1226,8 @@ function codeGen(instr, next_use_table, line_nr) {
 			var des_pointer;
 			if (registers.address_descriptor[arr]["type"] == "reg") {
 				des_pointer = registers.address_descriptor[arr]["name"];
-			} else {
+			}
+			else {
 				des_pointer = registers.getReg(arr, line_nr, next_use_table, safe = [y, z], safe_regs = [], print = true);
 				assembly.add("mov dword " + des_pointer + ", [ebp - " + registers.address_descriptor[arr]["offset"] + "]")
 			}
@@ -1229,7 +1238,7 @@ function codeGen(instr, next_use_table, line_nr) {
 	// else if (op == "arr=") {	// a[10] = z
 	else if (op == "arrset") {	// a[10] = z
 		var arr = instr[2];
-		if (registers.address_descriptor[arr]["category"] == "arr_int"){
+		if (registers.address_descriptor[arr]["category"] == "arr_int") {
 			var y = instr[3];
 			var z = instr[4];
 			var des_y = "";
@@ -1262,25 +1271,28 @@ function codeGen(instr, next_use_table, line_nr) {
 			var des_pointer;
 			if (registers.address_descriptor[arr]["type"] == "reg") {
 				des_pointer = registers.address_descriptor[arr]["name"];
-			} else {
+			}
+			else {
 				des_pointer = registers.getReg(arr, line_nr, next_use_table, safe = [y, z], safe_regs = [], print = true);
 				assembly.add("mov dword " + des_pointer + ", [ebp - " + registers.address_descriptor[arr]["offset"] + "]")
 			}
 			assembly.add("mov dword [" + des_pointer + " + " + des_y + " * 4], " + des_z);
-		} else if (registers.address_descriptor[arr]["category"] == "arr_float"){	//a[y] = z
+		}
+		else if (registers.address_descriptor[arr]["category"] == "arr_float") {	//a[y] = z
 			var y = instr[3];
 			var z = instr[4];
 			var des_y = "";
 			var des_z = "";
-			if (variables.indexOf(z) > -1 ){	// z is variable
+			if (variables.indexOf(z) > -1) {	// z is variable
 				var offset_z = registers.address_descriptor[z]["offset"]
 				assembly.add("fld dword [ebp -" + offset_z + "]")
-			} else {	// z is constant
+			}
+			else {	// z is constant
 				assembly.add_data("_" + line_nr + "	" + "DD " + z)
 				assembly.add("fld dword [_" + line_nr + "]")
 			}
 
-			
+
 			if (variables.indexOf(y) == -1) { // y is constant
 				des_y = y;
 			}
@@ -1296,7 +1308,8 @@ function codeGen(instr, next_use_table, line_nr) {
 			var des_pointer;
 			if (registers.address_descriptor[arr]["type"] == "reg") {
 				des_pointer = registers.address_descriptor[arr]["name"];
-			} else {
+			}
+			else {
 				des_pointer = registers.getReg(arr, line_nr, next_use_table, safe = [y, z], safe_regs = [], print = true);
 				assembly.add("mov dword " + des_pointer + ", [ebp - " + registers.address_descriptor[arr]["offset"] + "]")
 			}
@@ -1350,7 +1363,7 @@ function codeGen(instr, next_use_table, line_nr) {
 		assembly.shiftLeft()
 	}
 
-//	--------------------------------- float starts here -----------------------------------------------
+	//	--------------------------------- float starts here -----------------------------------------------
 
 	// else if (op == "f=") {	//x = y
 	// 	var x = instr[2]
@@ -1358,10 +1371,11 @@ function codeGen(instr, next_use_table, line_nr) {
 	// 	if (variables.indexOf(y) > -1 ){	// y is variable
 	// 		var offset_y = registers.address_descriptor[y]["offset"]
 	// 		assembly.add("fld dword [ebp -" + offset_y + "]")
-	// 	} else {	// y is constant
+	// 	}
+	// else {	// y is constant
 	// 		assembly.add_data("_" + line_nr + "	" + "DD " + y)
 	// 		assembly.add("fld dword [_" + line_nr + "]")
-	
+
 	// 	}
 	// 	var offset_x = registers.address_descriptor[x]["offset"]
 	// 	assembly.add("fstp dword [ebp - " + offset_x + "]")
@@ -1371,11 +1385,12 @@ function codeGen(instr, next_use_table, line_nr) {
 	// 	var x = instr[2]
 	// 	var y = instr[3]
 	// 	var z = instr[4]
-				
+
 	// 	if (variables.indexOf(z) != -1){	// z is variable
 	// 		var offset_z = registers.address_descriptor[z]["offset"]
 	// 		assembly.add("fld dword [ebp -" + offset_z + "]")			
-	// 	} else {	//z is constant
+	// 	}
+	// else {	//z is constant
 	// 		assembly.add_data("_" + line_nr + "	" + "DD " + z)
 	// 		assembly.add("fld dword [_" + line_nr + "]")
 	// 	}
@@ -1398,12 +1413,12 @@ function codeGen(instr, next_use_table, line_nr) {
 	// }
 
 	else if (op == "cast") {
-		var from  = instr[3]
-		var to  = instr[4]
+		var from = instr[3]
+		var to = instr[4]
 		var x = instr[2]
 		var y = instr[5]
 		var offset_x = registers.address_descriptor[x]["offset"]
-		if (from == "int" && to == "float"){ //	x = y
+		if (from == "int" && to == "float") { //	x = y
 			if (variables.indexOf(y) > -1) {
 				var offset_y = registers.address_descriptor[y]["offset"]
 				if (registers.address_descriptor[y]["type"] == "reg") {
@@ -1422,7 +1437,7 @@ function codeGen(instr, next_use_table, line_nr) {
 		}
 
 		else if (from == "float" && to == "int") {
-			if (variables.indexOf(y) > -1){
+			if (variables.indexOf(y) > -1) {
 				var offset_y = registers.address_descriptor[y]["offset"]
 				assembly.add("fld dword [ebp - " + offset_y + "]")
 				assembly.add("fistp dword [ebp - " + offset_x + "]")

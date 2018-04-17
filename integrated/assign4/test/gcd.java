@@ -12,8 +12,6 @@ class rec {
 	public void main() {
 		int a = 90;
 		int b = 9;
-		rec obj;
-		obj = new rec();
-		int c = obj.gcd(a, b);
+		int c = gcd(a, b);
 	}
 }

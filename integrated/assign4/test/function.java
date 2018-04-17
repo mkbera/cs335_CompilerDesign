@@ -13,7 +13,6 @@ class rec {
 	public void main() {
 		int a = 909;
 		int b = 101;
-		rec some = new rec();
-		int c = rec.sum(a, b);
+		int c = sum(a, b);
 	}
 }

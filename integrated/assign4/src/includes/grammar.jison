@@ -20,7 +20,7 @@
 						"decr" + ir_sep + t + ir_sep + obj.type.category + ir_sep + obj.type.get_basic_type() + ir_sep + obj.type.get_size(),
 						"fieldget" + ir_sep + t + ir_sep + "this" + ir_sep + variable.identifier
 					])
-					variable.identifier = t
+					variable.place = t
 				}
 
 				if (obj.type.category == "array") {
@@ -98,7 +98,7 @@
 									self.consr_code = self.consr_code.concat([
 										"decr" + ir_sep + temp + ir_sep + type.category + ir_sep + type.type + "1",
 										"cast" + ir_sep + temp + ir_sep + inits[index].type.type + ir_sep + type.type + ir_sep + inits[index].place,
-										"arrset" + ir_sep + variable.identifier + ir_sep + index + ir_sep + temp
+										"arrset" + ir_sep + variable.place + ir_sep + index + ir_sep + temp
 									])
 								}
 								else {
@@ -112,7 +112,7 @@
 							else {
 								if (obj.field) {
 									self.consr_code.push(
-										"arrset" + ir_sep + variable.identifier + ir_sep + index + ir_sep + inits[index].place
+										"arrset" + ir_sep + variable.place + ir_sep + index + ir_sep + inits[index].place
 									)
 								}
 								else {
@@ -148,7 +148,7 @@
 				else {
 					if (obj.field) {
 						self.code.push(
-							"field_decr" + ir_sep + ST.current_class.name + ir_sep + variable.identifier + ir_sep + obj.type.type
+							"field_decr" + ir_sep + ST.current_class.name + ir_sep + variable.identifier + ir_sep + obj.type.category + ir_sep + obj.type.get_basic_type() + obj.type.get_size()
 						)
 					}
 					else {
@@ -176,7 +176,7 @@
 								self.consr_code = self.consr_code.concat([
 									"decr" + ir_sep + temp + ir_sep + obj.type.category + ir_sep + obj.type.type + ir_sep + "1",
 									"cast" + ir_sep + temp + ir_sep + variable.init.type.type + ir_sep + obj.type.type + ir_sep + variable.init.place,
-									"=" + ir_sep + variable.identifier + ir_sep + temp
+									"fieldset" + ir_sep + "this" + ir_sep + variable.identifier + ir_sep + temp
 								])
 							}
 							else {
@@ -190,7 +190,7 @@
 						else {
 							if (obj.field) {
 								self.consr_code.push(
-									"=" + ir_sep + variable.identifier + ir_sep + variable.init.place
+									"fieldset" + ir_sep + "this" + ir_sep + variable.identifier + ir_sep + variable.init.place
 								)
 							}
 							else {
