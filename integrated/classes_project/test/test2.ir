@@ -1,0 +1,114 @@
+1	class	BubbleSort
+2	function	main
+3	decr	n_1	int
+4	decr	c_2	int
+5	decr	d_3	int
+6	decr	swap_4	int
+7	=	n_1	20
+8	decr	array_5	array	int	20
+9	=	c_2	0
+10	decr	t1	int
+11	=	t1	1
+12	ifgoto	lt	c_2	n_1	14
+13	=	t1	0
+14	ifgoto	eq	t1	0	27
+15	decr	t3	int
+16	=	t3	0
+17	ifgoto	>	c_2	0	19
+18	error	array_access_low
+19	ifgoto	<	c_2	20	21
+20	error	array_access_up
+21	+	t3	t3	c_2
+22	arrset	array_5	t3	8
+23	decr	t2	int
+24	=	t2	c_2
+25	+	c_2	c_2	1
+26	jump	10
+27	=	c_2	0
+28	decr	t4	int
+29	-	t4	n_1	1
+30	decr	t5	int
+31	=	t5	1
+32	ifgoto	lt	c_2	t4	34
+33	=	t5	0
+34	ifgoto	eq	t5	0	114
+35	=	d_3	0
+36	decr	t7	int
+37	-	t7	n_1	c_2
+38	decr	t8	int
+39	-	t8	t7	1
+40	decr	t9	int
+41	=	t9	1
+42	ifgoto	lt	d_3	t8	44
+43	=	t9	0
+44	ifgoto	eq	t9	0	110
+45	decr	t11	int
+46	=	t11	0
+47	ifgoto	>	d_3	0	49
+48	error	array_access_low
+49	ifgoto	<	d_3	20	51
+50	error	array_access_up
+51	+	t11	t11	d_3
+52	arrget	t12	array_5	t11
+53	decr	t14	int
+54	=	t14	0
+55	decr	t13	int
+56	+	t13	d_3	1
+57	ifgoto	>	t13	0	59
+58	error	array_access_low
+59	ifgoto	<	t13	20	61
+60	error	array_access_up
+61	+	t14	t14	t13
+62	arrget	t15	array_5	t14
+63	decr	t16	int
+64	=	t16	1
+65	ifgoto	gt	t12	t15	67
+66	=	t16	0
+67	ifgoto	eq	t16	1	69
+68	jump	106
+69	decr	t17	int
+70	=	t17	0
+71	ifgoto	>	d_3	0	73
+72	error	array_access_low
+73	ifgoto	<	d_3	20	75
+74	error	array_access_up
+75	+	t17	t17	d_3
+76	arrget	t18	array_5	t17
+77	=	swap_4	t18
+78	decr	t21	int
+79	=	t21	0
+80	decr	t20	int
+81	+	t20	d_3	1
+82	ifgoto	>	t20	0	84
+83	error	array_access_low
+84	ifgoto	<	t20	20	86
+85	error	array_access_up
+86	+	t21	t21	t20
+87	arrget	t22	array_5	t21
+88	decr	t19	int
+89	=	t19	0
+90	ifgoto	>	d_3	0	92
+91	error	array_access_low
+92	ifgoto	<	d_3	20	94
+93	error	array_access_up
+94	+	t19	t19	d_3
+95	arrset	array_5	t19	t22
+96	decr	t24	int
+97	=	t24	0
+98	decr	t23	int
+99	+	t23	d_3	1
+100	ifgoto	>	t23	0	102
+101	error	array_access_low
+102	ifgoto	<	t23	20	104
+103	error	array_access_up
+104	+	t24	t24	t23
+105	arrset	array_5	t24	swap_4
+106	decr	t10	int
+107	=	t10	d_3
+108	+	d_3	d_3	1
+109	jump	36
+110	decr	t6	int
+111	=	t6	c_2
+112	+	c_2	c_2	1
+113	jump	28
+114	return

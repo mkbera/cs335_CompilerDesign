@@ -82,6 +82,9 @@ function codeGen(instr, next_use_table, line_nr) {
 			}
 		}
 		assembly.add("call printf")
+		assembly.add("mov dword eax, 1");
+		assembly.add("int 0x80");
+		assembly.shiftLeft()
 	}
 
 	// else if(op == "float"){
@@ -836,9 +839,10 @@ function codeGen(instr, next_use_table, line_nr) {
 					registers.address_descriptor[obj_name] ={"type":"mem", "name": obj_name, "offset": registers.counter, "category" : class_name}
 				}
 
-				i_func = i_func + 1;
-				instr_local = tac[line_nr + i_func];
 			}
+			i_func = i_func + 1;
+			instr_local = tac[line_nr + i_func];
+			// console.log(i_func)
 		}
 	}
 

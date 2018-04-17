@@ -1,0 +1,17 @@
+1	array	a	100
+2	=	row_len	10
+3	=	col_len	10
+4	=	i	0
+5	if	eq	i	row_len	17
+6	=	j	0
+7	if	eq	j	col_len	15
+8	*	index	row_len	i
+9	+	index	index	j
+10	-	v	i	j
+11	arr=	a	index	v
+12	print	v
+13	+	j	j	1
+14	jump	7
+15	+	i	i	1
+16	jump	5
+17	exit

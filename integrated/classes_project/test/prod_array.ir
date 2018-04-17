@@ -1,0 +1,18 @@
+1	array	arr	100
+2	scan	n
+3	=	i	0
+4	=	prod	1
+5	if	eq	i	n	10
+6	scan	t
+7	arr=	arr	i	t
+8	+	i	i	1
+9	jump	5
+10	=	i	0
+11	if	eq	i	n	17
+12	=arr	t	arr	i
+13	print	t
+14	*	prod	prod	t
+15	+	i	i	1
+16	jump	11
+17	print	prod
+18	exit
