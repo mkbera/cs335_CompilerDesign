@@ -367,7 +367,12 @@
 
 %%
 
-\/\*								this.pushState('BLOCKCOMMENT');
+\/\*								{
+										var top = this.conditionStack[this.conditionStack.length - 1]
+										if (top != 'BLOCKCOMMENT') {
+											this.pushState('BLOCKCOMMENT');
+										}
+									}
 
 <BLOCKCOMMENT>\*\/					this.popState();
 
