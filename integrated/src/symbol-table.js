@@ -41,7 +41,7 @@ class Type {
     }
 
     numeric() {
-        return ["int", "short", "long", "char", "float"].indexOf(this.type) > -1
+        return ["int", "short", "long", "float"].indexOf(this.type) > -1
     }
 
     get_basic_type() {
@@ -470,7 +470,7 @@ class SymbolTable {
                 this.add_method(
                     "print_char",
                     new Type("null", "basic", null, null, 0),
-                    [self_object, new Variable("print_char_param", new Type("char", "basic", 1, null, 0), 0, true)],
+                    [self_object, new Variable("print_char_param", new Type("int", "basic", 4, null, 0), 0, true)],
                     null
                 )
                 this.add_method(
@@ -494,7 +494,7 @@ class SymbolTable {
                 )
                 this.add_method(
                     "scan_char",
-                    new Type("char", "basic", 1, null, 0),
+                    new Type("int", "basic", 4, null, 0),
                     [self_object],
                     null
                 )
