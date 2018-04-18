@@ -1,0 +1,62 @@
+1	import	IO
+2	class	rec
+3	function	rec_gcd
+4	arg	b_4	basic	int	1
+5	arg	a_3	basic	int	1
+6	arg	this	object	rec	1
+7	decr	t1	basic	int	1
+8	=	t1	1
+9	ifgoto	eq	b_4	0	11
+10	=	t1	0
+11	ifgoto	eq	t1	1	13
+12	jump	14
+13	return	a_3
+14	decr	x_5	basic	int	1
+15	decr	t2	basic	int	1
+16	%	t2	a_3	b_4
+17	=	x_5	t2
+18	decr	t3	basic	int	1
+19	param	this
+20	param	b_4
+21	param	x_5
+22	call	rec_gcd	3	t3
+23	return	t3
+24	error	function_return
+25	exit
+26	function	main
+27	decr	io_6	object	IO	1
+28	decr	t4	object	IO	1
+29	new	t4	IO
+30	param	t4
+31	call	IO_IO	1
+32	=	io_6	t4
+33	decr	a_7	basic	int	1
+34	decr	t5	basic	int	1
+35	param	io_6
+36	call	IO_scan_int	1	t5
+37	=	a_7	t5
+38	decr	b_8	basic	int	1
+39	decr	t6	basic	int	1
+40	param	io_6
+41	call	IO_scan_int	1	t6
+42	=	b_8	t6
+43	decr	obj_9	object	rec	1
+44	decr	t7	object	rec	1
+45	new	t7	rec
+46	param	t7
+47	call	rec_rec	1
+48	=	obj_9	t7
+49	decr	c_10	basic	int	1
+50	decr	t8	basic	int	1
+51	param	obj_9
+52	param	a_7
+53	param	b_8
+54	call	rec_gcd	3	t8
+55	=	c_10	t8
+56	param	io_6
+57	param	c_10
+58	call	IO_print_int	2
+59	return
+60	function	rec_rec
+61	arg	this	object	rec	1
+62	return

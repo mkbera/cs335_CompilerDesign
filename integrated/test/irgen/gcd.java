@@ -10,8 +10,11 @@ class rec {
 	}
 
 	public void main() {
-		int a = 90;
-		int b = 9;
-		int c = gcd(a, b);
+		IO io = new IO();
+		int a = io.scan_int();
+		int b = io.scan_int();
+		rec obj = new rec();
+		int c = obj.gcd(a, b);
+		io.print_int(c);
 	}
 }

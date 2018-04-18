@@ -1,16 +1,21 @@
+import IO;
+
 class BubbleSort {
   public void main() {
-    int n, c, d, swap;
+	int n, c, d;
+	
+	float swap;
     
     // System.out.println("Input number of integers to sort");
-    n = 20;
+    n = 5;
  
-    int[20] array;
+    float[5] array;
  
     // System.out.println("Enter " + n + " integers");
+	IO io = new IO();
  
     for (c = 0; c < n; c++){ 
-	  array:[c] = 8;
+	  array:[c] = io.scan_float();
 	}
  
     for (c = 0; c < ( n - 1 ); c++) {
@@ -23,7 +28,9 @@ class BubbleSort {
         }
       }
     }
- 
+		for (int i=0; i<n; i++){
+			io.print_float(array:[i]);
+		}
     // System.out.println("Sorted list of numbers");
  
 //     for (c = 0; c < n; c++) 

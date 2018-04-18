@@ -1,6 +1,10 @@
 import IO;
 
-class rec {
+class rec1 {
+	
+}
+
+class rec2 {
 	int a = 9;
 	int b = 10;
 	public int two_times(int a){	
