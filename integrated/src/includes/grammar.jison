@@ -353,7 +353,7 @@
 		},
 
 		boolean_type_array: ["boolean"],
-		numeric_type_array: ["int", "short", "long", "char", "byte", "float"],
+		numeric_type_array: ["int", "short", "long", "byte", "float"],
 
 		compare_types: function(type1, type2) {
 		}
@@ -3491,7 +3491,7 @@ field_access :
 
 			$$.code = $$.code.concat([
 				"decr" + ir_sep + temp + ir_sep + type.category + ir_sep + type.get_basic_type() + ir_sep + type.get_size(),
-				"fieldget" + ir_sep + temp + ir_sep + $1.type.type + ir_sep + $identifier
+				"fieldget" + ir_sep + temp + ir_sep + $1.place + ir_sep + variable.display_name
 			])
 
 			$$.type = type
