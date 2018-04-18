@@ -3,6 +3,7 @@ import IO;
 class nested_ifelse {
 	
 	public void main() {
+		IO io =  new IO();
 		int a = 1;
 		int b = 2;
 		int c = 3;

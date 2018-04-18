@@ -58,12 +58,14 @@ public class Life {
 
     
     public void main() {
+      Life life = new Life();
 		boolean[10][10] world;
-		world = gen();
-        show(world);
+		world = life.gen();
+        life.show(world);
+      	
         // System.out.println();
-        // world = nextGen(world);
-        show(world);
+        world = life.nextGen(world);
+        life.show(world);
         // Scanner s = new Scanner(System.in);
         // while(s.nextLine().length() == 0){
         //     System.out.println();

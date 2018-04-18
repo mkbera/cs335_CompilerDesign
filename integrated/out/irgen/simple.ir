@@ -1,112 +1,24 @@
 1	import	IO
-2	class	rec1
-3	field_decr	rec1	a_2	basic	int	1
-4	field_decr	rec1	b_3	basic	int	1
-5	field_decr	rec1	c_4	basic	int	1
-6	function	rec1_three_times
-7	arg	c_6	basic	int	1
-8	arg	this	object	rec1	1
-9	decr	t4	basic	int	1
-10	*	t4	c_6	3
-11	return	t4
-12	error	function_return
-13	exit
-14	function	rec1_rec1
-15	arg	this	object	rec1	1
-16	decr	t1	basic	int	1
-17	fieldget	t1	this	a_2
-18	fieldset	this	a_2	43
-19	decr	t2	basic	int	1
-20	fieldget	t2	this	b_3
-21	decr	t3	basic	int	1
-22	fieldget	t3	this	c_4
-23	fieldset	this	c_4	0
+2	class	Main
+3	field_decr	Main	num_2	basic	int1
+4	function	main
+5	decr	io_3	object	IO	1
+6	decr	t2	object	IO	1
+7	new	t2	IO
+8	param	t2
+9	call	IO_IO	1
+10	=	io_3	t2
+11	decr	a_4	basic	int	1
+12	decr	t3	basic	int	1
+13	cast	t3	int	int	5
+14	=	a_4	t3
+15	param	io_3
+16	param	a_4
+17	call	IO_print_int	2
+18	return
+19	function	Main_Main
+20	arg	this	object	Main	1
+21	decr	t1	basic	int	1
+22	fieldget	t1	this	num_2
+23	fieldset	this	num_2	0
 24	return
-25	class	rec2
-26	field_decr	rec2	a_8	basic	int	1
-27	field_decr	rec2	b_9	basic	int	1
-28	field_decr	rec2	obj_10	object	rec1	1
-29	function	rec2_two_times
-30	arg	a_12	basic	int	1
-31	arg	this	object	rec2	1
-32	decr	t8	basic	int	1
-33	*	t8	a_12	2
-34	return	t8
-35	error	function_return
-36	exit
-37	function	rec2_sum
-38	arg	b_15	basic	int	1
-39	arg	a_14	basic	int	1
-40	arg	this	object	rec2	1
-41	decr	c_16	basic	int	1
-42	decr	t9	basic	int	1
-43	+	t9	a_14	b_15
-44	decr	t10	basic	int	1
-45	param	this
-46	param	t9
-47	call	rec2_two_times	2	t10
-48	=	c_16	t10
-49	return	c_16
-50	error	function_return
-51	exit
-52	function	main
-53	decr	a_17	basic	int	1
-54	=	a_17	909
-55	decr	b_18	basic	int	1
-56	=	b_18	101
-57	decr	obj1_19	object	rec1	1
-58	decr	t11	object	rec1	1
-59	new	t11	rec1
-60	param	t11
-61	call	rec1_rec1	1
-62	=	obj1_19	t11
-63	decr	obj2_20	object	rec2	1
-64	decr	t12	object	rec2	1
-65	new	t12	rec2
-66	param	t12
-67	call	rec2_rec2	1
-68	=	obj2_20	t12
-69	decr	t14	object	rec1	1
-70	new	t14	rec1
-71	param	t14
-72	call	rec1_rec1	1
-73	decr	t13	object	rec1	1
-74	fieldset	obj2_20	obj_10	t14
-75	decr	c_21	basic	int	1
-76	decr	t15	basic	int	1
-77	param	obj2_20
-78	param	a_17
-79	param	1
-80	call	rec2_sum	3	t15
-81	=	c_21	t15
-82	decr	io_22	object	IO	1
-83	decr	t16	object	IO	1
-84	new	t16	IO
-85	param	t16
-86	call	IO_IO	1
-87	=	io_22	t16
-88	param	io_22
-89	param	c_21
-90	call	IO_print_int	2
-91	decr	t17	object	rec1	1
-92	fieldget	t17	obj2_20	obj_10
-93	decr	t18	basic	int	1
-94	param	t17
-95	param	b_18
-96	call	rec1_three_times	2	t18
-97	=	c_21	t18
-98	param	io_22
-99	param	c_21
-100	call	IO_print_int	2
-101	return
-102	function	rec2_rec2
-103	arg	this	object	rec2	1
-104	decr	t5	basic	int	1
-105	fieldget	t5	this	a_8
-106	fieldset	this	a_8	9
-107	decr	t6	basic	int	1
-108	fieldget	t6	this	b_9
-109	fieldset	this	b_9	10
-110	decr	t7	object	rec1	1
-111	fieldget	t7	this	obj_10
-112	return

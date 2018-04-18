@@ -1,8 +1,8 @@
 1	import	IO
 2	class	rec1
-3	field_decr	rec1	a_2	basic	int1
-4	field_decr	rec1	b_3	basic	int1
-5	field_decr	rec1	c_4	basic	int1
+3	field_decr	rec1	a_2	basic	int	1
+4	field_decr	rec1	b_3	basic	int	1
+5	field_decr	rec1	c_4	basic	int	1
 6	function	rec1_three_times
 7	arg	c_6	basic	int	1
 8	arg	this	object	rec1	1
@@ -23,9 +23,9 @@
 23	fieldset	this	c_4	0
 24	return
 25	class	rec2
-26	field_decr	rec2	a_8	basic	int1
-27	field_decr	rec2	b_9	basic	int1
-28	field_decr	rec2	obj_10	object	rec11
+26	field_decr	rec2	a_8	basic	int	1
+27	field_decr	rec2	b_9	basic	int	1
+28	field_decr	rec2	obj_10	object	rec1	1
 29	function	rec2_two_times
 30	arg	a_12	basic	int	1
 31	arg	this	object	rec2	1
@@ -88,23 +88,25 @@
 88	param	io_22
 89	param	c_21
 90	call	IO_print_int	2
-91	decr	t18	basic	int	1
-92	param	t17
-93	param	b_18
-94	call	rec1_three_times	2	t18
-95	=	c_21	t18
-96	param	io_22
-97	param	c_21
-98	call	IO_print_int	2
-99	return
-100	function	rec2_rec2
-101	arg	this	object	rec2	1
-102	decr	t5	basic	int	1
-103	fieldget	t5	this	a_8
-104	fieldset	this	a_8	9
-105	decr	t6	basic	int	1
-106	fieldget	t6	this	b_9
-107	fieldset	this	b_9	10
-108	decr	t7	object	rec1	1
-109	fieldget	t7	this	obj_10
-110	return
+91	decr	t17	object	rec1	1
+92	fieldget	t17	obj2_20	obj_10
+93	decr	t18	basic	int	1
+94	param	t17
+95	param	b_18
+96	call	rec1_three_times	2	t18
+97	=	c_21	t18
+98	param	io_22
+99	param	c_21
+100	call	IO_print_int	2
+101	return
+102	function	rec2_rec2
+103	arg	this	object	rec2	1
+104	decr	t5	basic	int	1
+105	fieldget	t5	this	a_8
+106	fieldset	this	a_8	9
+107	decr	t6	basic	int	1
+108	fieldget	t6	this	b_9
+109	fieldset	this	b_9	10
+110	decr	t7	object	rec1	1
+111	fieldget	t7	this	obj_10
+112	return

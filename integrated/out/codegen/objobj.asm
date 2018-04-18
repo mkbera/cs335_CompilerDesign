@@ -32,6 +32,8 @@ func_rec1_three_times:
 	ret
 push function_return_error_msg
 call printf
+mov dword eax, 1
+int 0x80
 
 mov dword esp, ebp
 pop ebp
@@ -70,6 +72,8 @@ func_rec2_two_times:
 	ret
 push function_return_error_msg
 call printf
+mov dword eax, 1
+int 0x80
 
 mov dword esp, ebp
 pop ebp
@@ -101,6 +105,8 @@ func_rec2_sum:
 	ret
 push function_return_error_msg
 call printf
+mov dword eax, 1
+int 0x80
 
 mov dword esp, ebp
 pop ebp
@@ -109,6 +115,7 @@ int 0x80
 main:
 	push ebp
 	mov ebp, esp
+	sub esp, 4
 	sub esp, 4
 	sub esp, 4
 	sub esp, 4
@@ -188,16 +195,19 @@ main:
 	mov dword [ ebp - 44], eax
 	call func_IO_print_int
 	add esp, 2* 4
-	;-1
-	push t17
-	mov dword eax, [ebp - 8]
+	mov dword ebx, [ebp - 20]
+	mov eax, [ebx+8]
 	push eax
-	mov dword [ ebp - 8], eax
+	mov dword ecx, [ebp - 8]
+	push ecx
+	mov dword [ ebp - 8], ecx
+	mov dword [ ebp - 20], ebx
+	mov dword [ ebp - 52], eax
 	call func_rec1_three_times
-	add esp, 1* 4
+	add esp, 2* 4
 	; TEST
-	mov dword [ebp - 52], eax
-	mov dword eax, [ ebp - 52]
+	mov dword [ebp - 56], eax
+	mov dword eax, [ ebp - 56]
 	mov dword ebx, [ebp - 44]
 	push ebx
 	push eax
