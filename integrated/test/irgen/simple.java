@@ -7,5 +7,7 @@ class rec {
 		char b = io.scan_char();
 		io.print_char(a+b);
 
+        // // asd //
+
 	}
 }
