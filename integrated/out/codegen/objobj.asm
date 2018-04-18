@@ -32,6 +32,8 @@ func_rec1_three_times:
 	ret
 push function_return_error_msg
 call printf
+mov dword eax, 1
+int 0x80
 
 mov dword esp, ebp
 pop ebp
@@ -70,6 +72,8 @@ func_rec2_two_times:
 	ret
 push function_return_error_msg
 call printf
+mov dword eax, 1
+int 0x80
 
 mov dword esp, ebp
 pop ebp
@@ -101,6 +105,8 @@ func_rec2_sum:
 	ret
 push function_return_error_msg
 call printf
+mov dword eax, 1
+int 0x80
 
 mov dword esp, ebp
 pop ebp

@@ -13,6 +13,7 @@ section .data
 	__dummy_float dq 0.0
 	_float_in db "%lf", 0
 	_int_in db "%i", 0
+	_char db "%c", 10, 0
 
 
 section .text
@@ -64,6 +65,8 @@ label_14:
 	ret
 push function_return_error_msg
 call printf
+mov dword eax, 1
+int 0x80
 
 mov dword esp, ebp
 pop ebp
@@ -151,6 +154,19 @@ func_rec_rec:
 
 func_IO_IO:
 	ret
+func_IO_print_char:
+	push ebp
+	mov ebp, esp
+	mov eax, [ebp+8]
+	mov edx, 0
+	mov ebx, 128
+	div ebx
+	push edx
+	push _char
+	call printf
+	mov esp, ebp
+	pop ebp
+	ret
 func_IO_print_int:
 	push ebp
 	mov ebp, esp
@@ -172,6 +188,7 @@ func_IO_print_float:
 	mov esp, ebp
 	pop ebp
 	ret
+func_IO_scan_char:
 func_IO_scan_int:
 	push ebp
 	mov ebp, esp

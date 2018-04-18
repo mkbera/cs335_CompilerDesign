@@ -1,6 +1,5 @@
 import IO;
 
-
 class rec {
     int a = 9;
     int b = 10;

@@ -73,9 +73,9 @@ function codeGen(instr, next_use_table, line_nr) {
 			}
 		}
 		assembly.add("call printf")
-		// assembly.add("mov dword eax, 1");
-		// assembly.add("int 0x80");
-		// assembly.shiftLeft()
+		assembly.add("mov dword eax, 1");
+		assembly.add("int 0x80");
+		assembly.shiftLeft()
 	}
 
 
@@ -1479,6 +1479,13 @@ function codeGen(instr, next_use_table, line_nr) {
 				assembly.add("fld dword [_" + line_nr + "]")
 				assembly.add("fistp dword [ebp - " + offset_x + "]")
 			}
+		}
+
+		else if (from == "int" && to == "int")  {
+			if (registers.address_descriptor[x]["type"] == "reg") {
+					var des_x = registers.address_descriptor[x]["name"]
+					assembly.add("mov dword " + des_x + ", [ebp - " + offset_x + "]")
+				}
 		}
 	}
 

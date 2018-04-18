@@ -20,6 +20,7 @@ section .data
 	__dummy_float dq 0.0
 	_float_in db "%lf", 0
 	_int_in db "%i", 0
+	_char db "%c", 10, 0
 
 
 section .text
@@ -122,6 +123,8 @@ func_test_test_func:
 	mov dword [ ebp - 28], ebx
 	call func_test_test2
 	add esp, 2* 4
+	; TEST
+	mov dword [ebp - 36], eax
 	mov dword eax, [ ebp - 40]
 	add dword eax, [ ebp - 44]
 	mov dword ecx, [ebp - -12]
@@ -295,32 +298,49 @@ main:
 	call malloc
 	add esp, 4
 	mov [ebp -16], eax
-	mov dword ebx, [ebp - 16]
-	push ebx
-	mov dword [ ebp - 4], eax
-	mov dword [ ebp - 16], ebx
+	push 40
+	call malloc
+	add esp, 4
+	mov ebx, [ebp - 16]
+	mov [ebx + 4 * 4], eax
+	push 8
+	call malloc
+	add esp, 4
+	mov ebx, [ebp - 16]
+	mov [ebx + 5 * 4], eax
+	mov dword eax, [ebp - 16]
+	push eax
+	mov dword [ ebp - 16], eax
 	call func_test_test
 	add esp, 1* 4
-	mov dword eax, [ebp - 12]
+	mov dword eax, [ ebp - 16]
 	push eax
 	mov dword [ ebp - 12], eax
 	call func_test_dummy
 	add esp, 1* 4
+	; TEST
+	mov dword [ebp - 32], eax
 	mov dword eax, [ebp - 32]
 	push eax
 	mov dword [ ebp - 32], eax
 	call func_test_dummy
 	add esp, 1* 4
+	; TEST
+	mov dword [ebp - 36], eax
 	mov dword eax, [ebp - 12]
 	push eax
 	mov dword [ ebp - 12], eax
 	call func_test_dummy
 	add esp, 1* 4
+	; TEST
+	mov dword [ebp - 32], eax
 	mov dword eax, [ebp - 32]
 	push eax
 	mov dword [ ebp - 32], eax
 	call func_test_dummy
 	add esp, 1* 4
+	; TEST
+	mov dword [ebp - 36], eax
 	mov dword eax, [ebp - 36]
 	push eax
 	mov dword ebx, [ebp - 4]
@@ -329,6 +349,8 @@ main:
 	mov dword [ ebp - 36], eax
 	call func_test_test2
 	add esp, 2* 4
+	; TEST
+	mov dword [ebp - 40], eax
 	fild dword [ebp - 40]
 	fstp dword [ebp - 44]
 	fld dword [ebp -44]
@@ -342,7 +364,7 @@ main:
 	mov dword [ ebp - 52], eax
 	call func_IO_IO
 	add esp, 1* 4
-	mov dword eax, [ebp - 48]
+	mov dword eax, [ ebp - 52]
 	push eax
 	mov dword ebx, [ebp - 4]
 	push ebx
@@ -426,6 +448,19 @@ func_test_test:
 
 func_IO_IO:
 	ret
+func_IO_print_char:
+	push ebp
+	mov ebp, esp
+	mov eax, [ebp+8]
+	mov edx, 0
+	mov ebx, 128
+	div ebx
+	push edx
+	push _char
+	call printf
+	mov esp, ebp
+	pop ebp
+	ret
 func_IO_print_int:
 	push ebp
 	mov ebp, esp
@@ -447,6 +482,7 @@ func_IO_print_float:
 	mov esp, ebp
 	pop ebp
 	ret
+func_IO_scan_char:
 func_IO_scan_int:
 	push ebp
 	mov ebp, esp

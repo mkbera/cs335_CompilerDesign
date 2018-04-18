@@ -1,0 +1,28 @@
+1	import	IO
+2	class	rec
+3	function	main
+4	decr	io_2	object	IO	1
+5	decr	t1	object	IO	1
+6	new	t1	IO
+7	param	t1
+8	call	IO_IO	1
+9	=	io_2	t1
+10	decr	a_3	basic	int	1
+11	decr	t2	basic	int	1
+12	param	io_2
+13	call	IO_scan_int	1	t2
+14	=	a_3	t2
+15	decr	b_4	basic	int	1
+16	decr	t3	basic	int	1
+17	param	io_2
+18	call	IO_scan_int	1	t3
+19	=	b_4	t3
+20	decr	t4	basic	int	1
+21	+	t4	a_3	b_4
+22	param	io_2
+23	param	t4
+24	call	IO_print_int	2
+25	return
+26	function	rec_rec
+27	arg	this	object	rec	1
+28	return
