@@ -54,7 +54,7 @@ function codeGen(instr, next_use_table, line_nr) {
 	// 		}
 	// 	}
 	// }
-	console.log(tac[line_nr])
+	// console.log(tac[line_nr])
 	if (op == "error") {
 		var msg = instr[2];
 

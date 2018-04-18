@@ -8,25 +8,28 @@
 8	call	IO_IO	1
 9	=	io_2	t1
 10	decr	a_3	basic	int	1
-11	decr	t2	basic	char	1
+11	decr	t2	basic	int	1
 12	param	io_2
 13	call	IO_scan_char	1	t2
-14	decr	t3	basic	int	1
-15	cast	t3	char	int	t2
-16	=	a_3	t3
-17	decr	b_4	basic	int	1
-18	decr	t4	basic	char	1
-19	param	io_2
-20	call	IO_scan_char	1	t4
-21	decr	t5	basic	int	1
-22	cast	t5	char	int	t4
-23	=	b_4	t5
-24	decr	t6	basic	int	1
-25	+	t6	a_3	b_4
-26	param	io_2
-27	param	t6
-28	call	IO_print_char	2
-29	return
-30	function	rec_rec
-31	arg	this	object	rec	1
+14	=	a_3	t2
+15	param	io_2
+16	param	a_3
+17	call	IO_print_char	2
+18	decr	b_4	basic	int	1
+19	decr	t3	basic	int	1
+20	param	io_2
+21	call	IO_scan_char	1	t3
+22	=	b_4	t3
+23	decr	t4	basic	int	1
+24	param	io_2
+25	call	IO_scan_char	1	t4
+26	=	b_4	t4
+27	decr	t5	basic	int	1
+28	+	t5	b_4	a_3
+29	param	io_2
+30	param	t5
+31	call	IO_print_char	2
 32	return
+33	function	rec_rec
+34	arg	this	object	rec	1
+35	return
