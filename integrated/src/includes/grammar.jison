@@ -1204,9 +1204,9 @@ integral_type :
 		'char' 
 		{
 			$$ = {
-				type: "char",
+				type: "int",
 				category: "basic",
-				width: 1,
+				width: 4,
 				length: null,
 				dimension: 0
 			}
