@@ -21,26 +21,23 @@ section .text
 main:
 	push ebp
 	mov ebp, esp
-	push 20
+	sub esp, 4
+	sub esp, 4
+	sub esp, 4
+	sub esp, 4
+	sub esp, 4
+	sub esp, 4
+	push 0
 	call malloc
 	add esp, 4
+	mov [ebp -8], eax
+	mov dword eax, [ebp - 8]
 	push eax
-	sub esp, 4
-	sub esp, 4
-	sub esp, 4
-	sub esp, 4
-	sub esp, 4
-	mov dword [ ebp - 8], 0
-
-label_9:
-	mov dword [ ebp - 12], 1
-	cmp dword [ ebp - 8], 5
-	jl label_13
-	mov dword [ ebp - 12], 0
-
-label_13:
-	cmp dword [ ebp - 12], 0
-	je label_30
+	mov dword [ ebp - 8], eax
+	call func_IO_IO
+	add esp, 1* 4
+	mov dword eax, [ ebp - 8]
+	mov [ebp - 4], eax
 	push 8
 	call malloc
 	add esp, 4
@@ -50,39 +47,17 @@ label_13:
 	mov dword [ ebp - 16], eax
 	call func_rec_rec
 	add esp, 1* 4
-	mov dword [ ebp - 20], 0
-	cmp dword [ ebp - 8], 0
-	jge label_22
-	push array_access_low_error_msg
-	call printf
-	mov dword eax, 1
-	int 0x80
-
-label_22:
-	cmp dword [ ebp - 8], 5
-	jl label_24
-	push array_access_up_error_msg
-	call printf
-	mov dword eax, 1
-	int 0x80
-
-label_24:
-	mov dword eax, [ebp - 20]
-	mov dword ebx, [ ebp - 8]
-	add dword eax, ebx
-	mov dword ecx, [ebp - 16]
-	mov dword edx, [ebp - 4]
-	mov dword [edx + eax * 4], ecx
-	mov dword esi, ebx
-	add dword ebx, 1
-	mov dword [ ebp - 4], edx
-	mov dword [ ebp - 8], ebx
-	mov dword [ ebp - 16], ecx
-	mov dword [ ebp - 20], eax
-	mov dword [ ebp - 24], esi
-	jmp label_9
-
-label_30:
+	mov dword eax, [ ebp - 16]
+	mov dword [eax+0], 9
+	mov ebx, [eax+0]
+	mov dword ecx, [ebp - 4]
+	push ecx
+	push ebx
+	mov dword [ ebp - 4], ecx
+	mov dword [ ebp - 12], eax
+	mov dword [ ebp - 24], ebx
+	call func_IO_print_int
+	add esp, 2* 4
 	mov dword esp, ebp
 	pop ebp
 	ret
