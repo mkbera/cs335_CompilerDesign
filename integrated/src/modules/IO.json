@@ -5,7 +5,8 @@
     "__dummy_float dq 0.0",
     "_float_in db \"%lf\", 0",
     "_int_in db \"%i\", 0",
-    "_char db \"%c\", 10, 0"
+    "_char db \"%c\", 10, 0",
+    "_char_in db \"%c\", 0"
 
     ],
     "code": [
@@ -51,7 +52,18 @@
         "\tpop ebp",
         "\tret",
         
-        "func_IO_scan_char:",    
+        "func_IO_scan_char:",
+        "\tpush ebp",
+        "\tmov ebp, esp",
+        "\tsub esp, 4",
+        "\tpush esp",
+        "\tpush _char_in",
+        "\tcall scanf",
+        "\tmov dword eax, [ebp - 4]",
+        "\tmov esp, ebp",
+        "\tpop ebp",
+        "\tret",
+
         "func_IO_scan_int:",
         "\tpush ebp",
         "\tmov ebp, esp",
