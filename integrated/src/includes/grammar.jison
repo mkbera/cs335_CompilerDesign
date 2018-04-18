@@ -96,14 +96,14 @@
 
 								if (obj.field) {
 									self.consr_code = self.consr_code.concat([
-										"decr" + ir_sep + temp + ir_sep + type.category + ir_sep + type.type + "1",
+										"decr" + ir_sep + temp + ir_sep + type.category + ir_sep + type.type + ir_sep + "1",
 										"cast" + ir_sep + temp + ir_sep + inits[index].type.type + ir_sep + type.type + ir_sep + inits[index].place,
 										"arrset" + ir_sep + variable.place + ir_sep + index + ir_sep + temp
 									])
 								}
 								else {
 									self.code = self.code.concat([
-										"decr" + ir_sep + temp + ir_sep + type.category + ir_sep + type.type + "1",
+										"decr" + ir_sep + temp + ir_sep + type.category + ir_sep + type.type + ir_sep + "1",
 										"cast" + ir_sep + temp + ir_sep + inits[index].type.type + ir_sep + type.type + ir_sep + inits[index].place,
 										"arrset" + ir_sep + variable.identifier + ir_sep + index + ir_sep + temp
 									])
@@ -3283,7 +3283,7 @@ method_invocation :
 			for (var index in $3) {
 				$$.code = $$.code.concat($3[index].code)
 
-				if (!($3[index].type.get_serial_type() == method.parameters[index].type.get_serial_type() || ($3[index].type.numeric() && method.parameters.type.numeric()))) {
+				if (!($3[index].type.get_serial_type() == method.parameters[index].type.get_serial_type() || ($3[index].type.numeric() && method.parameters[index].type.numeric()))) {
 					throw Error("Argument must be of type " + method.parameters[index].type.get_serial_type())
 				}
 				if ($3[index].type.category == "array" && $3[index].type.get_size() != method.parameters[index].type.get_size()) {
@@ -3369,14 +3369,13 @@ method_invocation :
 	|
 		primary 'field_invoker' 'identifier' 'paranthesis_start' argument_list 'paranthesis_end' 
 		{
-			$$ = { code: [], type: null, place: null }
+			$$ = { code: $1.code, type: null, place: null }
 
 			if ($1.type.category != "object") {
 				throw Error("Type '" + $1.type.get_serial_type() + "' does not have the property " + $identifier)
 			}
 
 			var method = ST.lookup_method($identifier, true, ST.classes[$1.type.type])
-			var temp = ST.create_temporary()
 			var type = method.return_type
 
 			$5.unshift({
@@ -3392,7 +3391,7 @@ method_invocation :
 			for (var index in $5) {
 				$$.code = $$.code.concat($5[index].code)
 
-				if (!($5[index].type.get_serial_type() == method.parameters[index].type.get_serial_type() || ($5[index].type.numeric() && method.parameters.type.numeric()))) {
+				if (!($5[index].type.get_serial_type() == method.parameters[index].type.get_serial_type() || ($5[index].type.numeric() && method.parameters[index].type.numeric()))) {
 					throw Error("Argument must be of type " + method.parameters[index].type.get_serial_type())
 				}
 				if ($5[index].type.category == "array" && $5[index].type.get_size() != method.parameters[index].type.get_size()) {
@@ -3434,14 +3433,13 @@ method_invocation :
 	|
 		primary 'field_invoker' 'identifier' 'paranthesis_start' 'paranthesis_end' 
 		{
-			$$ = { code: [], type: null, place: null }
+			$$ = { code: $1.code, type: null, place: null }
 
 			if ($1.type.category != "object") {
 				throw Error("Type '" + $1.type.get_serial_type() + "' does not have the property " + $identifier)
 			}
 
 			var method = ST.lookup_method($identifier, true, ST.classes[$1.type.type])
-			var temp = ST.create_temporary()
 			var type = method.return_type
 
 			if (method.num_parameters > 1) {
@@ -3507,7 +3505,7 @@ field_access :
 array_access :
 		expr_name 'colon' dim_exprs 
 		{
-			$$ = { code: [], place: null, offset: null, type: null }
+			$$ = { code: $1.code, place: null, offset: null, type: null }
 
 			var temp = ST.create_temporary()
 
@@ -3578,7 +3576,7 @@ array_access :
 				throw Error("Array dimensions do not match")
 			}
 
-			$$.place = array.display_name
+			$$.place = $1.place
 			$$.offset = temp
 			$$.type = type
 		}
@@ -3661,7 +3659,7 @@ class_instance_creation_expr :
 			for (var index in $4) {
 				$$.code = $$.code.concat($4[index].code)
 
-				if (!($4[index].type.get_serial_type() == method.parameters[index].type.get_serial_type() || ($4[index].type.numeric() && method.parameters.type.numeric()))) {
+				if (!($4[index].type.get_serial_type() == method.parameters[index].type.get_serial_type() || ($4[index].type.numeric() && method.parameters[index].type.numeric()))) {
 					throw Error("Argument must be of type " + method.parameters[index].type.get_serial_type())
 				}
 				if ($4[index].type.category == "array" && $4[index].type.get_size() != method.parameters[index].type.get_size()) {
@@ -3719,7 +3717,7 @@ class_instance_creation_expr :
 			for (var index in parameters) {
 				$$.code = $$.code.concat(parameters[index].code)
 
-				if (!(parameters[index].type.get_serial_type() == method.parameters[index].type.get_serial_type() || (parameters[index].type.numeric() && method.parameters.type.numeric()))) {
+				if (!(parameters[index].type.get_serial_type() == method.parameters[index].type.get_serial_type() || (parameters[index].type.numeric() && method.parameters[index].type.numeric()))) {
 					throw Error("Argument must be of type " + method.parameters[index].type.get_serial_type())
 				}
 				if (parameters[index].type.category == "array" && parameters[index].type.get_size() != method.parameters[index].type.get_size()) {

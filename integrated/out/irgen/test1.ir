@@ -1,0 +1,199 @@
+1	import	IO
+2	class	dummy
+3	field_decr	dummy	test_var_2	basic	int1
+4	function	dummy_dummy
+5	arg	this	object	dummy	1
+6	decr	t1	basic	int	1
+7	fieldget	t1	this	test_var_2
+8	fieldset	this	test_var_2	5
+9	return
+10	class	test
+11	field_decr	test	super_3	object	dummy	1
+12	field_decr	test	x_5	basic	int1
+13	field_decr	test	a_6	basic	int1
+14	field_decr	test	c_7	basic	int1
+15	field_decr	test	d_8	array	int	10	
+16	field_decr	test	test_9	array	float	2
+17	function	test_test2
+18	arg	x_12	basic	int	1
+19	arg	this	object	test	1
+20	decr	t14	basic	float	1
+21	cast	t14	int	float	x_12
+22	decr	t15	basic	float	1
+23	+	t15	t14	1.020
+24	decr	t16	basic	int	1
+25	fieldget	t16	this	a_6
+26	decr	t17	basic	float	1
+27	decr	t18	basic	float	1
+28	cast	t18	int	float	t16
+29	+	t17	t15	t18
+30	return	t17
+31	error	function_return
+32	exit
+33	function	test_test_func
+34	arg	arr_14	array	int	10
+35	arg	this	object	test	1
+36	decr	a_15	basic	int	1
+37	decr	t19	basic	int	1
+38	cast	t19	int	int	1
+39	=	a_15	t19
+40	decr	b_16	basic	int	1
+41	=	b_16	0
+42	decr	c_17	basic	int	1
+43	=	c_17	1
+44	decr	t20	basic	int	1
+45	+	t20	b_16	5
+46	decr	t21	basic	int	1
+47	cast	t21	int	int	t20
+48	=	a_15	t21
+49	decr	t22	basic	int	1
+50	=	t22	b_16
+51	neg	t22
+52	decr	t23	basic	int	1
+53	cast	t23	int	int	t22
+54	=	a_15	t23
+55	decr	t24	basic	int	1
+56	param	this
+57	param	a_15
+58	call	test_test2	2	t24
+59	decr	t25	basic	int	1
+60	cast	t25	int	int	t24
+61	=	a_15	t25
+62	decr	t26	basic	int	1
+63	cast	t26	int	int	1
+64	+	a_15	a_15	t26
+65	decr	t27	array	int	10
+66	fieldget	t27	this	d_8
+67	decr	t29	basic	int	1
+68	=	t29	0
+69	decr	t28	basic	int	1
+70	=	t28	1
+71	neg	t28
+72	ifgoto	ge	t28	0	74
+73	error	array_access_low
+74	ifgoto	lt	t28	2	76
+75	error	array_access_up
+76	+	t29	t29	t28
+77	*	t29	t29	5
+78	+	t29	t29	4
+79	decr	t30	basic	int	1
+80	cast	t30	float	int	0.0
+81	arrset	t27	t29	t30
+82	decr	i_18	basic	int	1
+83	=	i_18	0
+84	=	i_18	5
+85	ifgoto	eq	i_18	0	113
+86	decr	j_19	basic	int	1
+87	=	j_19	0
+88	=	j_19	5
+89	ifgoto	eq	j_19	0	111
+90	decr	t33	basic	int	1
+91	+	t33	b_16	1
+92	decr	t31	array	int	10
+93	fieldget	t31	this	d_8
+94	decr	t32	basic	int	1
+95	=	t32	0
+96	ifgoto	ge	i_18	0	98
+97	error	array_access_low
+98	ifgoto	lt	i_18	2	100
+99	error	array_access_up
+100	+	t32	t32	i_18
+101	ifgoto	ge	j_19	0	103
+102	error	array_access_low
+103	ifgoto	lt	j_19	5	105
+104	error	array_access_up
+105	*	t32	t32	5
+106	+	t32	t32	j_19
+107	arrset	t31	t32	t33
+108	return	1
+109	inc	j_19
+110	jump	88
+111	inc	i_18
+112	jump	84
+113	return	a_15
+114	error	function_return
+115	exit
+116	function	test_dummy
+117	arg	this	object	test	1
+118	return	this
+119	error	function_return
+120	exit
+121	function	main
+122	decr	a_21	basic	int	1
+123	decr	t34	basic	int	1
+124	cast	t34	float	int	2.0
+125	=	a_21	t34
+126	decr	self_22	object	test	1
+127	decr	t35	object	test	1
+128	new	t35	test
+129	param	t35
+130	call	test_test	1
+131	=	self_22	t35
+132	decr	b_23	basic	float	1
+133	decr	t36	object	test	1
+134	param	self_22
+135	call	test_dummy	1	t36
+136	decr	t37	object	test	1
+137	param	t36
+138	call	test_dummy	1	t37
+139	decr	t36	object	test	1
+140	param	self_22
+141	call	test_dummy	1	t36
+142	decr	t37	object	test	1
+143	param	t36
+144	call	test_dummy	1	t37
+145	decr	t38	basic	int	1
+146	param	t37
+147	param	a_21
+148	call	test_test2	2	t38
+149	decr	t39	basic	float	1
+150	cast	t39	int	float	t38
+151	=	b_23	t39
+152	decr	rr_24	object	IO	1
+153	decr	t40	object	IO	1
+154	new	t40	IO
+155	param	t40
+156	call	IO_IO	1
+157	=	rr_24	t40
+158	param	rr_24
+159	param	a_21
+160	call	IO_print_int	2
+161	decr	t41	basic	float	1
+162	cast	t41	int	float	a_21
+163	=	b_23	t41
+164	return
+165	function	test_test
+166	arg	this	object	test	1
+167	decr	t2	basic	int	1
+168	fieldget	t2	this	x_5
+169	fieldset	this	x_5	10
+170	decr	t3	basic	int	1
+171	fieldget	t3	this	a_6
+172	decr	t4	basic	int	1
+173	fieldget	t4	this	c_7
+174	decr	t5	basic	int	1
+175	cast	t5	float	int	5.012
+176	fieldset	this	c_7	t5
+177	decr	t6	array	int	10
+178	fieldget	t6	this	d_8
+179	decr	t7	array	float	2
+180	fieldget	t7	this	test_9
+181	decr	t8	basic	float	1
+182	cast	t8	int	float	12
+183	arrset	t7	0	t8
+184	decr	t9	basic	float	1
+185	cast	t9	int	float	4
+186	arrset	t7	1	t9
+187	decr	t11	basic	int	1
+188	fieldget	t11	this	x_5
+189	decr	t10	basic	int	1
+190	fieldset	this	a_6	t11
+191	decr	t12	array	float	2
+192	fieldget	t12	this	test_9
+193	decr	t13	basic	int	1
+194	=	t13	0
+195	+	t13	t13	1
+196	*	t13	t13	1
+197	+	t13	t13	0
+198	arrset	t12	t13	1.0
+199	return

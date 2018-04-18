@@ -28,14 +28,14 @@ class test extends dummy {
 		a = b + 5;
 		a = -b;
 
-		a = test2(1);
+		a = test2(a);
 
 		a += 1;
 
-		d:[-1][4] = 0.0;
+		this.d:[-1][4] = 0.0;
 
-		for (int i = 0; i < 5; ++i) {
-			for (int j = 0; j < 5; ++j) {
+		for (int i = 0; i = 5; ++i) {
+			for (int j = 0; j = 5; ++j) {
 				d:[i][j] = 1 + b;
 				return 1;
 			}
@@ -51,9 +51,8 @@ class test extends dummy {
 	public void main() {
 		int a = 2.0;
 		test self = new test();
-		self.dummy();
-		float b = self.dummy().dummy().test2(5);
-		IO rr;
+		float b = self.dummy().dummy().test2(a);
+		IO rr = new IO();
 		rr.print_int(a);
 		b = a;
 	}

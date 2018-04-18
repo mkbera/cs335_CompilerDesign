@@ -55,7 +55,7 @@ class Assembly {
 	addModules(module) {
 		var self = this;
 
-		var path = "classes_project/src/modules/" + module + ".json"
+		var path = "src/modules/" + module + ".json"
 
 		var fs = require("fs")
 		if (fs.existsSync(path)) {
@@ -102,7 +102,7 @@ class Assembly {
 
 	print(file = "") {
 		var code = this.generate_code().replace(/\:\s*\n\s*\n/g, ":\n")
-		console.log(code)
+		// console.log(code)
 		if (file != "") {
 			var fs = require("fs")
 			fs.writeFile(file, code, (err) => {

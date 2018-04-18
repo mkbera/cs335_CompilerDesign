@@ -1,0 +1,88 @@
+1	import	IO
+2	class	Main
+3	field_decr	Main	num_2	basic	int1
+4	function	Main_increase
+5	arg	n_5	basic	int	1
+6	arg	this	object	Main	1
+7	decr	i_6	basic	int	1
+8	=	i_6	0
+9	decr	t3	basic	int	1
+10	=	t3	1
+11	ifgoto	lt	i_6	n_5	13
+12	=	t3	0
+13	ifgoto	eq	t3	0	23
+14	decr	t5	basic	int	1
+15	fieldget	t5	this	num_2
+16	decr	t6	basic	int	1
+17	=	t6	t5
+18	+	t5	t5	1
+19	decr	t4	basic	int	1
+20	=	t4	i_6
+21	+	i_6	i_6	1
+22	jump	9
+23	return
+24	function	Main_test
+25	arg	this	object	Main	1
+26	return	10
+27	error	function_return
+28	exit
+29	function	main
+30	decr	io_8	object	IO	1
+31	decr	t7	object	IO	1
+32	new	t7	IO
+33	param	t7
+34	call	IO_IO	1
+35	=	io_8	t7
+36	decr	cc_9	object	Main	1
+37	decr	t8	object	Main	1
+38	new	t8	Main
+39	param	t8
+40	call	Main_Main	1
+41	=	cc_9	t8
+42	decr	b_10	basic	int	1
+43	=	b_10	10
+44	decr	a_11	basic	int	1
+45	decr	t9	basic	int	1
+46	*	t9	b_10	5
+47	decr	t10	basic	int	1
+48	param	cc_9
+49	call	Main_test	1	t10
+50	decr	t11	basic	int	1
+51	+	t11	t9	t10
+52	decr	t12	basic	int	1
+53	cast	t12	int	int	t11
+54	decr	t13	basic	float	1
+55	cast	t13	int	float	t12
+56	decr	t14	basic	int	1
+57	cast	t14	float	int	t13
+58	=	a_11	t14
+59	param	io_8
+60	param	a_11
+61	call	IO_print_int	2
+62	decr	i_12	basic	int	1
+63	=	i_12	0
+64	decr	t15	basic	int	1
+65	=	t15	1
+66	ifgoto	lt	i_12	10	68
+67	=	t15	0
+68	ifgoto	eq	t15	0	76
+69	decr	t17	basic	int	1
+70	=	t17	a_11
+71	+	a_11	a_11	1
+72	decr	t16	basic	int	1
+73	=	t16	i_12
+74	+	i_12	i_12	1
+75	jump	64
+76	param	io_8
+77	param	a_11
+78	call	IO_print_int	2
+79	return
+80	function	Main_Main
+81	arg	this	object	Main	1
+82	decr	t1	basic	int	1
+83	fieldget	t1	this	num_2
+84	fieldset	this	num_2	0
+85	decr	t2	basic	int	1
+86	+	t2	t2	1
+87	fieldset	this	num_2	1
+88	return

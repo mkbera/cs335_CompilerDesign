@@ -31,7 +31,7 @@ console.log("")
 output = ""
 
 code.forEach(function (line, index) {
-    console.log((index + 1) + ir_sep + line)
+    // console.log((index + 1) + ir_sep + line)
     output += (index + 1) + ir_sep + line + "\n"
 })
 

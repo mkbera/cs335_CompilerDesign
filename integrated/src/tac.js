@@ -70,7 +70,7 @@ function getBasicBlocks() {
 
 	tac.forEach(function (instr, index) {
 		switch (instr[1]) {
-			case "if": {
+			case "ifgoto": {
 				splits.push(parseInt(index + 1))
 				splits.push(instr[instr.length - 1] - 1)
 				break;
@@ -144,10 +144,9 @@ function getNextUseTable(basic_blocks, variables) {
 				if (variables.indexOf(v1) > -1) {
 					variable_status[v1] = ["live", parseInt(instr[0])];
 				}
-				break;
 			}
 			switch (instr[1]) {
-				case "if": {
+				case "ifgoto": {
 					var c1 = instr[3];
 					var c2 = instr[4];
 
@@ -183,7 +182,7 @@ function getNextUseTable(basic_blocks, variables) {
 					}
 					break;
 				}
-				case "arr=": {
+				case "arrget": {
 					var index = instr[3];
 					var value = instr[4];
 
@@ -195,16 +194,60 @@ function getNextUseTable(basic_blocks, variables) {
 					}
 					break;
 				}
-				case "=arr": {
+				case "arrset": {
 					var destn = instr[2];
+					var offst = instr[3];
 					var value = instr[4];
 
 					variable_status[destn] = ["dead", Infinity];
 
+					if (variables.indexOf(offst) > -1) {
+						variable_status[offst] = ["live", parseInt(instr[0])];
+					}
 					if (variables.indexOf(value) > -1) {
 						variable_status[value] = ["live", parseInt(instr[0])];
 					}
 					break;
+				}
+				case "fieldget": {
+					var destn = instr[2];
+					var offst = instr[3];
+					var value = instr[4];
+
+					variable_status[destn] = ["dead", Infinity];
+
+					if (variables.indexOf(offst) > -1) {
+						variable_status[offst] = ["live", parseInt(instr[0])];
+					}
+					if (variables.indexOf(value) > -1) {
+						variable_status[value] = ["live", parseInt(instr[0])];
+					}
+					break;
+				}
+				case "fieldset": {
+					var destn = instr[2];
+					var field = instr[3];
+					var value = instr[4];
+
+					variable_status[destn] = ["live", parseInt(instr[0])];
+
+					if (variables.indexOf(field) > -1) {
+						variable_status[field] = ["dead", parseInt(instr[0])];
+					}
+					if (variables.indexOf(value) > -1) {
+						variable_status[value] = ["live", parseInt(instr[0])];
+					}
+					break;
+				}
+				case "return": {
+					if (instr.length > 2) {
+						var value = instr[2];
+
+						if (variables.indexOf(value) > -1) {
+							variable_status[value] = ["live", parseInt(instr[0])];
+						}
+					}
+					break
 				}
 			}
 		}
@@ -214,39 +257,39 @@ function getNextUseTable(basic_blocks, variables) {
 }
 
 class Type {
-    constructor(type, category, width, length, dimension = 0) {
-        this.type = type
-        this.category = category
+	constructor(type, category, width, length, dimension = 0) {
+		this.type = type
+		this.category = category
 
-        this.width = width
-        this.length = length
-        this.dimension = dimension
+		this.width = width
+		this.length = length
+		this.dimension = dimension
 	}
 }
 
 class Variable {
-    constructor(name, type, index, isparam = false) {
-        this.name = name
-        this.type = type
-        this.display_name = name + "_" + index
+	constructor(name, type, index, isparam = false) {
+		this.name = name
+		this.type = type
+		this.display_name = name + "_" + index
 
-        this.isparam = isparam
-    }
+		this.isparam = isparam
+	}
 }
 
 class Class {
-    constructor(name, parent = null) {
-        this.name = name
+	constructor(name, parent = null) {
+		this.name = name
 
-        this.methods = {}
-        this.variables = {}
+		this.methods = {}
+		this.variables = {}
 
-        this.parent = parent
+		this.parent = parent
 	}
 }
 
 class SymbolTable {
-    constructor() {
+	constructor() {
 		var test = new Class("test")
 		var type1 = new Type("int", "basic", 4, null)
 		var type2 = new Type("float", "basic", 4, null)
@@ -255,17 +298,17 @@ class SymbolTable {
 		var b = new Variable("b", type2, 2)
 		var c = new Variable("c", type3, 3)
 		test.variables = {
-			"a" : a,
-			"b" : b,
-			"c" : c
+			"a": a,
+			"b": b,
+			"c": c
 		}
-		this.classes = {"test" : test}
+		this.classes = { "test": test }
 
-        
-    }
+
+	}
 }
 
-function get_classDict(){
+function get_classDict() {
 	var ST = new SymbolTable()
 	classes = Object.keys(ST.classes)
 	var symtab = {}
@@ -274,13 +317,13 @@ function get_classDict(){
 		dict_class = {}
 		position = 0
 		var variables = Object.keys(ST.classes[_class].variables)
-		variables.forEach(function (var_name){
+		variables.forEach(function (var_name) {
 			var variable = ST.classes[_class].variables[var_name]
 			dict_class[variable.display_name] = {
-				"category" : variable.type.category,
-				"type" : variable.type.type,
-				"length" : variable.type.length,
-				"position" : position
+				"category": variable.type.category,
+				"type": variable.type.type,
+				"length": variable.type.length,
+				"position": position
 			}
 			position += 1
 		})

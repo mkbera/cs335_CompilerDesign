@@ -117,7 +117,6 @@ function codeGen(instr, next_use_table, line_nr) {
 			else {                             				// x is in memory
 				if (variables.indexOf(y) == -1) {        // y is a constant
 					des_y = y;
-
 					des_x = registers.loadVariable(x, line_nr, next_use_table, safe = [], safe_regs = [], print = false);
 					assembly.add("mov dword " + des_x + ", " + des_y);
 				}
@@ -1101,7 +1100,7 @@ function codeGen(instr, next_use_table, line_nr) {
 				assembly.add("mov dword eax, [ebp - " + registers.address_descriptor[x]["offset"] + "]")
 			}
 			else {
-				assembly.add("fld [ebp - " + registers.address_descriptor[x]["offset"] + "]")
+				assembly.add("fld dword [ebp - " + registers.address_descriptor[x]["offset"] + "]")
 			}
 		}
 		assembly.add("mov dword esp, ebp");
