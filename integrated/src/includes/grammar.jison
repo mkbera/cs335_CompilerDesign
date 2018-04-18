@@ -135,7 +135,7 @@
 
 						if (obj.field) {
 							self.code.push(
-								"field_decr" + ir_sep + ST.current_class.name + ir_sep + variable.identifier + ir_sep + "array" + ir_sep + type.get_basic_type() + ir_sep + length + ir_sep
+								"field_decr" + ir_sep + ST.current_class.name + ir_sep + variable.identifier + ir_sep + "array" + ir_sep + type.get_basic_type() + ir_sep + length
 							)
 						}
 						else {
@@ -148,7 +148,7 @@
 				else {
 					if (obj.field) {
 						self.code.push(
-							"field_decr" + ir_sep + ST.current_class.name + ir_sep + variable.identifier + ir_sep + obj.type.category + ir_sep + obj.type.get_basic_type() + obj.type.get_size()
+							"field_decr" + ir_sep + ST.current_class.name + ir_sep + variable.identifier + ir_sep + obj.type.category + ir_sep + obj.type.get_basic_type() + ir_sep + obj.type.get_size()
 						)
 					}
 					else {
@@ -1242,14 +1242,12 @@ floating_type :
 reference_type :
 		'identifier' 
 		{
-			ST.lookup_class($identifier)
-
-			$$ = new Type($identifier, "object", null, null, 0)
+			$$ = new Type(ST.lookup_class($identifier).name, "object", null, null, 0)
 		}
 	|
 		'identifier' dim_exprs 
 		{
-			var type = new Type(ST.get_class($identifier), "object", null, null, 0)
+			var type = new Type(ST.lookup_class($identifier).name, "object", null, null, 0)
 
 			var l = $2.length - 1
 			while (l >= 0) {
@@ -3369,7 +3367,7 @@ method_invocation :
 	|
 		primary 'field_invoker' 'identifier' 'paranthesis_start' argument_list 'paranthesis_end' 
 		{
-			$$ = { code: $1.code, type: null, place: null }
+			$$ = { code: [], type: null, place: null }
 
 			if ($1.type.category != "object") {
 				throw Error("Type '" + $1.type.get_serial_type() + "' does not have the property " + $identifier)
@@ -3836,7 +3834,7 @@ expr_name :
 		expr_name 'field_invoker' 'identifier' 
 		{
 			$$ = {
-				code: [],
+				code: $1.code,
 				place: null,
 				method: null,
 				variable: null,
