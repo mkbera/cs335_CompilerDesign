@@ -1,7 +1,6 @@
 #!/bin/sh
 
 ir_file="out/irgen/`echo $1 | sed -e 's/.*\///g' -e 's/.java//g'`.ir"
-# ir_file="out/irgen/arr_in_obj.ir"
 as_file=out/codegen/`echo $1 | sed -e 's/.*\///g' -e 's/.java//g'`.asm
 
 node src/irgen.js $1 $ir_file

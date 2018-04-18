@@ -45,7 +45,7 @@ main:
 	mov dword esp, ebp
 	pop ebp
 	ret
-func_Main_Main:
+func_rec2_rec2:
 	push ebp
 	mov ebp, esp
 	sub esp, 4

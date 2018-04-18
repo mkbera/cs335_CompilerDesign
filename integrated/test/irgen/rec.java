@@ -16,9 +16,13 @@ class rec {
 		int b = 9;
 		rec first_object = new rec();
 		a = first_object.array_func(a, b);
-		b = a:[1][2];
 		IO ip = new IO();
-		ip.print_int(b);
+		for (int i = 0; i < 5; i++) {
+			for (int j = 0; j < 5; j++) {
+				b = a:[i][j]
+				ip.print_int(b);
+			}
+		}
 		// int c = gcd(a, b);
 	}
 }

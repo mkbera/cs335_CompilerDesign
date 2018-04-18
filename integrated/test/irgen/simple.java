@@ -2,6 +2,7 @@ import IO;
 
 class Main {
     int num = 0;
+    float[1][2] a;
 
     // Main() {
     //     num += 1;
@@ -13,24 +14,28 @@ class Main {
     //     }
     // }
 
-    // int test() {
-    //     return 10;
-    // }
+    int test() {
+        a:[0][0] = 5;
+        return 10;
+    }
 
     void main() {
         IO io = new IO();
         
-        // Main cc = new Main();
-        // int b = 10;
-        // int a =(int)(b * 5 + cc.test());
-        int a =(int)5;	
-        io.print_int(a);
+        float[5][5] arr;
+        float b = 10;
 
-        // for (int i = 0; i < 10; i++) {
-        //     a++;
-        // }
+        for (int i = 0; i < 5; i++) {
+            for (int j = 0; j < 5; j++) {
+                arr:[i][j] = b + 5.0 * i + j;
+            }
+        }
 
-        
-        // io.print_int(a);
+        for (int i = 0; i < 5; i++) {
+            for (int j = 0; j < 5; j++) {
+                b = arr:[i][j];
+                io.print_float(b);
+            }
+        }
     }
 }

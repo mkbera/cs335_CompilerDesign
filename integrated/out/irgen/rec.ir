@@ -2,8 +2,8 @@
 2	class	rec
 3	field_decr	rec	c_2	basic	int1
 4	function	rec_array_func
-5	arg	b_5	basic	int	1
-6	arg	a_4	array	int	25
+5	arg	b_5	basic	float	1
+6	arg	a_4	array	float	25
 7	arg	this	object	rec	1
 8	decr	i_6	basic	int	1
 9	=	i_6	0
@@ -11,80 +11,119 @@
 11	=	t2	1
 12	ifgoto	lt	i_6	5	14
 13	=	t2	0
-14	ifgoto	eq	t2	0	48
+14	ifgoto	eq	t2	0	52
 15	decr	j_7	basic	int	1
 16	=	j_7	0
 17	decr	t4	basic	int	1
 18	=	t4	1
 19	ifgoto	lt	j_7	5	21
 20	=	t4	0
-21	ifgoto	eq	t4	0	44
-22	decr	t7	basic	int	1
-23	+	t7	b_5	i_6
-24	decr	t8	basic	int	1
-25	+	t8	t7	j_7
-26	decr	t6	basic	int	1
-27	=	t6	0
-28	ifgoto	ge	i_6	0	30
-29	error	array_access_low
-30	ifgoto	lt	i_6	5	32
-31	error	array_access_up
-32	+	t6	t6	i_6
-33	ifgoto	ge	j_7	0	35
-34	error	array_access_low
-35	ifgoto	lt	j_7	5	37
-36	error	array_access_up
-37	*	t6	t6	5
-38	+	t6	t6	j_7
-39	arrset	a_4	t6	t8
-40	decr	t5	basic	int	1
-41	=	t5	j_7
-42	+	j_7	j_7	1
-43	jump	17
-44	decr	t3	basic	int	1
-45	=	t3	i_6
-46	+	i_6	i_6	1
-47	jump	10
-48	return	a_4
-49	error	function_return
-50	exit
-51	function	main
-52	decr	a_8	array	int	25	
-53	decr	b_9	basic	int	1
-54	=	b_9	9
-55	decr	first_object_10	object	rec	1
-56	decr	t9	object	rec	1
-57	new	t9	rec
-58	param	t9
-59	call	rec_rec	1
-60	=	first_object_10	t9
-61	decr	t10	array	int	25
-62	param	first_object_10
-63	param	a_8
-64	param	b_9
-65	call	rec_array_func	3	t10
-66	=	a_8	t10
-67	decr	t11	basic	int	1
-68	=	t11	0
-69	+	t11	t11	1
-70	*	t11	t11	5
-71	+	t11	t11	2
-72	decr	t12	basic	int	1
-73	arrget	t12	a_8	t11
-74	=	b_9	t12
-75	decr	ip_11	object	IO	1
-76	decr	t13	object	IO	1
-77	new	t13	IO
-78	param	t13
-79	call	IO_IO	1
-80	=	ip_11	t13
-81	param	ip_11
-82	param	b_9
-83	call	IO_print_int	2
-84	return
-85	function	rec_rec
-86	arg	this	object	rec	1
-87	decr	t1	basic	int	1
-88	fieldget	t1	this	c_2
-89	fieldset	this	c_2	9
-90	return
+21	ifgoto	eq	t4	0	48
+22	decr	t7	basic	float	1
+23	decr	t8	basic	float	1
+24	cast	t8	int	float	i_6
+25	+	t7	b_5	t8
+26	decr	t9	basic	float	1
+27	decr	t10	basic	float	1
+28	cast	t10	int	float	j_7
+29	+	t9	t7	t10
+30	decr	t6	basic	int	1
+31	=	t6	0
+32	ifgoto	ge	i_6	0	34
+33	error	array_access_low
+34	ifgoto	lt	i_6	5	36
+35	error	array_access_up
+36	+	t6	t6	i_6
+37	ifgoto	ge	j_7	0	39
+38	error	array_access_low
+39	ifgoto	lt	j_7	5	41
+40	error	array_access_up
+41	*	t6	t6	5
+42	+	t6	t6	j_7
+43	arrset	a_4	t6	t9
+44	decr	t5	basic	int	1
+45	=	t5	j_7
+46	+	j_7	j_7	1
+47	jump	17
+48	decr	t3	basic	int	1
+49	=	t3	i_6
+50	+	i_6	i_6	1
+51	jump	10
+52	return	a_4
+53	error	function_return
+54	exit
+55	function	main
+56	decr	a_8	array	float	25	
+57	decr	b_9	basic	float	1
+58	decr	t11	basic	float	1
+59	cast	t11	int	float	9
+60	=	b_9	t11
+61	decr	first_object_10	object	rec	1
+62	decr	t12	object	rec	1
+63	new	t12	rec
+64	param	t12
+65	call	rec_rec	1
+66	=	first_object_10	t12
+67	decr	t13	array	float	25
+68	param	first_object_10
+69	param	a_8
+70	param	b_9
+71	call	rec_array_func	3	t13
+72	=	a_8	t13
+73	decr	ip_11	object	IO	1
+74	decr	t14	object	IO	1
+75	new	t14	IO
+76	param	t14
+77	call	IO_IO	1
+78	=	ip_11	t14
+79	param	ip_11
+80	param	b_9
+81	call	IO_print_float	2
+82	decr	i_12	basic	int	1
+83	=	i_12	0
+84	decr	t15	basic	int	1
+85	=	t15	1
+86	ifgoto	lt	i_12	5	88
+87	=	t15	0
+88	ifgoto	eq	t15	0	123
+89	decr	j_13	basic	int	1
+90	=	j_13	0
+91	decr	t17	basic	int	1
+92	=	t17	1
+93	ifgoto	lt	j_13	5	95
+94	=	t17	0
+95	ifgoto	eq	t17	0	119
+96	decr	t19	basic	int	1
+97	=	t19	0
+98	ifgoto	ge	i_12	0	100
+99	error	array_access_low
+100	ifgoto	lt	i_12	5	102
+101	error	array_access_up
+102	+	t19	t19	i_12
+103	ifgoto	ge	j_13	0	105
+104	error	array_access_low
+105	ifgoto	lt	j_13	5	107
+106	error	array_access_up
+107	*	t19	t19	5
+108	+	t19	t19	j_13
+109	decr	t20	basic	float	1
+110	arrget	t20	a_8	t19
+111	=	b_9	t20
+112	param	ip_11
+113	param	b_9
+114	call	IO_print_int	2
+115	decr	t18	basic	int	1
+116	=	t18	j_13
+117	+	j_13	j_13	1
+118	jump	91
+119	decr	t16	basic	int	1
+120	=	t16	i_12
+121	+	i_12	i_12	1
+122	jump	84
+123	return
+124	function	rec_rec
+125	arg	this	object	rec	1
+126	decr	t1	basic	int	1
+127	fieldget	t1	this	c_2
+128	fieldset	this	c_2	9
+129	return
