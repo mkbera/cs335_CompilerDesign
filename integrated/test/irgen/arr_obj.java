@@ -6,11 +6,8 @@ class rec {
 	
 
 	public void main() {
-		
-		rec[5] arr;
-		for (int i=0; i<5; i++){
-			arr:[i] = new rec();
-		}
-
+		IO io = new IO();
+		rec d = new rec();
+		d.a = 2;
 	}
 }

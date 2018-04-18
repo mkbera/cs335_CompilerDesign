@@ -54,7 +54,7 @@ function codeGen(instr, next_use_table, line_nr) {
 	// 		}
 	// 	}
 	// }
-	// console.log(tac[line_nr])
+	console.log(tac[line_nr])
 	if (op == "error") {
 		var msg = instr[2];
 
@@ -845,6 +845,11 @@ function codeGen(instr, next_use_table, line_nr) {
 					else if (instr_local[4] == "float") {
 						registers.address_descriptor[x] = { "type": "mem", "name": x, "offset": registers.counter, "category": "arr_float" }
 					}
+					else{
+						var class_name = instr_local[4]
+						var category = "arr_" + class_name
+						registers.address_descriptor[x] = { "type": "mem", "name": x, "offset": registers.counter, "category": category }
+					}
 				}
 
 
@@ -880,8 +885,12 @@ function codeGen(instr, next_use_table, line_nr) {
 			if (category == "int") {
 				symtab[class_name][field_name]["category"] = "arr_int"
 			}
-			else {
+			else if (category == "float") {
 				symtab[class_name][field_name]["category"] = "arr_float"
+			}
+			else {
+				var category_array = "arr_" + category
+				symtab[class_name][field_name]["category"] = category_array
 			}
 
 			symtab[class_name][field_name]["length"] = instr[6]
@@ -923,7 +932,7 @@ function codeGen(instr, next_use_table, line_nr) {
 
 		Object.keys(symtab[class_name]).forEach(function (field) {
 			// console.log(symtab)
-			if (symtab[class_name][field]["category"] == "arr_int" || symtab[class_name][field]["category"] == "arr_float") {
+			if (symtab[class_name][field]["category"].split("_")[0] == "arr") {
 				var size = symtab[class_name][field]["length"] * 4
 				console.log(size)
 				assembly.add("push " + size)
@@ -1081,6 +1090,11 @@ function codeGen(instr, next_use_table, line_nr) {
 			else if (instr[4] == "float") {
 				registers.address_descriptor[x] = { "type": "mem", "name": x, "offset": registers.args_counter, "category": "arr_float" };
 			}
+			else{
+				var class_name = instr[4]
+				var category = "arr_" + class_name
+				registers.address_descriptor[x] = { "type": "mem", "name": x, "offset": registers.counter, "category": category }
+			}
 		}
 		else if (instr[3] == "object") {
 			var class_name = instr[4]
@@ -1189,7 +1203,7 @@ function codeGen(instr, next_use_table, line_nr) {
 
 	else if (op == "arrget") {	// z = a[10]
 		var z = instr[2];
-		if (registers.address_descriptor[z]["category"] == "int") {
+		if (registers.address_descriptor[z]["category"] != "float") {
 			var arr = instr[3];
 			var y = instr[4];
 			var des_z = "";
@@ -1265,7 +1279,7 @@ function codeGen(instr, next_use_table, line_nr) {
 	// else if (op == "arr=") {	// a[10] = z
 	else if (op == "arrset") {	// a[10] = z
 		var arr = instr[2];
-		if (registers.address_descriptor[arr]["category"] == "arr_int") {
+		if (registers.address_descriptor[arr]["category"] != "arr_float") {
 			var y = instr[3];
 			var z = instr[4];
 			var des_y = "";
@@ -1439,7 +1453,7 @@ function codeGen(instr, next_use_table, line_nr) {
 	// 	assembly.add("fstp st0")
 	// }
 
-	else if (op == "cast") {
+	else if (op == "cast") {	//x = y
 		var from = instr[3]
 		var to = instr[4]
 		var x = instr[2]
@@ -1482,10 +1496,54 @@ function codeGen(instr, next_use_table, line_nr) {
 		}
 
 		else if (from == "int" && to == "int")  {
-			if (registers.address_descriptor[x]["type"] == "reg") {
-					var des_x = registers.address_descriptor[x]["name"]
-					assembly.add("mov dword " + des_x + ", [ebp - " + offset_x + "]")
+			if (variables.indexOf(y) > -1) {
+				var offset_y = registers.address_descriptor[y]["offset"]
+				if (registers.address_descriptor[y]["type"] == "reg") {
+					var des_y = registers.address_descriptor[y]["name"]
+					if (registers.address_descriptor[x]["type"] == "reg") {
+						var des_x = registers.address_descriptor[x]["name"]
+						assembly.add("mov dword " + des_x + ", " + des_y)
+					}
+					else {
+						assembly.add("mov dword [ebp - " + registers.address_descriptor[x]["offset"] + "], " + des_y)
+					}
 				}
+				else {
+					if (registers.address_descriptor[x]["type"] == "reg") {
+						var des_x = registers.address_descriptor[x]["name"]
+						assembly.add("mov dword " + des_x + ", [ebp - " + registers.address_descriptor[y]["offset"] + "]")
+					}
+					else {
+						var des_x = registers.getReg(x, line_nr, next_use_table, safe = [], safe_regs = [])
+						assembly.add("mov dword " + des_x + ", [ebp - " + registers.address_descriptor[y]["offset"] + "]")
+					}
+				}
+			}
+
+			else {	// y is constant
+				des_y = y;
+				if (registers.address_descriptor[x]["type"] == "reg") {
+					var des_x = registers.address_descriptor[x]["name"]
+					assembly.add("mov dword " + des_x + ", " + des_y)
+				} else {
+					// des_x = registers.getReg(x, line_nr, next_use_table, safe = [], safe_regs = [])
+
+					assembly.add("mov dword [ebp - " + registers.address_descriptor[x]["offset"] + "], " + des_y)
+				}
+			}
+		}
+		else if (from == "float" && to == "float") {
+			if (variables.indexOf(y) > -1) {
+				var offset_y = registers.address_descriptor[y]["offset"]
+				assembly.add("fld dword [ebp - " + offset_y + "]")
+				assembly.add("fstp dword [ebp - " + offset_x + "]")
+			}
+
+			else {
+				assembly.add_data("_" + line_nr + " DD " + y)
+				assembly.add("fld dword [_" + line_nr + "]")
+				assembly.add("fstp dword [ebp - " + offset_x + "]")
+			}
 		}
 	}
 
