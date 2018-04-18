@@ -1,0 +1,104 @@
+1	import	IO
+2	class	rec
+3	field_decr	rec	a_2	basic	int1
+4	field_decr	rec	b_3	basic	int1
+5	field_decr	rec	arr_4	array	int	5	
+6	function	rec_two_times
+7	arg	a_6	basic	int	1
+8	arg	this	object	rec	1
+9	decr	t4	basic	int	1
+10	*	t4	a_6	2
+11	return	t4
+12	error	function_return
+13	exit
+14	function	rec_sum
+15	arg	b_9	basic	int	1
+16	arg	a_8	basic	int	1
+17	arg	this	object	rec	1
+18	decr	c_10	basic	int	1
+19	decr	t5	basic	int	1
+20	+	t5	a_8	b_9
+21	decr	t6	basic	int	1
+22	param	this
+23	param	t5
+24	call	rec_two_times	2	t6
+25	=	c_10	t6
+26	return	c_10
+27	error	function_return
+28	exit
+29	function	main
+30	decr	obj_11	object	rec	1
+31	decr	t7	object	rec	1
+32	new	t7	rec
+33	param	t7
+34	call	rec_rec	1
+35	=	obj_11	t7
+36	decr	t8	array	int	5
+37	fieldget	t8	obj_11	arr_4
+38	decr	t9	basic	int	1
+39	=	t9	0
+40	+	t9	t9	0
+41	arrset	t8	t9	1
+42	decr	io_12	object	IO	1
+43	decr	t10	object	IO	1
+44	new	t10	IO
+45	param	t10
+46	call	IO_IO	1
+47	=	io_12	t10
+48	decr	t11	array	int	5
+49	fieldget	t11	obj_11	arr_4
+50	decr	t12	basic	int	1
+51	=	t12	0
+52	+	t12	t12	0
+53	decr	t13	basic	int	1
+54	arrget	t13	t11	t12
+55	param	io_12
+56	param	t13
+57	call	IO_print_int	2
+58	decr	t16	array	int	5
+59	fieldget	t16	obj_11	arr_4
+60	decr	t17	basic	int	1
+61	=	t17	0
+62	+	t17	t17	0
+63	decr	t18	basic	int	1
+64	arrget	t18	t16	t17
+65	decr	t19	array	int	5
+66	fieldget	t19	obj_11	arr_4
+67	decr	t20	basic	int	1
+68	=	t20	0
+69	+	t20	t20	0
+70	decr	t21	basic	int	1
+71	arrget	t21	t19	t20
+72	decr	t22	basic	int	1
+73	param	obj_11
+74	param	t18
+75	param	t21
+76	call	rec_sum	3	t22
+77	decr	t14	array	int	5
+78	fieldget	t14	obj_11	arr_4
+79	decr	t15	basic	int	1
+80	=	t15	0
+81	+	t15	t15	1
+82	arrset	t14	t15	t22
+83	decr	t23	array	int	5
+84	fieldget	t23	obj_11	arr_4
+85	decr	t24	basic	int	1
+86	=	t24	0
+87	+	t24	t24	1
+88	decr	t25	basic	int	1
+89	arrget	t25	t23	t24
+90	param	io_12
+91	param	t25
+92	call	IO_print_int	2
+93	return
+94	function	rec_rec
+95	arg	this	object	rec	1
+96	decr	t1	basic	int	1
+97	fieldget	t1	this	a_2
+98	fieldset	this	a_2	9
+99	decr	t2	basic	int	1
+100	fieldget	t2	this	b_3
+101	fieldset	this	b_3	10
+102	decr	t3	array	int	5
+103	fieldget	t3	this	arr_4
+104	return

@@ -873,6 +873,7 @@ function codeGen(instr, next_use_table, line_nr) {
 		var class_name = instr[2]
 		var field_name = instr[3]
 		var category = instr[5]
+		console.log(category)
 		if (instr[4] == "array") {
 			symtab[class_name][field_name] = {}
 
@@ -921,8 +922,10 @@ function codeGen(instr, next_use_table, line_nr) {
 		assembly.add("mov [ebp -" + offset_obj + "], eax")
 
 		Object.keys(symtab[class_name]).forEach(function (field) {
-			if (field["category"] == "arr_int" || field["category"] == "arr_float") {
-				var size = field["length"] * 4
+			// console.log(symtab)
+			if (symtab[class_name][field]["category"] == "arr_int" || symtab[class_name][field]["category"] == "arr_float") {
+				var size = symtab[class_name][field]["length"] * 4
+				console.log(size)
 				assembly.add("push " + size)
 				assembly.add("call malloc")
 				assembly.add("add esp, " + 4)
@@ -931,7 +934,7 @@ function codeGen(instr, next_use_table, line_nr) {
 					var offset = registers.address_descriptor[variable]["offset"]
 					assembly.add("mov [ebp - " + offset + "], ebx")
 				}
-				var position = field["position"] * 4
+				var position = symtab[class_name][field]["position"]
 				assembly.add("mov ebx, [ebp - " + offset_obj + "]")
 				assembly.add("mov [ebx + " + position + " * 4], eax")
 			}
