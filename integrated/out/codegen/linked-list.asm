@@ -15,11 +15,13 @@ section .data
 		_int_in db "%i", 0
 		_char db "%c", 0
 		_char_in db "%c", 0
-		_34 DD 0
-		_42 DD 0
-		_76 DD 10
-		_108 DD 0
-		_111 DD 10.0
+		_22 DD 0
+		_31 DD 0
+		_37 DD 100
+		_59 DD 0
+		_65 DD 100
+		_95 DD 10
+		_136 DD 10.0
 
 
 section .text
@@ -136,6 +138,16 @@ main:
 	sub esp, 4
 	sub esp, 4
 	sub esp, 4
+	sub esp, 4
+	sub esp, 4
+	sub esp, 4
+	sub esp, 4
+	sub esp, 4
+	sub esp, 4
+	sub esp, 4
+	sub esp, 4
+	sub esp, 4
+	sub esp, 4
 	push 0
 	call malloc
 	add esp, 4
@@ -146,73 +158,57 @@ main:
 	call func_IO_IO
 	add esp, 1* 4
 	mov dword eax, [ ebp - 8]
-	mov [ebp - 4], eax
-	push 12
-	call malloc
-	add esp, 4
-	mov [ebp -16], eax
-	mov dword eax, [ebp - 4]
-	push eax
+	fild dword [_22]
+	fstp dword [ebp - 16]
+	fld dword [ebp -16]
+	fstp dword [ebp - 12]
 	mov dword [ ebp - 4], eax
-	call func_IO_scan_float
-	add esp, 1* 4
-	fstp dword [ebp - 20]
-	mov dword eax, [ebp - 16]
-	push eax
-	sub esp, 4
-	fld dword [ebp - 20]
-	fstp dword [esp]
-	mov dword [ ebp - 16], eax
-	call func_List_List
-	add esp, 1* 4
-	mov dword eax, [ ebp - 16]
-	mov dword [ ebp - 12], eax
-	fild dword [_34]
-	fstp dword [ebp - 32]
-	fld dword [ebp -32]
-	fstp dword [ebp - 28]
-	mov dword [ ebp - 24], eax
 
-label_37:
+label_26:
 	mov dword eax, [ebp - 4]
 	push eax
 	mov dword [ ebp - 4], eax
 	call func_IO_scan_float
 	add esp, 1* 4
-	fstp dword [ebp - 36]
-	fld dword [ebp -36]
-	fstp dword [ebp - 28]
-	fild dword [_42]
-	fstp dword [ebp - 44]
-	mov dword [ ebp - 40], 1
-	fld dword [ebp -44]
-	fld dword [ebp - 28]
+	fstp dword [ebp - 24]
+	fld dword [ebp -24]
+	fstp dword [ebp - 12]
+	fild dword [_31]
+	fstp dword [ebp - 32]
+	mov dword [ ebp - 28], 1
+	fld dword [ebp -32]
+	fld dword [ebp - 12]
 	fcompp
 	fstsw ax
 	fwait
 	sahf
-	jae label_47
-	mov dword [ ebp - 40], 0
+	jb label_36
+	mov dword [ ebp - 28], 0
 
-label_47:
-	cmp dword [ ebp - 40], 0
-	je label_66
-	mov dword eax, [ebp - 4]
-	push eax
-	sub esp, 4
-	fld dword [ebp - 28]
-	fstp dword [esp]
-	mov dword [ ebp - 4], eax
-	call func_IO_print_float
-	add esp, 1* 4
-	mov dword eax, [ebp - 4]
-	push eax
-	sub esp, 4
-	fld dword [ebp - 28]
-	fstp dword [esp]
-	mov dword [ ebp - 4], eax
-	call func_IO_print_char
-	add esp, 1* 4
+label_36:
+	fild dword [_37]
+	fstp dword [ebp - 40]
+	mov dword [ ebp - 36], 1
+	fld dword [ebp -40]
+	fld dword [ebp - 12]
+	fcompp
+	fstsw ax
+	fwait
+	sahf
+	ja label_42
+	mov dword [ ebp - 36], 0
+
+label_42:
+	; HERE
+	mov dword eax, [ebp - 28]
+	mov dword [ ebp - 28], eax
+	or dword eax, [ ebp - 36]
+	cmp dword eax, 0
+	mov dword [ ebp - 44], eax
+	je label_46
+	jmp label_26
+
+label_46:
 	push 12
 	call malloc
 	add esp, 4
@@ -220,78 +216,133 @@ label_47:
 	mov dword eax, [ebp - 48]
 	push eax
 	sub esp, 4
-	fld dword [ebp - 28]
+	fld dword [ebp - 12]
 	fstp dword [esp]
 	mov dword [ ebp - 48], eax
 	call func_List_List
 	add esp, 1* 4
-	mov dword eax, [ebp - 24]
+	mov dword eax, [ ebp - 48]
+	mov dword [ ebp - 20], eax
+	mov dword [ ebp - 52], eax
+
+label_54:
+	mov dword eax, [ebp - 4]
 	push eax
-	mov dword ebx, [ebp - 48]
+	mov dword [ ebp - 4], eax
+	call func_IO_scan_float
+	add esp, 1* 4
+	fstp dword [ebp - 56]
+	fld dword [ebp -56]
+	fstp dword [ebp - 12]
+	fild dword [_59]
+	fstp dword [ebp - 64]
+	mov dword [ ebp - 60], 1
+	fld dword [ebp -64]
+	fld dword [ebp - 12]
+	fcompp
+	fstsw ax
+	fwait
+	sahf
+	jae label_64
+	mov dword [ ebp - 60], 0
+
+label_64:
+	fild dword [_65]
+	fstp dword [ebp - 72]
+	mov dword [ ebp - 68], 1
+	fld dword [ebp -72]
+	fld dword [ebp - 12]
+	fcompp
+	fstsw ax
+	fwait
+	sahf
+	jb label_70
+	mov dword [ ebp - 68], 0
+
+label_70:
+	; HERE
+	mov dword eax, [ebp - 60]
+	mov dword [ ebp - 60], eax
+	and dword eax, [ ebp - 68]
+	cmp dword eax, 0
+	mov dword [ ebp - 76], eax
+	je label_85
+	push 12
+	call malloc
+	add esp, 4
+	mov [ebp -80], eax
+	mov dword eax, [ebp - 80]
+	push eax
+	sub esp, 4
+	fld dword [ebp - 12]
+	fstp dword [esp]
+	mov dword [ ebp - 80], eax
+	call func_List_List
+	add esp, 1* 4
+	mov dword eax, [ebp - 52]
+	push eax
+	mov dword ebx, [ebp - 80]
 	push ebx
-	mov dword [ ebp - 24], eax
-	mov dword [ ebp - 48], ebx
+	mov dword [ ebp - 52], eax
+	mov dword [ ebp - 80], ebx
 	call func_List_set_next
 	add esp, 2* 4
-	mov dword ebx, [ebp - 24]
+	mov dword ebx, [ebp - 52]
 	mov eax, [ebx+8]
 	mov dword ebx, eax
-	mov dword [ ebp - 24], ebx
-	mov dword [ ebp - 52], eax
-	jmp label_37
+	mov dword [ ebp - 52], ebx
+	mov dword [ ebp - 84], eax
+	jmp label_54
 
-label_66:
-	mov dword eax, [ ebp - 12]
+label_85:
+	mov dword eax, [ ebp - 20]
 	mov dword ebx, [ebp - 4]
 	push ebx
 	;-1
 	push 10
 	mov dword [ ebp - 4], ebx
-	mov dword [ ebp - 24], eax
+	mov dword [ ebp - 52], eax
 	call func_IO_print_char
 	add esp, 1* 4
+	mov dword [ ebp - 88], 1
 
-label_70:
-	mov dword ebx, [ebp - 24]
-	mov eax, [ebx+4]
-	cmp dword eax, 0
-	mov dword [ ebp - 24], ebx
-	mov dword [ ebp - 56], eax
-	je label_103
-	mov dword eax, [ebp - 24]
+label_91:
+	cmp dword [ ebp - 88], 0
+	je label_131
+	mov dword eax, [ebp - 52]
 	fld dword [eax+0]
-	fstp dword [ebp - 60]
-	fild dword [_76]
-	fstp dword [ebp - 68]
-	mov dword [ ebp - 64], 1
-	fld dword [ebp -68]
-	mov dword [ ebp - 24], eax
-	fld dword [ebp - 60]
+	fstp dword [ebp - 92]
+	fild dword [_95]
+	fstp dword [ebp - 100]
+	mov dword [ ebp - 96], 1
+	fld dword [ebp -100]
+	mov dword [ ebp - 52], eax
+	fld dword [ebp - 92]
 	fcompp
 	fstsw ax
 	fwait
 	sahf
-	jb label_81
-	mov dword [ ebp - 64], 0
+	jb label_100
+	mov dword [ ebp - 96], 0
 
-label_81:
-	cmp dword [ ebp - 64], 1
-	je label_88
-	mov dword eax, [ebp - 24]
+label_100:
+	cmp dword [ ebp - 96], 1
+	je label_107
+	mov dword eax, [ebp - 52]
 	fld dword [eax+0]
-	fstp dword [ebp - 72]
+	fstp dword [ebp - 104]
 	mov dword ebx, [ebp - 4]
 	push ebx
 	sub esp, 4
-	fld dword [ebp - 72]
+	fld dword [ebp - 104]
 	fstp dword [esp]
 	mov dword [ ebp - 4], ebx
-	mov dword [ ebp - 24], eax
+	mov dword [ ebp - 52], eax
 	call func_IO_print_float
 	add esp, 1* 4
-	jmp label_96
+	jmp label_115
 
-label_88:
+label_107:
 	mov dword eax, [ebp - 4]
 	push eax
 	;-1
@@ -299,20 +350,20 @@ label_88:
 	mov dword [ ebp - 4], eax
 	call func_IO_print_char
 	add esp, 1* 4
-	mov dword eax, [ebp - 24]
+	mov dword eax, [ebp - 52]
 	fld dword [eax+0]
-	fstp dword [ebp - 76]
+	fstp dword [ebp - 108]
 	mov dword ebx, [ebp - 4]
 	push ebx
 	sub esp, 4
-	fld dword [ebp - 76]
+	fld dword [ebp - 108]
 	fstp dword [esp]
 	mov dword [ ebp - 4], ebx
-	mov dword [ ebp - 24], eax
+	mov dword [ ebp - 52], eax
 	call func_IO_print_float
 	add esp, 1* 4
 
-label_96:
+label_115:
 	mov dword eax, [ebp - 4]
 	push eax
 	;-1
@@ -320,14 +371,32 @@ label_96:
 	mov dword [ ebp - 4], eax
 	call func_IO_print_char
 	add esp, 1* 4
-	mov dword ebx, [ebp - 24]
+	mov dword ebx, [ebp - 52]
+	mov eax, [ebx+4]
+	mov dword [ ebp - 116], 1
+	cmp dword eax, 0
+	mov dword [ ebp - 52], ebx
+	mov dword [ ebp - 112], eax
+	je label_124
+	mov dword [ ebp - 116], 0
+
+label_124:
+	cmp dword [ ebp - 116], 1
+	je label_126
+	jmp label_127
+
+label_126:
+	jmp label_131
+
+label_127:
+	mov dword ebx, [ebp - 52]
 	mov eax, [ebx+8]
 	mov dword ebx, eax
-	mov dword [ ebp - 24], ebx
-	mov dword [ ebp - 80], eax
-	jmp label_70
+	mov dword [ ebp - 52], ebx
+	mov dword [ ebp - 120], eax
+	jmp label_91
 
-label_103:
+label_131:
 	mov dword esp, ebp
 	pop ebp
 	ret
@@ -339,13 +408,9 @@ func_List_List:
 	sub esp, 4
 	sub esp, 4
 	mov dword eax, [ebp - -12]
-	mov dword [eax+8], 0
-	mov dword [eax+4], 0
-	fld dword [_108]
-	fstp dword [eax+0]
 	fld dword [eax+0]
 	fstp dword [ebp - 4]
-	fld dword [_111]
+	fld dword [_136]
 	fstp dword [eax+0]
 	mov ebx, [eax+4]
 	mov dword [eax+4], 0

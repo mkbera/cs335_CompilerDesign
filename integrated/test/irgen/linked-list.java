@@ -17,13 +17,15 @@ class List {
 	public void main() {
 		IO io = new IO();
 
-		List start = new List(io.scan_float());
-        List current = start;
-        
         float x = 0;
-        while ((x = io.scan_float()) >= 0) {
-            io.print_float(x);
-            io.print_char(x);
+
+		List start;
+        while ((x = io.scan_float()) < 0 || (x > 100)) {
+        }
+        start = new List(x);
+        
+        List current = start;
+        while ((x = io.scan_float()) >= 0 && (x < 100)) {
             current.set_next(new List(x));
             current = current.next;
         }
@@ -32,7 +34,8 @@ class List {
 
         io.print_char('\n');
 
-        while (current.next_exists) {
+        boolean xx = true;
+        while (xx) {
             if (current.value < 10) {
                 io.print_char(' ');
                 io.print_float(current.value);
@@ -41,6 +44,10 @@ class List {
 			    io.print_float(current.value);
             }
 			io.print_char('\n');
+
+            if (current.next_exists == false) {
+                break;
+            }
 			current = current.next;
         }
 	}

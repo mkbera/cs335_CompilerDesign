@@ -479,15 +479,6 @@ class SymbolTable {
                     null
                 )
 
-                // TO BE REMOVED
-                // this.add_method(
-                //     "print_int",
-                //     new Type("null", "basic", null, null, 0),
-                //     [self_object, new Variable("print_int_param", new Type("List", "object", null, null, 0), 0, true)],
-                //     null
-                // )
-                // TO BE REMOVED
-
                 this.add_method(
                     "scan_string",
                     new Type("string", "basic", null, null, 0),
