@@ -234,7 +234,7 @@
 				self.type = new Type("boolean", "basic", 1, 0, 0)
 			}
 
-			if (!obj.op1.literal) {
+			if (!(obj.op1.literal && !isNaN(obj.op1.place))) {
 				var temp = ST.create_temporary()
 				self.code.push(
 					"decr" + ir_sep + temp + ir_sep + self.type.category + ir_sep + self.type.type + ir_sep + "1"
@@ -264,7 +264,7 @@
 
 				self.place = temp
 			}
-			else if (!obj.op2.literal) {
+			else if (!(obj.op2.literal && !isNaN(obj.op2.place))) {
 				var temp = ST.create_temporary()
 				self.code.push(
 					"decr" + ir_sep + temp + ir_sep + self.type.category + ir_sep + self.type.type + ir_sep + "1"
@@ -305,47 +305,68 @@
 		relational: function (obj) {
 
 			var self = { code: [], place: null, type: null, literal: false }
-
-			if (!obj.op1.literal) {
-				self.code = obj.op1.code.concat(obj.op2.code)
-
-				var temp = ST.create_temporary()
-				self.code.push(
-					"decr" + ir_sep + temp + ir_sep + "basic" + ir_sep + "int" + ir_sep + "1"
-				)
-
-				var label = ST.create_label()
 			
-				self.code = self.code.concat([
-					"=" + ir_sep + temp + ir_sep + "1",
-					"ifgoto" + ir_sep + obj.operator + ir_sep + obj.op1.place + ir_sep + obj.op2.place + ir_sep + label,
-					"=" + ir_sep + temp + ir_sep + "0",
-					"label" + ir_sep + label
-				])
-				self.place = temp
+			if (obj.op1.type.type == "float" || obj.op2.type.type == "float") {
+				self.type = new Type("float", "basic", 4, 0, 0)
 			}
-			else if (!obj.op2.literal) {
-				self.code = obj.op2.code.concat(obj.op1.code)
-				var temp = ST.create_temporary()
-			
-				self.code.push(
-					"decr" + ir_sep + temp + ir_sep + "basic" + ir_sep + "int" + ir_sep + "1"
+			else if (obj.op1.type.type == "long" || obj.op2.type.type == "long") {
+				self.type = new Type("long", "basic", 8, 0, 0)
+			}
+			else if (obj.op1.type.type == "int" || obj.op2.type.type == "int") {
+				self.type = new Type("int", "basic", 4, 0, 0)
+			}
+			else if (obj.op1.type.type == "short" || obj.op2.type.type == "short") {
+				self.type = new Type("short", "basic", 2, 0, 0)
+			}
+			else if (obj.op1.type.type == "byte" || obj.op2.type.type == "byte") {
+				self.type = new Type("byte", "basic", 1, 0, 0)
+			}
+			else if (obj.op1.type.type == "boolean" || obj.op2.type.type == "boolean") {
+				self.type = new Type("boolean", "basic", 1, 0, 0)
+			}
+
+			self.code = obj.op1.code.concat(obj.op2.code)
+
+			if (obj.op1.literal && !isNaN(obj.op1.place)) {
+				var tt = ST.create_temporary()
+				self.code = self.code.concat(
+					"decr" + ir_sep + tt + ir_sep + obj.op1.type.category + ir_sep + obj.op1.type.type + ir_sep + "1",
+					"=" + ir_sep + tt + ir_sep + obj.op1.place
 				)
+			}
 
-				var label = ST.create_label()
+			var temp = ST.create_temporary()
+			self.code.push(
+				"decr" + ir_sep + temp + ir_sep + "basic" + ir_sep + "int" + ir_sep + "1"
+			)
 
+			var t1 = obj.op1.place
+			if (obj.op1.type.type != self.type.type) {
+				t1 = ST.create_temporary()
 				self.code = self.code.concat([
-					"=" + ir_sep + temp + ir_sep + "1",
-					"ifgoto" + ir_sep + obj.operator + ir_sep + obj.op2.place + ir_sep + obj.op1.place + ir_sep + label,
-					"=" + ir_sep + temp + ir_sep + "0",
-					"label" + ir_sep + label
+					"decr" + ir_sep + t1 + ir_sep + self.type.category + ir_sep + self.type.type + ir_sep + "1",
+					"cast" + ir_sep + t1 + ir_sep + obj.op1.type.type + ir_sep + self.type.type + ir_sep + obj.op1.place
 				])
-				self.place = temp
 			}
-			else {
-				self.place = eval(obj.op1.place + " " + obj.operator + " " + obj.op2.place) ? 1 : 0
-				self.literal = true
+
+			var t2 = obj.op2.place
+			if (obj.op2.type.type != self.type.type) {
+				t2 = ST.create_temporary()
+				self.code = self.code.concat([
+					"decr" + ir_sep + t2 + ir_sep + self.type.category + ir_sep + self.type.type + ir_sep + "1",
+					"cast" + ir_sep + t2 + ir_sep + obj.op2.type.type + ir_sep + self.type.type + ir_sep + obj.op2.place
+				])
 			}
+
+			var label = ST.create_label()
+		
+			self.code = self.code.concat([
+				"=" + ir_sep + temp + ir_sep + "1",
+				"ifgoto" + ir_sep + obj.operator + ir_sep + t1 + ir_sep + t2 + ir_sep + label,
+				"=" + ir_sep + temp + ir_sep + "0",
+				"label" + ir_sep + label
+			])
+			self.place = temp
 
 			self.type = new Type("boolean", "basic", 1, 0, 0)
 
@@ -1337,10 +1358,9 @@ method_decr :
 				$$.code.push("return")
 			}
 			else {
-				$$.code = $$.code.concat([
-					"error" + ir_sep + "function_return",
-					"exit"
-				])
+				$$.code.push(
+					"error" + ir_sep + "function_return"
+				)
 			}
 		}
 	;
@@ -2830,7 +2850,8 @@ equality_expr :
 			$$ = utils.relational({
 				op1: $1,
 				op2: $3,
-				operator: "eq"
+				operator: "eq",
+				operator_val: "=="
 			})
 		}
 	|
@@ -2843,7 +2864,8 @@ equality_expr :
 			$$ = utils.relational({
 				op1: $1,
 				op2: $3,
-				operator: "ne"
+				operator: "ne",
+				operator_val: "!="
 			})
 		}
 	;
@@ -2864,7 +2886,8 @@ relational_expr :
 			$$ = utils.relational({
 				op1: $1,
 				op2: $3,
-				operator: "gt"
+				operator: "gt",
+				operator_val: ">"
 			})
 		}
 	|
@@ -2877,7 +2900,8 @@ relational_expr :
 			$$ = utils.relational({
 				op1: $1,
 				op2: $3,
-				operator: "ge"
+				operator: "ge",
+				operator_val: ">="
 			})
 		}
 	|
@@ -2890,7 +2914,8 @@ relational_expr :
 			$$ = utils.relational({
 				op1: $1,
 				op2: $3,
-				operator: "lt"
+				operator: "lt",
+				operator_val: "<"
 			})
 		}
 	|
@@ -2903,7 +2928,8 @@ relational_expr :
 			$$ = utils.relational({
 				op1: $1,
 				op2: $3,
-				operator: "le"
+				operator: "le",
+				operator_val: "<="
 			})
 		}
 	|
@@ -3041,6 +3067,10 @@ predec_expr :
 		{
 			$$ = $2
 
+			if ($2.literal && !isNaN($2.place)) {
+				throw Error("Cannot apply decrement on constant")
+			}
+
 			if (!$$.type.numeric()) {
 				throw Error("Bad operand type '" + $$.type.get_serial_type() + "' on unary operator '++'")
 			}
@@ -3048,6 +3078,20 @@ predec_expr :
 			$$.code.push(
 				"dec" + ir_sep + $$.place
 			)
+
+			if ($$.code.length >= 2) {
+				var line = $$.code[$$.code.length - 2].split("\t")
+				if (line[0] == "fieldget") {
+					$$.field = true
+
+					$$.field_class = line[2]
+					$$.field_field = line[3]
+
+					$$.code.push(
+						"fieldset" + ir_sep + $$.field_class + ir_sep + $$.field_field + ir_sep + $$.place
+					)
+				}
+			}
 		}
 	;
 
@@ -3057,6 +3101,10 @@ preinc_expr :
 		{
 			$$ = $2
 
+			if ($2.literal && !isNaN($2.place)) {
+				throw Error("Cannot apply increment on constant")
+			}
+
 			if (!$$.type.numeric()) {
 				throw Error("Bad operand type '" + $$.type.get_serial_type() + "' on unary operator '++'")
 			}
@@ -3064,6 +3112,20 @@ preinc_expr :
 			$$.code.push(
 				"inc" + ir_sep + $$.place
 			)
+
+			if ($$.code.length >= 2) {
+				var line = $$.code[$$.code.length - 2].split("\t")
+				if (line[0] == "fieldget") {
+					$$.field = true
+
+					$$.field_class = line[2]
+					$$.field_field = line[3]
+
+					$$.code.push(
+						"fieldset" + ir_sep + $$.field_class + ir_sep + $$.field_field + ir_sep + $$.place
+					)
+				}
+			}
 		}
 	;
 
@@ -3173,38 +3235,66 @@ cast_expr :
 postdec_expr :
 		postfix_expr 'op_decrement' 
 		{
-			$$ = { code: $1.code, place: null, type: $1.type }
+			$$ = $1
 
-			if (!$1.type.numeric()) {
-				throw Error("Bad operand type '" + $1.type.get_serial_type() + "' on unary operator '++'")
+			if (!$$.type.numeric()) {
+				throw Error("Bad operand type '" + $$.type.get_serial_type() + "' on unary operator '++'")
 			}
 
 			var temp = ST.create_temporary()
 
 			$$.code = $$.code.concat([
-				"decr" + ir_sep + temp + ir_sep + $1.type.category + ir_sep + $1.type.get_basic_type() + ir_sep + $1.type.get_size(),
-				"=" + ir_sep + temp + ir_sep + $1.place,
-				"-" + ir_sep + $1.place + ir_sep + $1.place + ir_sep + "1"
+				"decr" + ir_sep + temp + ir_sep + $$.type.category + ir_sep + $$.type.get_basic_type() + ir_sep + $$.type.get_size(),
+				"=" + ir_sep + temp + ir_sep + $$.place,
+				"dec" + ir_sep + $$.place
 			])
+
+			if ($$.code.length >= 4) {
+				var line = $$.code[$$.code.length - 4].split("\t")
+				if (line[0] == "fieldget") {
+					$$.field = true
+
+					$$.field_class = line[2]
+					$$.field_field = line[3]
+
+					$$.code.push(
+						"fieldset" + ir_sep + $$.field_class + ir_sep + $$.field_field + ir_sep + $$.place
+					)
+				}
+			}
 
 			$$.place = temp
 		}
 	|
 		post_expr 'op_decrement' 
 		{
-			$$ = { code: $1.code, place: null, type: $1.type }
+			$$ = $1
 
-			if (!$1.type.numeric()) {
-				throw Error("Bad operand type '" + $1.type.get_serial_type() + "' on unary operator '++'")
+			if (!$$.type.numeric()) {
+				throw Error("Bad operand type '" + $$.type.get_serial_type() + "' on unary operator '++'")
 			}
 
 			var temp = ST.create_temporary()
 
 			$$.code = $$.code.concat([
-				"decr" + ir_sep + temp + ir_sep + $1.type.category + ir_sep + $1.type.get_basic_type() + ir_sep + $1.type.get_size(),
-				"=" + ir_sep + temp + ir_sep + $1.place,
-				"-" + ir_sep + $1.place + ir_sep + $1.place + ir_sep + "1"
+				"decr" + ir_sep + temp + ir_sep + $$.type.category + ir_sep + $$.type.get_basic_type() + ir_sep + $$.type.get_size(),
+				"=" + ir_sep + temp + ir_sep + $$.place,
+				"dec" + ir_sep + $$.place
 			])
+
+			if ($$.code.length >= 4) {
+				var line = $$.code[$$.code.length - 4].split("\t")
+				if (line[0] == "fieldget") {
+					$$.field = true
+
+					$$.field_class = line[2]
+					$$.field_field = line[3]
+
+					$$.code.push(
+						"fieldset" + ir_sep + $$.field_class + ir_sep + $$.field_field + ir_sep + $$.place
+					)
+				}
+			}
 
 			$$.place = temp
 		}
@@ -3214,38 +3304,74 @@ postdec_expr :
 postinc_expr :
 		postfix_expr 'op_increment' 
 		{
-			$$ = { code: $1.code, place: null, type: $1.type }
+			$$ = $1
 
-			if (!$1.type.numeric()) {
-				throw Error("Bad operand type '" + $1.type.get_serial_type() + "' on unary operator '++'")
+			if ($$.literal && !isNaN($$.place)) {
+				throw Error("Cannot apply decrement on constant")
+			}
+
+			if (!$$.type.numeric()) {
+				throw Error("Bad operand type '" + $$.type.get_serial_type() + "' on unary operator '++'")
 			}
 
 			var temp = ST.create_temporary()
 
 			$$.code = $$.code.concat([
-				"decr" + ir_sep + temp + ir_sep + $1.type.category + ir_sep + $1.type.get_basic_type() + ir_sep + $1.type.get_size(),
-				"=" + ir_sep + temp + ir_sep + $1.place,
-				"+" + ir_sep + $1.place + ir_sep + $1.place + ir_sep + "1"
+				"decr" + ir_sep + temp + ir_sep + $$.type.category + ir_sep + $$.type.get_basic_type() + ir_sep + $$.type.get_size(),
+				"=" + ir_sep + temp + ir_sep + $$.place,
+				"inc" + ir_sep + $$.place
 			])
+
+			if ($$.code.length >= 4) {
+				var line = $$.code[$$.code.length - 4].split("\t")
+				if (line[0] == "fieldget") {
+					$$.field = true
+
+					$$.field_class = line[2]
+					$$.field_field = line[3]
+
+					$$.code.push(
+						"fieldset" + ir_sep + $$.field_class + ir_sep + $$.field_field + ir_sep + $$.place
+					)
+				}
+			}
 
 			$$.place = temp
 		}
 	|
 		post_expr 'op_increment' 
 		{
-			$$ = { code: $1.code, place: null, type: $1.type }
+			$$ = $1
 
-			if (!$1.type.numeric()) {
-				throw Error("Bad operand type '" + $1.type.get_serial_type() + "' on unary operator '++'")
+			if ($$.literal && !isNaN($$.place)) {
+				throw Error("Cannot apply increment on constant")
+			}
+
+			if (!$$.type.numeric()) {
+				throw Error("Bad operand type '" + $$.type.get_serial_type() + "' on unary operator '++'")
 			}
 
 			var temp = ST.create_temporary()
 
 			$$.code = $$.code.concat([
-				"decr" + ir_sep + temp + ir_sep + $1.type.category + ir_sep + $1.type.get_basic_type() + ir_sep + $1.type.get_size(),
-				"=" + ir_sep + temp + ir_sep + $1.place,
-				"+" + ir_sep + $1.place + ir_sep + $1.place + ir_sep + "1"
+				"decr" + ir_sep + temp + ir_sep + $$.type.category + ir_sep + $$.type.get_basic_type() + ir_sep + $$.type.get_size(),
+				"=" + ir_sep + temp + ir_sep + $$.place,
+				"inc" + ir_sep + $$.place
 			])
+
+			if ($$.code.length >= 4) {
+				var line = $$.code[$$.code.length - 4].split("\t")
+				if (line[0] == "fieldget") {
+					$$.field = true
+
+					$$.field_class = line[2]
+					$$.field_field = line[3]
+
+					$$.code.push(
+						"fieldset" + ir_sep + $$.field_class + ir_sep + $$.field_field + ir_sep + $$.place
+					)
+				}
+			}
 
 			$$.place = temp
 		}
@@ -3828,6 +3954,7 @@ expr_name :
 					])
 				}
 
+				$$.field = true
 				$$.type = type
 				$$.place = place
 				$$.variable = variable
@@ -3886,6 +4013,7 @@ expr_name :
 				$$.variable = variable
 				$$.type = type
 				$$.category = "variable"
+				$$.field = true
 			}
 			else if (method) {
 				$$.place = $1
@@ -3933,7 +4061,6 @@ literal :
 	|
 		'character_literal' 
 		{
-			console.log($character_literal)
 			$$ = {
 				code: [],
 				place: $character_literal.charCodeAt(1).toString(),
