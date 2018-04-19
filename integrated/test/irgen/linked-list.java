@@ -1,46 +1,47 @@
 import IO;
 
 class List {
-    float value = 10;
+    float value = 10.0;
+    boolean next_exists = false;
     List next;
 
-	public void set_value(float x) {
-        this.value = x;
+	List(float x) {
+        value = x;
 	}
 
     public void set_next(List next) {
         this.next = next;
+        next_exists = true;
     }
 
 	public void main() {
 		IO io = new IO();
 
-        // List test = new List();
-        // io.print_float(test.value);
-
-		List[10] linked_list;
+		List start = new List(io.scan_float());
+        List current = start;
         
-        for (int i = 0; i < 10; i++) {
-            linked_list:[i] = new List();
-            linked_list:[i].set_value(2.0 * i);
+        float x = 0;
+        while ((x = io.scan_float()) >= 0) {
+            io.print_float(x);
+            io.print_char(x);
+            current.set_next(new List(x));
+            current = current.next;
         }
-        
-        for (int i = 0; i < 9; i++) {
-			linked_list:[i].set_next(linked_list:[i+1]); 
-        }
+		
+        current = start;
 
-		List a = linked_list:[0];
+        io.print_char('\n');
 
-        boolean r = true;
-        if (r) {
-            io.print_int(100);
-            io.print_char('\n');
-        }
-
-        for (int i = 0; 10.0 > i; i++) {
-			io.print_float(a.value);
-			io.print_char(10);
-			a = a.next;
+        while (current.next_exists) {
+            if (current.value < 10) {
+                io.print_char(' ');
+                io.print_float(current.value);
+            }
+            else {
+			    io.print_float(current.value);
+            }
+			io.print_char('\n');
+			current = current.next;
         }
 	}
 }

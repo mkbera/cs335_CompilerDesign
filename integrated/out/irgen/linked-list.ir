@@ -1,151 +1,120 @@
 1	import	IO
 2	class	List
 3	field_decr	List	value_2	basic	float	1
-4	field_decr	List	next_3	object	List	1
-5	function	List_set_value
-6	arg	x_5	basic	float	1
-7	arg	this	object	List	1
-8	decr	t4	basic	float	1
-9	fieldset	this	value_2	x_5
-10	return
-11	function	List_set_next
-12	arg	next_7	object	List	1
-13	arg	this	object	List	1
-14	decr	t5	object	List	1
-15	fieldset	this	next_3	next_7
-16	return
-17	function	main
-18	decr	io_8	object	IO	1
-19	decr	t6	object	IO	1
-20	new	t6	IO
-21	param	t6
-22	call	IO_IO	1
-23	=	io_8	t6
-24	decr	linked_list_9	array	List	10	
-25	decr	i_10	basic	int	1
-26	=	i_10	0
-27	decr	t7	basic	int	1
-28	=	t7	1
-29	ifgoto	lt	i_10	10	31
-30	=	t7	0
-31	ifgoto	eq	t7	0	64
-32	decr	t10	object	List	1
-33	new	t10	List
-34	param	t10
-35	call	List_List	1
-36	decr	t9	basic	int	1
-37	=	t9	0
-38	ifgoto	ge	i_10	0	40
-39	error	array_access_low
-40	ifgoto	lt	i_10	10	42
-41	error	array_access_up
-42	+	t9	t9	i_10
-43	arrset	linked_list_9	t9	t10
-44	decr	t11	basic	int	1
-45	=	t11	0
-46	ifgoto	ge	i_10	0	48
-47	error	array_access_low
-48	ifgoto	lt	i_10	10	50
-49	error	array_access_up
-50	+	t11	t11	i_10
-51	decr	t12	object	List	1
-52	arrget	t12	linked_list_9	t11
-53	decr	t13	basic	float	1
-54	decr	t14	basic	float	1
-55	cast	t14	int	float	i_10
-56	*	t13	t14	2.0
-57	param	t12
-58	param	t13
-59	call	List_set_value	2
-60	decr	t8	basic	int	1
-61	=	t8	i_10
-62	inc	i_10
-63	jump	27
-64	decr	i_11	basic	int	1
-65	=	i_11	0
-66	decr	t15	basic	int	1
-67	=	t15	1
-68	ifgoto	lt	i_11	9	70
-69	=	t15	0
-70	ifgoto	eq	t15	0	98
-71	decr	t17	basic	int	1
-72	=	t17	0
-73	ifgoto	ge	i_11	0	75
-74	error	array_access_low
-75	ifgoto	lt	i_11	10	77
-76	error	array_access_up
-77	+	t17	t17	i_11
-78	decr	t18	object	List	1
-79	arrget	t18	linked_list_9	t17
-80	decr	t20	basic	int	1
-81	=	t20	0
-82	decr	t19	basic	int	1
-83	+	t19	i_11	1
-84	ifgoto	ge	t19	0	86
-85	error	array_access_low
-86	ifgoto	lt	t19	10	88
-87	error	array_access_up
-88	+	t20	t20	t19
-89	decr	t21	object	List	1
-90	arrget	t21	linked_list_9	t20
-91	param	t18
-92	param	t21
-93	call	List_set_next	2
-94	decr	t16	basic	int	1
-95	=	t16	i_11
-96	inc	i_11
-97	jump	66
-98	decr	a_12	object	List	1
-99	decr	t22	basic	int	1
-100	=	t22	0
-101	+	t22	t22	0
-102	decr	t23	object	List	1
-103	arrget	t23	linked_list_9	t22
-104	=	a_12	t23
-105	decr	r_13	basic	int	1
-106	=	r_13	1
-107	ifgoto	eq	r_13	1	109
-108	jump	115
-109	param	io_8
-110	param	100
-111	call	IO_print_int	2
-112	param	io_8
-113	param	92
-114	call	IO_print_char	2
-115	decr	i_14	basic	int	1
-116	=	i_14	0
-117	decr	t24	basic	float	1
-118	=	t24	10.0
-119	decr	t25	basic	int	1
-120	decr	t26	basic	float	1
-121	cast	t26	int	float	i_14
-122	=	t25	1
-123	ifgoto	gt	t24	t26	125
-124	=	t25	0
-125	ifgoto	eq	t25	0	141
-126	decr	t28	basic	float	1
-127	fieldget	t28	a_12	value_2
-128	param	io_8
-129	param	t28
-130	call	IO_print_float	2
-131	param	io_8
-132	param	10
-133	call	IO_print_char	2
-134	decr	t29	object	List	1
-135	fieldget	t29	a_12	next_3
-136	=	a_12	t29
-137	decr	t27	basic	int	1
-138	=	t27	i_14
-139	inc	i_14
-140	jump	117
-141	return
-142	function	List_List
-143	arg	this	object	List	1
-144	decr	t1	basic	float	1
-145	fieldget	t1	this	value_2
-146	decr	t2	basic	float	1
-147	cast	t2	int	float	10
-148	fieldset	this	value_2	t2
-149	decr	t3	object	List	1
-150	fieldget	t3	this	next_3
-151	return
+4	field_decr	List	next_exists_3	basic	int	1
+5	field_decr	List	next_4	object	List	1
+6	function	List_set_next
+7	arg	next_8	object	List	1
+8	arg	this	object	List	1
+9	decr	t5	object	List	1
+10	fieldset	this	next_4	next_8
+11	decr	t6	basic	int	1
+12	fieldset	this	next_exists_3	1
+13	return
+14	function	main
+15	decr	io_9	object	IO	1
+16	decr	t7	object	IO	1
+17	new	t7	IO
+18	param	t7
+19	call	IO_IO	1
+20	=	io_9	t7
+21	decr	start_10	object	List	1
+22	decr	t9	object	List	1
+23	new	t9	List
+24	decr	t8	basic	float	1
+25	param	io_9
+26	call	IO_scan_float	1	t8
+27	param	t9
+28	param	t8
+29	call	List_List	2
+30	=	start_10	t9
+31	decr	current_11	object	List	1
+32	=	current_11	start_10
+33	decr	x_12	basic	float	1
+34	decr	t10	basic	float	1
+35	cast	t10	int	float	0
+36	=	x_12	t10
+37	decr	t11	basic	float	1
+38	param	io_9
+39	call	IO_scan_float	1	t11
+40	=	x_12	t11
+41	decr	t12	basic	int	1
+42	decr	t13	basic	float	1
+43	cast	t13	int	float	0
+44	=	t12	1
+45	ifgoto	ge	x_12	t13	47
+46	=	t12	0
+47	ifgoto	eq	t12	0	66
+48	param	io_9
+49	param	x_12
+50	call	IO_print_float	2
+51	param	io_9
+52	param	x_12
+53	call	IO_print_char	2
+54	decr	t14	object	List	1
+55	new	t14	List
+56	param	t14
+57	param	x_12
+58	call	List_List	2
+59	param	current_11
+60	param	t14
+61	call	List_set_next	2
+62	decr	t15	object	List	1
+63	fieldget	t15	current_11	next_4
+64	=	current_11	t15
+65	jump	37
+66	=	current_11	start_10
+67	param	io_9
+68	param	10
+69	call	IO_print_char	2
+70	decr	t16	basic	int	1
+71	fieldget	t16	current_11	next_exists_3
+72	ifgoto	eq	t16	0	103
+73	decr	t17	basic	float	1
+74	fieldget	t17	current_11	value_2
+75	decr	t18	basic	int	1
+76	decr	t19	basic	float	1
+77	cast	t19	int	float	10
+78	=	t18	1
+79	ifgoto	lt	t17	t19	81
+80	=	t18	0
+81	ifgoto	eq	t18	1	88
+82	decr	t21	basic	float	1
+83	fieldget	t21	current_11	value_2
+84	param	io_9
+85	param	t21
+86	call	IO_print_float	2
+87	jump	96
+88	param	io_9
+89	param	32
+90	call	IO_print_char	2
+91	decr	t20	basic	float	1
+92	fieldget	t20	current_11	value_2
+93	param	io_9
+94	param	t20
+95	call	IO_print_float	2
+96	param	io_9
+97	param	10
+98	call	IO_print_char	2
+99	decr	t22	object	List	1
+100	fieldget	t22	current_11	next_4
+101	=	current_11	t22
+102	jump	70
+103	return
+104	function	List_List
+105	arg	x_6	basic	float	1
+106	arg	this	object	List	1
+107	fieldset	this	next_4	0
+108	fieldset	this	next_exists_3	0
+109	fieldset	this	value_2	0
+110	decr	t1	basic	float	1
+111	fieldget	t1	this	value_2
+112	fieldset	this	value_2	10.0
+113	decr	t2	basic	int	1
+114	fieldget	t2	this	next_exists_3
+115	fieldset	this	next_exists_3	0
+116	decr	t3	object	List	1
+117	fieldget	t3	this	next_4
+118	decr	t4	basic	float	1
+119	fieldset	this	value_2	x_6
+120	return
