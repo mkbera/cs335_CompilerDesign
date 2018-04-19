@@ -421,25 +421,15 @@
 
 "byte"								return 'byte';
 
-"case"								return 'case';
-
 "char"								return 'char';
 
 "class" 							return 'class';
 
-"const"								return 'const';
-
 "continue"							return 'continue';
-
-"default"							return 'default';
-
-"do"								return 'do';
 
 "double"							return 'double';
 
 "else"								return 'else';
-
-"extends"							return 'extends';
 
 "float"								return 'float';
 
@@ -737,52 +727,6 @@ class_decr :
 
 
 class_header :
-		'public' 'class' 'identifier' extend_decr
-		{
-			$$ = {
-				code: ["class" + ir_sep + $identifier],
-				place: null
-			}
-			
-			var class_instance = ST.add_class($identifier, $4)
-			var super_field = class_instance.variables["super"]
-			
-			$$.code.push(
-				"field_decr" + ir_sep + class_instance.name + ir_sep + super_field.display_name + ir_sep + "object" + ir_sep + super_field.type.type + ir_sep + "1"
-			)
-
-			var parameters = []
-
-			ST.variables_count += 1
-			class_type = new Type(ST.current_class.name, "object", null, null, 0)
-			var parameters = [new Variable("this", class_type, ST.variables_count, isparam = true)]
-
-			class_instance.constructor = new Method($identifier, new Type("null", "basic", null, null, 0), parameters, null)
-		}
-	|
-		'class' 'identifier' extend_decr 
-		{
-			$$ = {
-				code: ["class" + ir_sep + $identifier],
-				place: null
-			}
-			
-			var class_instance = ST.add_class($identifier, $3)
-			var super_field = class_instance.variables["super"]
-			
-			$$.code.push(
-				"field_decr" + ir_sep + class_instance.name + ir_sep + super_field.display_name + ir_sep + "object" + ir_sep + super_field.type.type + ir_sep + "1"
-			)
-
-			var parameters = []
-
-			ST.variables_count += 1
-			class_type = new Type(ST.current_class.name, "object", null, null, 0)
-			var parameters = [new Variable("this", class_type, ST.variables_count, isparam = true)]
-
-			class_instance.constructor = new Method($identifier, new Type("null", "basic", null, null, 0), parameters, null)
-		}
-	|
 		'public' 'class' 'identifier' 
 		{
 			$$ = {
@@ -821,14 +765,6 @@ class_header :
 	;
 
 
-extend_decr :
-		'extends' 'identifier' 
-		{
-			$$ = $identifier
-		}
-	;
-
-
 class_body :
 		'set_start' class_body_decrs 'set_end' 
 		{
@@ -848,13 +784,6 @@ class_body :
 			}
 
 			$$.code = $$.code.concat($$.consr)
-
-			for (var variable in curr_class.variables) {
-				$$.consr_code = [
-					"fieldset" + ir_sep + "this" + ir_sep + curr_class.variables[variable].display_name + ir_sep + 0
-				].concat($$.consr_code)
-			}
-
 			$$.code = $$.code.concat($$.consr_code)
 			$$.code = $$.code.concat($$.consr_body)
 		}
@@ -2887,8 +2816,8 @@ equality_expr :
 				$$.type = new Type("boolean", "basic", null, null, 0)
 			}
 			else {
-				if (!$1.type.numeric() || !$3.type.numeric()) {
-					throw Error("Incomparable operand types '" + $1.type.get_serial_type() + "' and '" + $3.type.get_serial_type() + "' on binary operator '<='")
+				if (!($1.type.get_serial_type() == "boolean" && $3.type.get_serial_type() == "boolean") && !($1.type.numeric() && $3.type.numeric())) {
+					throw Error("Incomparable operand types '" + $1.type.get_serial_type() + "' and '" + $3.type.get_serial_type() + "' on binary operator '=='")
 				}
 
 				$$ = utils.relational({
@@ -2937,8 +2866,8 @@ equality_expr :
 				$$.type = new Type("boolean", "basic", null, null, 0)
 			}
 			else {
-				if (!$1.type.numeric() || !$3.type.numeric()) {
-					throw Error("Incomparable operand types '" + $1.type.get_serial_type() + "' and '" + $3.type.get_serial_type() + "' on operator '!='")
+				if (!($1.type.get_serial_type() == "boolean" && $3.type.get_serial_type() == "boolean") && !($1.type.numeric() && $3.type.numeric())) {
+					throw Error("Incomparable operand types '" + $1.type.get_serial_type() + "' and '" + $3.type.get_serial_type() + "' on binary operator '!='")
 				}
 
 				$$ = utils.relational({
@@ -3507,14 +3436,25 @@ method_invocation :
 			}
 
 			for (var index in $3) {
-				$$.code = $$.code.concat($3[index].code)
-
 				if (!($3[index].type.get_serial_type() == method.parameters[index].type.get_serial_type() || ($3[index].type.numeric() && method.parameters[index].type.numeric()))) {
 					throw Error("Argument must be of type " + method.parameters[index].type.get_serial_type())
 				}
 				if ($3[index].type.category == "array" && $3[index].type.get_size() != method.parameters[index].type.get_size()) {
 					throw Error("Array dimensions do not match")
 				}
+
+				if ($3[index].type.get_serial_type() != method.parameters[index].type.get_serial_type()) {
+					var t = ST.create_temporary()
+
+					$3[index].code = $3[index].code.concat([
+						"decr" + ir_sep + t + ir_sep + method.parameters[index].type.category + ir_sep + method.parameters[index].type.get_basic_type() + ir_sep + method.parameters[index].type.get_size(),
+						"cast" + ir_sep + t + ir_sep + $3[index].type.get_basic_type() + ir_sep + method.parameters[index].type.get_basic_type() + ir_sep + $3[index].place
+					])
+
+					$3[index].place = t
+				}
+
+				$$.code = $$.code.concat($3[index].code)
 			}
 
 			var temp
@@ -3615,14 +3555,25 @@ method_invocation :
 			}
 
 			for (var index in $5) {
-				$$.code = $$.code.concat($5[index].code)
-
 				if (!($5[index].type.get_serial_type() == method.parameters[index].type.get_serial_type() || ($5[index].type.numeric() && method.parameters[index].type.numeric()))) {
 					throw Error("Argument must be of type " + method.parameters[index].type.get_serial_type())
 				}
 				if ($5[index].type.category == "array" && $5[index].type.get_size() != method.parameters[index].type.get_size()) {
 					throw Error("Array dimensions do not match")
 				}
+
+				if ($5[index].type.get_serial_type() != method.parameters[index].type.get_serial_type()) {
+					var t = ST.create_temporary()
+
+					$5[index].code = $5[index].code.concat([
+						"decr" + ir_sep + t + ir_sep + method.parameters[index].type.category + ir_sep + method.parameters[index].type.get_basic_type() + ir_sep + method.parameters[index].type.get_size(),
+						"cast" + ir_sep + t + ir_sep + $5[index].type.get_basic_type() + ir_sep + method.parameters[index].type.get_basic_type() + ir_sep + $5[index].place
+					])
+
+					$5[index].place = t
+				}
+
+				$$.code = $$.code.concat($5[index].code)
 			}
 
 			var temp
@@ -3883,14 +3834,25 @@ class_instance_creation_expr :
 			}
 
 			for (var index in $4) {
-				$$.code = $$.code.concat($4[index].code)
-
 				if (!($4[index].type.get_serial_type() == method.parameters[index].type.get_serial_type() || ($4[index].type.numeric() && method.parameters[index].type.numeric()))) {
 					throw Error("Argument must be of type " + method.parameters[index].type.get_serial_type())
 				}
 				if ($4[index].type.category == "array" && $4[index].type.get_size() != method.parameters[index].type.get_size()) {
 					throw Error("Array dimensions do not match")
 				}
+
+				if ($4[index].type.get_serial_type() != method.parameters[index].type.get_serial_type()) {
+					var t = ST.create_temporary()
+
+					$4[index].code = $4[index].code.concat([
+						"decr" + ir_sep + t + ir_sep + method.parameters[index].type.category + ir_sep + method.parameters[index].type.get_basic_type() + ir_sep + method.parameters[index].type.get_size(),
+						"cast" + ir_sep + t + ir_sep + $4[index].type.get_basic_type() + ir_sep + method.parameters[index].type.get_basic_type() + ir_sep + $4[index].place
+					])
+
+					$4[index].place = t
+				}
+
+				$$.code = $$.code.concat($4[index].code)
 			}
 			for (var index in $4) {
 				$$.code.push(

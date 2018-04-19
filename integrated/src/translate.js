@@ -673,18 +673,17 @@ function codeGen(instr, next_use_table, line_nr) {
 		var x = instr[3];
 		if (variables.indexOf(x) == -1) {
 			var y = instr[4]
-			if (x.indexOf(".") == -1){
+			if (x.indexOf(".") == -1) {
 				x = x + ".0"
 			}
-			if (y.indexOf(".") == -1){
+			if (y.indexOf(".") == -1) {
 				y = y + ".0"
 			}
 			registers.unloadRegisters(line_nr - 1);
-			assembly.add("_" + line_nr +"_x DD " + x)
-			assembly.add("_" + line_nr +"_y DD " + y)
+			assembly.add_data("_" + line_nr + "_x DD " + x)
+			assembly.add_data("_" + line_nr + "_y DD " + y)
 			assembly.add("fld dword [_" + line_nr + "_y]")
 			assembly.add("fld dword [_" + line_nr + "_x]")
-
 
 			assembly.add("fcompp")
 			assembly.add("fstsw ax")
