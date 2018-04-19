@@ -120,7 +120,7 @@
 120	decr	t26	basic	float	1
 121	cast	t26	int	float	i_14
 122	=	t25	1
-123	ifgoto	gt	10.0	t26	125
+123	ifgoto	gt	t24	t26	125
 124	=	t25	0
 125	ifgoto	eq	t25	0	141
 126	decr	t28	basic	float	1

@@ -54,7 +54,7 @@ function codeGen(instr, next_use_table, line_nr) {
 	// 		}
 	// 	}
 	// }
-	console.log(tac[line_nr])
+	// console.log(tac[line_nr])
 	if (op == "error") {
 		var msg = instr[2];
 
@@ -324,7 +324,7 @@ function codeGen(instr, next_use_table, line_nr) {
 			assembly.add(map_op[op] + " dword " + des_x);
 		}
 		else if (registers.address_descriptor[x]["category"] == "float") {
-			if (op != 'neg'){
+			if (op != 'neg') {
 				assembly.add("fld1")
 				var offset_x = registers.address_descriptor[x]["offset"]
 				assembly.add("fld dword [ebp -" + offset_x + "]")

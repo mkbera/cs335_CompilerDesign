@@ -8,19 +8,93 @@ section .data
 			function_return_error_msg db "Error: function with return type not void, did not seem to return", 0x0a, 0
 			array_access_up_error_msg db "Error: array index exceeds dimension size", 0x0a, 0
 			array_access_low_error_msg db "Error: array index cannot be negative", 0x0a, 0
+		_int db "%i", 0
+		_float db "%f", 0
+		__dummy_float dq 0.0
+		_float_in db "%lf", 0
+		_int_in db "%i", 0
+		_char db "%c", 0
+		_char_in db "%c", 0
 		_55	DD 2.0
-		_142 DD 10
-	_int db "%i", 0
-	_float db "%f", 0
-	__dummy_float dq 0.0
-	_float_in db "%lf", 0
-	_int_in db "%i", 0
-	_char db "%c", 0
-	_char_in db "%c", 0
+		_117	DD 10.0
+		_146 DD 10
 
 
 section .text
 
+	
+	func_IO_IO:
+		ret
+	func_IO_print_char:
+		push ebp
+		mov ebp, esp
+		mov eax, [ebp+8]
+		mov edx, 0
+		mov ebx, 128
+		div ebx
+		push edx
+		push _char
+		call printf
+		mov esp, ebp
+		pop ebp
+		ret
+	func_IO_print_int:
+		push ebp
+		mov ebp, esp
+		mov eax, [ebp + 8]
+		push eax
+		push _int
+		call printf
+		mov esp, ebp
+		pop ebp
+		ret
+	func_IO_print_float:
+		push ebp
+		mov ebp, esp
+		fld dword [ebp + 8]
+		sub esp, 8
+		fstp qword [esp]
+		push _float
+		call printf
+		mov esp, ebp
+		pop ebp
+		ret
+	func_IO_scan_char:
+		push ebp
+		mov ebp, esp
+		sub esp, 4
+		push esp
+		push _char_in
+		call scanf
+		mov dword eax, [ebp - 4]
+		mov edx, 0
+		mov ebx, 128
+		div ebx
+		mov eax, edx
+		mov esp, ebp
+		pop ebp
+		ret
+	func_IO_scan_int:
+		push ebp
+		mov ebp, esp
+		sub esp, 4
+		push esp 
+		push _int_in
+		call scanf
+		mov eax, [ebp - 4]
+		mov esp, ebp
+		pop ebp
+		ret
+	func_IO_scan_float:
+		push ebp
+		mov ebp, esp
+		push __dummy_float
+		push _float_in
+		call scanf
+		fld qword [__dummy_float]
+		mov esp, ebp
+		pop ebp
+		ret
 func_List_set_value:
 	push ebp
 	mov ebp, esp
@@ -55,6 +129,8 @@ main:
 	call malloc
 	add esp, 4
 	push eax
+	sub esp, 4
+	sub esp, 4
 	sub esp, 4
 	sub esp, 4
 	sub esp, 4
@@ -299,21 +375,30 @@ label_115:
 	mov dword [ ebp - 100], 0
 
 label_117:
-	mov dword [ ebp - 104], 1
-	cmp dword [ ebp - 100], 10
-	jl label_121
-	mov dword [ ebp - 104], 0
+	fld dword [_117]
+	fstp dword [ebp - 104]
+	fild dword [ebp - 100]
+	fstp dword [ebp - 112]
+	mov dword [ ebp - 108], 1
+	fld dword [ebp -112]
+	fld dword [ebp - 104]
+	fcompp
+	fstsw ax
+	fwait
+	sahf
+	ja label_125
+	mov dword [ ebp - 108], 0
 
-label_121:
-	cmp dword [ ebp - 104], 0
-	je label_137
+label_125:
+	cmp dword [ ebp - 108], 0
+	je label_141
 	mov dword eax, [ebp - 84]
 	fld dword [eax+0]
-	fstp dword [ebp - 108]
+	fstp dword [ebp - 116]
 	mov dword ebx, [ebp - 4]
 	push ebx
 	sub esp, 4
-	fld dword [ebp - 108]
+	fld dword [ebp - 116]
 	fstp dword [esp]
 	mov dword [ ebp - 4], ebx
 	mov dword [ ebp - 84], eax
@@ -330,14 +415,14 @@ label_121:
 	mov eax, [ebx+4]
 	mov dword ebx, eax
 	mov dword ecx, [ebp - 100]
-	mov dword [ ebp - 116], ecx
+	mov dword [ ebp - 124], ecx
 	inc dword ecx
 	mov dword [ ebp - 84], ebx
 	mov dword [ ebp - 100], ecx
-	mov dword [ ebp - 112], eax
+	mov dword [ ebp - 120], eax
 	jmp label_117
 
-label_137:
+label_141:
 	mov dword esp, ebp
 	pop ebp
 	ret
@@ -350,7 +435,7 @@ func_List_List:
 	mov dword eax, [ebp - -8]
 	fld dword [eax+0]
 	fstp dword [ebp - 4]
-	fild dword [_142]
+	fild dword [_146]
 	fstp dword [ebp - 8]
 	fld dword [ebp - 8]
 	fstp dword [eax+0]
@@ -358,78 +443,5 @@ func_List_List:
 	mov dword [ ebp - -8], eax
 	mov dword [ ebp - 12], ebx
 	mov dword esp, ebp
-	pop ebp
-	ret
-
-func_IO_IO:
-	ret
-func_IO_print_char:
-	push ebp
-	mov ebp, esp
-	mov eax, [ebp+8]
-	mov edx, 0
-	mov ebx, 128
-	div ebx
-	push edx
-	push _char
-	call printf
-	mov esp, ebp
-	pop ebp
-	ret
-func_IO_print_int:
-	push ebp
-	mov ebp, esp
-	mov eax, [ebp + 8]
-	push eax
-	push _int
-	call printf
-	mov esp, ebp
-	pop ebp
-	ret
-func_IO_print_float:
-	push ebp
-	mov ebp, esp
-	fld dword [ebp + 8]
-	sub esp, 8
-	fstp qword [esp]
-	push _float
-	call printf
-	mov esp, ebp
-	pop ebp
-	ret
-func_IO_scan_char:
-	push ebp
-	mov ebp, esp
-	sub esp, 4
-	push esp
-	push _char_in
-	call scanf
-	mov dword eax, [ebp - 4]
-	mov edx, 0
-	mov ebx, 128
-	div ebx
-	mov eax, edx
-	mov esp, ebp
-	pop ebp
-	ret
-func_IO_scan_int:
-	push ebp
-	mov ebp, esp
-	sub esp, 4
-	push esp 
-	push _int_in
-	call scanf
-	mov eax, [ebp - 4]
-	mov esp, ebp
-	pop ebp
-	ret
-func_IO_scan_float:
-	push ebp
-	mov ebp, esp
-	push __dummy_float
-	push _float_in
-	call scanf
-	fld qword [__dummy_float]
-	mov esp, ebp
 	pop ebp
 	ret
