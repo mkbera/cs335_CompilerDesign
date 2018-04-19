@@ -1,7 +1,7 @@
 import IO;
 
 class ackermann{
-    int Ack(int m,int n) {
+    int Ack(int m, float n) {
         int i = -1, j = -1;
         if (m >= 0 && n >= 0) {
             if (m == 0) {
@@ -21,7 +21,7 @@ class ackermann{
     public void main(){
 		IO io = new IO();
 		ackermann ak = new ackermann();
-        int i = ak.Ack(3,4);
+        int i = ak.Ack(3.0,4);
         io.print_int(i); io.print_char('\n');
     }
 }
