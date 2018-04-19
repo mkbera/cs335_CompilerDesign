@@ -2644,6 +2644,15 @@ left_hand_side :
 		field_access 
 		{
 			$$ = $1
+			
+			var line = $$.code[$$.code.length - 1].split("\t")
+			if (line[0] == "fieldget") {
+				$$.field = true
+				$$.code.pop()
+
+				$$.field_class = line[2]
+				$$.field_field = line[3]
+			}
 		}
 	;
 

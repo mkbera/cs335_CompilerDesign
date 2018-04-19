@@ -14,6 +14,7 @@ section .data
 	_float_in db "%lf", 0
 	_int_in db "%i", 0
 	_char db "%c", 10, 0
+	_char_in db "%c", 0
 
 
 section .text
@@ -21,6 +22,9 @@ section .text
 main:
 	push ebp
 	mov ebp, esp
+	sub esp, 4
+	sub esp, 4
+	sub esp, 4
 	sub esp, 4
 	sub esp, 4
 	sub esp, 4
@@ -35,25 +39,55 @@ main:
 	call func_IO_IO
 	add esp, 1* 4
 	mov dword eax, [ ebp - 8]
-	mov dword ebx, [ ebp - 16]
 	push eax
+	mov dword [ ebp - 4], eax
+	call func_IO_scan_char
+	add esp, 1* 4
+	; TEST
+	mov dword [ebp - 16], eax
+	mov dword eax, [ ebp - 16]
+	mov dword ebx, [ebp - 4]
+	push ebx
+	mov dword [ ebp - 4], ebx
+	mov dword [ ebp - 12], eax
+	call func_IO_scan_char
+	add esp, 1* 4
+	; TEST
+	mov dword [ebp - 24], eax
+	mov dword eax, [ ebp - 24]
+	mov dword ebx, [ebp - 4]
+	push ebx
+	mov dword ecx, [ebp - 12]
+	push ecx
+	mov dword [ ebp - 4], ebx
+	mov dword [ ebp - 12], ecx
+	mov dword [ ebp - 20], eax
+	call func_IO_print_char
+	add esp, 2* 4
+	mov dword eax, [ebp - 4]
+	push eax
+	mov dword ebx, [ebp - 20]
 	push ebx
 	mov dword [ ebp - 4], eax
-	mov dword [ ebp - 12], ebx
-	call func_IO_print_int
+	mov dword [ ebp - 20], ebx
+	call func_IO_print_char
+	add esp, 2* 4
+	mov dword eax, [ebp - 12]
+	mov dword [ ebp - 12], eax
+	add dword eax, [ ebp - 20]
+	mov dword ebx, [ebp - 4]
+	push ebx
+	push eax
+	mov dword [ ebp - 4], ebx
+	mov dword [ ebp - 28], eax
+	call func_IO_print_char
 	add esp, 2* 4
 	mov dword esp, ebp
 	pop ebp
 	ret
-func_rec2_rec2:
+func_rec_rec:
 	push ebp
 	mov ebp, esp
-	sub esp, 4
-	mov dword ebx, [ebp - -8]
-	mov eax, [ebx+0]
-	mov dword [ebx+0], 0
-	mov dword [ ebp - -8], ebx
-	mov dword [ ebp - 4], eax
 	mov dword esp, ebp
 	pop ebp
 	ret
@@ -95,6 +129,16 @@ func_IO_print_float:
 	pop ebp
 	ret
 func_IO_scan_char:
+	push ebp
+	mov ebp, esp
+	sub esp, 4
+	push esp
+	push _char_in
+	call scanf
+	mov dword eax, [ebp - 4]
+	mov esp, ebp
+	pop ebp
+	ret
 func_IO_scan_int:
 	push ebp
 	mov ebp, esp

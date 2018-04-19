@@ -14,6 +14,7 @@ section .data
 	_float_in db "%lf", 0
 	_int_in db "%i", 0
 	_char db "%c", 10, 0
+	_char_in db "%c", 0
 
 
 section .text
@@ -290,7 +291,6 @@ func_rec_rec:
 	mov ecx, [ebx+4]
 	mov dword [ebx+4], 9
 	mov edx, [ebx+8]
-	mov dword [ebx+8], 11
 	mov esi, [ebx+12]
 	mov dword [ebx+12], 9
 	mov dword [ ebp - -8], ebx
@@ -339,6 +339,16 @@ func_IO_print_float:
 	pop ebp
 	ret
 func_IO_scan_char:
+	push ebp
+	mov ebp, esp
+	sub esp, 4
+	push esp
+	push _char_in
+	call scanf
+	mov dword eax, [ebp - 4]
+	mov esp, ebp
+	pop ebp
+	ret
 func_IO_scan_int:
 	push ebp
 	mov ebp, esp

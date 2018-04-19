@@ -1,0 +1,129 @@
+1	import	IO
+2	class	List
+3	field_decr	List	value_2	basic	int	1
+4	field_decr	List	next_3	object	List	1
+5	function	List_set_value
+6	arg	x_5	basic	int	1
+7	arg	this	object	List	1
+8	decr	t3	basic	int	1
+9	fieldset	this	value_2	x_5
+10	return
+11	function	List_set_next
+12	arg	next_7	object	List	1
+13	arg	this	object	List	1
+14	decr	t4	object	List	1
+15	fieldset	this	next_3	next_7
+16	return
+17	function	main
+18	decr	io_8	object	IO	1
+19	decr	t5	object	IO	1
+20	new	t5	IO
+21	param	t5
+22	call	IO_IO	1
+23	=	io_8	t5
+24	decr	linked_list_9	array	List	10	
+25	decr	i_10	basic	int	1
+26	=	i_10	0
+27	decr	t6	basic	int	1
+28	=	t6	1
+29	ifgoto	lt	i_10	10	31
+30	=	t6	0
+31	ifgoto	eq	t6	0	61
+32	decr	t9	object	List	1
+33	new	t9	List
+34	param	t9
+35	call	List_List	1
+36	decr	t8	basic	int	1
+37	=	t8	0
+38	ifgoto	ge	i_10	0	40
+39	error	array_access_low
+40	ifgoto	lt	i_10	10	42
+41	error	array_access_up
+42	+	t8	t8	i_10
+43	arrset	linked_list_9	t8	t9
+44	decr	t13	basic	int	1
+45	*	t13	i_10	2
+46	decr	t10	basic	int	1
+47	=	t10	0
+48	ifgoto	ge	i_10	0	50
+49	error	array_access_low
+50	ifgoto	lt	i_10	10	52
+51	error	array_access_up
+52	+	t10	t10	i_10
+53	decr	t11	object	List	1
+54	arrget	t11	linked_list_9	t10
+55	decr	t12	basic	int	1
+56	fieldset	t11	value_2	t13
+57	decr	t7	basic	int	1
+58	=	t7	i_10
+59	+	i_10	i_10	1
+60	jump	27
+61	decr	x_11	basic	int	1
+62	decr	i_12	basic	int	1
+63	=	i_12	0
+64	decr	t14	basic	int	1
+65	=	t14	1
+66	ifgoto	lt	i_12	9	68
+67	=	t14	0
+68	ifgoto	eq	t14	0	95
+69	decr	t20	basic	int	1
+70	=	t20	0
+71	decr	t19	basic	int	1
+72	+	t19	i_12	1
+73	ifgoto	ge	t19	0	75
+74	error	array_access_low
+75	ifgoto	lt	t19	10	77
+76	error	array_access_up
+77	+	t20	t20	t19
+78	decr	t21	object	List	1
+79	arrget	t21	linked_list_9	t20
+80	decr	t16	basic	int	1
+81	=	t16	0
+82	ifgoto	ge	i_12	0	84
+83	error	array_access_low
+84	ifgoto	lt	i_12	10	86
+85	error	array_access_up
+86	+	t16	t16	i_12
+87	decr	t17	object	List	1
+88	arrget	t17	linked_list_9	t16
+89	decr	t18	object	List	1
+90	fieldset	t17	next_3	t21
+91	decr	t15	basic	int	1
+92	=	t15	i_12
+93	+	i_12	i_12	1
+94	jump	64
+95	decr	i_13	basic	int	1
+96	=	i_13	0
+97	decr	t22	basic	int	1
+98	=	t22	1
+99	ifgoto	lt	i_13	10	101
+100	=	t22	0
+101	ifgoto	eq	t22	0	121
+102	decr	t24	basic	int	1
+103	=	t24	0
+104	ifgoto	ge	i_13	0	106
+105	error	array_access_low
+106	ifgoto	lt	i_13	10	108
+107	error	array_access_up
+108	+	t24	t24	i_13
+109	decr	t25	object	List	1
+110	arrget	t25	linked_list_9	t24
+111	decr	t26	basic	int	1
+112	fieldget	t26	t25	value_2
+113	=	x_11	t26
+114	param	io_8
+115	param	x_11
+116	call	IO_print_int	2
+117	decr	t23	basic	int	1
+118	=	t23	i_13
+119	+	i_13	i_13	1
+120	jump	97
+121	return
+122	function	List_List
+123	arg	this	object	List	1
+124	decr	t1	basic	int	1
+125	fieldget	t1	this	value_2
+126	fieldset	this	value_2	10
+127	decr	t2	object	List	1
+128	fieldget	t2	this	next_3
+129	return

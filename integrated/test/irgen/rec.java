@@ -12,17 +12,16 @@ class rec {
 	}
 
 	public void main() {
+		IO io = new IO();
 		int[5][5] a;
 		int b = 9;
 		rec first_object = new rec();
 		a = first_object.array_func(a, b);
-		IO ip = new IO();
 		for (int i = 0; i < 5; i++) {
 			for (int j = 0; j < 5; j++) {
-				b = a:[i][j]
-				ip.print_int(b);
+				b = a:[i][j];
+				io.print_int(b);
 			}
 		}
-		// int c = gcd(a, b);
 	}
 }

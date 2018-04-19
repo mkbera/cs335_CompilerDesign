@@ -440,7 +440,6 @@ class SymbolTable {
     }
 
     import(library) {
-        console.log("Importing " + library)
         switch (library) {
             case "IO": {
                 var class_instance = this.add_class("IO", "")

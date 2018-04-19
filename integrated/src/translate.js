@@ -54,7 +54,7 @@ function codeGen(instr, next_use_table, line_nr) {
 	// 		}
 	// 	}
 	// }
-	console.log(tac[line_nr])
+	// console.log(tac[line_nr])
 	if (op == "error") {
 		var msg = instr[2];
 
@@ -750,8 +750,8 @@ function codeGen(instr, next_use_table, line_nr) {
 	else if (op == "param") {
 		var x = instr[2]
 		var des_x = ""
-		if (variables.indexOf(x) > -1){
-			if (registers.address_descriptor[x]["category"] != "float"){
+		if (variables.indexOf(x) > -1) {
+			if (registers.address_descriptor[x]["category"] != "float") {
 				if (registers.address_descriptor[x]["type"] != "reg") {
 					des_x = registers.getReg(x, line_nr, next_use_table, safe = [], safe_regs = []);
 					assembly.add("mov dword " + des_x + ", [ebp - " + registers.address_descriptor[x]["offset"] + "]");
@@ -767,7 +767,7 @@ function codeGen(instr, next_use_table, line_nr) {
 				assembly.add("fstp dword [esp]")
 			}
 		} else {
-			if (x.indexOf(".") == -1){
+			if (x.indexOf(".") == -1) {
 				assembly.add(";" + x.indexOf("."))
 				assembly.add("push " + x)
 			} else {
@@ -845,7 +845,7 @@ function codeGen(instr, next_use_table, line_nr) {
 					else if (instr_local[4] == "float") {
 						registers.address_descriptor[x] = { "type": "mem", "name": x, "offset": registers.counter, "category": "arr_float" }
 					}
-					else{
+					else {
 						var class_name = instr_local[4]
 						var category = "arr_" + class_name
 						registers.address_descriptor[x] = { "type": "mem", "name": x, "offset": registers.counter, "category": category }
@@ -878,7 +878,7 @@ function codeGen(instr, next_use_table, line_nr) {
 		var class_name = instr[2]
 		var field_name = instr[3]
 		var category = instr[5]
-		console.log(category)
+		// console.log(category)
 		if (instr[4] == "array") {
 			symtab[class_name][field_name] = {}
 
@@ -934,7 +934,7 @@ function codeGen(instr, next_use_table, line_nr) {
 			// console.log(symtab)
 			if (symtab[class_name][field]["category"].split("_")[0] == "arr") {
 				var size = symtab[class_name][field]["length"] * 4
-				console.log(size)
+				// console.log(size)
 				assembly.add("push " + size)
 				assembly.add("call malloc")
 				assembly.add("add esp, " + 4)
@@ -952,10 +952,10 @@ function codeGen(instr, next_use_table, line_nr) {
 
 	else if (op == "fieldget") {	// z = object.field
 		var z = instr[2];
+		var object = instr[3];
+		var class_name = registers.address_descriptor[object]["category"]
+		var field = instr[4];
 		if (registers.address_descriptor[z]["category"] != "float") {
-			var object = instr[3];
-			var class_name = registers.address_descriptor[object]["category"]
-			var field = instr[4];
 			var des_z = "";
 			var des_field = "";
 
@@ -979,7 +979,7 @@ function codeGen(instr, next_use_table, line_nr) {
 
 		else {
 			des_object = registers.address_descriptor[object]["name"];
-			if (registers.address_descriptor[field]["type"] == "mem") {
+			if (registers.address_descriptor[z]["type"] == "mem") {
 				des_object = registers.getReg(object, line_nr, next_use_table, safe = [z], safe_regs = [], print = true);
 				assembly.add("mov dword " + des_object + ", [ebp - " + registers.address_descriptor[object]["offset"] + "]");
 			}
@@ -1090,7 +1090,7 @@ function codeGen(instr, next_use_table, line_nr) {
 			else if (instr[4] == "float") {
 				registers.address_descriptor[x] = { "type": "mem", "name": x, "offset": registers.args_counter, "category": "arr_float" };
 			}
-			else{
+			else {
 				var class_name = instr[4]
 				var category = "arr_" + class_name
 				registers.address_descriptor[x] = { "type": "mem", "name": x, "offset": registers.counter, "category": category }
@@ -1495,7 +1495,7 @@ function codeGen(instr, next_use_table, line_nr) {
 			}
 		}
 
-		else if (from == "int" && to == "int")  {
+		else if (from == "int" && to == "int") {
 			if (variables.indexOf(y) > -1) {
 				var offset_y = registers.address_descriptor[y]["offset"]
 				if (registers.address_descriptor[y]["type"] == "reg") {
