@@ -22,42 +22,26 @@ class List {
         
         float x = 0;
         while ((x = io.scan_float()) >= 0) {
+            io.print_float(x);
+            io.print_char(x);
             current.set_next(new List(x));
             current = current.next;
         }
+		
+        current = start;
 
-        // io.print_int((int) start.value);
-        // io.print_char('\n');
-		current = start;
-
-        io.print_int(current);
-        io.print_char('\n');
-        io.print_int(start);
         io.print_char('\n');
 
-        float t = current.value;
-        if (t < 10) {
-            io.print_char('>');
-            io.print_float(t);
+        while (current.next_exists) {
+            if (current.value < 10) {
+                io.print_char(' ');
+                io.print_float(current.value);
+            }
+            else {
+			    io.print_float(current.value);
+            }
+			io.print_char('\n');
+			current = current.next;
         }
-        else {
-            io.print_int(start);
-            io.print_char('<');
-            io.print_float(current.value);
-        }
-        io.print_char('\n');
-
-        // while (current.next_exists) {
-        //     if (current.value < 10) {
-        //         io.print_char(' ');
-        //         io.print_float(current.value);
-        //     }
-        //     else {
-        //         int t = current.value;
-		// 	    io.print_int(t);
-        //     }
-		// 	io.print_char('\n');
-		// 	current = current.next;
-        // }
 	}
 }

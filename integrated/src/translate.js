@@ -724,6 +724,7 @@ function codeGen(instr, next_use_table, line_nr) {
 
 		else if (registers.address_descriptor[x]["category"] == "float") {
 			var y = instr[4];
+
 			var offset_x = registers.address_descriptor[x]["offset"];
 			if (variables.indexOf(y) != -1) {	// z is variable
 				var offset_y = registers.address_descriptor[y]["offset"]
@@ -735,11 +736,8 @@ function codeGen(instr, next_use_table, line_nr) {
 			}
 			var variable
 			var variable_offset
-			if (registers.address_descriptor["eax"] != null) {
-				variable = registers.register_descriptor["eax"]
-				variable_offset = registers.address_descriptor[variable]["offset"]
-				assembly.add("mov dword [ebp - " + variable_offset + "], eax")
-			}
+
+			registers.unloadRegisters(line_nr - 1);
 
 			assembly.add("fld dword [ebp - " + offset_x + "]")
 			assembly.add("fcompp")
@@ -748,12 +746,7 @@ function codeGen(instr, next_use_table, line_nr) {
 			assembly.add("sahf")
 			// assembly.add("fstp")
 			// assembly.add("fstp")
-			registers.unloadRegisters(line_nr - 1);	
 			assembly.add(map_op_float[cond] + " label_" + instr[5])
-
-			if (registers.address_descriptor["eax"] != null) {
-				assembly.add("mov dword eax, [ebp - " + variable_offset + "]")
-			}
 		}
 
 	}
