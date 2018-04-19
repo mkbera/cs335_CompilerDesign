@@ -1,7 +1,7 @@
 import IO;
 
 class Main {
-    int num = 0;
+    // int num = 0;
 	// IO io = new IO();
 
     // Main() {
@@ -18,14 +18,15 @@ class Main {
     // }
 
     void main() {
-        Main cc = new Main();
+        // Main cc = new Main();
 		// int a = 10;
         // cc.increase(a);
-		cc.num++;
-		// IO io = new IO();
+		// cc.num+=1;
+		IO io = new IO();
 		// int a = 1;
 		// a++;
-		// io.print_int(cc.num);
+		int a = io.scan_char();
+		io.print_int(a);
         // io.print_int(cc.num);
 		// io.print_char(10);
         // io.print_int(a);

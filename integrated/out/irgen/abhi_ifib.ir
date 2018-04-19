@@ -1,0 +1,140 @@
+1	import	IO
+2	class	ifib
+3	function	ifib_ifibi
+4	arg	n_3	basic	int	1
+5	arg	this	object	ifib	1
+6	decr	f1_4	basic	int	1
+7	=	f1_4	0
+8	decr	f2_5	basic	int	1
+9	=	f2_5	1
+10	decr	fn_6	basic	int	1
+11	decr	t1	basic	int	1
+12	=	t1	1
+13	ifgoto	eq	n_3	0	15
+14	=	t1	0
+15	ifgoto	eq	t1	1	24
+16	decr	t2	basic	int	1
+17	=	t2	1
+18	ifgoto	eq	n_3	1	20
+19	=	t2	0
+20	ifgoto	eq	t2	1	22
+21	jump	23
+22	=	fn_6	1
+23	jump	25
+24	=	fn_6	0
+25	decr	i_7	basic	int	1
+26	=	i_7	1
+27	decr	t3	basic	int	1
+28	=	t3	1
+29	ifgoto	lt	i_7	n_3	31
+30	=	t3	0
+31	ifgoto	eq	t3	0	41
+32	decr	t5	basic	int	1
+33	+	t5	f1_4	f2_5
+34	=	fn_6	t5
+35	=	f1_4	f2_5
+36	=	f2_5	fn_6
+37	decr	t4	basic	int	1
+38	=	t4	i_7
+39	+	i_7	i_7	1
+40	jump	27
+41	return	fn_6
+42	error	function_return
+43	exit
+44	function	main
+45	decr	io_8	object	IO	1
+46	decr	t6	object	IO	1
+47	new	t6	IO
+48	param	t6
+49	call	IO_IO	1
+50	=	io_8	t6
+51	decr	fib_9	object	ifib	1
+52	decr	t7	object	ifib	1
+53	new	t7	ifib
+54	param	t7
+55	call	ifib_ifib	1
+56	=	fib_9	t7
+57	decr	t8	basic	int	1
+58	param	fib_9
+59	param	0
+60	call	ifib_ifibi	2	t8
+61	param	io_8
+62	param	t8
+63	call	IO_print_int	2
+64	param	io_8
+65	param	10
+66	call	IO_print_char	2
+67	decr	t9	basic	int	1
+68	param	fib_9
+69	param	1
+70	call	ifib_ifibi	2	t9
+71	param	io_8
+72	param	t9
+73	call	IO_print_int	2
+74	param	io_8
+75	param	10
+76	call	IO_print_char	2
+77	decr	t10	basic	int	1
+78	param	fib_9
+79	param	2
+80	call	ifib_ifibi	2	t10
+81	param	io_8
+82	param	t10
+83	call	IO_print_int	2
+84	param	io_8
+85	param	10
+86	call	IO_print_char	2
+87	decr	t11	basic	int	1
+88	param	fib_9
+89	param	3
+90	call	ifib_ifibi	2	t11
+91	param	io_8
+92	param	t11
+93	call	IO_print_int	2
+94	param	io_8
+95	param	10
+96	call	IO_print_char	2
+97	decr	t12	basic	int	1
+98	param	fib_9
+99	param	4
+100	call	ifib_ifibi	2	t12
+101	param	io_8
+102	param	t12
+103	call	IO_print_int	2
+104	param	io_8
+105	param	10
+106	call	IO_print_char	2
+107	decr	t13	basic	int	1
+108	param	fib_9
+109	param	5
+110	call	ifib_ifibi	2	t13
+111	param	io_8
+112	param	t13
+113	call	IO_print_int	2
+114	param	io_8
+115	param	10
+116	call	IO_print_char	2
+117	decr	t14	basic	int	1
+118	param	fib_9
+119	param	6
+120	call	ifib_ifibi	2	t14
+121	param	io_8
+122	param	t14
+123	call	IO_print_int	2
+124	param	io_8
+125	param	10
+126	call	IO_print_char	2
+127	decr	t15	basic	int	1
+128	param	fib_9
+129	param	7
+130	call	ifib_ifibi	2	t15
+131	param	io_8
+132	param	t15
+133	call	IO_print_int	2
+134	param	io_8
+135	param	10
+136	call	IO_print_char	2
+137	return
+138	function	ifib_ifib
+139	arg	this	object	ifib	1
+140	return

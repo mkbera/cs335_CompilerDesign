@@ -37,21 +37,24 @@
 37	param	io_2
 38	param	d_7
 39	call	IO_print_int	2
-40	decr	f_8	basic	float	1
-41	=	f_8	1.0
-42	decr	g_9	basic	float	1
-43	=	g_9	1.0
-44	decr	h_10	basic	float	1
-45	=	h_10	1.0
-46	decr	t8	basic	float	1
-47	decr	t9	basic	float	1
-48	cast	t9	int	float	b_5
-49	*	t8	f_8	t9
-50	=	h_10	t8
-51	param	io_2
-52	param	h_10
-53	call	IO_print_float	2
-54	return
-55	function	arr_arr
-56	arg	this	object	arr	1
+40	param	io_2
+41	param	10
+42	call	IO_print_char	2
+43	decr	f_8	basic	float	1
+44	=	f_8	1.0
+45	decr	g_9	basic	float	1
+46	=	g_9	1.0
+47	decr	h_10	basic	float	1
+48	=	h_10	1.0
+49	decr	t8	basic	float	1
+50	decr	t9	basic	float	1
+51	cast	t9	int	float	b_5
+52	*	t8	f_8	t9
+53	=	h_10	t8
+54	param	io_2
+55	param	h_10
+56	call	IO_print_float	2
 57	return
+58	function	arr_arr
+59	arg	this	object	arr	1
+60	return

@@ -1,0 +1,335 @@
+1	import	IO
+2	class	MergeSort
+3	field_decr	MergeSort	io_2	object	IO	1
+4	function	MergeSort_merge
+5	arg	r_7	basic	int	1
+6	arg	m_6	basic	int	1
+7	arg	l_5	basic	int	1
+8	arg	arr_4	array	int	8
+9	arg	this	object	MergeSort	1
+10	decr	m_old_8	basic	int	1
+11	=	m_old_8	m_6
+12	decr	jo_9	array	int	8	
+13	decr	i_10	basic	int	1
+14	=	i_10	l_5
+15	decr	t3	basic	int	1
+16	=	t3	1
+17	ifgoto	le	i_10	r_7	19
+18	=	t3	0
+19	ifgoto	eq	t3	0	122
+20	decr	t5	object	IO	1
+21	fieldget	t5	this	io_2
+22	param	t5
+23	param	65
+24	call	IO_print_char	2
+25	decr	t6	object	IO	1
+26	fieldget	t6	this	io_2
+27	param	t6
+28	param	10
+29	call	IO_print_char	2
+30	decr	t7	basic	int	1
+31	=	t7	0
+32	ifgoto	ge	l_5	0	34
+33	error	array_access_low
+34	ifgoto	lt	l_5	8	36
+35	error	array_access_up
+36	+	t7	t7	l_5
+37	decr	t8	basic	int	1
+38	arrget	t8	arr_4	t7
+39	decr	t10	basic	int	1
+40	=	t10	0
+41	decr	t9	basic	int	1
+42	+	t9	m_6	1
+43	ifgoto	ge	t9	0	45
+44	error	array_access_low
+45	ifgoto	lt	t9	8	47
+46	error	array_access_up
+47	+	t10	t10	t9
+48	decr	t11	basic	int	1
+49	arrget	t11	arr_4	t10
+50	decr	t12	basic	int	1
+51	=	t12	1
+52	ifgoto	lt	t8	t11	54
+53	=	t12	0
+54	ifgoto	eq	t12	1	78
+55	decr	t19	basic	int	1
+56	=	t19	0
+57	decr	t18	basic	int	1
+58	+	t18	m_6	1
+59	ifgoto	ge	t18	0	61
+60	error	array_access_low
+61	ifgoto	lt	t18	8	63
+62	error	array_access_up
+63	+	t19	t19	t18
+64	decr	t20	basic	int	1
+65	arrget	t20	arr_4	t19
+66	decr	t17	basic	int	1
+67	=	t17	0
+68	ifgoto	ge	i_10	0	70
+69	error	array_access_low
+70	ifgoto	lt	i_10	8	72
+71	error	array_access_up
+72	+	t17	t17	i_10
+73	arrset	jo_9	t17	t20
+74	decr	t21	basic	int	1
+75	=	t21	m_6
+76	+	m_6	m_6	1
+77	jump	98
+78	decr	t14	basic	int	1
+79	=	t14	0
+80	ifgoto	ge	l_5	0	82
+81	error	array_access_low
+82	ifgoto	lt	l_5	8	84
+83	error	array_access_up
+84	+	t14	t14	l_5
+85	decr	t15	basic	int	1
+86	arrget	t15	arr_4	t14
+87	decr	t13	basic	int	1
+88	=	t13	0
+89	ifgoto	ge	i_10	0	91
+90	error	array_access_low
+91	ifgoto	lt	i_10	8	93
+92	error	array_access_up
+93	+	t13	t13	i_10
+94	arrset	jo_9	t13	t15
+95	decr	t16	basic	int	1
+96	=	t16	l_5
+97	+	l_5	l_5	1
+98	decr	t22	basic	int	1
+99	+	t22	m_old_8	1
+100	decr	t23	basic	int	1
+101	=	t23	1
+102	ifgoto	eq	l_5	t22	104
+103	=	t23	0
+104	ifgoto	eq	t23	1	106
+105	jump	118
+106	decr	t24	basic	int	1
+107	+	t24	r_7	1
+108	decr	t25	basic	int	1
+109	=	t25	1
+110	ifgoto	eq	m_6	t24	112
+111	=	t25	0
+112	ifgoto	eq	t25	1	114
+113	jump	118
+114	decr	t26	basic	int	1
+115	=	t26	i_10
+116	+	i_10	i_10	1
+117	jump	122
+118	decr	t4	basic	int	1
+119	=	t4	i_10
+120	+	i_10	i_10	1
+121	jump	15
+122	decr	t27	basic	int	1
+123	=	t27	1
+124	ifgoto	le	l_5	m_old_8	126
+125	=	t27	0
+126	ifgoto	eq	t27	0	151
+127	decr	t29	basic	int	1
+128	=	t29	0
+129	ifgoto	ge	l_5	0	131
+130	error	array_access_low
+131	ifgoto	lt	l_5	8	133
+132	error	array_access_up
+133	+	t29	t29	l_5
+134	decr	t30	basic	int	1
+135	arrget	t30	arr_4	t29
+136	decr	t28	basic	int	1
+137	=	t28	0
+138	ifgoto	ge	i_10	0	140
+139	error	array_access_low
+140	ifgoto	lt	i_10	8	142
+141	error	array_access_up
+142	+	t28	t28	i_10
+143	arrset	jo_9	t28	t30
+144	decr	t31	basic	int	1
+145	=	t31	l_5
+146	+	l_5	l_5	1
+147	decr	t32	basic	int	1
+148	=	t32	i_10
+149	+	i_10	i_10	1
+150	jump	122
+151	decr	t33	basic	int	1
+152	=	t33	1
+153	ifgoto	le	m_6	r_7	155
+154	=	t33	0
+155	ifgoto	eq	t33	0	180
+156	decr	t35	basic	int	1
+157	=	t35	0
+158	ifgoto	ge	m_6	0	160
+159	error	array_access_low
+160	ifgoto	lt	m_6	8	162
+161	error	array_access_up
+162	+	t35	t35	m_6
+163	decr	t36	basic	int	1
+164	arrget	t36	arr_4	t35
+165	decr	t34	basic	int	1
+166	=	t34	0
+167	ifgoto	ge	i_10	0	169
+168	error	array_access_low
+169	ifgoto	lt	i_10	8	171
+170	error	array_access_up
+171	+	t34	t34	i_10
+172	arrset	jo_9	t34	t36
+173	decr	t37	basic	int	1
+174	=	t37	m_6
+175	+	m_6	m_6	1
+176	decr	t38	basic	int	1
+177	=	t38	i_10
+178	+	i_10	i_10	1
+179	jump	151
+180	decr	j_11	basic	int	1
+181	=	j_11	l_5
+182	decr	t39	basic	int	1
+183	=	t39	1
+184	ifgoto	le	j_11	r_7	186
+185	=	t39	0
+186	ifgoto	eq	t39	0	208
+187	decr	t42	basic	int	1
+188	=	t42	0
+189	ifgoto	ge	j_11	0	191
+190	error	array_access_low
+191	ifgoto	lt	j_11	8	193
+192	error	array_access_up
+193	+	t42	t42	j_11
+194	decr	t43	basic	int	1
+195	arrget	t43	jo_9	t42
+196	decr	t41	basic	int	1
+197	=	t41	0
+198	ifgoto	ge	j_11	0	200
+199	error	array_access_low
+200	ifgoto	lt	j_11	8	202
+201	error	array_access_up
+202	+	t41	t41	j_11
+203	arrset	arr_4	t41	t43
+204	decr	t40	basic	int	1
+205	=	t40	j_11
+206	+	j_11	j_11	1
+207	jump	182
+208	decr	t44	object	IO	1
+209	fieldget	t44	this	io_2
+210	param	t44
+211	param	68
+212	call	IO_print_char	2
+213	decr	t45	object	IO	1
+214	fieldget	t45	this	io_2
+215	param	t45
+216	param	10
+217	call	IO_print_char	2
+218	return
+219	function	MergeSort_sort
+220	arg	r_15	basic	int	1
+221	arg	l_14	basic	int	1
+222	arg	arr_13	array	int	8
+223	arg	this	object	MergeSort	1
+224	decr	t46	basic	int	1
+225	=	t46	1
+226	ifgoto	lt	l_14	r_15	228
+227	=	t46	0
+228	ifgoto	eq	t46	1	230
+229	jump	264
+230	decr	m_16	basic	int	1
+231	decr	t47	basic	int	1
+232	+	t47	l_14	r_15
+233	decr	t48	basic	int	1
+234	/	t48	t47	2
+235	=	m_16	t48
+236	param	this
+237	param	arr_13
+238	param	l_14
+239	param	m_16
+240	call	MergeSort_sort	4
+241	decr	t49	basic	int	1
+242	+	t49	m_16	1
+243	param	this
+244	param	arr_13
+245	param	t49
+246	param	r_15
+247	call	MergeSort_sort	4
+248	decr	t50	object	IO	1
+249	fieldget	t50	this	io_2
+250	param	t50
+251	param	r_15
+252	call	IO_print_int	2
+253	decr	t51	object	IO	1
+254	fieldget	t51	this	io_2
+255	param	t51
+256	param	10
+257	call	IO_print_char	2
+258	param	this
+259	param	arr_13
+260	param	l_14
+261	param	m_16
+262	param	r_15
+263	call	MergeSort_merge	5
+264	return
+265	function	MergeSort_printArray
+266	arg	arr_18	array	int	8
+267	arg	this	object	MergeSort	1
+268	decr	n_19	basic	int	1
+269	=	n_19	8
+270	decr	i_20	basic	int	1
+271	=	i_20	0
+272	decr	t52	basic	int	1
+273	=	t52	1
+274	ifgoto	lt	i_20	n_19	276
+275	=	t52	0
+276	ifgoto	eq	t52	0	300
+277	decr	t54	object	IO	1
+278	fieldget	t54	this	io_2
+279	decr	t55	basic	int	1
+280	=	t55	0
+281	ifgoto	ge	i_20	0	283
+282	error	array_access_low
+283	ifgoto	lt	i_20	8	285
+284	error	array_access_up
+285	+	t55	t55	i_20
+286	decr	t56	basic	int	1
+287	arrget	t56	arr_18	t55
+288	param	t54
+289	param	t56
+290	call	IO_print_int	2
+291	decr	t57	object	IO	1
+292	fieldget	t57	this	io_2
+293	param	t57
+294	param	10
+295	call	IO_print_char	2
+296	decr	t53	basic	int	1
+297	+	t53	i_20	1
+298	=	i_20	t53
+299	jump	272
+300	return
+301	function	main
+302	decr	ob_21	object	MergeSort	1
+303	decr	t58	object	MergeSort	1
+304	new	t58	MergeSort
+305	param	t58
+306	call	MergeSort_MergeSort	1
+307	=	ob_21	t58
+308	decr	arr_22	array	int	8
+309	arrset	arr_22	0	12
+310	arrset	arr_22	1	11
+311	arrset	arr_22	2	13
+312	arrset	arr_22	3	5
+313	arrset	arr_22	4	6
+314	arrset	arr_22	5	7
+315	arrset	arr_22	6	4
+316	arrset	arr_22	7	43
+317	param	ob_21
+318	param	arr_22
+319	param	0
+320	param	7
+321	call	MergeSort_sort	4
+322	param	ob_21
+323	param	arr_22
+324	call	MergeSort_printArray	2
+325	return
+326	function	MergeSort_MergeSort
+327	arg	this	object	MergeSort	1
+328	decr	t2	object	IO	1
+329	fieldget	t2	this	io_2
+330	decr	t1	object	IO	1
+331	new	t1	IO
+332	param	t1
+333	call	IO_IO	1
+334	fieldset	this	io_2	t1
+335	return

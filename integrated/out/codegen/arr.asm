@@ -15,8 +15,6 @@ section .data
 		_int_in db "%i", 0
 		_char db "%c", 0
 		_char_in db "%c", 0
-		_12	DD 1.0
-		_33 DD 9
 
 
 section .text
@@ -97,70 +95,58 @@ section .text
 main:
 	push ebp
 	mov ebp, esp
-	sub esp, 4
-	sub esp, 4
-	sub esp, 4
-	sub esp, 4
-	sub esp, 4
-	sub esp, 4
-	push 4
+	push 8
 	call malloc
 	add esp, 4
-	mov [ebp -8], eax
-	mov dword eax, [ebp - 8]
 	push eax
+	sub esp, 4
+	sub esp, 4
+	sub esp, 4
+	sub esp, 4
+	sub esp, 4
+	sub esp, 4
+	sub esp, 4
+	sub esp, 4
+	sub esp, 4
+	sub esp, 4
+	sub esp, 4
+	mov dword eax, 0
+	add dword eax, 0
+	mov dword ebx, [ebp - 4]
+	mov dword [ebx + eax * 4], 69
+	mov dword [ ebp - 12], 20
+	mov dword ecx, 0
+	add dword ecx, 0
+	mov dword edx, [ebx + ecx * 4]
+	mov dword [ ebp - 20], edx
+	mov dword esi, 0
+	add dword esi, 1
+	mov dword [ebx + esi * 4], edx
+	mov dword edi, 0
+	add dword edi, 0
 	mov dword [ ebp - 8], eax
-	call func_rec_rec
-	add esp, 1* 4
-	mov dword eax, [ ebp - 8]
-	fld dword [_12]
-	fstp dword [ebp - 16]
-	fld dword [ebp -16]
-	fchs
-	fstp dword [ebp - 16]
-	fld dword [ebp -16]
-	fstp dword [ebp - 12]
-	mov [ebp - 4], eax
-	push 0
-	call malloc
-	add esp, 4
-	mov [ebp -24], eax
-	mov dword eax, [ebp - 24]
-	push eax
-	mov dword [ ebp - 24], eax
-	call func_IO_IO
-	add esp, 1* 4
-	mov dword eax, [ ebp - 24]
-	push eax
-	sub esp, 4
-	fld dword [ebp - 12]
-	fstp dword [esp]
-	mov dword [ ebp - 20], eax
-	call func_IO_print_float
-	add esp, 1* 4
-	mov dword eax, [ebp - 20]
-	push eax
-	;-1
-	push 10
-	mov dword [ ebp - 20], eax
-	call func_IO_print_char
-	add esp, 1* 4
+	mov dword eax, [ebx + edi * 4]
+	mov dword [ ebp - 36], eax
+	mov dword [ ebp - 28], eax
+	mov dword eax, 0
+	add dword eax, 1
+	mov dword [ ebp - 4], ebx
+	mov dword [ ebp - 16], ecx
+	mov dword ecx, [ebp - 4]
+	mov dword ebx, [ecx + eax * 4]
+	mov dword [ ebp - 48], ebx
+	mov dword [ ebp - 4], ecx
+	mov dword [ ebp - 12], edx
+	mov dword [ ebp - 24], esi
+	mov dword [ ebp - 32], edi
+	mov dword [ ebp - 40], ebx
+	mov dword [ ebp - 44], eax
 	mov dword esp, ebp
 	pop ebp
 	ret
-func_rec_rec:
+func_arr_arr:
 	push ebp
 	mov ebp, esp
-	sub esp, 4
-	sub esp, 4
-	mov dword eax, [ebp - -8]
-	fld dword [eax+0]
-	fstp dword [ebp - 4]
-	fild dword [_33]
-	fstp dword [ebp - 8]
-	fld dword [ebp - 8]
-	fstp dword [eax+0]
-	mov dword [ ebp - -8], eax
 	mov dword esp, ebp
 	pop ebp
 	ret

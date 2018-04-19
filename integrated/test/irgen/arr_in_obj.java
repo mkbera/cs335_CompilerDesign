@@ -22,7 +22,7 @@ class rec {
         obj.arr:[0] = 1;
         IO io = new IO();
         io.print_int(obj.arr:[0]);
-
+		io.print_char(10);
         obj.arr:[1] = obj.sum(obj.arr:[0], obj.arr:[0]);
         io.print_int(obj.arr:[1]);
     }

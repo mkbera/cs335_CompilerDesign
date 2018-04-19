@@ -1,8 +1,8 @@
 1	import	IO
 2	class	rec
-3	field_decr	rec	a_2	basic	int1
-4	field_decr	rec	b_3	basic	int1
-5	field_decr	rec	arr_4	array	int	5	
+3	field_decr	rec	a_2	basic	int	1
+4	field_decr	rec	b_3	basic	int	1
+5	field_decr	rec	arr_4	array	int	5
 6	function	rec_two_times
 7	arg	a_6	basic	int	1
 8	arg	this	object	rec	1
@@ -55,50 +55,53 @@
 55	param	io_12
 56	param	t13
 57	call	IO_print_int	2
-58	decr	t16	array	int	5
-59	fieldget	t16	obj_11	arr_4
-60	decr	t17	basic	int	1
-61	=	t17	0
-62	+	t17	t17	0
-63	decr	t18	basic	int	1
-64	arrget	t18	t16	t17
-65	decr	t19	array	int	5
-66	fieldget	t19	obj_11	arr_4
-67	decr	t20	basic	int	1
-68	=	t20	0
-69	+	t20	t20	0
-70	decr	t21	basic	int	1
-71	arrget	t21	t19	t20
-72	decr	t22	basic	int	1
-73	param	obj_11
-74	param	t18
-75	param	t21
-76	call	rec_sum	3	t22
-77	decr	t14	array	int	5
-78	fieldget	t14	obj_11	arr_4
-79	decr	t15	basic	int	1
-80	=	t15	0
-81	+	t15	t15	1
-82	arrset	t14	t15	t22
-83	decr	t23	array	int	5
-84	fieldget	t23	obj_11	arr_4
-85	decr	t24	basic	int	1
-86	=	t24	0
-87	+	t24	t24	1
-88	decr	t25	basic	int	1
-89	arrget	t25	t23	t24
-90	param	io_12
-91	param	t25
-92	call	IO_print_int	2
-93	return
-94	function	rec_rec
-95	arg	this	object	rec	1
-96	decr	t1	basic	int	1
-97	fieldget	t1	this	a_2
-98	fieldset	this	a_2	9
-99	decr	t2	basic	int	1
-100	fieldget	t2	this	b_3
-101	fieldset	this	b_3	10
-102	decr	t3	array	int	5
-103	fieldget	t3	this	arr_4
-104	return
+58	param	io_12
+59	param	10
+60	call	IO_print_char	2
+61	decr	t16	array	int	5
+62	fieldget	t16	obj_11	arr_4
+63	decr	t17	basic	int	1
+64	=	t17	0
+65	+	t17	t17	0
+66	decr	t18	basic	int	1
+67	arrget	t18	t16	t17
+68	decr	t19	array	int	5
+69	fieldget	t19	obj_11	arr_4
+70	decr	t20	basic	int	1
+71	=	t20	0
+72	+	t20	t20	0
+73	decr	t21	basic	int	1
+74	arrget	t21	t19	t20
+75	decr	t22	basic	int	1
+76	param	obj_11
+77	param	t18
+78	param	t21
+79	call	rec_sum	3	t22
+80	decr	t14	array	int	5
+81	fieldget	t14	obj_11	arr_4
+82	decr	t15	basic	int	1
+83	=	t15	0
+84	+	t15	t15	1
+85	arrset	t14	t15	t22
+86	decr	t23	array	int	5
+87	fieldget	t23	obj_11	arr_4
+88	decr	t24	basic	int	1
+89	=	t24	0
+90	+	t24	t24	1
+91	decr	t25	basic	int	1
+92	arrget	t25	t23	t24
+93	param	io_12
+94	param	t25
+95	call	IO_print_int	2
+96	return
+97	function	rec_rec
+98	arg	this	object	rec	1
+99	decr	t1	basic	int	1
+100	fieldget	t1	this	a_2
+101	fieldset	this	a_2	9
+102	decr	t2	basic	int	1
+103	fieldget	t2	this	b_3
+104	fieldset	this	b_3	10
+105	decr	t3	array	int	5
+106	fieldget	t3	this	arr_4
+107	return

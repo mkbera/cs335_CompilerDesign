@@ -1,0 +1,154 @@
+1	import	IO
+2	class	Node
+3	field_decr	Node	data_2	basic	int	1
+4	field_decr	Node	next_3	object	Node	1
+5	function	Node_Node
+6	arg	d_5	basic	int	1
+7	arg	this	object	Node	1
+8	decr	t1	basic	int	1
+9	fieldget	t1	this	data_2
+10	decr	t2	object	Node	1
+11	fieldget	t2	this	next_3
+12	decr	t3	basic	int	1
+13	fieldset	this	data_2	d_5
+14	return
+15	class	LinkedList
+16	field_decr	LinkedList	io_7	object	IO	1
+17	field_decr	LinkedList	head_8	object	Node	1
+18	function	LinkedList_reverse
+19	arg	node_10	object	Node	1
+20	arg	this	object	LinkedList	1
+21	decr	prev_11	object	Node	1
+22	decr	current_12	object	Node	1
+23	=	current_12	node_10
+24	decr	next_13	object	Node	1
+25	decr	i_14	basic	int	1
+26	=	i_14	0
+27	decr	t7	basic	int	1
+28	=	t7	1
+29	ifgoto	lt	i_14	4	31
+30	=	t7	0
+31	ifgoto	eq	t7	0	43
+32	decr	t8	object	Node	1
+33	fieldget	t8	current_12	next_3
+34	=	next_13	t8
+35	decr	t9	object	Node	1
+36	fieldset	current_12	next_3	prev_11
+37	=	prev_11	current_12
+38	=	current_12	next_13
+39	decr	t10	basic	int	1
+40	+	t10	i_14	1
+41	=	i_14	t10
+42	jump	27
+43	=	node_10	prev_11
+44	return	node_10
+45	error	function_return
+46	exit
+47	function	LinkedList_printList
+48	arg	node_16	object	Node	1
+49	arg	this	object	LinkedList	1
+50	decr	i_17	basic	int	1
+51	=	i_17	0
+52	decr	t11	basic	int	1
+53	=	t11	1
+54	ifgoto	lt	i_17	4	56
+55	=	t11	0
+56	ifgoto	eq	t11	0	76
+57	decr	t12	object	IO	1
+58	fieldget	t12	this	io_7
+59	decr	t13	basic	int	1
+60	fieldget	t13	node_16	data_2
+61	param	t12
+62	param	t13
+63	call	IO_print_int	2
+64	decr	t14	object	IO	1
+65	fieldget	t14	this	io_7
+66	param	t14
+67	param	10
+68	call	IO_print_char	2
+69	decr	t15	object	Node	1
+70	fieldget	t15	node_16	next_3
+71	=	node_16	t15
+72	decr	t16	basic	int	1
+73	+	t16	i_17	1
+74	=	i_17	t16
+75	jump	52
+76	return
+77	function	main
+78	decr	list_18	object	LinkedList	1
+79	decr	t17	object	LinkedList	1
+80	new	t17	LinkedList
+81	param	t17
+82	call	LinkedList_LinkedList	1
+83	=	list_18	t17
+84	decr	t19	object	Node	1
+85	new	t19	Node
+86	param	t19
+87	param	85
+88	call	Node_Node	2
+89	decr	t18	object	Node	1
+90	fieldset	list_18	head_8	t19
+91	decr	t22	object	Node	1
+92	new	t22	Node
+93	param	t22
+94	param	15
+95	call	Node_Node	2
+96	decr	t20	object	Node	1
+97	fieldget	t20	list_18	head_8
+98	decr	t21	object	Node	1
+99	fieldset	t20	next_3	t22
+100	decr	t26	object	Node	1
+101	new	t26	Node
+102	param	t26
+103	param	4
+104	call	Node_Node	2
+105	decr	t23	object	Node	1
+106	fieldget	t23	list_18	head_8
+107	decr	t24	object	Node	1
+108	fieldget	t24	t23	next_3
+109	decr	t25	object	Node	1
+110	fieldset	t24	next_3	t26
+111	decr	t31	object	Node	1
+112	new	t31	Node
+113	param	t31
+114	param	20
+115	call	Node_Node	2
+116	decr	t27	object	Node	1
+117	fieldget	t27	list_18	head_8
+118	decr	t28	object	Node	1
+119	fieldget	t28	t27	next_3
+120	decr	t29	object	Node	1
+121	fieldget	t29	t28	next_3
+122	decr	t30	object	Node	1
+123	fieldset	t29	next_3	t31
+124	decr	t32	object	Node	1
+125	fieldget	t32	list_18	head_8
+126	param	list_18
+127	param	t32
+128	call	LinkedList_printList	2
+129	decr	t34	object	Node	1
+130	fieldget	t34	list_18	head_8
+131	decr	t35	object	Node	1
+132	param	list_18
+133	param	t34
+134	call	LinkedList_reverse	2	t35
+135	decr	t33	object	Node	1
+136	fieldset	list_18	head_8	t35
+137	decr	t36	object	Node	1
+138	fieldget	t36	list_18	head_8
+139	param	list_18
+140	param	t36
+141	call	LinkedList_printList	2
+142	return
+143	function	LinkedList_LinkedList
+144	arg	this	object	LinkedList	1
+145	decr	t5	object	IO	1
+146	fieldget	t5	this	io_7
+147	decr	t4	object	IO	1
+148	new	t4	IO
+149	param	t4
+150	call	IO_IO	1
+151	fieldset	this	io_7	t4
+152	decr	t6	object	Node	1
+153	fieldget	t6	this	head_8
+154	return

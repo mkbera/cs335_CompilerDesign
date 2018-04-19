@@ -20,6 +20,7 @@ class rec {
 		for (int i=0; i<5; i++){
 			for (int j=0; j<5; j++){
 				io.print_int(a:[i][j]);
+				io.print_char(10);
 			}
 		}
 		// int c = gcd(a, b);

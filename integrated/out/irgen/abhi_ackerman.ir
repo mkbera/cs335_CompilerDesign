@@ -1,0 +1,100 @@
+1	import	IO
+2	class	ackermann
+3	function	ackermann_Ack
+4	arg	n_4	basic	int	1
+5	arg	m_3	basic	int	1
+6	arg	this	object	ackermann	1
+7	decr	i_5	basic	int	1
+8	decr	t1	basic	int	1
+9	=	t1	1
+10	neg	t1
+11	=	i_5	t1
+12	decr	j_6	basic	int	1
+13	decr	t2	basic	int	1
+14	=	t2	1
+15	neg	t2
+16	=	j_6	t2
+17	decr	t3	basic	int	1
+18	=	t3	1
+19	ifgoto	ge	m_3	0	21
+20	=	t3	0
+21	decr	t4	basic	int	1
+22	=	t4	1
+23	ifgoto	ge	n_4	0	25
+24	=	t4	0
+25	decr	t5	basic	int	1
+26	&&	t5	t3	t4
+27	ifgoto	eq	t5	1	29
+28	jump	68
+29	decr	t6	basic	int	1
+30	=	t6	1
+31	ifgoto	eq	m_3	0	33
+32	=	t6	0
+33	ifgoto	eq	t6	1	65
+34	decr	t8	basic	int	1
+35	=	t8	1
+36	ifgoto	eq	n_4	0	38
+37	=	t8	0
+38	ifgoto	eq	t8	1	56
+39	decr	t11	basic	int	1
+40	-	t11	n_4	1
+41	decr	t12	basic	int	1
+42	param	this
+43	param	m_3
+44	param	t11
+45	call	ackermann_Ack	3	t12
+46	=	j_6	t12
+47	decr	t13	basic	int	1
+48	-	t13	m_3	1
+49	decr	t14	basic	int	1
+50	param	this
+51	param	t13
+52	param	j_6
+53	call	ackermann_Ack	3	t14
+54	=	i_5	t14
+55	jump	64
+56	decr	t9	basic	int	1
+57	-	t9	m_3	1
+58	decr	t10	basic	int	1
+59	param	this
+60	param	t9
+61	param	1
+62	call	ackermann_Ack	3	t10
+63	=	i_5	t10
+64	jump	68
+65	decr	t7	basic	int	1
+66	+	t7	n_4	1
+67	=	i_5	t7
+68	return	i_5
+69	error	function_return
+70	exit
+71	function	main
+72	decr	io_7	object	IO	1
+73	decr	t15	object	IO	1
+74	new	t15	IO
+75	param	t15
+76	call	IO_IO	1
+77	=	io_7	t15
+78	decr	ak_8	object	ackermann	1
+79	decr	t16	object	ackermann	1
+80	new	t16	ackermann
+81	param	t16
+82	call	ackermann_ackermann	1
+83	=	ak_8	t16
+84	decr	i_9	basic	int	1
+85	decr	t17	basic	int	1
+86	param	ak_8
+87	param	3
+88	param	4
+89	call	ackermann_Ack	3	t17
+90	=	i_9	t17
+91	param	io_7
+92	param	i_9
+93	call	IO_print_int	2
+94	param	io_7
+95	param	10
+96	call	IO_print_char	2
+97	return
+98	function	ackermann_ackermann
+99	arg	this	object	ackermann	1
+100	return

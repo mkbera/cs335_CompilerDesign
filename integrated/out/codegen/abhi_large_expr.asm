@@ -15,8 +15,6 @@ section .data
 		_int_in db "%i", 0
 		_char db "%c", 0
 		_char_in db "%c", 0
-		_12	DD 1.0
-		_33 DD 9
 
 
 section .text
@@ -100,67 +98,30 @@ main:
 	sub esp, 4
 	sub esp, 4
 	sub esp, 4
-	sub esp, 4
-	sub esp, 4
-	sub esp, 4
-	push 4
+	push 0
 	call malloc
 	add esp, 4
 	mov [ebp -8], eax
 	mov dword eax, [ebp - 8]
 	push eax
 	mov dword [ ebp - 8], eax
-	call func_rec_rec
-	add esp, 1* 4
-	mov dword eax, [ ebp - 8]
-	fld dword [_12]
-	fstp dword [ebp - 16]
-	fld dword [ebp -16]
-	fchs
-	fstp dword [ebp - 16]
-	fld dword [ebp -16]
-	fstp dword [ebp - 12]
-	mov [ebp - 4], eax
-	push 0
-	call malloc
-	add esp, 4
-	mov [ebp -24], eax
-	mov dword eax, [ebp - 24]
-	push eax
-	mov dword [ ebp - 24], eax
 	call func_IO_IO
 	add esp, 1* 4
-	mov dword eax, [ ebp - 24]
+	mov dword eax, [ ebp - 8]
+	mov dword [ ebp - 12], 117
 	push eax
-	sub esp, 4
-	fld dword [ebp - 12]
-	fstp dword [esp]
-	mov dword [ ebp - 20], eax
-	call func_IO_print_float
-	add esp, 1* 4
-	mov dword eax, [ebp - 20]
-	push eax
-	;-1
-	push 10
-	mov dword [ ebp - 20], eax
-	call func_IO_print_char
-	add esp, 1* 4
+	mov dword ebx, [ebp - 12]
+	push ebx
+	mov dword [ ebp - 4], eax
+	mov dword [ ebp - 12], ebx
+	call func_IO_print_int
+	add esp, 2* 4
 	mov dword esp, ebp
 	pop ebp
 	ret
-func_rec_rec:
+func_large_expression_large_expression:
 	push ebp
 	mov ebp, esp
-	sub esp, 4
-	sub esp, 4
-	mov dword eax, [ebp - -8]
-	fld dword [eax+0]
-	fstp dword [ebp - 4]
-	fild dword [_33]
-	fstp dword [ebp - 8]
-	fld dword [ebp - 8]
-	fstp dword [eax+0]
-	mov dword [ ebp - -8], eax
 	mov dword esp, ebp
 	pop ebp
 	ret
