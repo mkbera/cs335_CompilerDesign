@@ -69,7 +69,7 @@ function main() {
         })
     })
 
-    assembly.addModules("IO")
+    // assembly.addModules("IO")
 
     if (process.argv.length == 4) {
         assembly.print(process.argv[3])

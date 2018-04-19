@@ -1210,7 +1210,9 @@ function codeGen(instr, next_use_table, line_nr) {
 	}
 	// else if (op == "=arr") {	// z = a[10]
 	else if (op == "import") {
-		symtab["IO"] = {}
+		var lib_name = instr[2]
+		assembly.addModules(lib_name)
+		symtab[lib_name] = {}
 	}
 
 	else if (op == "arrget") {	// z = a[10]
