@@ -54,7 +54,7 @@ function codeGen(instr, next_use_table, line_nr) {
 	// 		}
 	// 	}
 	// }
-	// console.log(tac[line_nr])
+	console.log(tac[line_nr])
 	if (op == "error") {
 		var msg = instr[2];
 
@@ -320,12 +320,20 @@ function codeGen(instr, next_use_table, line_nr) {
 			assembly.add(map_op[op] + " dword " + des_x);
 		}
 		else if (registers.address_descriptor[x]["category"] == "float") {
-			assembly.add("fld1")
-			var offset_x = registers.address_descriptor[x]["offset"]
-			assembly.add("fld dword [ebp -" + offset_x + "]")
-			assembly.add(map_op_float[op] + " st0, st1")
-			assembly.add("fstp dword [ebp - " + offset_x + "]")
-			assembly.add("fstp st0")
+			if (op != 'neg'){
+				assembly.add("fld1")
+				var offset_x = registers.address_descriptor[x]["offset"]
+				assembly.add("fld dword [ebp -" + offset_x + "]")
+				assembly.add(map_op_float[op] + " st0, st1")
+				assembly.add("fstp dword [ebp - " + offset_x + "]")
+				assembly.add("fstp st0")
+			}
+			else {
+				var offset_x = registers.address_descriptor[x]["offset"]
+				assembly.add("fld dword [ebp -" + offset_x + "]")
+				assembly.add("fchs")
+				assembly.add("fstp dword [ebp - " + offset_x + "]")
+			}
 		}
 	}
 	else if (op == "*") {
