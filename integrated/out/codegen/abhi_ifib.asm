@@ -147,6 +147,7 @@ label_27:
 label_31:
 	cmp dword [ ebp - 28], 0
 	je label_41
+	; HERE
 	mov dword eax, [ebp - 4]
 	mov dword ebx, [ ebp - 8]
 	mov dword [ ebp - 4], eax
@@ -156,7 +157,7 @@ label_31:
 	mov dword [ ebp - 12], eax
 	mov dword ecx, [ebp - 24]
 	mov dword [ ebp - 36], ecx
-	add dword ecx, 1
+	inc dword ecx
 	mov dword [ ebp - 4], ebx
 	mov dword [ ebp - 8], eax
 	mov dword [ ebp - 24], ecx
@@ -169,11 +170,6 @@ label_41:
 	ret
 push function_return_error_msg
 call printf
-mov dword eax, 1
-int 0x80
-
-mov dword esp, ebp
-pop ebp
 mov dword eax, 1
 int 0x80
 main:

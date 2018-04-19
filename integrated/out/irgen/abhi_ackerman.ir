@@ -67,34 +67,33 @@
 67	=	i_5	t7
 68	return	i_5
 69	error	function_return
-70	exit
-71	function	main
-72	decr	io_7	object	IO	1
-73	decr	t15	object	IO	1
-74	new	t15	IO
-75	param	t15
-76	call	IO_IO	1
-77	=	io_7	t15
-78	decr	ak_8	object	ackermann	1
-79	decr	t16	object	ackermann	1
-80	new	t16	ackermann
-81	param	t16
-82	call	ackermann_ackermann	1
-83	=	ak_8	t16
-84	decr	i_9	basic	int	1
-85	decr	t17	basic	int	1
-86	param	ak_8
-87	param	3
-88	param	4
-89	call	ackermann_Ack	3	t17
-90	=	i_9	t17
-91	param	io_7
-92	param	i_9
-93	call	IO_print_int	2
-94	param	io_7
-95	param	10
-96	call	IO_print_char	2
-97	return
-98	function	ackermann_ackermann
-99	arg	this	object	ackermann	1
-100	return
+70	function	main
+71	decr	io_7	object	IO	1
+72	decr	t15	object	IO	1
+73	new	t15	IO
+74	param	t15
+75	call	IO_IO	1
+76	=	io_7	t15
+77	decr	ak_8	object	ackermann	1
+78	decr	t16	object	ackermann	1
+79	new	t16	ackermann
+80	param	t16
+81	call	ackermann_ackermann	1
+82	=	ak_8	t16
+83	decr	i_9	basic	int	1
+84	decr	t17	basic	int	1
+85	param	ak_8
+86	param	3
+87	param	4
+88	call	ackermann_Ack	3	t17
+89	=	i_9	t17
+90	param	io_7
+91	param	i_9
+92	call	IO_print_int	2
+93	param	io_7
+94	param	10
+95	call	IO_print_char	2
+96	return
+97	function	ackermann_ackermann
+98	arg	this	object	ackermann	1
+99	return

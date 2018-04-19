@@ -1,0 +1,43 @@
+1	import	IO
+2	class	operators_type_check
+3	function	main
+4	decr	io_2	object	IO	1
+5	decr	t1	object	IO	1
+6	new	t1	IO
+7	param	t1
+8	call	IO_IO	1
+9	=	io_2	t1
+10	decr	i_3	basic	int	1
+11	=	i_3	3
+12	decr	j_4	basic	float	1
+13	=	j_4	2.34
+14	decr	c_5	basic	int	1
+15	=	c_5	97
+16	decr	t2	basic	float	1
+17	decr	t3	basic	float	1
+18	cast	t3	int	float	i_3
+19	+	t2	t3	j_4
+20	decr	t4	basic	int	1
+21	cast	t4	float	int	t2
+22	=	i_3	t4
+23	decr	t5	basic	float	1
+24	decr	t6	basic	float	1
+25	cast	t6	int	float	i_3
+26	+	t5	t6	j_4
+27	=	j_4	t5
+28	decr	t7	basic	int	1
+29	+	t7	i_3	c_5
+30	=	i_3	t7
+31	param	io_2
+32	param	i_3
+33	call	IO_print_int	2
+34	param	io_2
+35	param	j_4
+36	call	IO_print_float	2
+37	param	io_2
+38	param	c_5
+39	call	IO_print_char	2
+40	return
+41	function	operators_type_check_operators_type_check
+42	arg	this	object	operators_type_check	1
+43	return

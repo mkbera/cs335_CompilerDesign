@@ -112,6 +112,7 @@ func_MyBinarySearch_binarySearch:
 	sub esp, 4
 	sub esp, 4
 	mov dword [ ebp - 4], 0
+	; HERE
 	mov dword eax, [ebp - -12]
 	mov dword [ ebp - -12], eax
 	sub dword eax, 1
@@ -129,6 +130,7 @@ label_15:
 label_19:
 	cmp dword [ ebp - 20], 0
 	je label_63
+	; HERE
 	mov dword eax, [ebp - 4]
 	mov dword [ ebp - 4], eax
 	add dword eax, [ ebp - 12]
@@ -156,6 +158,7 @@ label_29:
 	int 0x80
 
 label_31:
+	; HERE
 	mov dword eax, [ebp - 32]
 	add dword eax, [ ebp - 8]
 	mov dword ecx, [ebp - -16]
@@ -197,6 +200,7 @@ label_45:
 	int 0x80
 
 label_47:
+	; HERE
 	mov dword eax, [ebp - 44]
 	add dword eax, [ ebp - 8]
 	mov dword ecx, [ebp - -16]
@@ -212,6 +216,7 @@ label_47:
 label_54:
 	cmp dword [ ebp - 52], 1
 	je label_59
+	; HERE
 	mov dword eax, [ebp - 8]
 	mov dword [ ebp - 8], eax
 	add dword eax, 1
@@ -220,6 +225,7 @@ label_54:
 	jmp label_62
 
 label_59:
+	; HERE
 	mov dword eax, [ebp - 8]
 	mov dword [ ebp - 8], eax
 	sub dword eax, 1
@@ -239,11 +245,6 @@ label_63:
 	ret
 push function_return_error_msg
 call printf
-mov dword eax, 1
-int 0x80
-
-mov dword esp, ebp
-pop ebp
 mov dword eax, 1
 int 0x80
 main:
@@ -301,32 +302,40 @@ main:
 	add esp, 1* 4
 	mov dword eax, [ ebp - 16]
 	mov dword ebx, 0
+	; HERE
 	add dword ebx, 0
 	mov dword ecx, [ebp - 20]
 	mov dword [ecx + ebx * 4], 2
 	mov dword edx, 0
+	; HERE
 	add dword edx, 1
 	mov dword [ecx + edx * 4], 4
 	mov dword esi, 0
+	; HERE
 	add dword esi, 2
 	mov dword [ecx + esi * 4], 6
 	mov dword edi, 0
+	; HERE
 	add dword edi, 3
 	mov dword [ecx + edi * 4], 8
 	mov dword [ ebp - 12], eax
 	mov dword eax, 0
+	; HERE
 	add dword eax, 4
 	mov dword [ecx + eax * 4], 10
 	mov dword [ ebp - 40], eax
 	mov dword eax, 0
+	; HERE
 	add dword eax, 5
 	mov dword [ecx + eax * 4], 12
 	mov dword [ ebp - 44], eax
 	mov dword eax, 0
+	; HERE
 	add dword eax, 6
 	mov dword [ecx + eax * 4], 14
 	mov dword [ ebp - 48], eax
 	mov dword eax, 0
+	; HERE
 	add dword eax, 7
 	mov dword [ecx + eax * 4], 16
 	mov dword [ ebp - 52], eax
@@ -363,31 +372,39 @@ main:
 	call func_IO_print_char
 	add esp, 1* 4
 	mov dword eax, 0
+	; HERE
 	add dword eax, 0
 	mov dword ebx, [ebp - 60]
 	mov dword [ebx + eax * 4], 6
 	mov dword ecx, 0
+	; HERE
 	add dword ecx, 1
 	mov dword [ebx + ecx * 4], 34
 	mov dword edx, 0
+	; HERE
 	add dword edx, 2
 	mov dword [ebx + edx * 4], 78
 	mov dword esi, 0
+	; HERE
 	add dword esi, 3
 	mov dword [ebx + esi * 4], 123
 	mov dword edi, 0
+	; HERE
 	add dword edi, 4
 	mov dword [ebx + edi * 4], 432
 	mov dword [ ebp - 64], eax
 	mov dword eax, 0
+	; HERE
 	add dword eax, 5
 	mov dword [ebx + eax * 4], 900
 	mov dword [ ebp - 84], eax
 	mov dword eax, 0
+	; HERE
 	add dword eax, 6
 	mov dword [ebx + eax * 4], 990
 	mov dword [ ebp - 88], eax
 	mov dword eax, 0
+	; HERE
 	add dword eax, 7
 	mov dword [ebx + eax * 4], 1000
 	mov dword [ ebp - 92], eax
