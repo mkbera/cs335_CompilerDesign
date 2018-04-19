@@ -472,20 +472,20 @@ class SymbolTable {
                     [self_object, new Variable("print_char_param", new Type("int", "basic", 4, null, 0), 0, true)],
                     null
                 )
-                // this.add_method(
-                //     "print_int",
-                //     new Type("null", "basic", null, null, 0),
-                //     [self_object, new Variable("print_int_param", new Type("int", "basic", 4, null, 0), 0, true)],
-                //     null
-                // )
-
-                // TO BE REMOVED
                 this.add_method(
                     "print_int",
                     new Type("null", "basic", null, null, 0),
-                    [self_object, new Variable("print_int_param", new Type("List", "object", null, null, 0), 0, true)],
+                    [self_object, new Variable("print_int_param", new Type("int", "basic", 4, null, 0), 0, true)],
                     null
                 )
+
+                // TO BE REMOVED
+                // this.add_method(
+                //     "print_int",
+                //     new Type("null", "basic", null, null, 0),
+                //     [self_object, new Variable("print_int_param", new Type("List", "object", null, null, 0), 0, true)],
+                //     null
+                // )
                 // TO BE REMOVED
 
                 this.add_method(

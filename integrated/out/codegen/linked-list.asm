@@ -267,8 +267,8 @@ label_60:
 	fstsw ax
 	fwait
 	sahf
-	jb label_83
 	mov dword [ ebp - 24], eax
+	jb label_83
 	mov dword [ ebp - 64], 0
 
 label_83:
