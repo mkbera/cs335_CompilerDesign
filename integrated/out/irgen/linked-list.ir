@@ -92,38 +92,41 @@
 92	=	t15	i_12
 93	+	i_12	i_12	1
 94	jump	64
-95	decr	i_13	basic	int	1
-96	=	i_13	0
-97	decr	t22	basic	int	1
-98	=	t22	1
-99	ifgoto	lt	i_13	10	101
-100	=	t22	0
-101	ifgoto	eq	t22	0	121
-102	decr	t24	basic	int	1
-103	=	t24	0
-104	ifgoto	ge	i_13	0	106
-105	error	array_access_low
-106	ifgoto	lt	i_13	10	108
-107	error	array_access_up
-108	+	t24	t24	i_13
-109	decr	t25	object	List	1
-110	arrget	t25	linked_list_9	t24
-111	decr	t26	basic	int	1
-112	fieldget	t26	t25	value_2
-113	=	x_11	t26
-114	param	io_8
-115	param	x_11
-116	call	IO_print_int	2
-117	decr	t23	basic	int	1
-118	=	t23	i_13
-119	+	i_13	i_13	1
-120	jump	97
-121	return
-122	function	List_List
-123	arg	this	object	List	1
-124	decr	t1	basic	int	1
-125	fieldget	t1	this	value_2
-126	fieldset	this	value_2	10
-127	decr	t2	object	List	1
-128	fieldget	t2	this	next_3
-129	return
+95	decr	current_13	object	List	1
+96	decr	t22	basic	int	1
+97	=	t22	0
+98	+	t22	t22	0
+99	decr	t23	object	List	1
+100	arrget	t23	linked_list_9	t22
+101	=	current_13	t23
+102	decr	i_14	basic	int	1
+103	=	i_14	0
+104	decr	t24	basic	int	1
+105	=	t24	1
+106	ifgoto	lt	i_14	10	108
+107	=	t24	0
+108	ifgoto	eq	t24	0	124
+109	decr	t26	basic	int	1
+110	fieldget	t26	current_13	value_2
+111	param	io_8
+112	param	t26
+113	call	IO_print_int	2
+114	decr	t27	object	List	1
+115	fieldget	t27	current_13	next_3
+116	=	current_13	t27
+117	param	io_8
+118	param	32
+119	call	IO_print_char	2
+120	decr	t25	basic	int	1
+121	=	t25	i_14
+122	+	i_14	i_14	1
+123	jump	104
+124	return
+125	function	List_List
+126	arg	this	object	List	1
+127	decr	t1	basic	int	1
+128	fieldget	t1	this	value_2
+129	fieldset	this	value_2	10
+130	decr	t2	object	List	1
+131	fieldget	t2	this	next_3
+132	return

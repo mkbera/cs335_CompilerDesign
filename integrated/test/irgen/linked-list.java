@@ -28,13 +28,12 @@ class List {
             linked_list:[i].next = linked_list:[i+1];
         }
 
-        // List current = linked_list:[0];
+        List current = linked_list:[0];
 
         for (int i = 0; i < 10; i++) {
-        //     io.print_int(current.value);
-        //     current = current.next;
-            x = linked_list:[i].value;
-            io.print_int(x);
+            io.print_int(current.value);
+            current = current.next;
+            io.print_char(' ');
         }
 	}
 }
