@@ -1,66 +1,83 @@
 GROUP 24:
-    -   Manish Kumar Bera
-    -   Gurpreet Singh
-    -   Prann Bansal
+   -   Manish Kumar Bera	150381
+   -   Gurpreet Singh		150259
+   -   Prann Bansal			150510
 
-In this assignment, we provide the source for the code generation part of the
-compiler, for conversion from the 3AC (IR) to Assembly Code.
+Source language :- Java
+Implementation language :- NODE.JS
+Target language :- x86 assembly language
 
-
-------------------------------------- 3AC --------------------------------------
-
-All the operations and keywords allowed in our 3AC are described in
-"/src/descriptor.js".
-
-** Note ** We are note checking for any errors in the 3AC and assume that the
-IR generation will handle the correctness of the 3AC.
-
-Each instruction will start with a line number and will have the elements
-separated by a tab as shown below: "line_num	op	X	Y	Z"
-
-This convention is strict, and any error in following might lead to wrong
-assembly code.
-
-Along with that these are the conventions we made for our 3AC:
-    -	For X = Y op Z, Y can't take a constant value.
-	-	array elements can't participate directly in an operation, they will
-		have to be loaded in a temporary variable i.e. either "arr[i] = x" or "x
-		= arr[i]"
-	-	There will be an exit call at the end of the main block
-
-Library functions provided in our 3AC are:
-
-	"print	a"	:	print an integer value "a"
-	"scan	a"	:	scan an integer value into variable "a"
-	"exit"		:	denotes end of code and exits from the code
+The "src" folder contains the required code for converting source language to
+machine language.
+The machine and ircode code generated are stored in folders "out/codegen" and 
+"out/irgen" respectively.
 
 
 
------------------------------------- SOURCE ------------------------------------
+----------------------------------	FEATURES ----------------------------------
+BASIC FEATURES:
+	TYPES:	INT, FLOAT, CHAR, BOOLEAN
 
-The main file is "index.js" which is used to generate the assembly code from IR.
+	LOOPS:	FOR, WHILE
 
-The descriptions of other source files are given below:
+	BINARY OPERATIONS:	add, sub, mul, div, and, or, xor, mod, relops
 
-** assembly.js ** Contains the assembly class with constructs to add individual
-assembly code instructions to assembly object and also to indent them.
+	UNARY OPERATIONS:	not, preinc, predec, postinc, postdec
 
-** components.js ** Contains the classes for variables, functions and arrays
-declared in the 3AC.
+	ASSIGNMENTS:	=, +=, -=, *=, /=, %=, &=, |=
 
-** descriptor.js ** Descibes the keywords and the operations that our 3AC
-implements.
+	FUNCTIONS and FUNCTION CALLS and IMPORT
 
-** registers.js ** Contains the list of registers to be used and the class
-Registers with methods to get registers and unload registers and variables.
 
-** symbol-table.js ** Contains the class SymbolTable and the methods to insert
-variables, functions and arrays in the SymbolTable.
+ADVANCED FEATURES:
+	CLASSES and OBJECTS and METHODS
 
-** tac.js ** Defines the functions to generate the list of variables, functions,
-arrays, nextUseTable and basic blocks from the 3AC.
+	TYPE CASTING
 
-** translate.js ** Translates the 3AC to assembly code.
+	RECURSION
+
+	LINKED LISTS
+
+
+-------------------------------- FILES DESCRIPTION -------------------------------
+
+includes/tokens.jison		:	Contains   the	 required	tokens	 for   lexer
+includes/grammar.jison		:	Contains the grammar  and tokens used  by  jison
+								for buiding  the parser along with the  semantic
+								actions for each rule
+src/irgen.js   				:   Uses the generated	parser to parse the	required
+								test file
+symbol-table.js				:	contains   the   class   symboltable   with  the
+								structure of the  symbol table and functions for
+								building the symbol table.
+
+assembly.js					:	Contains the assembly class with constructs to add 
+								individual assembly code instructions to assembly 
+								object and also to indent them.
+
+components.js				:	Contains the classes for variables, functions and 
+								arrays declared in the 3AC.
+
+descriptor.js				:	Descibes the keywords and the operations that our
+ 								3AC implements.
+
+registers.js				:	Contains the list of registers to be used and the 
+								class Registers with methods to get registers and 
+								unload registers and variables.
+
+tac.js						:	Defines the functions to generate the list of 
+								variables, functions, arrays, nextUseTable and 
+								basic blocks from the 3AC.
+
+translate.js				:	Translates the 3AC to assembly code.
+
+
+
+---------------------------------- TOOLS USED ----------------------------------
+
+For this assignment, we have made use of 'jison' which is available as	an	open
+source plugin for node.js.	The docs are  available  at  'https://zaa.ch/jison/'
+
 
 
 
@@ -69,12 +86,12 @@ arrays, nextUseTable and basic blocks from the 3AC.
 In order to run the code, first you need to generate the proper binaries using
 make. Change the directory to asgn2/ and call make
 
-    make
+   make
 
 In order to translate from an test IR file, execute the following command to run
 the code:
 
-    bin/codegen test/test.ir [output-file (optional)]
+   bin/codegen test/test.ir [output-file (optional)]
 
 We have provided many test cases in the test folder. An interesting one is the
 "sort.ir" which provides an IR code for bubble sort (a working implementation).
