@@ -746,6 +746,9 @@ function codeGen(instr, next_use_table, line_nr) {
 			assembly.add("fstsw ax")
 			assembly.add("fwait")
 			assembly.add("sahf")
+			// assembly.add("fstp")
+			// assembly.add("fstp")
+			registers.unloadRegisters(line_nr - 1);	
 			assembly.add(map_op_float[cond] + " label_" + instr[5])
 
 			if (registers.address_descriptor["eax"] != null) {
@@ -786,8 +789,8 @@ function codeGen(instr, next_use_table, line_nr) {
 				assembly.add(";" + x.indexOf("."))
 				assembly.add_data("_" + line_nr + " DD " + x)
 				assembly.add("sub esp, 4")
-				assembly.add("fld dword _" + line_nr)
-				assembly.add("fstp dword esp")
+				assembly.add("fld dword [_" + line_nr + "]")
+				assembly.add("fstp dword [esp]")
 			}
 		}
 	}
