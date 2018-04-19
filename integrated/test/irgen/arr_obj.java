@@ -6,16 +6,17 @@ class rec {
 	
 
 	public void main() {
-		// IO io = new IO();
+		IO io = new IO();
 		rec[5] arr;
 		for (int i=0; i<5; i++){
 			arr:[i] = new rec();
 		}
-		arr:[1].a = 9;
+		// arr:[1].a = 9;
+		// io.print_int(arr:[1].a);
 		
-		// for (int i=0; i<5; i++){
-		// 	io.print_int(arr:[i].a);
-		// io.print_int(arr:[1].b);
-		// }
+		for (int i=0; i<5; i++){
+			io.print_int(arr:[i].a);
+			io.print_int(arr:[1].b);
+		}
 	}
 }

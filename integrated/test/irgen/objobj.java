@@ -28,16 +28,20 @@ class rec2 {
         int a = 909;
         int b = 101;
         
+        IO io = new IO();
 
         rec1 obj1 = new rec1();
         rec2 obj2 = new rec2();
         obj2.obj = new rec1();
-
+		obj2.obj.a = 6;
+		io.print_int(obj2.obj.a);
+		io.print_char(10);
         int c = obj2.sum(a, 1);
-        IO io = new IO();
         io.print_int(c);
+		io.print_char(10);	
 
         c = obj2.obj.three_times(b);
         io.print_int(c);
+		io.print_char(10);	
     }
 }

@@ -3,45 +3,78 @@
 3	field_decr	rec	a_2	basic	int	1
 4	field_decr	rec	b_3	basic	int	1
 5	function	main
-6	decr	arr_4	array	rec	5	
-7	decr	i_5	basic	int	1
-8	=	i_5	0
-9	decr	t3	basic	int	1
-10	=	t3	1
-11	ifgoto	lt	i_5	5	13
-12	=	t3	0
-13	ifgoto	eq	t3	0	30
-14	decr	t6	object	rec	1
-15	new	t6	rec
-16	param	t6
-17	call	rec_rec	1
-18	decr	t5	basic	int	1
-19	=	t5	0
-20	ifgoto	ge	i_5	0	22
-21	error	array_access_low
-22	ifgoto	lt	i_5	5	24
-23	error	array_access_up
-24	+	t5	t5	i_5
-25	arrset	arr_4	t5	t6
-26	decr	t4	basic	int	1
-27	=	t4	i_5
-28	+	i_5	i_5	1
-29	jump	9
-30	decr	t7	basic	int	1
-31	=	t7	0
-32	+	t7	t7	1
-33	decr	t8	object	rec	1
-34	arrget	t8	arr_4	t7
-35	decr	t9	basic	int	1
-36	fieldget	t9	rec	a
-37	=	t9	9
-38	return
-39	function	rec_rec
-40	arg	this	object	rec	1
-41	decr	t1	basic	int	1
-42	fieldget	t1	this	a_2
-43	fieldset	this	a_2	9
-44	decr	t2	basic	int	1
-45	fieldget	t2	this	b_3
-46	fieldset	this	b_3	10
-47	return
+6	decr	io_4	object	IO	1
+7	decr	t3	object	IO	1
+8	new	t3	IO
+9	param	t3
+10	call	IO_IO	1
+11	=	io_4	t3
+12	decr	arr_5	array	rec	5	
+13	decr	i_6	basic	int	1
+14	=	i_6	0
+15	decr	t4	basic	int	1
+16	=	t4	1
+17	ifgoto	lt	i_6	5	19
+18	=	t4	0
+19	ifgoto	eq	t4	0	36
+20	decr	t7	object	rec	1
+21	new	t7	rec
+22	param	t7
+23	call	rec_rec	1
+24	decr	t6	basic	int	1
+25	=	t6	0
+26	ifgoto	ge	i_6	0	28
+27	error	array_access_low
+28	ifgoto	lt	i_6	5	30
+29	error	array_access_up
+30	+	t6	t6	i_6
+31	arrset	arr_5	t6	t7
+32	decr	t5	basic	int	1
+33	=	t5	i_6
+34	+	i_6	i_6	1
+35	jump	15
+36	decr	i_7	basic	int	1
+37	=	i_7	0
+38	decr	t8	basic	int	1
+39	=	t8	1
+40	ifgoto	lt	i_7	5	42
+41	=	t8	0
+42	ifgoto	eq	t8	0	71
+43	decr	t10	basic	int	1
+44	=	t10	0
+45	ifgoto	ge	i_7	0	47
+46	error	array_access_low
+47	ifgoto	lt	i_7	5	49
+48	error	array_access_up
+49	+	t10	t10	i_7
+50	decr	t11	object	rec	1
+51	arrget	t11	arr_5	t10
+52	decr	t12	basic	int	1
+53	fieldget	t12	t11	a_2
+54	param	io_4
+55	param	t12
+56	call	IO_print_int	2
+57	decr	t13	basic	int	1
+58	=	t13	0
+59	+	t13	t13	1
+60	decr	t14	object	rec	1
+61	arrget	t14	arr_5	t13
+62	decr	t15	basic	int	1
+63	fieldget	t15	t14	b_3
+64	param	io_4
+65	param	t15
+66	call	IO_print_int	2
+67	decr	t9	basic	int	1
+68	=	t9	i_7
+69	+	i_7	i_7	1
+70	jump	38
+71	return
+72	function	rec_rec
+73	arg	this	object	rec	1
+74	decr	t1	basic	int	1
+75	fieldget	t1	this	a_2
+76	fieldset	this	a_2	9
+77	decr	t2	basic	int	1
+78	fieldget	t2	this	b_3
+79	fieldset	this	b_3	10
+80	return
