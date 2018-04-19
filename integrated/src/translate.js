@@ -979,8 +979,8 @@ function codeGen(instr, next_use_table, line_nr) {
 
 		else {
 			des_object = registers.address_descriptor[object]["name"];
-			if (registers.address_descriptor[z]["type"] == "mem") {
-				des_object = registers.getReg(object, line_nr, next_use_table, safe = [z], safe_regs = [], print = true);
+			if (registers.address_descriptor[object]["type"] == "mem") {
+				des_object = registers.getReg(object, line_nr, next_use_table, safe = [], safe_regs = [], print = true);
 				assembly.add("mov dword " + des_object + ", [ebp - " + registers.address_descriptor[object]["offset"] + "]");
 			}
 

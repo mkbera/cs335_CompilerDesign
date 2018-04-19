@@ -8,12 +8,12 @@ section .data
 			function_return_error_msg db "Error: function with return type not void, did not seem to return", 0x0a, 0
 			array_access_up_error_msg db "Error: array index exceeds dimension size", 0x0a, 0
 			array_access_low_error_msg db "Error: array index cannot be negative", 0x0a, 0
-	_int db "%i", 0x0a, 0x00
-	_float db "%f", 0xA, 0
+	_int db "%i", 0x00
+	_float db "%f", 0
 	__dummy_float dq 0.0
 	_float_in db "%lf", 0
 	_int_in db "%i", 0
-	_char db "%c", 10, 0
+	_char db "%c", 0
 	_char_in db "%c", 0
 
 
