@@ -145,6 +145,12 @@ func_MergeSort_merge:
 	sub esp, 4
 	sub esp, 4
 	sub esp, 4
+	sub esp, 4
+	sub esp, 4
+	sub esp, 4
+	sub esp, 4
+	sub esp, 4
+	sub esp, 4
 	mov dword eax, [ ebp - -12]
 	mov dword ebx, [ ebp - -16]
 	mov dword [ ebp - 4], eax
@@ -160,7 +166,7 @@ label_15:
 
 label_19:
 	cmp dword [ ebp - 16], 0
-	je label_122
+	je label_142
 	mov dword ebx, [ebp - -24]
 	mov eax, [ebx+0]
 	push eax
@@ -196,11 +202,13 @@ label_34:
 	int 0x80
 
 label_36:
+	; HERE
 	mov dword eax, [ebp - 28]
 	add dword eax, [ ebp - -16]
 	mov dword ecx, [ebp - -20]
 	mov dword ebx, [ecx + eax * 4]
 	mov dword [ ebp - 36], 0
+	; HERE
 	mov dword edx, [ebp - -12]
 	mov dword [ ebp - -12], edx
 	add dword edx, 1
@@ -224,6 +232,7 @@ label_45:
 	int 0x80
 
 label_47:
+	; HERE
 	mov dword eax, [ebp - 36]
 	add dword eax, [ ebp - 40]
 	mov dword ecx, [ebp - -20]
@@ -240,6 +249,7 @@ label_54:
 	cmp dword [ ebp - 48], 1
 	je label_78
 	mov dword [ ebp - 52], 0
+	; HERE
 	mov dword eax, [ebp - -12]
 	mov dword [ ebp - -12], eax
 	add dword eax, 1
@@ -260,6 +270,7 @@ label_61:
 	int 0x80
 
 label_63:
+	; HERE
 	mov dword eax, [ebp - 52]
 	add dword eax, [ ebp - 56]
 	mov dword ecx, [ebp - -20]
@@ -284,6 +295,7 @@ label_70:
 	int 0x80
 
 label_72:
+	; HERE
 	mov dword eax, [ebp - 64]
 	add dword eax, [ ebp - 12]
 	mov dword ebx, [ebp - 60]
@@ -291,7 +303,7 @@ label_72:
 	mov dword [ecx + eax * 4], ebx
 	mov dword edx, [ebp - -12]
 	mov dword [ ebp - 68], edx
-	add dword edx, 1
+	inc dword edx
 	mov dword [ ebp - -12], edx
 	mov dword [ ebp - 8], ecx
 	mov dword [ ebp - 60], ebx
@@ -316,6 +328,7 @@ label_82:
 	int 0x80
 
 label_84:
+	; HERE
 	mov dword eax, [ebp - 72]
 	add dword eax, [ ebp - -16]
 	mov dword ecx, [ebp - -20]
@@ -340,6 +353,7 @@ label_91:
 	int 0x80
 
 label_93:
+	; HERE
 	mov dword eax, [ebp - 80]
 	add dword eax, [ ebp - 12]
 	mov dword ebx, [ebp - 76]
@@ -347,157 +361,127 @@ label_93:
 	mov dword [ecx + eax * 4], ebx
 	mov dword edx, [ebp - -16]
 	mov dword [ ebp - 84], edx
-	add dword edx, 1
+	inc dword edx
 	mov dword [ ebp - -16], edx
 	mov dword [ ebp - 8], ecx
 	mov dword [ ebp - 76], ebx
 	mov dword [ ebp - 80], eax
 
 label_98:
+	mov dword ebx, [ebp - -24]
+	mov eax, [ebx+0]
+	; HERE
+	mov dword ecx, [ebp - 4]
+	mov dword [ ebp - 4], ecx
+	add dword ecx, 1
+	push eax
+	push ecx
+	mov dword [ ebp - -24], ebx
+	mov dword [ ebp - 88], eax
+	mov dword [ ebp - 92], ecx
+	call func_IO_print_int
+	add esp, 2* 4
+	mov dword ebx, [ebp - -24]
+	mov eax, [ebx+0]
+	push eax
+	;-1
+	push 10
+	mov dword [ ebp - -24], ebx
+	mov dword [ ebp - 96], eax
+	call func_IO_print_char
+	add esp, 1* 4
+	; HERE
 	mov dword eax, [ebp - 4]
 	mov dword [ ebp - 4], eax
 	add dword eax, 1
-	mov dword [ ebp - 92], 1
+	mov dword [ ebp - 104], 1
 	cmp dword [ ebp - -16], eax
-	mov dword [ ebp - 88], eax
-	je label_104
-	mov dword [ ebp - 92], 0
+	mov dword [ ebp - 100], eax
+	je label_116
+	mov dword [ ebp - 104], 0
 
-label_104:
-	cmp dword [ ebp - 92], 1
-	je label_106
-	jmp label_118
-
-label_106:
+label_116:
+	; HERE
 	mov dword eax, [ebp - -8]
 	mov dword [ ebp - -8], eax
 	add dword eax, 1
-	mov dword [ ebp - 100], 1
+	mov dword [ ebp - 112], 1
 	cmp dword [ ebp - -12], eax
-	mov dword [ ebp - 96], eax
-	je label_112
-	mov dword [ ebp - 100], 0
-
-label_112:
-	cmp dword [ ebp - 100], 1
-	je label_114
-	jmp label_118
-
-label_114:
-	mov dword eax, [ebp - 12]
-	mov dword [ ebp - 104], eax
-	add dword eax, 1
-	mov dword [ ebp - 12], eax
-	jmp label_122
-
-label_118:
-	mov dword eax, [ebp - 12]
 	mov dword [ ebp - 108], eax
+	je label_122
+	mov dword [ ebp - 112], 0
+
+label_122:
+	; HERE
+	mov dword eax, [ebp - 104]
+	mov dword [ ebp - 104], eax
+	or dword eax, [ ebp - 112]
+	cmp dword eax, 1
+	mov dword [ ebp - 116], eax
+	je label_126
+	jmp label_138
+
+label_126:
+	; HERE
+	mov dword eax, [ebp - -8]
+	mov dword [ ebp - -8], eax
 	add dword eax, 1
+	mov dword [ ebp - 124], 1
+	cmp dword [ ebp - -12], eax
+	mov dword [ ebp - 120], eax
+	je label_132
+	mov dword [ ebp - 124], 0
+
+label_132:
+	cmp dword [ ebp - 124], 1
+	je label_134
+	jmp label_138
+
+label_134:
+	mov dword eax, [ebp - 12]
+	mov dword [ ebp - 128], eax
+	inc dword eax
+	mov dword [ ebp - 12], eax
+	jmp label_142
+
+label_138:
+	mov dword eax, [ebp - 12]
+	mov dword [ ebp - 132], eax
+	inc dword eax
 	mov dword [ ebp - 12], eax
 	jmp label_15
 
-label_122:
-	mov dword [ ebp - 112], 1
+label_142:
+	mov dword [ ebp - 136], 1
 	mov dword eax, [ebp - -16]
 	cmp dword eax, [ ebp - 4]
 	mov dword [ ebp - -16], eax
-	jle label_126
-	mov dword [ ebp - 112], 0
-
-label_126:
-	cmp dword [ ebp - 112], 0
-	je label_151
-	mov dword [ ebp - 116], 0
-	cmp dword [ ebp - -16], 0
-	jge label_131
-	push array_access_low_error_msg
-	call printf
-	mov dword eax, 1
-	int 0x80
-
-label_131:
-	cmp dword [ ebp - -16], 8
-	jl label_133
-	push array_access_up_error_msg
-	call printf
-	mov dword eax, 1
-	int 0x80
-
-label_133:
-	mov dword eax, [ebp - 116]
-	add dword eax, [ ebp - -16]
-	mov dword ecx, [ebp - -20]
-	mov dword ebx, [ecx + eax * 4]
-	mov dword [ ebp - 124], 0
-	cmp dword [ ebp - 12], 0
-	mov dword [ ebp - -20], ecx
-	mov dword [ ebp - 116], eax
-	mov dword [ ebp - 120], ebx
-	jge label_140
-	push array_access_low_error_msg
-	call printf
-	mov dword eax, 1
-	int 0x80
-
-label_140:
-	cmp dword [ ebp - 12], 8
-	jl label_142
-	push array_access_up_error_msg
-	call printf
-	mov dword eax, 1
-	int 0x80
-
-label_142:
-	mov dword eax, [ebp - 124]
-	mov dword ebx, [ ebp - 12]
-	add dword eax, ebx
-	mov dword ecx, [ebp - 120]
-	mov dword edx, [ebp - 8]
-	mov dword [edx + eax * 4], ecx
-	mov dword esi, [ebp - -16]
-	mov dword [ ebp - 128], esi
-	add dword esi, 1
-	mov dword edi, ebx
-	add dword ebx, 1
-	mov dword [ ebp - -16], esi
-	mov dword [ ebp - 8], edx
-	mov dword [ ebp - 12], ebx
-	mov dword [ ebp - 120], ecx
-	mov dword [ ebp - 124], eax
-	mov dword [ ebp - 132], edi
-	jmp label_122
-
-label_151:
-	mov dword [ ebp - 136], 1
-	mov dword eax, [ebp - -12]
-	cmp dword eax, [ ebp - -8]
-	mov dword [ ebp - -12], eax
-	jle label_155
+	jle label_146
 	mov dword [ ebp - 136], 0
 
-label_155:
+label_146:
 	cmp dword [ ebp - 136], 0
-	je label_180
+	je label_171
 	mov dword [ ebp - 140], 0
-	cmp dword [ ebp - -12], 0
-	jge label_160
+	cmp dword [ ebp - -16], 0
+	jge label_151
 	push array_access_low_error_msg
 	call printf
 	mov dword eax, 1
 	int 0x80
 
-label_160:
-	cmp dword [ ebp - -12], 8
-	jl label_162
+label_151:
+	cmp dword [ ebp - -16], 8
+	jl label_153
 	push array_access_up_error_msg
 	call printf
 	mov dword eax, 1
 	int 0x80
 
-label_162:
+label_153:
+	; HERE
 	mov dword eax, [ebp - 140]
-	add dword eax, [ ebp - -12]
+	add dword eax, [ ebp - -16]
 	mov dword ecx, [ebp - -20]
 	mov dword ebx, [ecx + eax * 4]
 	mov dword [ ebp - 148], 0
@@ -505,121 +489,197 @@ label_162:
 	mov dword [ ebp - -20], ecx
 	mov dword [ ebp - 140], eax
 	mov dword [ ebp - 144], ebx
-	jge label_169
+	jge label_160
 	push array_access_low_error_msg
 	call printf
 	mov dword eax, 1
 	int 0x80
 
-label_169:
+label_160:
 	cmp dword [ ebp - 12], 8
-	jl label_171
+	jl label_162
 	push array_access_up_error_msg
 	call printf
 	mov dword eax, 1
 	int 0x80
 
-label_171:
+label_162:
+	; HERE
 	mov dword eax, [ebp - 148]
 	mov dword ebx, [ ebp - 12]
 	add dword eax, ebx
 	mov dword ecx, [ebp - 144]
 	mov dword edx, [ebp - 8]
 	mov dword [edx + eax * 4], ecx
-	mov dword esi, [ebp - -12]
+	mov dword esi, [ebp - -16]
 	mov dword [ ebp - 152], esi
-	add dword esi, 1
+	inc dword esi
 	mov dword edi, ebx
-	add dword ebx, 1
-	mov dword [ ebp - -12], esi
+	inc dword ebx
+	mov dword [ ebp - -16], esi
 	mov dword [ ebp - 8], edx
 	mov dword [ ebp - 12], ebx
 	mov dword [ ebp - 144], ecx
 	mov dword [ ebp - 148], eax
 	mov dword [ ebp - 156], edi
-	jmp label_151
+	jmp label_142
+
+label_171:
+	mov dword [ ebp - 160], 1
+	mov dword eax, [ebp - -12]
+	cmp dword eax, [ ebp - -8]
+	mov dword [ ebp - -12], eax
+	jle label_175
+	mov dword [ ebp - 160], 0
+
+label_175:
+	cmp dword [ ebp - 160], 0
+	je label_200
+	mov dword [ ebp - 164], 0
+	cmp dword [ ebp - -12], 0
+	jge label_180
+	push array_access_low_error_msg
+	call printf
+	mov dword eax, 1
+	int 0x80
 
 label_180:
-	mov dword eax, [ ebp - -16]
-	mov dword [ ebp - 160], eax
+	cmp dword [ ebp - -12], 8
+	jl label_182
+	push array_access_up_error_msg
+	call printf
+	mov dword eax, 1
+	int 0x80
 
 label_182:
-	mov dword [ ebp - 164], 1
-	mov dword eax, [ebp - 160]
-	cmp dword eax, [ ebp - -8]
-	mov dword [ ebp - 160], eax
-	jle label_186
-	mov dword [ ebp - 164], 0
-
-label_186:
-	cmp dword [ ebp - 164], 0
-	je label_208
-	mov dword [ ebp - 168], 0
-	cmp dword [ ebp - 160], 0
-	jge label_191
+	; HERE
+	mov dword eax, [ebp - 164]
+	add dword eax, [ ebp - -12]
+	mov dword ecx, [ebp - -20]
+	mov dword ebx, [ecx + eax * 4]
+	mov dword [ ebp - 172], 0
+	cmp dword [ ebp - 12], 0
+	mov dword [ ebp - -20], ecx
+	mov dword [ ebp - 164], eax
+	mov dword [ ebp - 168], ebx
+	jge label_189
 	push array_access_low_error_msg
+	call printf
+	mov dword eax, 1
+	int 0x80
+
+label_189:
+	cmp dword [ ebp - 12], 8
+	jl label_191
+	push array_access_up_error_msg
 	call printf
 	mov dword eax, 1
 	int 0x80
 
 label_191:
-	cmp dword [ ebp - 160], 8
-	jl label_193
-	push array_access_up_error_msg
-	call printf
-	mov dword eax, 1
-	int 0x80
-
-label_193:
-	mov dword eax, [ebp - 168]
-	mov dword ebx, [ ebp - 160]
+	; HERE
+	mov dword eax, [ebp - 172]
+	mov dword ebx, [ ebp - 12]
 	add dword eax, ebx
+	mov dword ecx, [ebp - 168]
 	mov dword edx, [ebp - 8]
-	mov dword ecx, [edx + eax * 4]
-	mov dword [ ebp - 176], 0
-	cmp dword ebx, 0
+	mov dword [edx + eax * 4], ecx
+	mov dword esi, [ebp - -12]
+	mov dword [ ebp - 176], esi
+	inc dword esi
+	mov dword edi, ebx
+	inc dword ebx
+	mov dword [ ebp - -12], esi
 	mov dword [ ebp - 8], edx
-	mov dword [ ebp - 160], ebx
-	mov dword [ ebp - 168], eax
-	mov dword [ ebp - 172], ecx
-	jge label_200
+	mov dword [ ebp - 12], ebx
+	mov dword [ ebp - 168], ecx
+	mov dword [ ebp - 172], eax
+	mov dword [ ebp - 180], edi
+	jmp label_171
+
+label_200:
+	mov dword eax, [ ebp - -16]
+	mov dword [ ebp - 184], eax
+
+label_202:
+	mov dword [ ebp - 188], 1
+	mov dword eax, [ebp - 184]
+	cmp dword eax, [ ebp - -8]
+	mov dword [ ebp - 184], eax
+	jle label_206
+	mov dword [ ebp - 188], 0
+
+label_206:
+	cmp dword [ ebp - 188], 0
+	je label_228
+	mov dword [ ebp - 192], 0
+	cmp dword [ ebp - 184], 0
+	jge label_211
 	push array_access_low_error_msg
 	call printf
 	mov dword eax, 1
 	int 0x80
 
-label_200:
-	cmp dword [ ebp - 160], 8
-	jl label_202
+label_211:
+	cmp dword [ ebp - 184], 8
+	jl label_213
 	push array_access_up_error_msg
 	call printf
 	mov dword eax, 1
 	int 0x80
 
-label_202:
-	mov dword eax, [ebp - 176]
-	mov dword ebx, [ ebp - 160]
+label_213:
+	; HERE
+	mov dword eax, [ebp - 192]
+	mov dword ebx, [ ebp - 184]
 	add dword eax, ebx
-	mov dword ecx, [ebp - 172]
+	mov dword edx, [ebp - 8]
+	mov dword ecx, [edx + eax * 4]
+	mov dword [ ebp - 200], 0
+	cmp dword ebx, 0
+	mov dword [ ebp - 8], edx
+	mov dword [ ebp - 184], ebx
+	mov dword [ ebp - 192], eax
+	mov dword [ ebp - 196], ecx
+	jge label_220
+	push array_access_low_error_msg
+	call printf
+	mov dword eax, 1
+	int 0x80
+
+label_220:
+	cmp dword [ ebp - 184], 8
+	jl label_222
+	push array_access_up_error_msg
+	call printf
+	mov dword eax, 1
+	int 0x80
+
+label_222:
+	; HERE
+	mov dword eax, [ebp - 200]
+	mov dword ebx, [ ebp - 184]
+	add dword eax, ebx
+	mov dword ecx, [ebp - 196]
 	mov dword edx, [ebp - -20]
 	mov dword [edx + eax * 4], ecx
 	mov dword esi, ebx
-	add dword ebx, 1
+	inc dword ebx
 	mov dword [ ebp - -20], edx
-	mov dword [ ebp - 160], ebx
-	mov dword [ ebp - 172], ecx
-	mov dword [ ebp - 176], eax
-	mov dword [ ebp - 180], esi
-	jmp label_182
+	mov dword [ ebp - 184], ebx
+	mov dword [ ebp - 196], ecx
+	mov dword [ ebp - 200], eax
+	mov dword [ ebp - 204], esi
+	jmp label_202
 
-label_208:
+label_228:
 	mov dword ebx, [ebp - -24]
 	mov eax, [ebx+0]
 	push eax
 	;-1
 	push 68
 	mov dword [ ebp - -24], ebx
-	mov dword [ ebp - 184], eax
+	mov dword [ ebp - 208], eax
 	call func_IO_print_char
 	add esp, 1* 4
 	mov dword ebx, [ebp - -24]
@@ -628,7 +688,7 @@ label_208:
 	;-1
 	push 10
 	mov dword [ ebp - -24], ebx
-	mov dword [ ebp - 188], eax
+	mov dword [ ebp - 212], eax
 	call func_IO_print_char
 	add esp, 1* 4
 	mov dword esp, ebp
@@ -648,15 +708,16 @@ func_MergeSort_sort:
 	mov dword eax, [ebp - -12]
 	cmp dword eax, [ ebp - -8]
 	mov dword [ ebp - -12], eax
-	jl label_228
+	jl label_248
 	mov dword [ ebp - 4], 0
 
-label_228:
+label_248:
 	cmp dword [ ebp - 4], 1
-	je label_230
-	jmp label_264
+	je label_250
+	jmp label_284
 
-label_230:
+label_250:
+	; HERE
 	mov dword eax, [ebp - -12]
 	mov dword [ ebp - -12], eax
 	add dword eax, [ ebp - -8]
@@ -679,6 +740,7 @@ label_230:
 	mov dword [ ebp - 8], eax
 	call func_MergeSort_sort
 	add esp, 4* 4
+	; HERE
 	mov dword eax, [ebp - 8]
 	mov dword [ ebp - 8], eax
 	add dword eax, 1
@@ -732,7 +794,7 @@ label_230:
 	call func_MergeSort_merge
 	add esp, 5* 4
 
-label_264:
+label_284:
 	mov dword esp, ebp
 	pop ebp
 	ret
@@ -750,38 +812,39 @@ func_MergeSort_printArray:
 	mov dword [ ebp - 4], 8
 	mov dword [ ebp - 8], 0
 
-label_272:
+label_292:
 	mov dword [ ebp - 12], 1
 	mov dword eax, [ebp - 8]
 	cmp dword eax, [ ebp - 4]
 	mov dword [ ebp - 8], eax
-	jl label_276
+	jl label_296
 	mov dword [ ebp - 12], 0
 
-label_276:
+label_296:
 	cmp dword [ ebp - 12], 0
-	je label_300
+	je label_320
 	mov dword ebx, [ebp - -12]
 	mov eax, [ebx+0]
 	mov dword [ ebp - 20], 0
 	cmp dword [ ebp - 8], 0
 	mov dword [ ebp - -12], ebx
 	mov dword [ ebp - 16], eax
-	jge label_283
+	jge label_303
 	push array_access_low_error_msg
 	call printf
 	mov dword eax, 1
 	int 0x80
 
-label_283:
+label_303:
 	cmp dword [ ebp - 8], 8
-	jl label_285
+	jl label_305
 	push array_access_up_error_msg
 	call printf
 	mov dword eax, 1
 	int 0x80
 
-label_285:
+label_305:
+	; HERE
 	mov dword eax, [ebp - 20]
 	add dword eax, [ ebp - 8]
 	mov dword ecx, [ebp - -8]
@@ -804,14 +867,15 @@ label_285:
 	mov dword [ ebp - 28], eax
 	call func_IO_print_char
 	add esp, 1* 4
+	; HERE
 	mov dword eax, [ebp - 8]
 	mov dword [ ebp - 8], eax
 	add dword eax, 1
 	mov dword [ ebp - 32], eax
 	mov dword [ ebp - 8], eax
-	jmp label_272
+	jmp label_292
 
-label_300:
+label_320:
 	mov dword esp, ebp
 	pop ebp
 	ret
