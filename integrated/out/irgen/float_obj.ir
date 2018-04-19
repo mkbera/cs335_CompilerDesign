@@ -1,0 +1,35 @@
+1	import	IO
+2	class	rec
+3	field_decr	rec	a_2	basic	float	1
+4	function	main
+5	decr	obj_3	object	rec	1
+6	decr	t3	object	rec	1
+7	new	t3	rec
+8	param	t3
+9	call	rec_rec	1
+10	=	obj_3	t3
+11	decr	d_4	basic	float	1
+12	decr	t4	basic	float	1
+13	fieldget	t4	obj_3	a_2
+14	=	d_4	t4
+15	decr	io_5	object	IO	1
+16	decr	t5	object	IO	1
+17	new	t5	IO
+18	param	t5
+19	call	IO_IO	1
+20	=	io_5	t5
+21	param	io_5
+22	param	d_4
+23	call	IO_print_float	2
+24	param	io_5
+25	param	10
+26	call	IO_print_char	2
+27	return
+28	function	rec_rec
+29	arg	this	object	rec	1
+30	decr	t1	basic	float	1
+31	fieldget	t1	this	a_2
+32	decr	t2	basic	float	1
+33	cast	t2	int	float	9
+34	fieldset	this	a_2	t2
+35	return
