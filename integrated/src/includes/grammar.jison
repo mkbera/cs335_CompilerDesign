@@ -367,17 +367,29 @@
 
 %%
 
-\/\*								this.pushState('BLOCKCOMMENT');
+\/\*								{
+										var top = this.conditionStack[this.conditionStack.length - 1]
+										if (top != 'BLOCKCOMMENT') {
+											this.pushState('BLOCKCOMMENT');
+										}
+									}
 
 <BLOCKCOMMENT>\*\/					this.popState();
 
 <BLOCKCOMMENT>(\n|\r|.)				/* SKIP BLOCKCOMMENTS */
 
-\/\/								this.pushState('COMMENT');
+\/\/								{
+										var top = this.conditionStack[this.conditionStack.length - 1]
+										if (top != 'COMMENT') {
+											this.pushState('COMMENT');
+										}
+									}
 
 <COMMENT>(.)						/* SKIP COMMENTS */
 
 <COMMENT>(\n|\r)					this.popState();
+
+<COMMENT><<EOF>>					this.popState();
 
 \s+									/* SKIP WHITESPACES */
 
