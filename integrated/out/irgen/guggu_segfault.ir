@@ -141,9 +141,11 @@
 141	return
 142	function	List_List
 143	arg	this	object	List	1
-144	decr	t1	basic	float	1
-145	fieldget	t1	this	value_2
-146	fieldset	this	value_2	10.0
-147	decr	t2	object	List	1
-148	fieldget	t2	this	next_3
-149	return
+144	fieldset	this	next_3	0
+145	fieldset	this	value_2	0
+146	decr	t1	basic	float	1
+147	fieldget	t1	this	value_2
+148	fieldset	this	value_2	10.0
+149	decr	t2	object	List	1
+150	fieldget	t2	this	next_3
+151	return

@@ -10,98 +10,99 @@
 10	*	t4	a_6	2
 11	return	t4
 12	error	function_return
-13	exit
-14	function	rec_sum
-15	arg	b_9	basic	int	1
-16	arg	a_8	basic	int	1
-17	arg	this	object	rec	1
-18	decr	c_10	basic	int	1
-19	decr	t5	basic	int	1
-20	+	t5	a_8	b_9
-21	decr	t6	basic	int	1
-22	param	this
-23	param	t5
-24	call	rec_two_times	2	t6
-25	=	c_10	t6
-26	return	c_10
-27	error	function_return
-28	exit
-29	function	main
-30	decr	obj_11	object	rec	1
-31	decr	t7	object	rec	1
-32	new	t7	rec
-33	param	t7
-34	call	rec_rec	1
-35	=	obj_11	t7
-36	decr	t8	array	int	5
-37	fieldget	t8	obj_11	arr_4
-38	decr	t9	basic	int	1
-39	=	t9	0
-40	+	t9	t9	0
-41	arrset	t8	t9	1
-42	decr	io_12	object	IO	1
-43	decr	t10	object	IO	1
-44	new	t10	IO
-45	param	t10
-46	call	IO_IO	1
-47	=	io_12	t10
-48	decr	t11	array	int	5
-49	fieldget	t11	obj_11	arr_4
-50	decr	t12	basic	int	1
-51	=	t12	0
-52	+	t12	t12	0
-53	decr	t13	basic	int	1
-54	arrget	t13	t11	t12
-55	param	io_12
-56	param	t13
-57	call	IO_print_int	2
-58	param	io_12
-59	param	10
-60	call	IO_print_char	2
-61	decr	t16	array	int	5
-62	fieldget	t16	obj_11	arr_4
-63	decr	t17	basic	int	1
-64	=	t17	0
-65	+	t17	t17	0
-66	decr	t18	basic	int	1
-67	arrget	t18	t16	t17
-68	decr	t19	array	int	5
-69	fieldget	t19	obj_11	arr_4
-70	decr	t20	basic	int	1
-71	=	t20	0
-72	+	t20	t20	0
-73	decr	t21	basic	int	1
-74	arrget	t21	t19	t20
-75	decr	t22	basic	int	1
-76	param	obj_11
-77	param	t18
-78	param	t21
-79	call	rec_sum	3	t22
-80	decr	t14	array	int	5
-81	fieldget	t14	obj_11	arr_4
-82	decr	t15	basic	int	1
-83	=	t15	0
-84	+	t15	t15	1
-85	arrset	t14	t15	t22
-86	decr	t23	array	int	5
-87	fieldget	t23	obj_11	arr_4
-88	decr	t24	basic	int	1
-89	=	t24	0
-90	+	t24	t24	1
-91	decr	t25	basic	int	1
-92	arrget	t25	t23	t24
-93	param	io_12
-94	param	t25
-95	call	IO_print_int	2
-96	return
-97	function	rec_rec
-98	arg	this	object	rec	1
-99	decr	t1	basic	int	1
-100	fieldget	t1	this	a_2
-101	fieldset	this	a_2	9
-102	decr	t2	basic	int	1
-103	fieldget	t2	this	b_3
-104	fieldset	this	b_3	10
-105	decr	t3	array	int	5
-106	fieldget	t3	this	arr_4
-107	return
+13	function	rec_sum
+14	arg	b_9	basic	int	1
+15	arg	a_8	basic	int	1
+16	arg	this	object	rec	1
+17	decr	c_10	basic	int	1
+18	decr	t5	basic	int	1
+19	+	t5	a_8	b_9
+20	decr	t6	basic	int	1
+21	param	this
+22	param	t5
+23	call	rec_two_times	2	t6
+24	=	c_10	t6
+25	return	c_10
+26	error	function_return
+27	function	main
+28	decr	obj_11	object	rec	1
+29	decr	t7	object	rec	1
+30	new	t7	rec
+31	param	t7
+32	call	rec_rec	1
+33	=	obj_11	t7
+34	decr	t8	array	int	5
+35	fieldget	t8	obj_11	arr_4
+36	decr	t9	basic	int	1
+37	=	t9	0
+38	+	t9	t9	0
+39	arrset	t8	t9	1
+40	decr	io_12	object	IO	1
+41	decr	t10	object	IO	1
+42	new	t10	IO
+43	param	t10
+44	call	IO_IO	1
+45	=	io_12	t10
+46	decr	t11	array	int	5
+47	fieldget	t11	obj_11	arr_4
+48	decr	t12	basic	int	1
+49	=	t12	0
+50	+	t12	t12	0
+51	decr	t13	basic	int	1
+52	arrget	t13	t11	t12
+53	param	io_12
+54	param	t13
+55	call	IO_print_int	2
+56	param	io_12
+57	param	10
+58	call	IO_print_char	2
+59	decr	t16	array	int	5
+60	fieldget	t16	obj_11	arr_4
+61	decr	t17	basic	int	1
+62	=	t17	0
+63	+	t17	t17	0
+64	decr	t18	basic	int	1
+65	arrget	t18	t16	t17
+66	decr	t19	array	int	5
+67	fieldget	t19	obj_11	arr_4
+68	decr	t20	basic	int	1
+69	=	t20	0
+70	+	t20	t20	0
+71	decr	t21	basic	int	1
+72	arrget	t21	t19	t20
+73	decr	t22	basic	int	1
+74	param	obj_11
+75	param	t18
+76	param	t21
+77	call	rec_sum	3	t22
+78	decr	t14	array	int	5
+79	fieldget	t14	obj_11	arr_4
+80	decr	t15	basic	int	1
+81	=	t15	0
+82	+	t15	t15	1
+83	arrset	t14	t15	t22
+84	decr	t23	array	int	5
+85	fieldget	t23	obj_11	arr_4
+86	decr	t24	basic	int	1
+87	=	t24	0
+88	+	t24	t24	1
+89	decr	t25	basic	int	1
+90	arrget	t25	t23	t24
+91	param	io_12
+92	param	t25
+93	call	IO_print_int	2
+94	return
+95	function	rec_rec
+96	arg	this	object	rec	1
+97	fieldset	this	arr_4	0
+98	fieldset	this	b_3	0
+99	fieldset	this	a_2	0
+100	decr	t1	basic	int	1
+101	fieldget	t1	this	a_2
+102	fieldset	this	a_2	9
+103	decr	t2	basic	int	1
+104	fieldget	t2	this	b_3
+105	fieldset	this	b_3	10
+106	decr	t3	array	int	5
+107	fieldget	t3	this	arr_4
+108	return

@@ -699,10 +699,27 @@ label_238:
 
 label_242:
 	cmp dword [ ebp - 72], 0
-	je label_255
-	mov dword eax, 0
+	je label_259
+	mov dword [ ebp - 76], 0
+	cmp dword [ ebp - 32], 0
+	jge label_247
+	push array_access_low_error_msg
+	call printf
+	mov dword eax, 1
+	int 0x80
+
+label_247:
+	cmp dword [ ebp - 32], 5
+	jl label_249
+	push array_access_up_error_msg
+	call printf
+	mov dword eax, 1
+	int 0x80
+
+label_249:
 	; HERE
-	add dword eax, 0
+	mov dword eax, [ebp - 76]
+	add dword eax, [ ebp - 32]
 	mov dword esi, [ebp - 12]
 	mov dword ebx, [esi + eax * 4]
 	mov dword edi, [ebp - 4]
@@ -722,7 +739,7 @@ label_242:
 	mov dword [ ebp - 32], eax
 	jmp label_238
 
-label_255:
+label_259:
 	mov dword esp, ebp
 	pop ebp
 	ret

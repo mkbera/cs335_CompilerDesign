@@ -17,9 +17,9 @@ section .data
 		_char_in db "%c", 0
 		_34 DD 0
 		_42 DD 0
-		_76 DD 10
-		_108 DD 0
-		_111 DD 10.0
+		_73 DD 10
+		_105 DD 0
+		_108 DD 10.0
 
 
 section .text
@@ -196,7 +196,7 @@ label_37:
 
 label_47:
 	cmp dword [ ebp - 40], 0
-	je label_66
+	je label_63
 	mov dword eax, [ebp - 4]
 	push eax
 	sub esp, 4
@@ -204,14 +204,6 @@ label_47:
 	fstp dword [esp]
 	mov dword [ ebp - 4], eax
 	call func_IO_print_float
-	add esp, 1* 4
-	mov dword eax, [ebp - 4]
-	push eax
-	sub esp, 4
-	fld dword [ebp - 28]
-	fstp dword [esp]
-	mov dword [ ebp - 4], eax
-	call func_IO_print_char
 	add esp, 1* 4
 	push 12
 	call malloc
@@ -240,7 +232,7 @@ label_47:
 	mov dword [ ebp - 52], eax
 	jmp label_37
 
-label_66:
+label_63:
 	mov dword eax, [ ebp - 12]
 	mov dword ebx, [ebp - 4]
 	push ebx
@@ -251,17 +243,17 @@ label_66:
 	call func_IO_print_char
 	add esp, 1* 4
 
-label_70:
+label_67:
 	mov dword ebx, [ebp - 24]
 	mov eax, [ebx+4]
 	cmp dword eax, 0
 	mov dword [ ebp - 24], ebx
 	mov dword [ ebp - 56], eax
-	je label_103
+	je label_100
 	mov dword eax, [ebp - 24]
 	fld dword [eax+0]
 	fstp dword [ebp - 60]
-	fild dword [_76]
+	fild dword [_73]
 	fstp dword [ebp - 68]
 	mov dword [ ebp - 64], 1
 	fld dword [ebp -68]
@@ -271,12 +263,12 @@ label_70:
 	fstsw ax
 	fwait
 	sahf
-	jb label_81
+	jb label_78
 	mov dword [ ebp - 64], 0
 
-label_81:
+label_78:
 	cmp dword [ ebp - 64], 1
-	je label_88
+	je label_85
 	mov dword eax, [ebp - 24]
 	fld dword [eax+0]
 	fstp dword [ebp - 72]
@@ -289,9 +281,9 @@ label_81:
 	mov dword [ ebp - 24], eax
 	call func_IO_print_float
 	add esp, 1* 4
-	jmp label_96
+	jmp label_93
 
-label_88:
+label_85:
 	mov dword eax, [ebp - 4]
 	push eax
 	;-1
@@ -312,7 +304,7 @@ label_88:
 	call func_IO_print_float
 	add esp, 1* 4
 
-label_96:
+label_93:
 	mov dword eax, [ebp - 4]
 	push eax
 	;-1
@@ -325,9 +317,9 @@ label_96:
 	mov dword ebx, eax
 	mov dword [ ebp - 24], ebx
 	mov dword [ ebp - 80], eax
-	jmp label_70
+	jmp label_67
 
-label_103:
+label_100:
 	mov dword esp, ebp
 	pop ebp
 	ret
@@ -341,11 +333,11 @@ func_List_List:
 	mov dword eax, [ebp - -12]
 	mov dword [eax+8], 0
 	mov dword [eax+4], 0
-	fld dword [_108]
+	fld dword [_105]
 	fstp dword [eax+0]
 	fld dword [eax+0]
 	fstp dword [ebp - 4]
-	fld dword [_111]
+	fld dword [_108]
 	fstp dword [eax+0]
 	mov ebx, [eax+4]
 	mov dword [eax+4], 0

@@ -11,7 +11,7 @@ class List {
 
     public void set_next(List next) {
         this.next = next;
-        next_exists = true;
+        this.next_exists = true;
     }
 
 	public void main() {
@@ -23,7 +23,7 @@ class List {
         float x = 0;
         while ((x = io.scan_float()) >= 0) {
             io.print_float(x);
-            io.print_char(x);
+            // io.print_char(x);
             current.set_next(new List(x));
             current = current.next;
         }

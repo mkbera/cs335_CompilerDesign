@@ -17,7 +17,8 @@ section .data
 		_char_in db "%c", 0
 		_55	DD 2.1
 		_115	DD 18.1
-		_145 DD 10.0
+		_144 DD 0
+		_147 DD 10.0
 
 
 section .text
@@ -364,12 +365,12 @@ label_111:
 	fstp dword [ebp - 104]
 	mov dword [ ebp - 108], 1
 	fld dword [_115]
+	mov dword [ ebp - 84], eax
 	fld dword [ebp - 104]
 	fcompp
 	fstsw ax
 	fwait
 	sahf
-	mov dword [ ebp - 84], eax
 	jb label_118
 	mov dword [ ebp - 108], 0
 
@@ -436,9 +437,12 @@ func_List_List:
 	sub esp, 4
 	sub esp, 4
 	mov dword eax, [ebp - -8]
+	mov dword [eax+4], 0
+	fld dword [_144]
+	fstp dword [eax+0]
 	fld dword [eax+0]
 	fstp dword [ebp - 4]
-	fld dword [_145]
+	fld dword [_147]
 	fstp dword [eax+0]
 	mov ebx, [eax+4]
 	mov dword [ ebp - -8], eax

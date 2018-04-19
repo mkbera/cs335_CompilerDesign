@@ -239,20 +239,24 @@
 239	=	t43	1
 240	ifgoto	lt	i_18	5	242
 241	=	t43	0
-242	ifgoto	eq	t43	0	255
+242	ifgoto	eq	t43	0	259
 243	decr	t45	basic	int	1
 244	=	t45	0
-245	+	t45	t45	0
-246	decr	t46	basic	int	1
-247	arrget	t46	x_14	t45
-248	param	io_13
-249	param	t46
-250	call	IO_print_int	2
-251	decr	t44	basic	int	1
-252	+	t44	i_18	1
-253	=	i_18	t44
-254	jump	238
-255	return
-256	function	Qsort_Qsort
-257	arg	this	object	Qsort	1
-258	return
+245	ifgoto	ge	i_18	0	247
+246	error	array_access_low
+247	ifgoto	lt	i_18	5	249
+248	error	array_access_up
+249	+	t45	t45	i_18
+250	decr	t46	basic	int	1
+251	arrget	t46	x_14	t45
+252	param	io_13
+253	param	t46
+254	call	IO_print_int	2
+255	decr	t44	basic	int	1
+256	+	t44	i_18	1
+257	=	i_18	t44
+258	jump	238
+259	return
+260	function	Qsort_Qsort
+261	arg	this	object	Qsort	1
+262	return

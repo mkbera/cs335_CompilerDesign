@@ -62,7 +62,7 @@ class Qsort
 				// io.print_int(some);
 
                 for(i=0;i<5;i=i+1){
-                        io.print_int(x:[0]);
+                        io.print_int(x:[i]);
                 }
         }
 

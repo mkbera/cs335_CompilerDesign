@@ -345,11 +345,12 @@
 345	return
 346	function	MergeSort_MergeSort
 347	arg	this	object	MergeSort	1
-348	decr	t2	object	IO	1
-349	fieldget	t2	this	io_2
-350	decr	t1	object	IO	1
-351	new	t1	IO
-352	param	t1
-353	call	IO_IO	1
-354	fieldset	this	io_2	t1
-355	return
+348	fieldset	this	io_2	0
+349	decr	t2	object	IO	1
+350	fieldget	t2	this	io_2
+351	decr	t1	object	IO	1
+352	new	t1	IO
+353	param	t1
+354	call	IO_IO	1
+355	fieldset	this	io_2	t1
+356	return
