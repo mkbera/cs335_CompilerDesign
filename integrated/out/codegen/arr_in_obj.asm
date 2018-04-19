@@ -108,17 +108,13 @@ push function_return_error_msg
 call printf
 mov dword eax, 1
 int 0x80
-
-mov dword esp, ebp
-pop ebp
-mov dword eax, 1
-int 0x80
 func_rec_sum:
 	push ebp
 	mov ebp, esp
 	sub esp, 4
 	sub esp, 4
 	sub esp, 4
+	; HERE
 	mov dword eax, [ebp - -12]
 	mov dword [ ebp - -12], eax
 	add dword eax, [ ebp - -8]
@@ -139,11 +135,6 @@ func_rec_sum:
 	ret
 push function_return_error_msg
 call printf
-mov dword eax, 1
-int 0x80
-
-mov dword esp, ebp
-pop ebp
 mov dword eax, 1
 int 0x80
 main:
@@ -204,9 +195,10 @@ main:
 	add esp, 1* 4
 	mov dword eax, [ ebp - 8]
 	mov ebx, [eax+8]
-	mov dword ecx, 0
-	add dword ecx, 0
-	mov dword [ebx + ecx * 4], 1
+	mov dword esi, 0
+	; HERE
+	add dword esi, 0
+	mov dword [ebx + esi * 4], 1
 	mov [ebp - 4], eax
 	push 0
 	call malloc
@@ -215,23 +207,28 @@ main:
 	mov dword eax, [ebp - 24]
 	push eax
 	mov dword [ ebp - 12], ebx
-	mov dword [ ebp - 16], ecx
+	mov dword [ ebp - 16], esi
 	mov dword [ ebp - 24], eax
 	call func_IO_IO
 	add esp, 1* 4
 	mov dword eax, [ ebp - 24]
-	mov dword ecx, [ebp - 4]
-	mov ebx, [ecx+8]
-	mov dword edx, 0
-	add dword edx, 0
-	mov dword esi, [ebx + edx * 4]
-	push eax
-	push esi
-	mov dword [ ebp - 4], ecx
+	mov dword esi, [ebp - 4]
+	mov ebx, [esi+8]
+	mov dword edi, 0
+	; HERE
+	add dword edi, 0
 	mov dword [ ebp - 20], eax
+	mov dword eax, [ebx + edi * 4]
+	mov dword [ ebp - 36], eax
+	mov dword eax, [ebp - 20]
+	push eax
+	mov dword [ ebp - 20], eax
+	mov dword eax, [ebp - 36]
+	push eax
+	mov dword [ ebp - 4], esi
 	mov dword [ ebp - 28], ebx
-	mov dword [ ebp - 32], edx
-	mov dword [ ebp - 36], esi
+	mov dword [ ebp - 32], edi
+	mov dword [ ebp - 36], eax
 	call func_IO_print_int
 	add esp, 2* 4
 	mov dword eax, [ebp - 20]
@@ -243,22 +240,30 @@ main:
 	add esp, 1* 4
 	mov dword ebx, [ebp - 4]
 	mov eax, [ebx+8]
-	mov dword ecx, 0
-	add dword ecx, 0
-	mov dword edx, [eax + ecx * 4]
-	mov esi, [ebx+8]
-	mov dword edi, 0
-	add dword edi, 0
+	mov dword esi, 0
+	; HERE
+	add dword esi, 0
+	mov dword edi, [eax + esi * 4]
 	mov dword [ ebp - 40], eax
-	mov dword eax, [esi + edi * 4]
-	push ebx
-	push edx
-	push eax
+	mov eax, [ebx+8]
 	mov dword [ ebp - 4], ebx
-	mov dword [ ebp - 44], ecx
-	mov dword [ ebp - 48], edx
+	mov dword ebx, 0
+	; HERE
+	add dword ebx, 0
+	mov dword [ ebp - 52], eax
+	mov dword [ ebp - 44], esi
+	mov dword esi, [ebp - 52]
+	mov dword eax, [esi + ebx * 4]
+	mov dword [ ebp - 60], eax
+	mov dword eax, [ebp - 4]
+	push eax
+	push edi
+	mov dword [ ebp - 4], eax
+	mov dword eax, [ebp - 60]
+	push eax
+	mov dword [ ebp - 48], edi
 	mov dword [ ebp - 52], esi
-	mov dword [ ebp - 56], edi
+	mov dword [ ebp - 56], ebx
 	mov dword [ ebp - 60], eax
 	call func_rec_sum
 	add esp, 3* 4
@@ -266,26 +271,30 @@ main:
 	mov dword [ebp - 64], eax
 	mov dword ebx, [ebp - 4]
 	mov eax, [ebx+8]
-	mov dword ecx, 0
-	add dword ecx, 1
-	mov dword edx, [ebp - 64]
-	mov dword [eax + ecx * 4], edx
-	mov esi, [ebx+8]
-	mov dword edi, 0
-	add dword edi, 1
+	mov dword esi, 0
+	; HERE
+	add dword esi, 1
+	mov dword edi, [ebp - 64]
+	mov dword [eax + esi * 4], edi
 	mov dword [ ebp - 68], eax
-	mov dword eax, [esi + edi * 4]
+	mov eax, [ebx+8]
+	mov dword [ ebp - 4], ebx
+	mov dword ebx, 0
+	; HERE
+	add dword ebx, 1
+	mov dword [ ebp - 76], eax
+	mov dword [ ebp - 72], esi
+	mov dword esi, [ebp - 76]
+	mov dword eax, [esi + ebx * 4]
 	mov dword [ ebp - 84], eax
 	mov dword eax, [ebp - 20]
 	push eax
 	mov dword [ ebp - 20], eax
 	mov dword eax, [ebp - 84]
 	push eax
-	mov dword [ ebp - 4], ebx
-	mov dword [ ebp - 64], edx
-	mov dword [ ebp - 72], ecx
+	mov dword [ ebp - 64], edi
 	mov dword [ ebp - 76], esi
-	mov dword [ ebp - 80], edi
+	mov dword [ ebp - 80], ebx
 	mov dword [ ebp - 84], eax
 	call func_IO_print_int
 	add esp, 2* 4
@@ -301,16 +310,19 @@ func_rec_rec:
 	call malloc
 	add esp, 4
 	push eax
-	mov dword ebx, [ebp - -8]
-	mov eax, [ebx+0]
-	mov dword [ebx+0], 9
-	mov ecx, [ebx+4]
-	mov dword [ebx+4], 10
-	mov edx, [ebx+8]
-	mov dword [ ebp - -8], ebx
-	mov dword [ ebp - 4], eax
-	mov dword [ ebp - 8], ecx
-	mov dword [ ebp - 12], edx
+	mov dword eax, [ebp - -8]
+	mov dword [eax+8], 0
+	mov dword [eax+4], 0
+	mov dword [eax+0], 0
+	mov ebx, [eax+0]
+	mov dword [eax+0], 9
+	mov esi, [eax+4]
+	mov dword [eax+4], 10
+	mov edi, [eax+8]
+	mov dword [ ebp - -8], eax
+	mov dword [ ebp - 4], ebx
+	mov dword [ ebp - 8], esi
+	mov dword [ ebp - 12], edi
 	mov dword esp, ebp
 	pop ebp
 	ret

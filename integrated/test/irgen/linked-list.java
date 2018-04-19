@@ -11,7 +11,7 @@ class List {
 
     public void set_next(List next) {
         this.next = next;
-        next_exists = true;
+        this.next_exists = true;
     }
 
 	public void main() {

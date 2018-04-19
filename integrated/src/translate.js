@@ -667,11 +667,35 @@ function codeGen(instr, next_use_table, line_nr) {
 			assembly.add("fstp st0")
 		}
 	}
-	else if (op == "ifgoto") {
+	else if (op == "ifgoto") {			//x<y type
 		var cond = instr[2]
 
 		var x = instr[3];
-		if (registers.address_descriptor[x]["category"] == "int") {
+		if (variables.indexOf(x) == -1) {
+			var y = instr[4]
+			if (x.indexOf(".") == -1){
+				x = x + ".0"
+			}
+			if (y.indexOf(".") == -1){
+				y = y + ".0"
+			}
+			registers.unloadRegisters(line_nr - 1);
+			assembly.add("_" + line_nr +"_x DD " + x)
+			assembly.add("_" + line_nr +"_y DD " + y)
+			assembly.add("fld dword [_" + line_nr + "_y]")
+			assembly.add("fld dword [_" + line_nr + "_x]")
+
+
+			assembly.add("fcompp")
+			assembly.add("fstsw ax")
+			assembly.add("fwait")
+			assembly.add("sahf")
+			// assembly.add("fstp")
+			// assembly.add("fstp")
+			assembly.add(map_op_float[cond] + " label_" + instr[5])
+
+		}
+		else if (registers.address_descriptor[x]["category"] == "int") {
 			var y = instr[4];
 
 			var des_x = registers.address_descriptor[x]["name"];

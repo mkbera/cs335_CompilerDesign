@@ -23,8 +23,8 @@ class MergeSort
 				jo:[i] = arr:[m+1];
 				m++;
 			}
-			// io.print_int(m_old+1);io.print_char(10);
-			if(l == m_old + 1){
+			io.print_int(m_old+1);io.print_char(10);
+			if(l == m_old + 1 || m == r+ 1){
 				if(m == r+1){
 					i++;
 					break;
