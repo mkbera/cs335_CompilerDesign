@@ -1,11 +1,11 @@
 {
     "data": [
-        "_int db \"%i\", 0x0a, 0x00",
-        "_float db \"%f\", 0xA, 0",
+        "_int db \"%i\", 0x00",
+        "_float db \"%f\", 0",
     "__dummy_float dq 0.0",
     "_float_in db \"%lf\", 0",
     "_int_in db \"%i\", 0",
-    "_char db \"%c\", 10, 0",
+    "_char db \"%c\", 0",
     "_char_in db \"%c\", 0"
 
     ],
@@ -27,6 +27,7 @@
         "\tpop ebp",
         "\tret",
 
+ 
 
 
         "func_IO_print_int:",
@@ -72,7 +73,7 @@
         "\tpush _int_in",
         "\tcall scanf",
         "\tmov eax, [ebp - 4]",
-        "\tmov esp, ebp",
+		"\tmov esp, ebp",
         "\tpop ebp",
         "\tret",
     
@@ -83,7 +84,7 @@
         "\tpush _float_in",
         "\tcall scanf",
         "\tfld qword [__dummy_float]",
-        "\tmov esp, ebp",
+      	"\tmov esp, ebp",
         "\tpop ebp",
         "\tret"    
     ],

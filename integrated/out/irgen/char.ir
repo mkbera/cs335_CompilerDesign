@@ -15,21 +15,30 @@
 15	param	io_2
 16	param	a_3
 17	call	IO_print_char	2
-18	decr	b_4	basic	int	1
+18	decr	c_4	basic	int	1
 19	decr	t3	basic	int	1
 20	param	io_2
-21	call	IO_scan_char	1	t3
-22	=	b_4	t3
-23	decr	t4	basic	int	1
-24	param	io_2
-25	call	IO_scan_char	1	t4
-26	=	b_4	t4
-27	decr	t5	basic	int	1
-28	+	t5	b_4	a_3
+21	call	IO_scan_int	1	t3
+22	=	c_4	t3
+23	decr	b_5	basic	int	1
+24	decr	t4	basic	int	1
+25	param	io_2
+26	call	IO_scan_char	1	t4
+27	=	b_5	t4
+28	decr	t5	basic	int	1
 29	param	io_2
-30	param	t5
-31	call	IO_print_char	2
-32	return
-33	function	rec_rec
-34	arg	this	object	rec	1
-35	return
+30	call	IO_scan_char	1	t5
+31	=	b_5	t5
+32	param	io_2
+33	param	37
+34	call	IO_print_char	2
+35	param	io_2
+36	param	c_4
+37	call	IO_print_int	2
+38	param	io_2
+39	param	b_5
+40	call	IO_print_char	2
+41	return
+42	function	rec_rec
+43	arg	this	object	rec	1
+44	return

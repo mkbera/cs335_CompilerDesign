@@ -996,6 +996,7 @@ function codeGen(instr, next_use_table, line_nr) {
 		var field = instr[3]
 
 		var class_name = registers.address_descriptor[object]["category"]
+		// console.log(";" + instr[4])		
 		var z = instr[4];
 		var field_type = symtab[class_name][field]["type"]
 		if (field_type != "float") {
@@ -1006,10 +1007,14 @@ function codeGen(instr, next_use_table, line_nr) {
 				des_z = z
 			}
 			else if (registers.address_descriptor[z]["type"] == "mem") {	// z in mem
+				assembly.add(";" + registers.address_descriptor[instr[4]]["type"])
+		assembly.add(";" + registers.address_descriptor[instr[4]]["name"])
 				des_z = registers.getReg(z, line_nr, next_use_table, safe = [y], safe_regs = [], print = true);
-				// assembly.add("mov dword " + des_z + ", [ebp - " + registers.address_descriptor[z]["offset"] + "]");
+				assembly.add("mov dword " + des_z + ", [ebp - " + registers.address_descriptor[z]["offset"] + "]");
 			}
 			else if (registers.address_descriptor[z]["type"] == "reg") {	// z in reg
+				// assembly.add(";" + registers.address_descriptor[instr[4]]["type"])
+		// assembly.add(";" + registers.address_descriptor[instr[4]]["name"])
 				des_z = registers.address_descriptor[z]["name"];
 			}
 

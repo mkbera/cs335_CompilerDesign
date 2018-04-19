@@ -31,6 +31,7 @@ main:
 	sub esp, 4
 	sub esp, 4
 	sub esp, 4
+	sub esp, 4
 	push 0
 	call malloc
 	add esp, 4
@@ -41,76 +42,62 @@ main:
 	call func_IO_IO
 	add esp, 1* 4
 	mov dword eax, [ ebp - 8]
+	mov [ebp - 4], eax
+	push 8
+	call malloc
+	add esp, 4
+	mov [ebp -16], eax
+	mov dword eax, [ebp - 16]
 	push eax
-	mov dword [ ebp - 4], eax
-	call func_IO_scan_char
+	mov dword [ ebp - 16], eax
+	call func_rec1_rec1
 	add esp, 1* 4
-	; TEST
-	mov dword [ebp - 16], eax
 	mov dword eax, [ ebp - 16]
-	mov dword ebx, [ebp - 4]
-	push ebx
+	mov [ebp - 12], eax
+	push 8
+	call malloc
+	add esp, 4
+	mov [ebp -20], eax
+	mov dword eax, [ebp - 20]
 	push eax
-	mov dword [ ebp - 4], ebx
-	mov dword [ ebp - 12], eax
-	call func_IO_print_char
-	add esp, 2* 4
-	mov dword eax, [ebp - 4]
-	push eax
-	mov dword [ ebp - 4], eax
-	call func_IO_scan_int
-	add esp, 1* 4
-	; TEST
-	mov dword [ebp - 24], eax
-	mov dword eax, [ ebp - 24]
-	mov dword ebx, [ebp - 4]
-	push ebx
-	mov dword [ ebp - 4], ebx
 	mov dword [ ebp - 20], eax
-	call func_IO_scan_char
+	call func_rec1_rec1
 	add esp, 1* 4
-	; TEST
-	mov dword [ebp - 32], eax
-	mov dword eax, [ ebp - 32]
-	mov dword ebx, [ebp - 4]
-	push ebx
-	mov dword [ ebp - 4], ebx
-	mov dword [ ebp - 28], eax
-	call func_IO_scan_char
-	add esp, 1* 4
-	; TEST
-	mov dword [ebp - 36], eax
-	mov dword eax, [ ebp - 36]
-	mov dword ebx, [ebp - 4]
-	push ebx
-	;-1
-	push 37
-	mov dword [ ebp - 4], ebx
-	mov dword [ ebp - 28], eax
-	call func_IO_print_char
-	add esp, 1* 4
-	mov dword eax, [ebp - 4]
-	push eax
-	mov dword ebx, [ebp - 20]
-	push ebx
-	mov dword [ ebp - 4], eax
-	mov dword [ ebp - 20], ebx
+	;mem
+	;t6
+	mov dword eax, [ebp - 20]
+	mov dword ebx, [ebp - 12]
+	mov dword [ebx+4], eax
+	mov ecx, [ebx+4]
+	mov dword [ecx+0], 6
+	mov edx, [ebx+4]
+	mov esi, [edx+0]
+	mov dword edi, [ebp - 4]
+	push edi
+	push esi
+	mov dword [ ebp - 4], edi
+	mov dword [ ebp - 12], ebx
+	mov dword [ ebp - 20], eax
+	mov dword [ ebp - 28], ecx
+	mov dword [ ebp - 36], edx
+	mov dword [ ebp - 40], esi
 	call func_IO_print_int
-	add esp, 2* 4
-	mov dword eax, [ebp - 4]
-	push eax
-	mov dword ebx, [ebp - 28]
-	push ebx
-	mov dword [ ebp - 4], eax
-	mov dword [ ebp - 28], ebx
-	call func_IO_print_char
 	add esp, 2* 4
 	mov dword esp, ebp
 	pop ebp
 	ret
-func_rec_rec:
+func_rec1_rec1:
 	push ebp
 	mov ebp, esp
+	sub esp, 4
+	sub esp, 4
+	mov dword ebx, [ebp - -8]
+	mov eax, [ebx+0]
+	mov dword [ebx+0], 43
+	mov ecx, [ebx+4]
+	mov dword [ ebp - -8], ebx
+	mov dword [ ebp - 4], eax
+	mov dword [ ebp - 8], ecx
 	mov dword esp, ebp
 	pop ebp
 	ret

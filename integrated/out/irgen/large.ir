@@ -1,5 +1,5 @@
 1	class	Life
-2	field_decr	Life	length_2	basic	int1
+2	field_decr	Life	length_2	basic	int	1
 3	function	Life_show
 4	arg	grid_4	array	int	100
 5	arg	this	object	Life	1
