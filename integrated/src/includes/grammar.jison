@@ -834,8 +834,9 @@ class_body :
 		{
 			$$ = $2
 
+			var curr_class = ST.current_class
+
 			if ($$.consr.length == 0) {
-				var curr_class = ST.current_class
 				var self = curr_class.constructor.parameters[0]
 
 				$$.consr = $$.consr.concat([
@@ -847,6 +848,13 @@ class_body :
 			}
 
 			$$.code = $$.code.concat($$.consr)
+
+			for (var variable in curr_class.variables) {
+				$$.consr_code = [
+					"fieldset" + ir_sep + "this" + ir_sep + curr_class.variables[variable].display_name + ir_sep + 0
+				].concat($$.consr_code)
+			}
+
 			$$.code = $$.code.concat($$.consr_code)
 			$$.code = $$.code.concat($$.consr_body)
 		}
@@ -2844,30 +2852,102 @@ equality_expr :
 	|
 		equality_expr 'op_equalCompare' relational_expr 
 		{
-			if (!$1.type.numeric() || !$3.type.numeric()) {
-				throw Error("Incomparable operand types '" + $1.type.get_serial_type() + "' and '" + $3.type.get_serial_type() + "' on binary operator '<='")
-			}
+			if ($1.type.category == "object" && $3.type.type == "null") {
+				var temp = ST.create_temporary()
+				var label = ST.create_label()
 
-			$$ = utils.relational({
-				op1: $1,
-				op2: $3,
-				operator: "eq",
-				operator_val: "=="
-			})
+				$$ = { code: $1.code, place: null, type: null }
+
+				$$.code = $$.code.concat([
+					"decr" + ir_sep + temp + ir_sep + "basic" + ir_sep + "boolean" + ir_sep + "1",
+					"=" + ir_sep + temp + ir_sep + "1",
+					"ifgoto" + ir_sep + "eq" + ir_sep + $1.place + ir_sep + "0" + ir_sep + label,
+					"=" + ir_sep + temp + ir_sep + "0",
+					"label" + ir_sep + label
+				])
+
+				$$.place = temp
+				$$.type = new Type("boolean", "basic", null, null, 0)
+			}
+			else if ($3.type.category == "object" && $1.type.type == "null") {
+				var temp = ST.create_temporary()
+				var label = ST.create_label()
+
+				$$ = { code: $1.code, place: null, type: null }
+
+				$$.code = $$.code.concat([
+					"decr" + ir_sep + temp + ir_sep + "basic" + ir_sep + "boolean" + ir_sep + "1",
+					"=" + ir_sep + temp + ir_sep + "1",
+					"ifgoto" + ir_sep + "eq" + ir_sep + $3.place + ir_sep + "0" + ir_sep + label,
+					"=" + ir_sep + temp + ir_sep + "0",
+					"label" + ir_sep + label
+				])
+
+				$$.place = temp
+				$$.type = new Type("boolean", "basic", null, null, 0)
+			}
+			else {
+				if (!$1.type.numeric() || !$3.type.numeric()) {
+					throw Error("Incomparable operand types '" + $1.type.get_serial_type() + "' and '" + $3.type.get_serial_type() + "' on binary operator '<='")
+				}
+
+				$$ = utils.relational({
+					op1: $1,
+					op2: $3,
+					operator: "eq",
+					operator_val: "=="
+				})
+			}
 		}
 	|
 		equality_expr 'op_notequalCompare' relational_expr 
 		{
-			if (!$1.type.numeric() || !$3.type.numeric()) {
-				throw Error("Incomparable operand types '" + $1.type.get_serial_type() + "' and '" + $3.type.get_serial_type() + "' on operator '!='")
-			}
+			if ($1.type.category == "object" && $3.type.type == "null") {
+				var temp = ST.create_temporary()
+				var label = ST.create_label()
 
-			$$ = utils.relational({
-				op1: $1,
-				op2: $3,
-				operator: "ne",
-				operator_val: "!="
-			})
+				$$ = { code: $1.code, place: null, type: null }
+
+				$$.code = $$.code.concat([
+					"decr" + ir_sep + temp + ir_sep + "basic" + ir_sep + "boolean" + ir_sep + "1",
+					"=" + ir_sep + temp + ir_sep + "0",
+					"ifgoto" + ir_sep + "eq" + ir_sep + $1.place + ir_sep + "0" + ir_sep + label,
+					"=" + ir_sep + temp + ir_sep + "1",
+					"label" + ir_sep + label
+				])
+
+				$$.place = temp
+				$$.type = new Type("boolean", "basic", null, null, 0)
+			}
+			else if ($3.type.category == "object" && $1.type.type == "null") {
+				var temp = ST.create_temporary()
+				var label = ST.create_label()
+
+				$$ = { code: $1.code, place: null, type: null }
+
+				$$.code = $$.code.concat([
+					"decr" + ir_sep + temp + ir_sep + "basic" + ir_sep + "boolean" + ir_sep + "1",
+					"=" + ir_sep + temp + ir_sep + "0",
+					"ifgoto" + ir_sep + "eq" + ir_sep + $3.place + ir_sep + "0" + ir_sep + label,
+					"=" + ir_sep + temp + ir_sep + "1",
+					"label" + ir_sep + label
+				])
+
+				$$.place = temp
+				$$.type = new Type("boolean", "basic", null, null, 0)
+			}
+			else {
+				if (!$1.type.numeric() || !$3.type.numeric()) {
+					throw Error("Incomparable operand types '" + $1.type.get_serial_type() + "' and '" + $3.type.get_serial_type() + "' on operator '!='")
+				}
+
+				$$ = utils.relational({
+					op1: $1,
+					op2: $3,
+					operator: "ne",
+					operator_val: "!="
+				})
+			}
 		}
 	;
 
