@@ -3933,6 +3933,7 @@ literal :
 	|
 		'character_literal' 
 		{
+			console.log($character_literal)
 			$$ = {
 				code: [],
 				place: $character_literal.charCodeAt(1).toString(),

@@ -1,6 +1,6 @@
 global.math_ops = ["+", "-", "^", "|", "&", "*", "/", "%", "=", "=arr"]
 global.math_ops_binary = ["+", "-", "^", "|", "&"]
-global.math_ops_unary = ["not", "inc", "dec"]
+global.math_ops_unary = ["not", "inc", "dec", "neg"]
 global.math_ops_involved = ["*", "/", "%"]
 global.array_ops = ["arrset", "arrget"]
 
@@ -33,7 +33,7 @@ global.map_op = {
 	"f/": "fdiv",
 	"finc": "fadd",
 	"fdec": "fsub",
-
+	"neg": "neg"
 }
 
 global.map_op_float = {
