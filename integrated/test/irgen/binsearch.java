@@ -20,26 +20,12 @@ public class MyBinarySearch {
     public void main() {
 		IO io = new IO();
         MyBinarySearch mbs = new MyBinarySearch();
-        int[8] arr;
-        arr:[0] = 2;
-        arr:[1] = 4;
-        arr:[2] = 6;
-        arr:[3] = 8;
-        arr:[4] = 10;
-        arr:[5] = 12;
-        arr:[6] = 14;
-        arr:[7] = 16;
-        io.print_int(mbs.binarySearch(arr, 8, 14));io.print_char(10);
+        int[8] arr = {2, 4, 6, 8, 10, 12, 14, 16};
 
-        int[8] arr1;
-        arr1:[0] = 6;
-        arr1:[1] = 34;
-        arr1:[2] = 78;
-        arr1:[3] = 123;
-        arr1:[4] = 432;
-        arr1:[5] = 900;
-        arr1:[6] = 990;
-        arr1:[7] = 1000;
-        io.print_int(mbs.binarySearch(arr1, 8, 431));
+        io.print_int(mbs.binarySearch(arr, 8, 14)); io.print_char('\n');
+
+        int[8] arr1 = {6, 34, 78, 123, 432, 900, 990, 1000};
+
+        io.print_int(mbs.binarySearch(arr1, 8, 431)); io.print_char('\n');
     }
 }
