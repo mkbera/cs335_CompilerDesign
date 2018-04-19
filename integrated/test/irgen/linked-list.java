@@ -38,8 +38,9 @@ class List {
         }
 
         for (int i = 0; 10.0 > i; i++) {
+			io.print_char('\t');
 			io.print_float(a.value);
-			io.print_char(10);
+			io.print_char('\n');
 			a = a.next;
         }
 	}

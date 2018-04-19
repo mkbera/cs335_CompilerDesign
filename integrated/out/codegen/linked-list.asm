@@ -17,7 +17,7 @@ section .data
 		_char_in db "%c", 0
 		_55	DD 2.0
 		_117	DD 10.0
-		_146 DD 10
+		_149 DD 10
 
 
 section .text
@@ -366,7 +366,7 @@ label_109:
 	mov dword eax, [ebp - 4]
 	push eax
 	;-1
-	push 92
+	push 10
 	mov dword [ ebp - 4], eax
 	call func_IO_print_char
 	add esp, 1* 4
@@ -391,7 +391,14 @@ label_117:
 
 label_125:
 	cmp dword [ ebp - 108], 0
-	je label_141
+	je label_144
+	mov dword eax, [ebp - 4]
+	push eax
+	;-1
+	push 9
+	mov dword [ ebp - 4], eax
+	call func_IO_print_char
+	add esp, 1* 4
 	mov dword eax, [ebp - 84]
 	fld dword [eax+0]
 	fstp dword [ebp - 116]
@@ -422,7 +429,7 @@ label_125:
 	mov dword [ ebp - 120], eax
 	jmp label_117
 
-label_141:
+label_144:
 	mov dword esp, ebp
 	pop ebp
 	ret
@@ -435,7 +442,7 @@ func_List_List:
 	mov dword eax, [ebp - -8]
 	fld dword [eax+0]
 	fstp dword [ebp - 4]
-	fild dword [_146]
+	fild dword [_149]
 	fstp dword [ebp - 8]
 	fld dword [ebp - 8]
 	fstp dword [eax+0]

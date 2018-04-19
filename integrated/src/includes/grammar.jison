@@ -333,6 +333,7 @@
 					"decr" + ir_sep + tt + ir_sep + obj.op1.type.category + ir_sep + obj.op1.type.type + ir_sep + "1",
 					"=" + ir_sep + tt + ir_sep + obj.op1.place
 				)
+				obj.op1.place = tt
 			}
 
 			var temp = ST.create_temporary()
@@ -374,7 +375,7 @@
 		},
 
 		boolean_type_array: ["boolean"],
-		numeric_type_array: ["int", "short", "long", "byte", "float"],
+		numeric_type_array: ["int", "char", "short", "long", "byte", "float"],
 
 		compare_types: function(type1, type2) {
 		}
@@ -603,7 +604,7 @@ program :
 					line[4] = labels[line[4]]
 				}
 
-				filtered_code[index] = line.join("\t").replace(/boolean|short|long/g, "int")
+				filtered_code[index] = line.join("	").replace(/\bboolean\b|\bchar\b|\bshort\b|\blong\b/g, "int")
 			}
 
 			if (ST.main_method == null) {
@@ -653,7 +654,7 @@ program :
 					line[4] = labels[line[4]]
 				}
 
-				filtered_code[index] = line.join("\t").replace(/boolean|short|long/g, "int")
+				filtered_code[index] = line.join("	").replace(/\bboolean\b|\bchar\b|\bshort\b|\blong\b/g, "int")
 			}
 
 			if (ST.main_method == null) {
@@ -4061,9 +4062,32 @@ literal :
 	|
 		'character_literal' 
 		{
+			var s = $character_literal
+			s = s.substr(1, s.length - 2)
+
+			if (s.length == 2) {
+				s = {
+					"a": "\a",
+					"b": "\b",
+					"f": "\f",
+					"n": "\n",
+					"r": "\r",
+					"t": "\t",
+					"v": "\v",
+					"\\": "\\",
+					"\'": "\'",
+					"\"": "\"",
+					"?": "\?"
+				}[s[1]]
+
+				if (s == null) {
+					throw Error("Invalid escape sequence found")
+				}
+			}
+
 			$$ = {
 				code: [],
-				place: $character_literal.charCodeAt(1).toString(),
+				place: s.charCodeAt(0).toString(),
 				literal: true,
 				type: new Type("int", "basic", 4, null, 0)
 			}
