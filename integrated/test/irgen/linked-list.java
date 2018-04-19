@@ -17,7 +17,7 @@ class List {
 	public void main() {
 		IO io = new IO();
 
-        float x = 0;
+        int x = 0;
 
 		List start;
         while ((x = io.scan_float()) < 0 || (x > 100)) {
@@ -35,7 +35,7 @@ class List {
         io.print_char('\n');
 
         boolean xx = true;
-        while (xx) {
+        while (true) {
             if (current.value < 10) {
                 io.print_char(' ');
                 io.print_float(current.value);
