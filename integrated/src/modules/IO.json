@@ -1,6 +1,6 @@
 {
     "data": [
-        "_int db \"%i\", 0x00",
+        "_int db \"%i\", 0",
         "_float db \"%f\", 0",
     "__dummy_float dq 0.0",
     "_float_in db \"%lf\", 0",
@@ -60,7 +60,11 @@
         "\tpush esp",
         "\tpush _char_in",
         "\tcall scanf",
-        "\tmov dword eax, [ebp - 4]",
+		"\tmov dword eax, [ebp - 4]",
+		"\tmov edx, 0",
+		"\tmov ebx, 128",
+		"\tdiv ebx",
+		"\tmov eax, edx",
         "\tmov esp, ebp",
         "\tpop ebp",
         "\tret",
