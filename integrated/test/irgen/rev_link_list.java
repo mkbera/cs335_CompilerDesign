@@ -20,12 +20,14 @@ class LinkedList {
     Node reverse(Node node) {
         Node prev;
         Node current = node;
-        Node next;
-        while (!current) {
+		Node next;
+		int i = 0;
+        while (i<4) {
             next = current.next;
             current.next = prev;
             prev = current;
-            current = next;
+			current = next;
+			i = i + 1;
         }
         node = prev;
         return node;
@@ -33,14 +35,16 @@ class LinkedList {
  
     // prints content of double linked list
     void printList(Node node) {
-        while (node != 0) {
+		int i = 0;
+        while (i<4) {
             io.print_int(node.data);
             io.print_char(10);
-            node = node.next;
+			node = node.next;
+			i = i + 1;
         }
     }
  
-    public static void main(String[] args) {
+    public void main() {
         LinkedList list = new LinkedList();
         list.head = new Node(85);
         list.head.next = new Node(15);

@@ -17,11 +17,12 @@ class rec {
     public void main() {
         
 		rec obj = new rec();
-		float d = obj.a;
-
+		float d = -1.0;
+		// int a = 5++;
         // obj.arr:[0] = 1;
         IO io = new IO();
         io.print_float(d);
+        // io.print_int(a);
         io.print_char(10);
 
         // obj.arr:[1] = obj.sum(obj.arr:[0], obj.arr:[0]);

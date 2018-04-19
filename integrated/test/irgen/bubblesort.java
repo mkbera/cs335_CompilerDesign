@@ -30,6 +30,7 @@ class BubbleSort {
     }
 		for (int i=0; i<n; i++){
 			io.print_float(array:[i]);
+			io.print_char(10);
 		}
     // System.out.println("Sorted list of numbers");
  

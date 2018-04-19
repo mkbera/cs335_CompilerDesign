@@ -1,0 +1,171 @@
+1	import	IO
+2	class	MyBinarySearch
+3	function	MyBinarySearch_binarySearch
+4	arg	key_5	basic	int	1
+5	arg	len_4	basic	int	1
+6	arg	inputArr_3	array	int	8
+7	arg	this	object	MyBinarySearch	1
+8	decr	start_6	basic	int	1
+9	=	start_6	0
+10	decr	mid_7	basic	int	1
+11	decr	end_8	basic	int	1
+12	decr	t1	basic	int	1
+13	-	t1	len_4	1
+14	=	end_8	t1
+15	decr	t2	basic	int	1
+16	=	t2	1
+17	ifgoto	le	start_6	end_8	19
+18	=	t2	0
+19	ifgoto	eq	t2	0	63
+20	decr	t3	basic	int	1
+21	+	t3	start_6	end_8
+22	decr	t4	basic	int	1
+23	/	t4	t3	2
+24	=	mid_7	t4
+25	decr	t5	basic	int	1
+26	=	t5	0
+27	ifgoto	ge	mid_7	0	29
+28	error	array_access_low
+29	ifgoto	lt	mid_7	8	31
+30	error	array_access_up
+31	+	t5	t5	mid_7
+32	decr	t6	basic	int	1
+33	arrget	t6	inputArr_3	t5
+34	decr	t7	basic	int	1
+35	=	t7	1
+36	ifgoto	eq	key_5	t6	38
+37	=	t7	0
+38	ifgoto	eq	t7	1	40
+39	jump	41
+40	return	mid_7
+41	decr	t8	basic	int	1
+42	=	t8	0
+43	ifgoto	ge	mid_7	0	45
+44	error	array_access_low
+45	ifgoto	lt	mid_7	8	47
+46	error	array_access_up
+47	+	t8	t8	mid_7
+48	decr	t9	basic	int	1
+49	arrget	t9	inputArr_3	t8
+50	decr	t10	basic	int	1
+51	=	t10	1
+52	ifgoto	lt	key_5	t9	54
+53	=	t10	0
+54	ifgoto	eq	t10	1	59
+55	decr	t12	basic	int	1
+56	+	t12	mid_7	1
+57	=	start_6	t12
+58	jump	62
+59	decr	t11	basic	int	1
+60	-	t11	mid_7	1
+61	=	end_8	t11
+62	jump	15
+63	decr	t13	basic	int	1
+64	=	t13	1
+65	neg	t13
+66	return	t13
+67	error	function_return
+68	function	main
+69	decr	io_9	object	IO	1
+70	decr	t14	object	IO	1
+71	new	t14	IO
+72	param	t14
+73	call	IO_IO	1
+74	=	io_9	t14
+75	decr	mbs_10	object	MyBinarySearch	1
+76	decr	t15	object	MyBinarySearch	1
+77	new	t15	MyBinarySearch
+78	param	t15
+79	call	MyBinarySearch_MyBinarySearch	1
+80	=	mbs_10	t15
+81	decr	arr_11	array	int	8	
+82	decr	t16	basic	int	1
+83	=	t16	0
+84	+	t16	t16	0
+85	arrset	arr_11	t16	2
+86	decr	t17	basic	int	1
+87	=	t17	0
+88	+	t17	t17	1
+89	arrset	arr_11	t17	4
+90	decr	t18	basic	int	1
+91	=	t18	0
+92	+	t18	t18	2
+93	arrset	arr_11	t18	6
+94	decr	t19	basic	int	1
+95	=	t19	0
+96	+	t19	t19	3
+97	arrset	arr_11	t19	8
+98	decr	t20	basic	int	1
+99	=	t20	0
+100	+	t20	t20	4
+101	arrset	arr_11	t20	10
+102	decr	t21	basic	int	1
+103	=	t21	0
+104	+	t21	t21	5
+105	arrset	arr_11	t21	12
+106	decr	t22	basic	int	1
+107	=	t22	0
+108	+	t22	t22	6
+109	arrset	arr_11	t22	14
+110	decr	t23	basic	int	1
+111	=	t23	0
+112	+	t23	t23	7
+113	arrset	arr_11	t23	16
+114	decr	t24	basic	int	1
+115	param	mbs_10
+116	param	arr_11
+117	param	8
+118	param	14
+119	call	MyBinarySearch_binarySearch	4	t24
+120	param	io_9
+121	param	t24
+122	call	IO_print_int	2
+123	param	io_9
+124	param	10
+125	call	IO_print_char	2
+126	decr	arr1_12	array	int	8	
+127	decr	t25	basic	int	1
+128	=	t25	0
+129	+	t25	t25	0
+130	arrset	arr1_12	t25	6
+131	decr	t26	basic	int	1
+132	=	t26	0
+133	+	t26	t26	1
+134	arrset	arr1_12	t26	34
+135	decr	t27	basic	int	1
+136	=	t27	0
+137	+	t27	t27	2
+138	arrset	arr1_12	t27	78
+139	decr	t28	basic	int	1
+140	=	t28	0
+141	+	t28	t28	3
+142	arrset	arr1_12	t28	123
+143	decr	t29	basic	int	1
+144	=	t29	0
+145	+	t29	t29	4
+146	arrset	arr1_12	t29	432
+147	decr	t30	basic	int	1
+148	=	t30	0
+149	+	t30	t30	5
+150	arrset	arr1_12	t30	900
+151	decr	t31	basic	int	1
+152	=	t31	0
+153	+	t31	t31	6
+154	arrset	arr1_12	t31	990
+155	decr	t32	basic	int	1
+156	=	t32	0
+157	+	t32	t32	7
+158	arrset	arr1_12	t32	1000
+159	decr	t33	basic	int	1
+160	param	mbs_10
+161	param	arr1_12
+162	param	8
+163	param	431
+164	call	MyBinarySearch_binarySearch	4	t33
+165	param	io_9
+166	param	t33
+167	call	IO_print_int	2
+168	return
+169	function	MyBinarySearch_MyBinarySearch
+170	arg	this	object	MyBinarySearch	1
+171	return

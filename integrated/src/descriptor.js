@@ -1,5 +1,5 @@
-global.math_ops = ["+", "-", "^", "|", "&", "*", "/", "%", "=", "=arr"]
-global.math_ops_binary = ["+", "-", "^", "|", "&"]
+global.math_ops = ["+", "-", "^", "|","||", "&&", "&", "*", "/", "%", "=", "=arr"]
+global.math_ops_binary = ["+", "-", "^", "|", "&", "||", "&&"]
 global.math_ops_unary = ["not", "inc", "dec", "neg"]
 global.math_ops_involved = ["*", "/", "%"]
 global.array_ops = ["arrset", "arrget"]
@@ -14,7 +14,9 @@ global.map_op = {
 	"+": "add",
 	"-": "sub",
 	"&": "and",
+	"&&": "and",
 	"|": "or",
+	"||": "or",
 	"^": "xor",
 	"/": "idiv",
 	"*": "imul",

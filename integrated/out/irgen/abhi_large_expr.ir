@@ -1,0 +1,18 @@
+1	import	IO
+2	class	large_expression
+3	function	main
+4	decr	io_2	object	IO	1
+5	decr	t1	object	IO	1
+6	new	t1	IO
+7	param	t1
+8	call	IO_IO	1
+9	=	io_2	t1
+10	decr	r_3	basic	int	1
+11	=	r_3	117
+12	param	io_2
+13	param	r_3
+14	call	IO_print_int	2
+15	return
+16	function	large_expression_large_expression
+17	arg	this	object	large_expression	1
+18	return

@@ -1,0 +1,67 @@
+1	import	IO
+2	class	many_para_func
+3	function	many_para_func_sum
+4	arg	j_12	basic	int	1
+5	arg	i_11	basic	int	1
+6	arg	h_10	basic	int	1
+7	arg	g_9	basic	int	1
+8	arg	f_8	basic	int	1
+9	arg	e_7	basic	int	1
+10	arg	d_6	basic	int	1
+11	arg	c_5	basic	int	1
+12	arg	b_4	basic	int	1
+13	arg	a_3	basic	int	1
+14	arg	this	object	many_para_func	1
+15	decr	t1	basic	int	1
+16	+	t1	a_3	b_4
+17	decr	t2	basic	int	1
+18	+	t2	t1	c_5
+19	decr	t3	basic	int	1
+20	+	t3	t2	d_6
+21	decr	t4	basic	int	1
+22	+	t4	t3	e_7
+23	decr	t5	basic	int	1
+24	+	t5	t4	f_8
+25	decr	t6	basic	int	1
+26	+	t6	t5	g_9
+27	decr	t7	basic	int	1
+28	+	t7	t6	h_10
+29	decr	t8	basic	int	1
+30	+	t8	t7	i_11
+31	decr	t9	basic	int	1
+32	+	t9	t8	j_12
+33	return	t9
+34	error	function_return
+35	function	main
+36	decr	io_13	object	IO	1
+37	decr	t10	object	IO	1
+38	new	t10	IO
+39	param	t10
+40	call	IO_IO	1
+41	=	io_13	t10
+42	decr	ob_14	object	many_para_func	1
+43	decr	t11	object	many_para_func	1
+44	new	t11	many_para_func
+45	param	t11
+46	call	many_para_func_many_para_func	1
+47	=	ob_14	t11
+48	decr	t12	basic	int	1
+49	param	ob_14
+50	param	1
+51	param	2
+52	param	3
+53	param	4
+54	param	5
+55	param	6
+56	param	7
+57	param	8
+58	param	9
+59	param	10
+60	call	many_para_func_sum	11	t12
+61	param	io_13
+62	param	t12
+63	call	IO_print_int	2
+64	return
+65	function	many_para_func_many_para_func
+66	arg	this	object	many_para_func	1
+67	return

@@ -1,0 +1,175 @@
+1	import	IO
+2	class	bubblesort
+3	function	bubblesort_sort
+4	arg	len_4	basic	int	1
+5	arg	arr_3	array	int	7
+6	arg	this	object	bubblesort	1
+7	decr	n_5	basic	int	1
+8	=	n_5	len_4
+9	decr	temp_6	basic	int	1
+10	decr	i_7	basic	int	1
+11	decr	j_8	basic	int	1
+12	=	i_7	0
+13	decr	t1	basic	int	1
+14	=	t1	1
+15	ifgoto	lt	i_7	n_5	17
+16	=	t1	0
+17	ifgoto	eq	t1	0	99
+18	=	j_8	1
+19	decr	t3	basic	int	1
+20	-	t3	n_5	i_7
+21	decr	t4	basic	int	1
+22	=	t4	1
+23	ifgoto	lt	j_8	t3	25
+24	=	t4	0
+25	ifgoto	eq	t4	0	95
+26	decr	t7	basic	int	1
+27	=	t7	0
+28	decr	t6	basic	int	1
+29	-	t6	j_8	1
+30	ifgoto	ge	t6	0	32
+31	error	array_access_low
+32	ifgoto	lt	t6	7	34
+33	error	array_access_up
+34	+	t7	t7	t6
+35	decr	t8	basic	int	1
+36	arrget	t8	arr_3	t7
+37	decr	t9	basic	int	1
+38	=	t9	0
+39	ifgoto	ge	j_8	0	41
+40	error	array_access_low
+41	ifgoto	lt	j_8	7	43
+42	error	array_access_up
+43	+	t9	t9	j_8
+44	decr	t10	basic	int	1
+45	arrget	t10	arr_3	t9
+46	decr	t11	basic	int	1
+47	=	t11	1
+48	ifgoto	gt	t8	t10	50
+49	=	t11	0
+50	ifgoto	eq	t11	1	52
+51	jump	91
+52	decr	t13	basic	int	1
+53	=	t13	0
+54	decr	t12	basic	int	1
+55	-	t12	j_8	1
+56	ifgoto	ge	t12	0	58
+57	error	array_access_low
+58	ifgoto	lt	t12	7	60
+59	error	array_access_up
+60	+	t13	t13	t12
+61	decr	t14	basic	int	1
+62	arrget	t14	arr_3	t13
+63	=	temp_6	t14
+64	decr	t17	basic	int	1
+65	=	t17	0
+66	ifgoto	ge	j_8	0	68
+67	error	array_access_low
+68	ifgoto	lt	j_8	7	70
+69	error	array_access_up
+70	+	t17	t17	j_8
+71	decr	t18	basic	int	1
+72	arrget	t18	arr_3	t17
+73	decr	t16	basic	int	1
+74	=	t16	0
+75	decr	t15	basic	int	1
+76	-	t15	j_8	1
+77	ifgoto	ge	t15	0	79
+78	error	array_access_low
+79	ifgoto	lt	t15	7	81
+80	error	array_access_up
+81	+	t16	t16	t15
+82	arrset	arr_3	t16	t18
+83	decr	t19	basic	int	1
+84	=	t19	0
+85	ifgoto	ge	j_8	0	87
+86	error	array_access_low
+87	ifgoto	lt	j_8	7	89
+88	error	array_access_up
+89	+	t19	t19	j_8
+90	arrset	arr_3	t19	temp_6
+91	decr	t5	basic	int	1
+92	=	t5	j_8
+93	inc	j_8
+94	jump	19
+95	decr	t2	basic	int	1
+96	=	t2	i_7
+97	inc	i_7
+98	jump	13
+99	return
+100	function	main
+101	decr	io_9	object	IO	1
+102	decr	t20	object	IO	1
+103	new	t20	IO
+104	param	t20
+105	call	IO_IO	1
+106	=	io_9	t20
+107	decr	bub_10	object	bubblesort	1
+108	decr	t21	object	bubblesort	1
+109	new	t21	bubblesort
+110	param	t21
+111	call	bubblesort_bubblesort	1
+112	=	bub_10	t21
+113	decr	arr_11	array	int	7	
+114	decr	t22	basic	int	1
+115	=	t22	0
+116	+	t22	t22	0
+117	arrset	arr_11	t22	7
+118	decr	t23	basic	int	1
+119	=	t23	0
+120	+	t23	t23	1
+121	arrset	arr_11	t23	6
+122	decr	t24	basic	int	1
+123	=	t24	0
+124	+	t24	t24	2
+125	arrset	arr_11	t24	5
+126	decr	t25	basic	int	1
+127	=	t25	0
+128	+	t25	t25	3
+129	arrset	arr_11	t25	4
+130	decr	t26	basic	int	1
+131	=	t26	0
+132	+	t26	t26	4
+133	arrset	arr_11	t26	3
+134	decr	t27	basic	int	1
+135	=	t27	0
+136	+	t27	t27	5
+137	arrset	arr_11	t27	2
+138	decr	t28	basic	int	1
+139	=	t28	0
+140	+	t28	t28	6
+141	arrset	arr_11	t28	1
+142	param	bub_10
+143	param	arr_11
+144	param	7
+145	call	bubblesort_sort	3
+146	decr	i_12	basic	int	1
+147	=	i_12	0
+148	decr	t29	basic	int	1
+149	=	t29	1
+150	ifgoto	lt	i_12	7	152
+151	=	t29	0
+152	ifgoto	eq	t29	0	172
+153	decr	t31	basic	int	1
+154	=	t31	0
+155	ifgoto	ge	i_12	0	157
+156	error	array_access_low
+157	ifgoto	lt	i_12	7	159
+158	error	array_access_up
+159	+	t31	t31	i_12
+160	decr	t32	basic	int	1
+161	arrget	t32	arr_11	t31
+162	param	io_9
+163	param	t32
+164	call	IO_print_int	2
+165	param	io_9
+166	param	10
+167	call	IO_print_char	2
+168	decr	t30	basic	int	1
+169	=	t30	i_12
+170	inc	i_12
+171	jump	148
+172	return
+173	function	bubblesort_bubblesort
+174	arg	this	object	bubblesort	1
+175	return

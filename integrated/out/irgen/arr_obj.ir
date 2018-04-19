@@ -39,7 +39,7 @@
 39	=	t8	1
 40	ifgoto	lt	i_7	5	42
 41	=	t8	0
-42	ifgoto	eq	t8	0	71
+42	ifgoto	eq	t8	0	77
 43	decr	t10	basic	int	1
 44	=	t10	0
 45	ifgoto	ge	i_7	0	47
@@ -54,27 +54,33 @@
 54	param	io_4
 55	param	t12
 56	call	IO_print_int	2
-57	decr	t13	basic	int	1
-58	=	t13	0
-59	+	t13	t13	1
-60	decr	t14	object	rec	1
-61	arrget	t14	arr_5	t13
-62	decr	t15	basic	int	1
-63	fieldget	t15	t14	b_3
-64	param	io_4
-65	param	t15
-66	call	IO_print_int	2
-67	decr	t9	basic	int	1
-68	=	t9	i_7
-69	+	i_7	i_7	1
-70	jump	38
-71	return
-72	function	rec_rec
-73	arg	this	object	rec	1
-74	decr	t1	basic	int	1
-75	fieldget	t1	this	a_2
-76	fieldset	this	a_2	9
-77	decr	t2	basic	int	1
-78	fieldget	t2	this	b_3
-79	fieldset	this	b_3	10
-80	return
+57	param	io_4
+58	param	10
+59	call	IO_print_char	2
+60	decr	t13	basic	int	1
+61	=	t13	0
+62	+	t13	t13	1
+63	decr	t14	object	rec	1
+64	arrget	t14	arr_5	t13
+65	decr	t15	basic	int	1
+66	fieldget	t15	t14	b_3
+67	param	io_4
+68	param	t15
+69	call	IO_print_int	2
+70	param	io_4
+71	param	10
+72	call	IO_print_char	2
+73	decr	t9	basic	int	1
+74	=	t9	i_7
+75	+	i_7	i_7	1
+76	jump	38
+77	return
+78	function	rec_rec
+79	arg	this	object	rec	1
+80	decr	t1	basic	int	1
+81	fieldget	t1	this	a_2
+82	fieldset	this	a_2	9
+83	decr	t2	basic	int	1
+84	fieldget	t2	this	b_3
+85	fieldset	this	b_3	10
+86	return

@@ -8,15 +8,90 @@ section .data
 			function_return_error_msg db "Error: function with return type not void, did not seem to return", 0x0a, 0
 			array_access_up_error_msg db "Error: array index exceeds dimension size", 0x0a, 0
 			array_access_low_error_msg db "Error: array index cannot be negative", 0x0a, 0
-	_int db "%i", 0x0a, 0x00
-	_float db "%f", 0xA, 0
-	__dummy_float dq 0.0
-	_float_in db "%lf", 0
-	_int_in db "%i", 0
+		_int db "%i", 0
+		_float db "%f", 0
+		__dummy_float dq 0.0
+		_float_in db "%lf", 0
+		_int_in db "%i", 0
+		_char db "%c", 0
+		_char_in db "%c", 0
 
 
 section .text
 
+	
+	func_IO_IO:
+		ret
+	func_IO_print_char:
+		push ebp
+		mov ebp, esp
+		mov eax, [ebp+8]
+		mov edx, 0
+		mov ebx, 128
+		div ebx
+		push edx
+		push _char
+		call printf
+		mov esp, ebp
+		pop ebp
+		ret
+	func_IO_print_int:
+		push ebp
+		mov ebp, esp
+		mov eax, [ebp + 8]
+		push eax
+		push _int
+		call printf
+		mov esp, ebp
+		pop ebp
+		ret
+	func_IO_print_float:
+		push ebp
+		mov ebp, esp
+		fld dword [ebp + 8]
+		sub esp, 8
+		fstp qword [esp]
+		push _float
+		call printf
+		mov esp, ebp
+		pop ebp
+		ret
+	func_IO_scan_char:
+		push ebp
+		mov ebp, esp
+		sub esp, 4
+		push esp
+		push _char_in
+		call scanf
+		mov dword eax, [ebp - 4]
+		mov edx, 0
+		mov ebx, 128
+		div ebx
+		mov eax, edx
+		mov esp, ebp
+		pop ebp
+		ret
+	func_IO_scan_int:
+		push ebp
+		mov ebp, esp
+		sub esp, 4
+		push esp 
+		push _int_in
+		call scanf
+		mov eax, [ebp - 4]
+		mov esp, ebp
+		pop ebp
+		ret
+	func_IO_scan_float:
+		push ebp
+		mov ebp, esp
+		push __dummy_float
+		push _float_in
+		call scanf
+		fld qword [__dummy_float]
+		mov esp, ebp
+		pop ebp
+		ret
 main:
 	push ebp
 	mov ebp, esp
@@ -96,12 +171,16 @@ label_21:
 	jge label_29
 	push array_access_low_error_msg
 	call printf
+	mov dword eax, 1
+	int 0x80
 
 label_29:
 	cmp dword [ ebp - 8], 5
 	jl label_31
 	push array_access_up_error_msg
 	call printf
+	mov dword eax, 1
+	int 0x80
 
 label_31:
 	mov dword eax, [ebp - 40]
@@ -156,12 +235,16 @@ label_54:
 	jge label_59
 	push array_access_low_error_msg
 	call printf
+	mov dword eax, 1
+	int 0x80
 
 label_59:
 	cmp dword [ ebp - 12], 5
 	jl label_61
 	push array_access_up_error_msg
 	call printf
+	mov dword eax, 1
+	int 0x80
 
 label_61:
 	mov dword eax, [ebp - 68]
@@ -180,12 +263,16 @@ label_61:
 	jge label_70
 	push array_access_low_error_msg
 	call printf
+	mov dword eax, 1
+	int 0x80
 
 label_70:
 	cmp dword [ ebp - 80], 5
 	jl label_72
 	push array_access_up_error_msg
 	call printf
+	mov dword eax, 1
+	int 0x80
 
 label_72:
 	mov dword eax, [ebp - 76]
@@ -216,12 +303,16 @@ label_81:
 	jge label_85
 	push array_access_low_error_msg
 	call printf
+	mov dword eax, 1
+	int 0x80
 
 label_85:
 	cmp dword [ ebp - 12], 5
 	jl label_87
 	push array_access_up_error_msg
 	call printf
+	mov dword eax, 1
+	int 0x80
 
 label_87:
 	mov dword eax, [ebp - 92]
@@ -242,12 +333,16 @@ label_87:
 	jge label_97
 	push array_access_low_error_msg
 	call printf
+	mov dword eax, 1
+	int 0x80
 
 label_97:
 	cmp dword [ ebp - 104], 5
 	jl label_99
 	push array_access_up_error_msg
 	call printf
+	mov dword eax, 1
+	int 0x80
 
 label_99:
 	mov dword eax, [ebp - 100]
@@ -262,12 +357,16 @@ label_99:
 	jge label_106
 	push array_access_low_error_msg
 	call printf
+	mov dword eax, 1
+	int 0x80
 
 label_106:
 	cmp dword [ ebp - 12], 5
 	jl label_108
 	push array_access_up_error_msg
 	call printf
+	mov dword eax, 1
+	int 0x80
 
 label_108:
 	mov dword eax, [ebp - 112]
@@ -286,12 +385,16 @@ label_108:
 	jge label_116
 	push array_access_low_error_msg
 	call printf
+	mov dword eax, 1
+	int 0x80
 
 label_116:
 	cmp dword [ ebp - 120], 5
 	jl label_118
 	push array_access_up_error_msg
 	call printf
+	mov dword eax, 1
+	int 0x80
 
 label_118:
 	mov dword eax, [ebp - 116]
@@ -329,18 +432,22 @@ label_130:
 
 label_134:
 	cmp dword [ ebp - 136], 0
-	je label_151
+	je label_154
 	mov dword [ ebp - 140], 0
 	cmp dword [ ebp - 132], 0
 	jge label_139
 	push array_access_low_error_msg
 	call printf
+	mov dword eax, 1
+	int 0x80
 
 label_139:
 	cmp dword [ ebp - 132], 5
 	jl label_141
 	push array_access_up_error_msg
 	call printf
+	mov dword eax, 1
+	int 0x80
 
 label_141:
 	mov dword eax, [ebp - 140]
@@ -358,13 +465,20 @@ label_141:
 	mov dword [ ebp - 140], eax
 	call func_IO_print_float
 	add esp, 1* 4
+	mov dword eax, [ebp - 24]
+	push eax
+	;-1
+	push 10
+	mov dword [ ebp - 24], eax
+	call func_IO_print_char
+	add esp, 1* 4
 	mov dword eax, [ebp - 132]
 	mov dword [ ebp - 148], eax
 	add dword eax, 1
 	mov dword [ ebp - 132], eax
 	jmp label_130
 
-label_151:
+label_154:
 	mov dword esp, ebp
 	pop ebp
 	ret
@@ -372,50 +486,5 @@ func_BubbleSort_BubbleSort:
 	push ebp
 	mov ebp, esp
 	mov dword esp, ebp
-	pop ebp
-	ret
-
-func_IO_IO:
-	ret
-func_IO_print_int:
-	push ebp
-	mov ebp, esp
-	mov eax, [ebp + 8]
-	push eax
-	push _int
-	call printf
-	mov esp, ebp
-	pop ebp
-	ret
-func_IO_print_float:
-	push ebp
-	mov ebp, esp
-	fld dword [ebp + 8]
-	sub esp, 8
-	fstp qword [esp]
-	push _float
-	call printf
-	mov esp, ebp
-	pop ebp
-	ret
-func_IO_scan_int:
-	push ebp
-	mov ebp, esp
-	sub esp, 4
-	push esp 
-	push _int_in
-	call scanf
-	mov eax, [ebp - 4]
-	mov esp, ebp
-	pop ebp
-	ret
-func_IO_scan_float:
-	push ebp
-	mov ebp, esp
-	push __dummy_float
-	push _float_in
-	call scanf
-	fld qword [__dummy_float]
-	mov esp, ebp
 	pop ebp
 	ret

@@ -16,7 +16,9 @@ class rec {
 		
 		for (int i=0; i<5; i++){
 			io.print_int(arr:[i].a);
+			io.print_char(10);
 			io.print_int(arr:[1].b);
+			io.print_char(10);
 		}
 	}
 }

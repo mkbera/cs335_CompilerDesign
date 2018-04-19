@@ -13,6 +13,7 @@ class arr {
 		int c = a:[0];
 		int d = a:[1];
 		io.print_int(d);
+		io.print_char(10);
 		float f = 1.0;
 		float g = 1.0;
 		float h = 1.0;

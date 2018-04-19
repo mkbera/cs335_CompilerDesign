@@ -131,7 +131,7 @@
 131	=	t27	1
 132	ifgoto	lt	i_8	n_2	134
 133	=	t27	0
-134	ifgoto	eq	t27	0	151
+134	ifgoto	eq	t27	0	154
 135	decr	t29	basic	int	1
 136	=	t29	0
 137	ifgoto	ge	i_8	0	139
@@ -144,11 +144,14 @@
 144	param	io_7
 145	param	t30
 146	call	IO_print_float	2
-147	decr	t28	basic	int	1
-148	=	t28	i_8
-149	+	i_8	i_8	1
-150	jump	130
-151	return
-152	function	BubbleSort_BubbleSort
-153	arg	this	object	BubbleSort	1
+147	param	io_7
+148	param	10
+149	call	IO_print_char	2
+150	decr	t28	basic	int	1
+151	=	t28	i_8
+152	+	i_8	i_8	1
+153	jump	130
 154	return
+155	function	BubbleSort_BubbleSort
+156	arg	this	object	BubbleSort	1
+157	return

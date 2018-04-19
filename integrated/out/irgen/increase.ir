@@ -1,22 +1,21 @@
 1	import	IO
 2	class	Main
-3	field_decr	Main	num_2	basic	int	1
-4	function	main
-5	decr	cc_3	object	Main	1
-6	decr	t2	object	Main	1
-7	new	t2	Main
-8	param	t2
-9	call	Main_Main	1
-10	=	cc_3	t2
-11	decr	t3	basic	int	1
-12	fieldget	t3	cc_3	num_2
-13	decr	t4	basic	int	1
-14	=	t4	t3
-15	+	t3	t3	1
-16	return
-17	function	Main_Main
-18	arg	this	object	Main	1
-19	decr	t1	basic	int	1
-20	fieldget	t1	this	num_2
-21	fieldset	this	num_2	0
-22	return
+3	function	main
+4	decr	io_2	object	IO	1
+5	decr	t1	object	IO	1
+6	new	t1	IO
+7	param	t1
+8	call	IO_IO	1
+9	=	io_2	t1
+10	decr	a_3	basic	int	1
+11	decr	t2	basic	int	1
+12	param	io_2
+13	call	IO_scan_char	1	t2
+14	=	a_3	t2
+15	param	io_2
+16	param	a_3
+17	call	IO_print_int	2
+18	return
+19	function	Main_Main
+20	arg	this	object	Main	1
+21	return
