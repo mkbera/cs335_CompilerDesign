@@ -1,9 +1,0 @@
-1	import	IO
-2	function	main
-3	decr	a	
-4	=	a	69
-5	decr	b	int
-6	=	b	20
-7	decr	c
-8	=	c	b
-9	exit

@@ -1,8 +1,0 @@
-1	import	IO
-2	class	test
-3	function	main
-4	decr	a_1	int
-5	decr	t1	int
-6	cast	t1	float	int	2.0
-7	=	a_1	t1
-8	return
