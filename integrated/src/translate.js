@@ -193,7 +193,6 @@ function codeGen(instr, next_use_table, line_nr) {
 	}
 	else if (math_ops_binary.indexOf(op) > -1) {
 		var x = instr[2];
-		assembly.add("; HERE")
 		if (registers.address_descriptor[x]["category"] == "int") {
 			var y = instr[3];
 
@@ -996,6 +995,11 @@ function codeGen(instr, next_use_table, line_nr) {
 			}
 			else if (registers.address_descriptor[z]["type"] == "reg") {	// z in reg
 				des_z = registers.address_descriptor[z]["name"];
+			}
+
+			if (field == "length_9" && object == "this") {
+				assembly.add("; THIS = " + des_z)
+				console.log(des_z)
 			}
 
 			des_object = registers.address_descriptor[object]["name"];

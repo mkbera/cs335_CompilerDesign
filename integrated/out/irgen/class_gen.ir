@@ -1,0 +1,73 @@
+1	import	IO
+2	class	MiniClass
+3	field_decr	MiniClass	value_2	basic	int	1
+4	function	MiniClass_MiniClass
+5	arg	value_4	basic	int	1
+6	arg	this	object	MiniClass	1
+7	decr	t1	basic	int	1
+8	fieldget	t1	this	value_2
+9	decr	t2	basic	int	1
+10	fieldset	this	value_2	value_4
+11	return
+12	class	SuperClass
+13	function	SuperClass_gen
+14	arg	b_8	basic	int	1
+15	arg	a_7	basic	int	1
+16	arg	this	object	SuperClass	1
+17	decr	sum_9	basic	int	1
+18	=	sum_9	0
+19	decr	i_10	basic	int	1
+20	=	i_10	0
+21	decr	t3	basic	int	1
+22	=	t3	1
+23	ifgoto	lt	i_10	b_8	25
+24	=	t3	0
+25	ifgoto	eq	t3	0	31
+26	+	sum_9	sum_9	a_7
+27	decr	t4	basic	int	1
+28	=	t4	i_10
+29	inc	i_10
+30	jump	21
+31	decr	t5	object	MiniClass	1
+32	new	t5	MiniClass
+33	param	t5
+34	param	sum_9
+35	call	MiniClass_MiniClass	2
+36	return	t5
+37	error	function_return
+38	function	main
+39	decr	io_11	object	IO	1
+40	decr	t6	object	IO	1
+41	new	t6	IO
+42	param	t6
+43	call	IO_IO	1
+44	=	io_11	t6
+45	decr	super_12	object	SuperClass	1
+46	decr	t7	object	SuperClass	1
+47	new	t7	SuperClass
+48	param	t7
+49	call	SuperClass_SuperClass	1
+50	=	super_12	t7
+51	decr	t8	basic	int	1
+52	param	io_11
+53	call	IO_scan_int	1	t8
+54	decr	t9	basic	int	1
+55	param	io_11
+56	call	IO_scan_int	1	t9
+57	decr	t10	object	MiniClass	1
+58	param	super_12
+59	param	t8
+60	param	t9
+61	call	SuperClass_gen	3	t10
+62	decr	t11	basic	int	1
+63	fieldget	t11	t10	value_2
+64	param	io_11
+65	param	t11
+66	call	IO_print_int	2
+67	param	io_11
+68	param	10
+69	call	IO_print_char	2
+70	return
+71	function	SuperClass_SuperClass
+72	arg	this	object	SuperClass	1
+73	return

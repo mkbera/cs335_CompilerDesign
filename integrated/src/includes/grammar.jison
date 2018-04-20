@@ -2510,7 +2510,7 @@ assignment :
 				if ($2.third) {
 					$$.code = $$.code.concat([
 						$2.operator + ir_sep + $1.place + ir_sep + $1.place + ir_sep + place,
-						"fieldset" + ir_sep + $1.field_class + ir_sep + $1.field_field + ir_sep + place
+						"fieldset" + ir_sep + $1.field_class + ir_sep + $1.field_field + ir_sep + $1.place
 					])
 				}
 				else {
@@ -2591,7 +2591,6 @@ left_hand_side :
 				var line = $$.code[$$.code.length - 1].split("\t")
 				if (line[0] == "fieldget") {
 					$$.field = true
-					$$.code.pop()
 
 					$$.field_class = line[2]
 					$$.field_field = line[3]
@@ -2606,7 +2605,6 @@ left_hand_side :
 			var line = $$.code[$$.code.length - 1].split("\t")
 			if (line[0] == "fieldget") {
 				$$.field = true
-				$$.code.pop()
 
 				$$.field_class = line[2]
 				$$.field_field = line[3]
