@@ -1,0 +1,230 @@
+1	import	IO
+2	class	Char
+3	field_decr	Char	val_2	basic	int	1
+4	field_decr	Char	next_3	object	Char	1
+5	function	Char_Char
+6	arg	val_5	basic	int	1
+7	arg	this	object	Char	1
+8	decr	t1	basic	int	1
+9	fieldget	t1	this	val_2
+10	decr	t2	object	Char	1
+11	fieldget	t2	this	next_3
+12	decr	t3	basic	int	1
+13	fieldget	t3	this	val_2
+14	fieldset	this	val_2	val_5
+15	return
+16	class	String
+17	field_decr	String	start_7	object	Char	1
+18	field_decr	String	end_8	object	Char	1
+19	field_decr	String	length_9	basic	int	1
+20	field_decr	String	io_10	object	IO	1
+21	function	String_print
+22	arg	this	object	String	1
+23	decr	curr_13	object	Char	1
+24	decr	t10	object	Char	1
+25	fieldget	t10	this	start_7
+26	=	curr_13	t10
+27	decr	i_14	basic	int	1
+28	=	i_14	0
+29	decr	t11	basic	int	1
+30	fieldget	t11	this	length_9
+31	decr	t12	basic	int	1
+32	=	t12	1
+33	ifgoto	lt	i_14	t11	35
+34	=	t12	0
+35	ifgoto	eq	t12	0	50
+36	decr	t14	object	IO	1
+37	fieldget	t14	this	io_10
+38	decr	t15	basic	int	1
+39	fieldget	t15	curr_13	val_2
+40	param	t14
+41	param	t15
+42	call	IO_print_char	2
+43	decr	t16	object	Char	1
+44	fieldget	t16	curr_13	next_3
+45	=	curr_13	t16
+46	decr	t13	basic	int	1
+47	=	t13	i_14
+48	inc	i_14
+49	jump	29
+50	decr	t17	object	IO	1
+51	fieldget	t17	this	io_10
+52	param	t17
+53	param	10
+54	call	IO_print_char	2
+55	return
+56	function	String_scan
+57	arg	this	object	String	1
+58	decr	x_16	basic	int	1
+59	decr	t18	object	IO	1
+60	fieldget	t18	this	io_10
+61	decr	t19	basic	int	1
+62	param	t18
+63	call	IO_scan_char	1	t19
+64	=	x_16	t19
+65	decr	t20	basic	int	1
+66	=	t20	1
+67	ifgoto	eq	x_16	10	69
+68	=	t20	0
+69	decr	t21	basic	int	1
+70	=	t21	1
+71	ifgoto	eq	x_16	0	73
+72	=	t21	0
+73	decr	t22	basic	int	1
+74	||	t22	t20	t21
+75	ifgoto	eq	t22	1	77
+76	jump	81
+77	decr	t23	basic	int	1
+78	fieldget	t23	this	length_9
+79	fieldset	this	length_9	0
+80	return
+81	decr	t25	object	Char	1
+82	new	t25	Char
+83	param	t25
+84	param	x_16
+85	call	Char_Char	2
+86	decr	t24	object	Char	1
+87	fieldget	t24	this	start_7
+88	fieldset	this	start_7	t25
+89	decr	t26	basic	int	1
+90	fieldget	t26	this	length_9
+91	fieldset	this	length_9	1
+92	decr	end_17	object	Char	1
+93	decr	t27	object	Char	1
+94	fieldget	t27	this	start_7
+95	=	end_17	t27
+96	decr	t28	object	IO	1
+97	fieldget	t28	this	io_10
+98	decr	t29	basic	int	1
+99	param	t28
+100	call	IO_scan_char	1	t29
+101	=	x_16	t29
+102	decr	t30	basic	int	1
+103	=	t30	1
+104	ifgoto	ne	x_16	10	106
+105	=	t30	0
+106	decr	t31	basic	int	1
+107	=	t31	1
+108	ifgoto	ne	x_16	0	110
+109	=	t31	0
+110	decr	t32	basic	int	1
+111	&&	t32	t30	t31
+112	ifgoto	eq	t32	0	130
+113	decr	t34	basic	int	1
+114	fieldget	t34	this	length_9
+115	decr	t35	basic	int	1
+116	+	t35	t34	1
+117	decr	t33	basic	int	1
+118	fieldget	t33	this	length_9
+119	fieldset	this	length_9	1
+120	decr	t36	object	Char	1
+121	new	t36	Char
+122	param	t36
+123	param	x_16
+124	call	Char_Char	2
+125	=	end_17	t36
+126	decr	t37	object	Char	1
+127	fieldget	t37	end_17	next_3
+128	=	end_17	t37
+129	jump	96
+130	decr	t38	object	IO	1
+131	fieldget	t38	this	io_10
+132	decr	t39	basic	int	1
+133	fieldget	t39	this	length_9
+134	param	t38
+135	param	t39
+136	call	IO_print_int	2
+137	return
+138	function	String_compare
+139	arg	cmp_19	object	String	1
+140	arg	this	object	String	1
+141	decr	t40	basic	int	1
+142	fieldget	t40	cmp_19	length_9
+143	decr	t41	basic	int	1
+144	fieldget	t41	this	length_9
+145	decr	t42	basic	int	1
+146	=	t42	1
+147	ifgoto	ne	t40	t41	149
+148	=	t42	0
+149	ifgoto	eq	t42	1	151
+150	jump	152
+151	return	0
+152	decr	curr1_20	object	Char	1
+153	decr	t43	object	Char	1
+154	fieldget	t43	this	start_7
+155	=	curr1_20	t43
+156	decr	curr2_21	object	Char	1
+157	decr	t44	object	Char	1
+158	fieldget	t44	cmp_19	start_7
+159	=	curr2_21	t44
+160	decr	i_22	basic	int	1
+161	=	i_22	0
+162	decr	t45	basic	int	1
+163	fieldget	t45	this	length_9
+164	decr	t46	basic	int	1
+165	=	t46	1
+166	ifgoto	lt	i_22	t45	168
+167	=	t46	0
+168	ifgoto	eq	t46	0	190
+169	decr	t48	basic	int	1
+170	fieldget	t48	curr1_20	val_2
+171	decr	t49	basic	int	1
+172	fieldget	t49	curr2_21	val_2
+173	decr	t50	basic	int	1
+174	=	t50	1
+175	ifgoto	ne	t48	t49	177
+176	=	t50	0
+177	ifgoto	eq	t50	1	179
+178	jump	180
+179	return	0
+180	decr	t51	object	Char	1
+181	fieldget	t51	curr1_20	next_3
+182	=	curr1_20	t51
+183	decr	t52	object	Char	1
+184	fieldget	t52	curr2_21	next_3
+185	=	curr2_21	t52
+186	decr	t47	basic	int	1
+187	=	t47	i_22
+188	inc	i_22
+189	jump	162
+190	return	1
+191	error	function_return
+192	function	String_String
+193	arg	this	object	String	1
+194	decr	t4	object	Char	1
+195	fieldget	t4	this	start_7
+196	decr	t5	object	Char	1
+197	fieldget	t5	this	end_8
+198	decr	t6	basic	int	1
+199	fieldget	t6	this	length_9
+200	decr	t7	object	IO	1
+201	fieldget	t7	this	io_10
+202	decr	t9	object	IO	1
+203	new	t9	IO
+204	param	t9
+205	call	IO_IO	1
+206	decr	t8	object	IO	1
+207	fieldget	t8	this	io_10
+208	fieldset	this	io_10	t9
+209	return
+210	class	Test
+211	function	main
+212	decr	str1_24	object	String	1
+213	decr	t53	object	String	1
+214	new	t53	String
+215	param	t53
+216	call	String_String	1
+217	=	str1_24	t53
+218	param	str1_24
+219	call	String_scan	1
+220	param	str1_24
+221	call	String_print	1
+222	decr	t54	object	IO	1
+223	fieldget	t54	str1_24	io_10
+224	param	t54
+225	param	10
+226	call	IO_print_char	2
+227	return
+228	function	Test_Test
+229	arg	this	object	Test	1
+230	return
