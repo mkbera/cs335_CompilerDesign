@@ -7,11 +7,6 @@ Source language :- Java
 Implementation language :- NODE.JS
 Target language :- x86 assembly language
 
-The "src" folder contains the required code for converting source language to
-machine language.
-The machine and ircode code generated are stored in folders "out/codegen" and 
-"out/irgen" respectively.
-
 
 
 ----------------------------------	FEATURES ----------------------------------
@@ -83,3 +78,9 @@ source plugin for node.js.	The docs are  available  at  'https://zaa.ch/jison/'
 
 ------------------------------- RUNNING THE CODE -------------------------------
 
+The following command will run the code":
+
+	$ bin/jaba path/to/java/file
+
+The IR file will be created in out/irgen
+The assembly file will be created in out/codegen
