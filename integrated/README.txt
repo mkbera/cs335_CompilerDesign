@@ -23,6 +23,10 @@ BASIC FEATURES:
 
 	FUNCTIONS and FUNCTION CALLS and IMPORT
 
+	MULTI-DIMENSIONAL ARRAYS for ALL data types
+
+	BASIC LIBRARY FUNCTIONS:	print, scan
+
 
 ADVANCED FEATURES:
 	CLASSES and OBJECTS and METHODS
@@ -30,8 +34,6 @@ ADVANCED FEATURES:
 	TYPE CASTING
 
 	RECURSION
-
-	LINKED LISTS
 
 
 -------------------------------- FILES DESCRIPTION -------------------------------
@@ -65,6 +67,39 @@ tac.js						:	Defines the functions to generate the list of
 								basic blocks from the 3AC.
 
 translate.js				:	Translates the 3AC to assembly code.
+
+
+------------------------- DEVIATIONS FROM JAVA SYNTAX -------------------------
+
+## Array Access
+
+Before the square brackets, there needs to be a 'colon' (':'), i.e. the (i, j)th
+element    of	 Array	  'arr'    can	  be	accessed	as	  =>	a:[i][j]
+
+This was done to avoid a  reduce/reduce conflict, for which we couldn't find any
+other workaround.
+
+## Array Declaration
+
+Array declaration will follow the following format:
+
+	int[d1][...][dn] arr;
+
+		OR
+
+	int[d1][...][dn] arr = { { ... }, ... { ... } }
+
+where each dimension is an integer literal
+
+
+
+
+----------------------	SOME JAVA FEATURES NOT IMPLEMENTED	--------------------
+CLASS INHERITANCE
+
+PRIVATE CLASSES and STATIC OBJECTS & VARIABLES
+
+
 
 
 

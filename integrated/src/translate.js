@@ -798,10 +798,8 @@ function codeGen(instr, next_use_table, line_nr) {
 			}
 		} else {
 			if (x.indexOf(".") == -1) {
-				assembly.add(";" + x.indexOf("."))
 				assembly.add("push " + x)
 			} else {
-				assembly.add(";" + x.indexOf("."))
 				assembly.add_data("_" + line_nr + " DD " + x)
 				assembly.add("sub esp, 4")
 				assembly.add("fld dword [_" + line_nr + "]")
@@ -997,10 +995,9 @@ function codeGen(instr, next_use_table, line_nr) {
 				des_z = registers.address_descriptor[z]["name"];
 			}
 
-			if (field == "length_9" && object == "this") {
-				assembly.add("; THIS = " + des_z)
-				console.log(des_z)
-			}
+			// if (field == "length_9" && object == "this") {
+			// 	assembly.add("; THIS = " + des_z)
+			// }
 
 			des_object = registers.address_descriptor[object]["name"];
 			if (registers.address_descriptor[object]["type"] == "mem") {
@@ -1042,8 +1039,6 @@ function codeGen(instr, next_use_table, line_nr) {
 				des_z = z
 			}
 			else if (registers.address_descriptor[z]["type"] == "mem") {	// z in mem
-				assembly.add(";" + registers.address_descriptor[instr[4]]["type"])
-				assembly.add(";" + registers.address_descriptor[instr[4]]["name"])
 				des_z = registers.getReg(z, line_nr, next_use_table, safe = [y], safe_regs = [], print = true);
 				assembly.add("mov dword " + des_z + ", [ebp - " + registers.address_descriptor[z]["offset"] + "]");
 			}
@@ -1149,7 +1144,7 @@ function codeGen(instr, next_use_table, line_nr) {
 		if (instr[4] != null) {
 			var variable = instr[4]
 			if (registers.address_descriptor[variable]["category"] != "float") {
-				assembly.add("; TEST")
+				// assembly.add("; TEST")
 				assembly.add("mov dword [ebp - " + registers.address_descriptor[variable]["offset"] + "], eax")
 			}
 			else {

@@ -1,7 +1,7 @@
 import IO;
 
 class List {
-    float value = 10;
+    float value = 10.0;
     boolean next_exists = false;
     List next;
 

@@ -33,6 +33,7 @@ class List {
                 io.print_char(' ');
 			}
 			io.print_int(i);
+			io.print_char(' ');
 			io.print_float(current.value);
 			io.print_char(10);
 			current = current.next;

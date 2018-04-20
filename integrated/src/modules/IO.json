@@ -1,11 +1,11 @@
 {
     "data": [
         "_int db \"%i\", 0",
-        "_int_in db \"%i\", 10, 0",
+        "_int_in db \"%i\", 0",
         "_char db \"%c\", 0",
         "_char_in db \"%c\", 0",
         "_float db \"%f\", 0",
-        "_float_in db \"%lf\", 10, 0",
+        "_float_in db \"%lf\", 0",
         "__dummy_float dq 0.0"
     ],
     "code": [
