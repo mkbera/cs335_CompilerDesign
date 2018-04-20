@@ -364,6 +364,97 @@ func_String_print_char:
 	mov dword esp, ebp
 	pop ebp
 	ret
+func_String_get:
+	push ebp
+	mov ebp, esp
+	sub esp, 4
+	sub esp, 4
+	sub esp, 4
+	sub esp, 4
+	sub esp, 4
+	sub esp, 4
+	sub esp, 4
+	sub esp, 4
+	sub esp, 4
+	sub esp, 4
+	sub esp, 4
+	sub esp, 4
+	mov dword [ ebp - 4], 1
+	cmp dword [ ebp - -8], 0
+	jl label_146
+	mov dword [ ebp - 4], 0
+
+label_146:
+	; THIS = eax
+	mov dword ebx, [ebp - -12]
+	mov eax, [ebx+8]
+	mov dword [ ebp - 12], 1
+	cmp dword [ ebp - -8], eax
+	mov dword [ ebp - -12], ebx
+	mov dword [ ebp - 8], eax
+	jge label_152
+	mov dword [ ebp - 12], 0
+
+label_152:
+	mov dword eax, [ebp - 4]
+	mov dword [ ebp - 4], eax
+	or dword eax, [ ebp - 12]
+	cmp dword eax, 1
+	mov dword [ ebp - 16], eax
+	je label_156
+	jmp label_157
+
+label_156:
+	mov dword eax, 0
+	mov dword esp, ebp
+	pop ebp
+	ret
+
+label_157:
+	mov dword ebx, [ebp - -12]
+	mov eax, [ebx+0]
+	mov dword [ ebp - 24], eax
+	mov dword [ ebp - 28], 0
+	mov dword [ ebp - -12], ebx
+	mov dword [ ebp - 20], eax
+
+label_163:
+	mov dword eax, [ebp - -8]
+	mov dword [ ebp - -8], eax
+	sub dword eax, 1
+	mov dword [ ebp - 36], 1
+	cmp dword [ ebp - 28], eax
+	mov dword [ ebp - 32], eax
+	jl label_169
+	mov dword [ ebp - 36], 0
+
+label_169:
+	cmp dword [ ebp - 36], 0
+	je label_177
+	mov dword ebx, [ebp - 20]
+	mov eax, [ebx+4]
+	mov dword ebx, eax
+	mov dword esi, [ebp - 28]
+	mov dword [ ebp - 44], esi
+	inc dword esi
+	mov dword [ ebp - 20], ebx
+	mov dword [ ebp - 28], esi
+	mov dword [ ebp - 40], eax
+	jmp label_163
+
+label_177:
+	mov dword ebx, [ebp - 20]
+	mov eax, [ebx+0]
+	mov dword [ ebp - 20], ebx
+	mov dword [ ebp - 48], eax
+	mov dword eax, [ebp - 48]
+	mov dword esp, ebp
+	pop ebp
+	ret
+push function_return_error_msg
+call printf
+mov dword eax, 1
+int 0x80
 func_String_compare:
 	push ebp
 	mov ebp, esp
@@ -394,21 +485,21 @@ func_String_compare:
 	mov dword [ ebp - -8], ebx
 	mov dword [ ebp - 4], eax
 	mov dword [ ebp - 8], esi
-	jne label_150
+	jne label_192
 	mov dword [ ebp - 12], 0
 
-label_150:
+label_192:
 	cmp dword [ ebp - 12], 1
-	je label_152
-	jmp label_153
+	je label_194
+	jmp label_195
 
-label_152:
+label_194:
 	mov dword eax, 0
 	mov dword esp, ebp
 	pop ebp
 	ret
 
-label_153:
+label_195:
 	mov dword ebx, [ebp - -12]
 	mov eax, [ebx+0]
 	mov dword [ ebp - 20], eax
@@ -421,7 +512,7 @@ label_153:
 	mov dword [ ebp - 16], eax
 	mov dword [ ebp - 24], esi
 
-label_163:
+label_205:
 	; THIS = eax
 	mov dword ebx, [ebp - -12]
 	mov eax, [ebx+8]
@@ -429,12 +520,12 @@ label_163:
 	cmp dword [ ebp - 32], eax
 	mov dword [ ebp - -12], ebx
 	mov dword [ ebp - 36], eax
-	jl label_169
+	jl label_211
 	mov dword [ ebp - 40], 0
 
-label_169:
+label_211:
 	cmp dword [ ebp - 40], 0
-	je label_191
+	je label_233
 	mov dword ebx, [ebp - 16]
 	mov eax, [ebx+0]
 	mov dword edi, [ebp - 24]
@@ -445,21 +536,21 @@ label_169:
 	mov dword [ ebp - 24], edi
 	mov dword [ ebp - 44], eax
 	mov dword [ ebp - 48], esi
-	jne label_178
+	jne label_220
 	mov dword [ ebp - 52], 0
 
-label_178:
+label_220:
 	cmp dword [ ebp - 52], 1
-	je label_180
-	jmp label_181
+	je label_222
+	jmp label_223
 
-label_180:
+label_222:
 	mov dword eax, 0
 	mov dword esp, ebp
 	pop ebp
 	ret
 
-label_181:
+label_223:
 	mov dword ebx, [ebp - 16]
 	mov eax, [ebx+4]
 	mov dword ebx, eax
@@ -474,9 +565,9 @@ label_181:
 	mov dword [ ebp - 24], edi
 	mov dword [ ebp - 32], eax
 	mov dword [ ebp - 60], esi
-	jmp label_163
+	jmp label_205
 
-label_191:
+label_233:
 	mov dword eax, 1
 	mov dword esp, ebp
 	pop ebp
@@ -535,6 +626,7 @@ main:
 	sub esp, 4
 	sub esp, 4
 	sub esp, 4
+	sub esp, 4
 	push 16
 	call malloc
 	add esp, 4
@@ -561,44 +653,61 @@ main:
 	mov dword [ ebp - 4], eax
 	call func_String_print_char
 	add esp, 1* 4
-	push 16
-	call malloc
-	add esp, 4
-	mov [ebp -16], eax
-	mov dword eax, [ebp - 16]
-	push eax
-	mov dword [ ebp - 16], eax
-	call func_String_String
-	add esp, 1* 4
-	mov dword eax, [ ebp - 16]
-	push eax
-	mov dword [ ebp - 12], eax
-	call func_String_scan
-	add esp, 1* 4
-	mov dword eax, [ebp - 12]
-	push eax
-	mov dword [ ebp - 12], eax
-	call func_String_print
-	add esp, 1* 4
-	mov dword eax, [ebp - 12]
+	mov dword eax, [ebp - 4]
 	push eax
 	;-1
-	push 10
-	mov dword [ ebp - 12], eax
-	call func_String_print_char
+	push 5
+	mov dword [ ebp - 4], eax
+	call func_String_get
 	add esp, 1* 4
+	; TEST
+	mov dword [ebp - 12], eax
 	mov dword eax, [ebp - 4]
 	push eax
 	mov dword ebx, [ebp - 12]
 	push ebx
 	mov dword [ ebp - 4], eax
 	mov dword [ ebp - 12], ebx
+	call func_String_print_char
+	add esp, 2* 4
+	push 16
+	call malloc
+	add esp, 4
+	mov [ebp -20], eax
+	mov dword eax, [ebp - 20]
+	push eax
+	mov dword [ ebp - 20], eax
+	call func_String_String
+	add esp, 1* 4
+	mov dword eax, [ ebp - 20]
+	push eax
+	mov dword [ ebp - 16], eax
+	call func_String_scan
+	add esp, 1* 4
+	mov dword eax, [ebp - 16]
+	push eax
+	mov dword [ ebp - 16], eax
+	call func_String_print
+	add esp, 1* 4
+	mov dword eax, [ebp - 16]
+	push eax
+	;-1
+	push 10
+	mov dword [ ebp - 16], eax
+	call func_String_print_char
+	add esp, 1* 4
+	mov dword eax, [ebp - 4]
+	push eax
+	mov dword ebx, [ebp - 16]
+	push ebx
+	mov dword [ ebp - 4], eax
+	mov dword [ ebp - 16], ebx
 	call func_String_compare
 	add esp, 2* 4
 	; TEST
-	mov dword [ebp - 20], eax
-	cmp dword [ ebp - 20], 1
-	je label_248
+	mov dword [ebp - 24], eax
+	cmp dword [ ebp - 24], 1
+	je label_297
 	mov dword eax, [ebp - 4]
 	push eax
 	;-1
@@ -606,20 +715,20 @@ main:
 	mov dword [ ebp - 4], eax
 	call func_String_print_char
 	add esp, 1* 4
-	jmp label_253
+	jmp label_302
 
-label_248:
+label_297:
 	mov dword ebx, [ebp - 4]
 	mov eax, [ebx+12]
 	push eax
 	;-1
 	push 84
 	mov dword [ ebp - 4], ebx
-	mov dword [ ebp - 24], eax
+	mov dword [ ebp - 28], eax
 	call func_IO_print_char
 	add esp, 1* 4
 
-label_253:
+label_302:
 	mov dword eax, [ebp - 4]
 	push eax
 	;-1

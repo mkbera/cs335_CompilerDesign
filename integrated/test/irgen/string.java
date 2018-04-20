@@ -53,6 +53,17 @@ class String {
         io.print_char(x);
     }
 
+    char get(int index) {
+        if (index < 0 || index >= length) {
+            return 0;
+        }
+        Char curr = start;
+        for (int i = 0; i < index - 1; i++) {
+            curr = curr.next;
+        }
+        return curr.val;
+    }
+
     boolean compare(String cmp) {
         if (cmp.length != length) {
             return false;
