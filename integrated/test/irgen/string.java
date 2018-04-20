@@ -43,12 +43,25 @@ class String {
 
         Char end = start;
         while ((x = io.scan_char()) != '\n' && x != 0) {
-            io.print_int(length);
             length += 1;
-            end = new Char(x);
+            end.next = new Char(x);
             end = end.next;
         }
-        io.print_int(length);
+    }
+
+    void print_char(char x) {
+        io.print_char(x);
+    }
+
+    char get(int index) {
+        if (index < 0 || index >= length) {
+            return 0;
+        }
+        Char curr = start;
+        for (int i = 0; i < index - 1; i++) {
+            curr = curr.next;
+        }
+        return curr.val;
     }
 
     boolean compare(String cmp) {
@@ -73,17 +86,19 @@ class Test {
         String str1 = new String();
         str1.scan();
         str1.print();
-        str1.io.print_char('\n');
+        str1.print_char('\n');
 
-        // String str2 = new String();
-        // str2.scan();
+        String str2 = new String();
+        str2.scan();
+        str2.print();
+        str2.print_char('\n');
 
-        // if (str1.compare(str2)) {
-        //     str1.io.print_char('T');
-        // }
-        // else {
-        //     str1.io.print_char('F');
-        // }
-        // str1.io.print_char('\n');
+        if (str1.compare(str2)) {
+            str1.io.print_char('T');
+        }
+        else {
+            str1.print_char('F');
+        }
+        str1.print_char('\n');
     }
 }
