@@ -1,5 +1,5 @@
 # cs335_CompilerDesign
-course project | cs335(compiler design) | A cross platform compiler for java language to mips using node.js  
+course project | cs335(compiler design) | A cross platform compiler for java language to x86 using node.js  
 
 Members :-  
 
